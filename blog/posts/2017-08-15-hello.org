@@ -1,0 +1,58 @@
+---
+title: テスト
+---
+
+* hello world
+
+Hakyllでブログを作ってみた
+org-modeで記事をかいて、emacsでorg→markdownに変換してからHakyllがHTMLの生成をやってくれる
+
+ところでorg→markdownの変換はpandocを使った場合、orgの =#+OPTIONS:= の指定が効かなくなったので
+仕方なくemacsのバッチモードを呼んでいる
+(emacsのバッチモードを呼ぶスクリプトをorgファイルを監視しているHakyllから呼ぶようにしてる)
+
+テーマとかタグとか色々やらないといけないことがあるのでそれもおいおい…
+
+-----
+
+* org-mode 表示テスト
+
+** 見出し
+
+*** 小見出し
+
+**** 孫見出し
+
+** 見出し2
+
+*太字* _下線_ =code=
+
+- 項目
+  - 子項目
+  - 子項目2
+- 項目2
+
+** チェックボックス [1/2]
+
+- [ ] チェックボックス
+- [X] =C-c C-c= でチェックをON/OFF
+
+** TODOリスト [33%]
+
+*** TODO やること
+*** DONE やったこと
+*** TODO 操作
+
+=C-c C-t= でTODOとDONEをトグル
+
+** 表
+
+| header1 | header2 | header3 |
+|---------+---------+---------|
+| 10      | 20      | 300     |
+| apple   | pen     | banana  |
+
+** リンク
+
+[[https://github.com/myuon/myuon.github.io][repository]]
+
