@@ -16,6 +16,14 @@ main = hakyll $ do
         route   idRoute
         compile compressCssCompiler
 
+    match "semantic-ui-css/*.css" $ do
+        route   idRoute
+        compile compressCssCompiler
+
+    match "semantic-ui-css/themes/**/*" $ do
+        route   idRoute
+        compile getResourceLBS
+
     match (fromList ["about.rst", "contact.markdown"]) $ do
         route   $ setExtension "html"
         compile $ pandocCompiler

@@ -4,8 +4,8 @@ import os
 import subprocess
 
 @baker.command
-def watch():
-    build()
+def watch(rebuild=False):
+    build(rebuild)
     subprocess.run(["stack exec site watch"], shell=True)
 
 @baker.command
