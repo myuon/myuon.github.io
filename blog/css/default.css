@@ -14,12 +14,19 @@ code {
     padding: 0.1em 0.2em;
     word-wrap: normal;
     font-size: smaller;
+    background-color: #fbf1c7;
+    color: #333;
 }
 
 pre {
+    background-color: #fbf1c7;
     padding: 1em;
     font-family: Consolas, "Courier New", Courier, Monaco, monospace;
     line-height: 1.4;
+}
+
+.container h1, .container h2, .container h3, .container h4, .container h5 {
+    margin: 1rem 0 0.75rem 0;
 }
 
 /***/
@@ -71,6 +78,11 @@ body > div.container h2 {
     border-bottom: 3px solid #f7a541;
 }
 
+body > div.container h3 {
+    display: table;
+    border-bottom: 2px solid #f45d4c;
+}
+
 body > div.container h1::before {
     content: "\f105";
     font-family: Icons;
@@ -79,6 +91,12 @@ body > div.container h1::before {
 
 body > div.container h2::before {
     content: "\f101";
+    font-family: Icons;
+    margin-right: 0.25em;
+}
+
+body > div.container h3::before {
+    content: "\f138";
     font-family: Icons;
     margin-right: 0.25em;
 }
