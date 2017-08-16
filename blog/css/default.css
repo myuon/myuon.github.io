@@ -12,13 +12,14 @@ a:hover {
 
 code {
     background-color: #eee;
-    padding: 0 0.2em;
+    padding: 0.1em 0.2em;
+    word-wrap: normal;
+    font-size: smaller;
 }
 
 pre {
     background-color: #eee;
     padding: 1em;
-    font-size: smaller;
     font-family: Consolas, "Courier New", Courier, Monaco, monospace;
     line-height: 1.4;
 }
