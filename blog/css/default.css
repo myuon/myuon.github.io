@@ -46,12 +46,12 @@ header h2.header a:hover {
     color: #555;
 }
 
-header a {
+header a, header .ui.list>a.item {
     color: #46626d;
     font-weight: bold;
 }
 
-header a:hover {
+header a:hover, header .ui.list>a.item:hover {
     color: #16323d;
 }
 
