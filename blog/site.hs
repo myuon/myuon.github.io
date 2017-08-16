@@ -33,22 +33,19 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
 
-    match "org/*" $ do
-        compile $ getResourceFilePath
-            >>= \fpath -> unsafeCompiler (callCommand $ unwords ["python3", "build.py", "org_to_markdown", fpath])
-            >>= makeItem
-
-    match "markdown/*" $ do
+    match "posts/*" $ do
         route $ setExtension "html"
         let hardLineBreaks :: Inline -> Inline
             hardLineBreaks SoftBreak = LineBreak
             hardLineBreaks k = k
+
         let ropt = def
         let wopt = def
               { writerTableOfContents = True
               , writerSectionDivs = True
               , writerTemplate = Just "$if(toc)$\n$toc$\n$endif$\n$body$"
               , writerWrapText = WrapPreserve
+              , writerHighlight = True
               }
         
         compile $ pandocCompilerWithTransform ropt wopt (walk hardLineBreaks)
@@ -59,7 +56,7 @@ main = hakyll $ do
     create ["archive.html"] $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "markdown/*"
+            posts <- recentFirst =<< loadAll "posts/*"
             let archiveCtx =
                     listField "posts" postCtx (return posts) `mappend`
                     constField "title" "Archives"            `mappend`
@@ -74,7 +71,7 @@ main = hakyll $ do
     match "index.html" $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "markdown/*"
+            posts <- recentFirst =<< loadAll "posts/*"
             let indexCtx =
                     listField "posts" postCtx (return posts) `mappend`
                     constField "title" "Home"                `mappend`
