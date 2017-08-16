@@ -1,6 +1,9 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 import Data.Monoid (mappend)
+import qualified Data.Set as S
+import Text.Pandoc
+import Text.Pandoc.Walk
 import System.Process
 import Hakyll
 
@@ -37,7 +40,18 @@ main = hakyll $ do
 
     match "markdown/*" $ do
         route $ setExtension "html"
-        compile $ pandocCompiler
+        let hardLineBreaks :: Inline -> Inline
+            hardLineBreaks SoftBreak = LineBreak
+            hardLineBreaks k = k
+        let ropt = def
+        let wopt = def
+              { writerTableOfContents = True
+              , writerSectionDivs = True
+              , writerTemplate = Just "$if(toc)$\n$toc$\n$endif$\n$body$"
+              , writerWrapText = WrapPreserve
+              }
+        
+        compile $ pandocCompilerWithTransform ropt wopt (walk hardLineBreaks)
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
