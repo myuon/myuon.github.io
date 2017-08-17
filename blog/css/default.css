@@ -38,11 +38,11 @@ header {
     border-bottom: 5px solid #fee5ad;
 }
 
-header h2.header a {
+header .header .content a {
     color: #333;
 }
 
-header h2.header a:hover {
+header .header .content a:hover {
     color: #555;
 }
 
