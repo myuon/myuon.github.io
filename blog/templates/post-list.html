@@ -1,7 +1,9 @@
 <ul>
-    $for(posts)$
-        <li>
-            <a href="$url$">$title$</a> - <script id="dsq-count-scr" src="//the-curse-of-lambda.disqus.com/count.js" async></script> $date$
-        </li>
-    $endfor$
+  $for(posts)$
+  <li>
+    <span class="date">$date$</span>
+    <a href="$url$">$title$</a>
+    <!-- <span class="comment-count">(<span class="disqus-comment-count" data-disqus-url="https://myuon.github.io$url$"></span>)</span> -->
+  </li>
+  $endfor$
 </ul>

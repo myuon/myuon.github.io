@@ -108,4 +108,16 @@ article .disqus-area {
     margin-top: 1.5rem;
 }
 
+.date, .comment-count {
+    font-size: small;
+}
+
+.date {
+    margin-right: 0.5rem;
+}
+
+.comment-count {
+    margin-left: 0.2rem;
+}
+
 
