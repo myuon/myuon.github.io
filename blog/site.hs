@@ -41,9 +41,17 @@ main = hakyll $ do
               , writerWrapText = WrapPreserve
               , writerHighlight = True
               }
-        
-        compile $ pandocCompilerWithTransform ropt wopt (walk hardLineBreaks)
-            >>= loadAndApplyTemplate "templates/post.html"    postCtx
+
+        compile $ do
+          fpath <- getResourceFilePath
+          let fpathId = concat $ fmap (show . fromEnum) fpath
+          
+          let postCtx' =
+                constField "filepath_id" fpathId `mappend`
+                postCtx
+
+          pandocCompilerWithTransform ropt wopt (walk hardLineBreaks)
+            >>= loadAndApplyTemplate "templates/post.html"    postCtx'
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
 
