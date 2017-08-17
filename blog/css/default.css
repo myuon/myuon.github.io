@@ -104,7 +104,7 @@ body > div.container h3::before {
 footer {
 }
 
-.disqus-area {
+article .disqus-area {
     margin-top: 1.5rem;
 }
 

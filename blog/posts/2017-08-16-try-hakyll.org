@@ -12,6 +12,7 @@ Hakyllでこのブログを作ったのでそのあれこれを
 - orgから良い感じのHTMLを生成し
 - github pagesで公開
 
+
 * Hakyllのsetup
 
 次を参考にした
@@ -24,6 +25,7 @@ Hakyllでこのブログを作ったのでそのあれこれを
 . =stack= でパッケージを入れて、 =hakyll-init= → =stack build= → =stack exec site watch= で動かすところまでは簡単にいけた
 2番目のリンクにあるように、 =_site= をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく
 
+
 * 文書の変換・Hakyllの設定
 
 プロジェクトの構造は次のようになっている
@@ -35,9 +37,7 @@ Hakyllでこのブログを作ったのでそのあれこれを
   - css      できたCSSファイルが置かれる(圧縮済)
   - images   画像ファイルが(ry
 
-  - org      ここに新しい記事を書いて放り込む
-  - markdown orgから変換されたmarkdownが入るorここにmarkdownで書いた記事を入れる
-  - build.py python build script
+  - posts    ここにorg or markdownで書いた記事を入れる
   - site.hs  Hakyllの設定ファイル
 #+END_SRC
 
@@ -94,6 +94,7 @@ pandocのオプションをつければいけるらしい
 
 ここの =pandocCompilerWithTransform ...= がそれ。
 
+
 ** COMMENT
 しかし、pandocはorgの =#OPTIONS: toc:2 \n:t= みたいなオプションを無視するようで、これがどうしても使いたかったので仕方なく一旦orgをemacsでmarkdownに変換してからHTMLに変換することにした。
 このため、Hakyllは =org/*.org= を =markdown/*.md= に、 =markdown/*.md= をHTMLに、変換するようにしている。
@@ -138,7 +139,16 @@ Hakyllのテーマにはあまりまともなものがなく、例えばJekyll�
 
 まぁひとまずこれで。
 
+
+** コメント機能
+
+ブログなのでコメント機能は欲しいなということで、[[https://disqus.com/][disqus]]を入れてみた(このページの一番下に表示されてる)
+海外のブログでは割とよく見るやつ
+
 -----
+
+
+** 終わりに
 
 以下はまだ出来てないこと
 今後やっていく
@@ -148,4 +158,5 @@ Hakyllのテーマにはあまりまともなものがなく、例えばJekyll�
 - [ ] 記事にタグを付ける
 - [ ] markdownからHTMLに変換する時にsemantic-ui用にclassを付与する
 - [X] orgのメタ情報をmarkdownのメタ情報に変換する？ (HTMLに正しくメタ情報が受け継がれて欲しい)
+
 
