@@ -29,6 +29,14 @@ pre {
     margin: 1rem 0 0.75rem 0;
 }
 
+hr {
+    height: 0px;
+    border-right: 0;
+    border-left: 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #eee;
+}
+
 /***/
 
 header {
