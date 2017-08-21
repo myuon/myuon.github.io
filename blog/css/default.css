@@ -12,7 +12,6 @@ a:hover {
 
 code {
     padding: 0.1em 0.2em;
-    word-wrap: normal;
     font-size: smaller;
     background-color: #fbf1c7;
     color: #333;
@@ -23,6 +22,7 @@ pre {
     padding: 1em;
     font-family: Consolas, "Courier New", Courier, Monaco, monospace;
     line-height: 1.4;
+    overflow: auto;
 }
 
 .container h1, .container h2, .container h3, .container h4, .container h5 {
