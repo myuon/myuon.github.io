@@ -20,7 +20,7 @@ Haskellで少し凝ったinstanceをいくつか書いたりしているとoverl
 #+BEGIN_QUOTE
 一般に、[[https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#instance-resolution][Instance resolution]]で述べたように、 /GHCは、型クラス制約を解決するために使用されるinstance宣言が曖昧ではないことを要求する。/ GHCは、 /最も具体的な形が存在する時に限って/ 複数のinstanceにマッチすることを許すという方法で、instanceの解決を緩める方法も提供している。さらに、これはもっと緩くすることもできて、最も具体的な形があるかどうかにかかわらず、複数のinstanceにマッチすることを許すこともできる。この節で詳しく述べる。
 
-instanceの選択をコントロールするには、それぞれのinstanceについてオーバーラップしたときの挙動を指定することができる。 =instance= キーワードの直後に次のプラグマを書けば良い: ={-# OVERLAPPING #-}, {-# OVERLAPPABLE #-}, {-# OVERLAPS #-}, or {-# INCOHERENT #-}=
+instanceの選択をコントロールするには、それぞれのinstanceについてオーバーラップしたときの挙動を指定することができる。 =instance= キーワードの直後に次のいずれかのプラグマを書けば良い: ={-# OVERLAPPING #-}, {-# OVERLAPPABLE #-}, {-# OVERLAPS #-} または {-# INCOHERENT #-}=
 #+END_QUOTE
 
 =INCOHERENT= はinstanceが自由にoverlapしたりされたりすることを許すが、使わないほうがいいプラグマなので出来る限り避けたほうがいい。
