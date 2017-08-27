@@ -91,22 +91,34 @@ body > div.container h3 {
     border-bottom: 2px solid #f45d4c;
 }
 
-body > div.container h1::before {
+body > div.container h1:not(.no-icon)::before {
     content: "\f105";
     font-family: Icons;
     margin-right: 0.25em;
 }
 
-body > div.container h2::before {
+body > div.container h2:not(.no-icon)::before {
     content: "\f101";
     font-family: Icons;
     margin-right: 0.25em;
 }
 
-body > div.container h3::before {
+body > div.container h3:not(.no-icon)::before {
     content: "\f138";
     font-family: Icons;
     margin-right: 0.25em;
+}
+
+.container h2 {
+    margin-top: 1.5rem;
+}
+
+.ui.items > .item > .content > a.header.header-link {
+    color: #d43d2c;
+}
+
+.ui.items > .item > .content > a.header.header-link:hover {
+    color: #f45d4c;
 }
 
 footer {

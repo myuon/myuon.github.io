@@ -69,6 +69,16 @@ main = hakyll $ do
                 >>= loadAndApplyTemplate "templates/default.html" archiveCtx
                 >>= relativizeUrls
 
+    create ["works.html"] $ do
+        route idRoute
+        compile $ do
+            let worksCtx =
+                    defaultContext
+
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/works.html" worksCtx
+                >>= loadAndApplyTemplate "templates/default.html" worksCtx
+                >>= relativizeUrls
 
     match "index.html" $ do
         route idRoute
