@@ -1,0 +1,66 @@
+#+title: n番煎じのrecursion-scheme
+
+* F-algbra and Initial Construction
+
+** 定義
+
+=F:C -> C= をfunctorとする.
+*F-algebra* とは, 対象 =A= と射 =m : FA -> A= の組である. しばしば射だけでF-algebraとよぶ.
+=m: FA -> A= から =n: FB -> B= への *F-algebraのmorphism* とは, morphism =A -> B= であって, 誘導される四角形が可換になるもののこと: =m; f = fmap F f; n=.
+
+これの双対, すなわち =m' : A -> FA= を *F-coalgebra* とよぶ.
+
+** Lambekの定理
+
+*Thm (Lambek)* initial F-algebraが存在すれば, 同型になる.
+
+Proof) initial F-algebraを =p : FI -> I= とする.
+  ここで, =fmap F p : FFI -> FI= はF-algebraである.
+  =p= のinitialityにより, F-algebra morphism =h : I -> FI= が一意に存在して, =p; h = fmap F h; fmap F p= を満たす.
+
+  さて, =h= が =p= の逆射であることを示そう.
+  =h; p: I -> I= は, =p= から =p= へのF-algebra morphismであることが次の計算によってわかる:
+
+#+BEGIN_SRC text
+  p; (h; p) = p; h; p
+	    = fmap F h; fmap F p; p
+	    = fmap F (h; p); p
+#+END_SRC
+
+  よって, =p= のinitialityにより, =h; p = id= である.
+  そして, =p; h = id= であることが, 次の計算によってわかる.
+
+#+BEGIN_SRC text
+  p; h = fmap F h; fmap F p
+       = fmap F (h; p)
+       = fmap F id    -- h; p = idはすでに示した
+       = id
+#+END_SRC
+
+  以上により, =h= は =p= の逆射であり, =p= はiso.  //
+
+** Initial Construction
+
+ある程度の条件のもとでは, initial F-algebraを具体的に構成することができる.
+
+*Thm* Cがintial object 0, colimit of omega-chainをもつとする. Fがcolimitを保つならば,
+  次のchainのcolimitはinitial F-algebraを与える.
+
+#+BEGIN_SRC text
+     !     F!                   F^n(!)
+  0 -> F0 -> FF0 -> ... -> F^n 0 -> F^(n+1) 0 -> ...
+#+END_SRC
+
+Proof)
+  上のchainのcolimitを =K= とかく.
+  すると, colimiting coconeの射 =cn: F^n(0) -> K= をFで送った =fmap F cn: F^(n+1)(0) -> FK= が存在して各 =F^n(!)= と可換になること, 及び =!: 0 -> FK= により, =FK= を頂点とするcocone =F^{-}(0) --> FK= が存在し, よって =h: K -> FK= が得られる.
+  ところでFはcolimitを保つので, KとFKはiso, よって =h= はinvertibleである. この逆射を =h': FK -> K= とおく.
+  これが求めるinitial F-algebraであることを見よう.
+
+  任意のF-algebra =a: FA -> A= に対し, cocone =F^{-}(0) --> A= が, initialityなどを用いて =F^{n}(!); F^{n}(a); ...; a: F^{n}(0) --> F^{n}(A) -> A= によって得られる.
+  ゆえに =u: K -> A= が一意に存在してこれらのcoconeと可換になる.
+  この =u= が, =h'= から =a= へのF-algebraのmorphismであることを示そう.
+  すなわち, =h'; u = fmap F u; a : FK -> A= を示せばよいが, =h'= がisoなことより =u = h; fmap F u; a: K -> A= を示せば十分.
+  そしてこのことは =K= のcolimitのuniversalityによってわかる.  //
+
+
