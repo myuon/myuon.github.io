@@ -57,7 +57,7 @@ morphism =t: F(D,A) -> A= に対し, =fmap F fst; in: F(D,A) -> D= があるの�
     = fmap F (<id, cata(<fmap F fst; in, t>); snd>); t
 #+END_SRC
 
-となる. ここで, =para(t) = cata(<fmap F fst; in, t>); snd: D -> A= を *paramorphism* という. これは(上でも見たとおり) =in; para(t) = fmap F para(t); t= を満たす.
+となる. ここで, =para(t) = cata(<fmap F fst; in, t>); snd: D -> A= を *paramorphism* という. これは(上でも見たとおり) =in; para(t) = fmap F <id, para(t)>; t= を満たす.
 
 ** apomorphism
 
