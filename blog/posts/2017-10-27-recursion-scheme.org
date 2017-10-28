@@ -66,7 +66,7 @@ morphism =t: A -> F(D+A)= から得られる =apo(t): A -> D= で, =apo(t); out 
 
 ** histomorphism
 
-=Cofree(F): C -> C= を, =Cofree(F)(X) = (X,F (Cofree(F)(X)))= を満たすようなデータとして, すなわち =CF(X) = (X,F (CF(X)))= のterminal coalgebraとして定める(これは別にinitial algebraになっていなくともよい[fn:2]).
+=Cofree(F): C -> C= を, =Cofree(F)(X) = (X,F (Cofree(F)(X)))= を満たすようなデータとして, すなわち =CF(X)(K) = (X,FK)= のterminal coalgebraとして定める(これは別にinitial algebraになっていなくともよい[fn:2]).
 
 =t: F(Cofree(F)(A)) -> A= に対し, =<t,id>; in: F(Cofree(F)(A)) -> Cofree(F)(A)= なるF-algebraがある. これのcatamorphismから得られる =histo(t) = cata(<t,id>; in); out; fst: D -> A= を *histomorphism* とよぶ.
 
