@@ -375,6 +375,7 @@ fixの双対をcofixと呼ぶ.
 - [[http://d.hatena.ne.jp/KeisukeNakano/20090320/1237559049][なんとかモルフィズム - λx.x K S K ＠ はてな]]
 - [[https://www.cs.gunma-u.ac.jp/~hamana/Papers/cpo.pdf][What is the Category for Haskell?]]
 - [[http://titech-ssr.blog.jp/archives/1047835805.html][Dynamorphism 〜 Haskellでも動的計画法がしたい！ 〜 - 東京工業大学 ロボット技術研究会]]
+- [[https://hackage.haskell.org/package/recursion-schemes][The recursion-schemes package]]
 
 [fn:1] ここでの適当な条件は, 例えばpolynomial functorくらいあれば十分である. ところで, このFix=Cofix, もっといえばinitial algebraとterminal coalgebraが一致するというのはかなり不思議な条件であるが, 例えばHaskellのような言語ではこのような性質が見られる.
 [fn:2] 今のセッティングでこれがinitial algebraにはならないような例が構成できるかどうかは知らない.
