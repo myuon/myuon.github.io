@@ -1,8 +1,7 @@
 ---
 title: "HakyllでBlogを作る"
-date: 2017-11-09T22:39:48+09:00
+date: 2017-08-16T22:39:48+09:00
 toc: true
-draft: true
 ---
 
 Hakyllでこのブログを作ったのでそのあれこれを

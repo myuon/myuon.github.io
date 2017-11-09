@@ -1,4 +1,10 @@
 {{ define "main" }}
+<h2>サイト説明</h2>
+
+<p>(来訪者がじゃぶじゃぶ記事を閲覧したくなるような好奇心を煽りまくる説明文章)</p>
+
+<h2>Posts</h2>
+
 <ul>
   {{ range where .Data.Pages "Section" "posts" }}
   <li>
@@ -8,3 +14,4 @@
   {{ end }}
 </ul>
 {{ end }}
+
