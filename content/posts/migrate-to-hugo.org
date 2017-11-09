@@ -1,7 +1,6 @@
 ---
 title: "HakyllからHugoに移行した"
-date: 2017-11-10T00:31:03+09:00
-draft: true
+date: 2017-11-10T02:37:31+09:00
 toc: true
 ---
 
@@ -45,4 +44,28 @@ pygmentscodefencesはmarkdownで =```lang= みたいに書けるようにする�
 
 pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。
 それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。
+
+** TOC
+
+困ったことにorg-modeだとtocが表示されないバグがあるらしく[fn:1]、調べたら[[https://github.com/gohugoio/hugo/issues/1778#issuecomment-313895910][テンプレートだけでTOCを作る方法があった]]のでそれをパクった。
+リストを作ってCSSでheadingに応じて右にずらしているだけだけど。
+
+** semantic-uiの読み込み
+
+このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。
+と言っても =git submodule add URL directory= とかして管理するだけだけど。
+公開するときとローカルビルドするときのどちらも必要になるのでどちらもsubmoduleに追加する必要がある。
+それと、URLはgit@...じゃなくてhttps:... じゃないとだめらしい。(一度怒られた)
+
+** hard line breaks
+
+これはやり方がわからない。
+orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(=<br>= に)してほしい。 =#+OPTIONS: \n:t= 相当のやつ。markdownは対応しているみたいだけど…。
+
+一度pandocでhard line breaks入れるフィルターを通すとかすると良いのかもしれないけど強引すぎるからやりたくはない。
+hugoが対応してくれるのを待つしかないのかな〜。
+
+
+[fn:1] 2017-11-10現在。最近報告されたらしいのでそのうち直ると思う。
+
 
