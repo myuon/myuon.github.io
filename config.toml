@@ -1,5 +1,5 @@
-baseURL = "http://example.org/"
-languageCode = "en-us"
+baseURL = "https://myuon.github.io"
+languageCode = "ja"
 title = "The curse of λ"
 theme = "muon"
 pygmentscodefences = true
