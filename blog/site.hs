@@ -6,6 +6,7 @@ import Text.Pandoc
 import Text.Pandoc.Walk
 import System.Process
 import Hakyll
+import Debug.Trace
 
 
 --------------------------------------------------------------------------------
@@ -31,10 +32,12 @@ main = hakyll $ do
         route $ setExtension "html"
         let hardLineBreaks :: Inline -> Inline
             hardLineBreaks SoftBreak = LineBreak
-            hardLineBreaks k = k
+            hardLineBreaks k = trace (show k) $ k
 
-        let ropt = def
-        let wopt = def
+        let ropt = defaultHakyllReaderOptions
+              { readerExtensions = S.union (S.fromList [Ext_all_symbols_escapable, Ext_emoji]) (readerExtensions defaultHakyllReaderOptions)
+              }
+        let wopt = defaultHakyllWriterOptions
               { writerTableOfContents = True
               , writerSectionDivs = True
               , writerTemplate = Just "$if(toc)$\n$toc$\n$endif$\n$body$"
