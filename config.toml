@@ -1,0 +1,6 @@
+baseURL = "http://example.org/"
+languageCode = "en-us"
+title = "The curse of λ"
+theme = "muon"
+pygmentscodefences = true
+pygmentsstyle = "manni"

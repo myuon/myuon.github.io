@@ -1,0 +1,389 @@
+---
+title: n番煎じのrecursion-scheme
+date: 2017-10-27T00:59:31+09:00
+draft: true
+toc: true
+---
+
+
+前提になりそうなことをちょこっとPreliminariesに書いた.
+
+* Recursion schemes
+
+以下, =C= は適当な条件を満たすfunctor =F: C -> C= がFixをもち, さらにそれがCofixにもなっていることを仮定する[fn:1].
+以下ではこの適当な条件を満たすfunctorしか考えないものとする.
+
+** catamorphism
+
+F-algebra =p: FA -> A= に対し, =D= のinitialityにより得られる射 =cata(p): D -> A= を *catamorphism* とよぶ. これは =in; cata(p) = fmap F cata(p); p: FD -> A= を満たす.
+
+** anamorphism
+
+catamorphismの双対.
+F-coalgebra =q: A -> FA= に対し, =D= のterminalityにより得られる射 =ana(q): A -> D= を *anamorphism* とよぶ. これは =q; fmap F ana(q) = ana(q); out= を満たす.
+
+** hylomorphism
+
+F-algebra =p: FB -> B= と F-coalgebra =q: A -> FA= に対し, =hylo(p,q) = ana(q); cata(p) : A -> B= を *hylomorphism* とよぶ.
+
+** metamorphism
+
+hylomorphismと合成が逆になったもの.
+F-algebra =p: FA -> A= と F-coalgebra =q: A -> FA= に対し, =meta(p,q) = cata(p); ana(q) : D -> D= を *metamorphism* とよぶ.
+
+** paramorphism
+
+morphism =t: F(D,A) -> A= に対し, =fmap F fst; in: F(D,A) -> D= があるので, これと合わせて =<fmap F fst; in, t>: F(D,A) -> (D,A)= なるF-algebraが得られる.
+これのcatamorphismは =D -> (D,A)= という形をしており, 次の等式を満たす.
+
+#+BEGIN_SRC text
+  in; cata(<fmap F fst; in, t>)
+    = fmap F (cata(<fmap F fst; in, t>)); <fmap F fst; in, t>  -- (*)
+#+END_SRC
+
+(*)の第一成分を見ると,
+
+#+BEGIN_SRC text
+  in; cata(<fmap F fst; in, t>); fst
+    = fmap F (cata(<fmap F fst; in, t>)); <fmap F fst; in, t>; fst
+    = fmap F (cata(<fmap F fst; in, t>)); fmap F fst; in
+    = fmap F (cata(<fmap F fst; in, t>); fst); in
+#+END_SRC
+
+であるので, =cata(<fmap F fst; in, t>); fst: D -> D= はinitial objectの一意性により =id= に等しい.
+
+さて, (*)の第二成分を見ると,
+
+#+BEGIN_SRC text
+  in; cata(<fmap F fst; in, t>); snd
+    = fmap F (cata(<fmap F fst; in, t>)); <fmap F fst; in, t>; snd
+    = fmap F (cata(<fmap F fst; in, t>)); t
+      -- cata(<fmap F fst; in, t>)の第一成分がidなことは上で示した.
+    = fmap F (<id, cata(<fmap F fst; in, t>); snd>); t
+#+END_SRC
+
+となる. ここで, =para(t) = cata(<fmap F fst; in, t>); snd: D -> A= を *paramorphism* という. これは(上でも見たとおり) =in; para(t) = fmap F <id, para(t)>; t= を満たす.
+
+** apomorphism
+
+paramorphismの双対.
+morphism =t: A -> F(D+A)= から得られる =apo(t): A -> D= で, =apo(t); out = t; fmap [id,apo(t)]: A -> FD= を満たす.
+
+** histomorphism
+
+=Cofree(F): C -> C= を, =Cofree(F)(X) = (X,F (Cofree(F)(X)))= を満たすようなデータとして, すなわち =CF(X)(K) = (X,FK)= のterminal coalgebraとして定める(これは別にinitial algebraになっていなくともよい[fn:2]).
+
+=t: F(Cofree(F)(A)) -> A= に対し, =<t,id>; in: F(Cofree(F)(A)) -> Cofree(F)(A)= なるF-algebraがある. これのcatamorphismから得られる =histo(t) = cata(<t,id>; in); out; fst: D -> A= を *histomorphism* とよぶ.
+
+catamorphismの図式から =in; cata(<t,id>; in) = fmap F (cata(<t,id>; in)); <t,id>; in= が成り立っている. このことを使って,
+
+#+BEGIN_SRC text
+  in; histo(t)
+    = in; cata(<t,id>; in); out; fst
+      -- 上で示したことから
+    = fmap F (cata(<t,id>; in)); <t,id>; in; out; fst
+    = fmap F (cata(<t,id>; in)); t
+#+END_SRC
+
+が成り立つことも分かる.
+
+** futumorphism
+
+histomorphismの双対.
+
+=Free(F): C -> C= を, =Free(F)(X) = X + F(Free(F)(X))= を満たすものとして定める. このとき =t: A -> F(Free(F)(A))= に対して =futu(t) = left; in; ana(out; [t,id]): A -> D= を *futumorphism* という.
+
+** chronomorphism
+
+=t: A -> F(Free(F)(A))= と =s: F(Cofree(F)(B)) -> B= に対し, =chrono(t,s) = futu(t); histo(s): A -> B= を *chronomorphism* という.
+
+** zygomorphism
+
+=p: FB -> B= と =q: F(B,A) -> A= に対し, =<fmap F fst; p, q>: F(B,A) -> (B,A)= のcatamorphismから誘導される =zygo(p,q) = cata(<fmap F fst;p,q>); snd: D -> A= を *zygomorphism* という.
+これは, paramorphismの時と同様の計算により, =in; zygo(p,q) = fmap F <cata(p); zygo(p,q)>; q= を満たすことが分かる.
+
+** cozygomorphism
+
+zygomorphismの双対.
+なぜここへ来て命名を諦めてしまったのか.
+
+** dynamorphism
+
+=p: A -> FA= と =q: F(Cofree(F)(B)) -> B= に対し, =dyna(p,q) = ana(p); histo(q): A -> B= を *dynamorphism* という.
+
+* List Examples
+
+=F(X) = 1 + (T,X)= を例に挙げる. このinitial F-algebraを =List T= とかく.
+
+=in: 1 + (T,List T) -> List T= の =1 -> List T= を =Nil=, =(T,List T) -> List T= を =Cons= とかく.
+また, =in= の逆射は =out: List T -> 1 + (T,List T)= である.
+さらに, Fのfunctorとしての作用は,
+
+#+BEGIN_SRC haskell
+  fmap : (a -> b) -> F a -> F b
+  fmap f t = case t of
+    Nil -> Nil
+    Cons x y -> Cons (f x) (fmap f y)
+#+END_SRC
+
+とかけることに注意.
+
+** catamorphism
+
+#+BEGIN_SRC haskell
+  cata : (F a -> a) -> List t -> a
+  cata p = out; fmap F (cata p); p
+
+  -- outを自然にパターンマッチによって書き直して整理すると,
+
+  cata : a -> (t -> a -> a) -> List t -> a
+  cata pnil pcons ts = case ts of
+    Nil -> pnil
+    Cons t r -> pcons t (cata pnil pcons r)
+#+END_SRC
+
+となるが, これはfoldとよばれる.
+
+** anamorphism
+
+#+BEGIN_SRC haskell
+  ana : (a -> F a) -> a -> List t
+  ana q = q; fmap F (ana q); in
+
+  -- ↓
+
+  ana : (a -> Maybe (t,a)) -> a -> List t
+  ana q r = case q r of
+    Nothing -> Nil
+    Just (a,r) -> Cons a (ana q r)
+
+#+END_SRC
+
+となるが, これはunfoldとよばれる.
+
+** hylomorphism
+
+#+BEGIN_SRC haskell
+  hylo : (F b -> b) -> (a -> F a) -> a -> b
+  hylo p q = ana q; cata p
+
+  -- ↓
+
+  hylo : b -> (t -> b -> b) -> (a -> Maybe (t,a)) -> a -> b
+  hylo pnil pcons q a = case q a of
+    Nothing -> pnil
+    Just (x,y) -> pcons x (hylo pnil pcons q y)
+
+#+END_SRC
+
+=a= から =b= の関数を, 一旦リストを作ってから畳み込むという方法で計算することができるようになる.
+
+** metamorphism
+
+#+BEGIN_SRC haskell
+  meta : (F a -> a) -> (a -> F a) -> List t -> List t
+  meta p q = cata p; ana q
+
+  -- ↓
+
+  meta : a -> (t -> a -> a) -> (a -> Maybe (t,a)) -> List t -> List t
+  meta pnil pcons q ts = case ts of
+    Nil -> ana q pnil
+    Cons t r -> ana q (pcons t r)
+
+#+END_SRC
+
+何に使うんだこれ
+
+** paramorphism
+
+#+BEGIN_SRC haskell
+  para : (F(List t,a) -> a) -> List t -> a
+  para t = out; fmap F <id, para t>; t
+
+  -- ↓
+
+  para : a -> (t -> List t -> a -> a) -> List t -> a
+  para tnil tcons ts = case ts of
+    Nil -> tnil
+    Cons x y -> tcons x y (para tnil tcons y)
+#+END_SRC
+
+paramorphismは再帰関数のstep caseで, 再帰の値 =para tnil tcons y= 以外に入力だった値 =y= も利用できる. このとき, =tcons= が =y= を使用しないならばこのparamorphismはcatamorphismに一致する.
+
+** apomorphism
+
+#+BEGIN_SRC haskell
+  apo : (a -> F (List t + a)) -> a -> List t
+  apo t = t; fmap F [id,apo t]; in
+
+  -- ↓
+
+  apo : (a -> Maybe (t, List t + a)) -> a -> List t
+  apo t a = case t a of
+    Nothing -> Nil
+    Just (x,y) ->
+      Cons x (case y of
+		 Left z -> z
+		 Right a' -> apo t a')
+
+#+END_SRC
+
+anamorphismの拡張.
+
+** histomorphism
+
+#+BEGIN_SRC haskell
+  data Cofree f a = a :< f (Cofree f a)
+  -- Cofree F a = a :< Maybe (t,Cofree F a)
+
+  histo : (F (Cofree F a) -> a) -> List t -> a
+  histo t = cata(<t,id>; in); out; fst
+
+  -- ↓
+
+  histo : a -> (t -> Cofree F a -> a) -> List t -> a
+  histo tnil tcons xs = case cata (tnil :< Nothing) (\t cfa -> tcons a cfa :< cfa) of
+    x :< _ -> x
+#+END_SRC
+
+catamorphismでは直前の値しか参照できなかったのに対し, histomorphismは過去に作った全ての値が参照できるようになる. =cata= の第二引数に渡されている =tcons a cfa :< cfa= の部分では, =cfa= がこのステップまでに得られた値で, それらを使って次の値 =tcons a cfa= を作り, これを =cfa= の先頭に追加して次の再帰のステップに進む.
+
+** futumorphism
+
+#+BEGIN_SRC haskell
+  data Free f a = a + f (Free f a)
+  -- Free F a = a + Maybe (t, Free f a)
+  -- Pure : a -> Free f a
+  -- Impure : f (Free f a) -> Free f a
+
+  futu : (a -> F (Free F a)) -> a -> List t
+  futu t a = left; in; ana(out; [t,id])
+
+  -- ↓
+
+  futu : (a -> Maybe (t, Free F a)) -> a -> List t
+  futu t a = ana (\fa -> case fa of { Pure a -> t a; Impure k -> k }) (Pure a)
+#+END_SRC
+
+anamorphismはlistの要素を1つずつ作って追加していたが, futumorphismでは一度に同時に複数のlistを作っていくことができるようになる.
+
+** chronomorphism
+
+#+BEGIN_SRC haskell
+  chrono : (a -> F (Free F a)) -> (F (Cofree F b) -> b) -> a -> b
+  chrono t s = futu t; histo s
+
+  -- ↓
+
+  chrono : (a -> Maybe (t, Free F a)) -> b -> (t -> Cofree F b -> b) -> a -> b
+  chrono t snil scons a = case hylo (snil :< Nothing) (\t cfa -> tcons a cfa :< cfa) (\fa -> case fa of { Pure a -> t a; Impure k -> k }) (Pure a) of
+    x :< _ -> x
+
+#+END_SRC
+
+hylomorphismのように一旦Listを作ってから畳み込むが, Listを作るときと畳み込む時にそれぞれ直前の値だけでなく他の値も使えるようになる.
+
+** zygomorphism
+
+#+BEGIN_SRC haskell
+  zygo : (F b -> b) -> (F (b,a) -> a) -> List t -> a
+  zygo p q = cata <fmap F fst; p, q>; snd
+
+  -- ↓
+
+  zygo : b -> (t -> b -> b) -> a -> (t -> b -> a -> a) -> List t -> a
+  zygo pnil pcons qnil qcons xs = snd $ cata (pnil,qnil) (\t (a,b) -> (pcons t b,qcons t b a)) xs
+#+END_SRC
+
+畳み込みだが、実際に作る =a= 以外に =b= というデータを作って利用しながら畳み込むことができる.
+
+** cozygomorphism
+
+#+BEGIN_SRC haskell
+  cozygo : (b -> F b) -> (a -> F (b + a)) -> a -> List t
+  cozygo p q = inR; ana [p; fmap F inL, q]
+
+  -- ↓
+
+  cozygo : (b -> Maybe (t,b)) -> (a -> Maybe (t, b + a)) -> a -> List t
+  cozygo p q a = ana (\ba -> case ba of
+    { Left b -> (\(t,b) -> (t, Left b)) <$> p b
+    ; Right a -> q a }) (Right a)
+#+END_SRC
+
+** dynamorphism
+
+#+BEGIN_SRC haskell
+  dyna : (a -> F a) -> (F b -> b) -> a -> b
+  dyna p q = ana p; histo q
+
+  -- ↓
+
+  dyna : (a -> Maybe (t,a)) -> b -> (t -> Cofree F b -> b) -> a -> b
+  dyna p qnil qcons a = histo qnil qcons (ana p a)
+#+END_SRC
+
+anamorphismで作ったデータに対し、その時点で作られた全てのリストの要素を使って次の値を作る関数を使って畳み込みを行う. これは =a= から =b= へ変換を行う際に, 中間データとして作ったリスト全体が再帰のstep caseで得られることを表す.
+このdynamorphismやhistomorphismは, =(forall n. (forall i < n. P i) --> P (n+1)) --> P n= の形の帰納法に対応し, アルゴリズムとしては分割統治法あるいはこのdynamorphismの手法を指してDPと呼ばれる.
+
+* Preliminaries
+
+** 定義
+
+=F:C -> C= をfunctorとする.
+*F-algebra* とは, 対象 =A= と射 =m : FA -> A= の組である. しばしば射だけでF-algebraとよぶ.
+=m: FA -> A= から =n: FB -> B= への *F-algebraのmorphism* とは, morphism =A -> B= であって, 誘導される四角形が可換になるもののこと: =m; f = fmap F f; n=.
+
+これの双対, すなわち =m' : A -> FA= を *F-coalgebra* とよぶ.
+
+** Lambekの定理
+
+*Thm (Lambek)* initial F-algebraが存在すれば, 同型になる.
+
+Proof) initial F-algebraを =p : FI -> I= とする.
+ここで, =fmap F p : FFI -> FI= はF-algebraである.
+=p= のinitialityにより, F-algebra morphism =h : I -> FI= が一意に存在して, =p; h = fmap F h; fmap F p= を満たす.
+
+さて, =h= が =p= の逆射であることを示そう.
+=h; p: I -> I= は, =p= から =p= へのF-algebra morphismであることが次の計算によってわかる:
+
+#+BEGIN_SRC text
+  p; (h; p) = p; h; p
+    = fmap F h; fmap F p; p
+    = fmap F (h; p); p
+#+END_SRC
+
+よって, =p= のinitialityにより, =h; p = id= である.
+そして, =p; h = id= であることが, 次の計算によってわかる.
+
+#+BEGIN_SRC text
+  p; h = fmap F h; fmap F p
+    = fmap F (h; p)
+    = fmap F id    -- h; p = idはすでに示した
+    = id
+#+END_SRC
+
+以上により, =h= は =p= の逆射であり, =p= はiso.  //
+
+** Fix & Cofix
+
+=F(f)(x) = f x= のinitial F-algebraは, 存在すれば =D(f) = f (D(f))= を満たす. これはfixpointと呼ばれる.
+fixの双対をcofixと呼ぶ.
+
+例えば, =f(a)(b) = 1 + (a,b)= のfixpoint =Fix(f)(a)= は =a= のリストである.
+
+
+* 参考文献
+
+- "Generalized bananas, lenses and barbed wire" by Erik Meijer, Maarten Fokkinga and Ross Paterson.
+- [[http://d.hatena.ne.jp/KeisukeNakano/20090320/1237559049][なんとかモルフィズム - λx.x K S K ＠ はてな]]
+- [[https://www.cs.gunma-u.ac.jp/~hamana/Papers/cpo.pdf][What is the Category for Haskell?]]
+- [[http://titech-ssr.blog.jp/archives/1047835805.html][Dynamorphism 〜 Haskellでも動的計画法がしたい！ 〜 - 東京工業大学 ロボット技術研究会]]
+- [[https://hackage.haskell.org/package/recursion-schemes][The recursion-schemes package]]
+
+[fn:1] ここでの適当な条件は, 例えばpolynomial functorくらいあれば十分である. ところで, このFix=Cofix, もっといえばinitial algebraとterminal coalgebraが一致するというのはかなり不思議な条件であるが, 例えばHaskellのような言語ではこのような性質が見られる.
+[fn:2] 今のセッティングでこれがinitial algebraにはならないような例が構成できるかどうかは知らない.
+
+
+

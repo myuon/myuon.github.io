@@ -1,0 +1,117 @@
+---
+title: "HakyllでBlogを作る"
+date: 2017-11-09T22:39:48+09:00
+toc: true
+draft: true
+---
+
+Hakyllでこのブログを作ったのでそのあれこれを
+
+* 概要
+
+やりたいことは以下
+
+- orgで文章をかく(大事)
+- orgから良い感じのHTMLを生成し
+- github pagesで公開
+
+
+* Hakyllのsetup
+
+次を参考にした
+
+- [[https://jaspervdj.be/hakyll/tutorials.html][Hakyll Tutorials]]
+- [[http://335g.github.io/posts/2015-08-09-hakyll_travis.html][Hakyll, stack, Travis CI, Github でブログを管理する]]
+- [[https://matsubara0507.github.io/posts/2016-07-07-started-github-pages.html][GitHub Pages はじめました]]
+- [[https://hackage.haskell.org/package/hakyll-4.9.8.0][hakyll package]]
+ 
+=stack= でパッケージを入れて、 =hakyll-init= → =stack build= → =stack exec site watch= で動かすところまでは簡単にいけた
+2番目のリンクにあるように、 =_site= をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく
+
+
+* 文書の変換・Hakyllの設定
+
+プロジェクトの構造は次のようになっている
+
+#+BEGIN_SRC txt
+- root
+  - _site    できたHTMLファイルが置かれる
+  - _cache
+  - css      できたCSSファイルが置かれる(圧縮済)
+  - images   画像ファイルが(ry
+
+  - posts    ここにorg or markdownで書いた記事を入れる
+  - site.hs  Hakyllの設定ファイル
+#+END_SRC
+
+** orgの変換
+
+Hakyllは内部で文書変換にpandocを使っていて、pandocはorgに対応しているらしいので何も設定しなくても変換はできる
+(デフォルトの状態では =posts= 以下の文書ファイルが変換される)
+
+ただし、次の2つをやりたかったのであれこれ設定をかいた
+
+1. 文章中の改行は強制改行
+1. toc(目次)の表示
+1. syntax highlightを有効にする
+
+*** 改行
+
+org-modeでは、パラグラフ中で強制改行したい場合は =\\= を行末に置くことになっているので、orgを変換する時にそれを噛ませるようにした
+markdownではmarkdown optionsに =hard_line_break= というのがあるのでそれで読みこめばいいんだけど、orgにはそんなものはなかったので =SoftBreak= を無理やり =LineBreak= に変換するという強引な方法をとっている。
+これでいつでも求めるHTMLが得られるかは不明。今のところは困ってない。
+
+*** TOC
+
+pandocのオプションをつければいけるらしい
+
+*** syntax highlight
+
+これもオプションで指定すると、 =code= タグ内の適当なキーワードに適切なclassが付与されるので、色を自分でcssで指定した
+
+*** コード
+
+- [[https://github.com/myuon/myuon.github.io/blob/33394539926ee03fecc72906b39b4f0318b5b559/blog/site.hs][site.hs]]
+
+#+BEGIN_SRC haskell
+  (略)
+	  let hardLineBreaks :: Inline -> Inline
+	      hardLineBreaks SoftBreak = LineBreak
+	      hardLineBreaks k = k
+
+	  let ropt = def
+	  let wopt = def
+		{ writerTableOfContents = True
+		, writerSectionDivs = True
+		, writerTemplate = Just "$if(toc)$\n$toc$\n$endif$\n$body$"
+		, writerWrapText = WrapPreserve
+		, writerHighlight = True
+		}
+        
+	  compile $ pandocCompilerWithTransform ropt wopt (walk hardLineBreaks)
+	      >>= loadAndApplyTemplate "templates/post.html"    postCtx
+	      >>= loadAndApplyTemplate "templates/default.html" postCtx
+	      >>= relativizeUrls
+
+#+END_SRC
+
+ここの =pandocCompilerWithTransform ...= がそれ。
+
+
+** デザイン
+
+Hakyllのテーマにはあまりまともなものがなく、例えばJekyllのテーマをHakyll用に変換するのは[[https://matsubara0507.github.io/posts/2016-10-24-changed-design.html][かなり大変そう]]なのでやりたくなかった。
+ので、デザインは自力で何とかすることにした。
+
+[[https://semantic-ui.com/][semantic-ui]]というCSSフレームワークを使った。
+この上でテンプレートHTMLを適当に改造し適当にCSSを書くことでそれらしいデザインにした。
+
+まぁひとまずこれで。
+
+
+** コメント機能
+
+ブログなのでコメント機能は欲しいなということで、[[https://disqus.com/][disqus]]を入れてみた(このページの一番下に表示されてる)
+海外のブログでは割とよく見るやつ
+
+
