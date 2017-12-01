@@ -1,5 +1,2 @@
-blog/_site
-blog/_cache
-.stack-work
 *~
-blog/semantic-ui-css
+themes/muon/static/semantic-ui-css

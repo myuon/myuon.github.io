@@ -1,9 +1,3 @@
-[submodule "blog/semantic-ui-css"]
-	path = blog/semantic-ui-css
-	url = https://github.com/Semantic-Org/Semantic-UI-CSS
-[submodule "themes/muon/static/semantic-ui-css"]
-	path = themes/muon/static/semantic-ui-css
-	url = https://github.com/Semantic-Org/Semantic-UI-CSS
 [submodule "public"]
 	path = public
 	url = git@github.com:myuon/myuon.github.io.git
