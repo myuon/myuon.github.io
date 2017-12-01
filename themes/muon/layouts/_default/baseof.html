@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" itemscope itemtype="http://schema.org/Blog">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -7,11 +7,23 @@
 
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@myuon_myon" />
-    <meta name="twitter:title" content="The curse of λ - $title$" />
-    <meta name="twitter:description" content="λに捧げよ" />
-    <meta name="twitter:image" content="https://myuon.github.io/images/icon_top.png" />
+    <meta name="twitter:title" content="{{ .Title }}{{ if .IsPage }} - {{ .Site.Title }}{{ end }}" />
+    <meta name="twitter:description" content="{{ if .IsPage }}{{ .Summary }}{{ else }}λに捧げよ{{ end }}" />
+    <meta name="twitter:image" content="/images/icon_top.png" />
+    <meta name="og:site_name" content="{{ .Site.Title }}" />
+    <meta name="og:title" content="{{ .Title }}{{ if .IsPage }} - {{ .Site.Title }}{{ end }}" />
+    <meta name="og:description" content="{{ if .IsPage }}{{ .Summary }}{{ else }}λに捧げよ{{ end }}" />
+    <meta name="og:type" content="blog" />
+    <meta name="og:url" content="{{ .Site.BaseURL }}" />
+    <meta name="og:image" content="/images/icon_top.png" />
+
+    <meta itemprop="name" content="{{ .Title }}{{ if .IsPage }} - {{ .Site.Title }}{{ end }}" />
+    <meta itemprop="image" content="/images/icon_top.png" />
 
     <title>{{ block "title" . }} {{ .Site.Title }} {{ end }}</title>
+    <meta name="author" content="myuon">
+    <meta name="description" content="{{ if .IsPage }}{{ .Summary }}{{ else }}λに捧げよ{{ end }}" />
+    <link rel="canonical" href="{{ .Site.BaseURL }}">
 
     <link rel="stylesheet" href="/semantic-ui-css/semantic.min.css" />
     <link rel="stylesheet" href="/css/default.css" />
