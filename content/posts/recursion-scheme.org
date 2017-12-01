@@ -14,7 +14,7 @@ toc: true
 
 ** catamorphism
 
-F-algebra =p: FA -> A= に対し, =D= のinitialityにより得られる射 =cata(p): D -> A= を *catamorphism* とよぶ. これは =in; cata(p) = fmap F cata(p); p: FD -> A= を満たす.
+F-algebra =p: FA -> A= に対し, =D= のinitialityにより得られる射 =cata(p): D -> A= を *catamorphism* とよぶ. これは ~in; cata(p) = fmap F cata(p); p: FD -> A~ を満たす.
 
 ** anamorphism
 
@@ -23,7 +23,7 @@ F-coalgebra =q: A -> FA= に対し, =D= のterminalityにより得られる射 =
 
 ** hylomorphism
 
-F-algebra =p: FB -> B= と F-coalgebra =q: A -> FA= に対し, =hylo(p,q) = ana(q); cata(p) : A -> B= を *hylomorphism* とよぶ.
+F-algebra =p: FB -> B= と F-coalgebra =q: A -> FA= に対し, ~hylo(p,q) = ana(q); cata(p) : A -> B~ を *hylomorphism* とよぶ.
 
 ** metamorphism
 
@@ -61,20 +61,20 @@ morphism =t: F(D,A) -> A= に対し, =fmap F fst; in: F(D,A) -> D= があるの�
     = fmap F (<id, cata(<fmap F fst; in, t>); snd>); t
 #+END_SRC
 
-となる. ここで, =para(t) = cata(<fmap F fst; in, t>); snd: D -> A= を *paramorphism* という. これは(上でも見たとおり) =in; para(t) = fmap F <id, para(t)>; t= を満たす.
+となる. ここで, ~para(t) = cata(<fmap F fst; in, t>); snd: D -> A~ を *paramorphism* という. これは(上でも見たとおり) ~in; para(t) = fmap F <id, para(t)>; t~ を満たす.
 
 ** apomorphism
 
 paramorphismの双対.
-morphism =t: A -> F(D+A)= から得られる =apo(t): A -> D= で, =apo(t); out = t; fmap [id,apo(t)]: A -> FD= を満たす.
+morphism =t: A -> F(D+A)= から得られる =apo(t): A -> D= で, ~apo(t); out = t; fmap [id,apo(t)]: A -> FD~ を満たす.
 
 ** histomorphism
 
-=Cofree(F): C -> C= を, =Cofree(F)(X) = (X,F (Cofree(F)(X)))= を満たすようなデータとして, すなわち =CF(X)(K) = (X,FK)= のterminal coalgebraとして定める(これは別にinitial algebraになっていなくともよい[fn:2]).
+=Cofree(F): C -> C= を, ~Cofree(F)(X) = (X,F (Cofree(F)(X)))~ を満たすようなデータとして, すなわち ~CF(X)(K) = (X,FK)~ のterminal coalgebraとして定める(これは別にinitial algebraになっていなくともよい[fn:2]).
 
-=t: F(Cofree(F)(A)) -> A= に対し, =<t,id>; in: F(Cofree(F)(A)) -> Cofree(F)(A)= なるF-algebraがある. これのcatamorphismから得られる =histo(t) = cata(<t,id>; in); out; fst: D -> A= を *histomorphism* とよぶ.
+=t: F(Cofree(F)(A)) -> A= に対し, =<t,id>; in: F(Cofree(F)(A)) -> Cofree(F)(A)= なるF-algebraがある. これのcatamorphismから得られる ~histo(t) = cata(<t,id>; in); out; fst: D -> A~ を *histomorphism* とよぶ.
 
-catamorphismの図式から =in; cata(<t,id>; in) = fmap F (cata(<t,id>; in)); <t,id>; in= が成り立っている. このことを使って,
+catamorphismの図式から ~in; cata(<t,id>; in) = fmap F (cata(<t,id>; in)); <t,id>; in~ が成り立っている. このことを使って,
 
 #+BEGIN_SRC text
   in; histo(t)
@@ -94,12 +94,12 @@ histomorphismの双対.
 
 ** chronomorphism
 
-=t: A -> F(Free(F)(A))= と =s: F(Cofree(F)(B)) -> B= に対し, =chrono(t,s) = futu(t); histo(s): A -> B= を *chronomorphism* という.
+=t: A -> F(Free(F)(A))= と =s: F(Cofree(F)(B)) -> B= に対し, ~chrono(t,s) = futu(t); histo(s): A -> B~ を *chronomorphism* という.
 
 ** zygomorphism
 
-=p: FB -> B= と =q: F(B,A) -> A= に対し, =<fmap F fst; p, q>: F(B,A) -> (B,A)= のcatamorphismから誘導される =zygo(p,q) = cata(<fmap F fst;p,q>); snd: D -> A= を *zygomorphism* という.
-これは, paramorphismの時と同様の計算により, =in; zygo(p,q) = fmap F <cata(p); zygo(p,q)>; q= を満たすことが分かる.
+=p: FB -> B= と =q: F(B,A) -> A= に対し, =<fmap F fst; p, q>: F(B,A) -> (B,A)= のcatamorphismから誘導される ~zygo(p,q) = cata(<fmap F fst;p,q>); snd: D -> A~ を *zygomorphism* という.
+これは, paramorphismの時と同様の計算により, ~in; zygo(p,q) = fmap F <cata(p); zygo(p,q)>; q~ を満たすことが分かる.
 
 ** cozygomorphism
 
@@ -108,11 +108,11 @@ zygomorphismの双対.
 
 ** dynamorphism
 
-=p: A -> FA= と =q: F(Cofree(F)(B)) -> B= に対し, =dyna(p,q) = ana(p); histo(q): A -> B= を *dynamorphism* という.
+=p: A -> FA= と =q: F(Cofree(F)(B)) -> B= に対し, ~dyna(p,q) = ana(p); histo(q): A -> B~ を *dynamorphism* という.
 
 * List Examples
 
-=F(X) = 1 + (T,X)= を例に挙げる. このinitial F-algebraを =List T= とかく.
+~F(X) = 1 + (T,X)~ を例に挙げる. このinitial F-algebraを =List T= とかく.
 
 =in: 1 + (T,List T) -> List T= の =1 -> List T= を =Nil=, =(T,List T) -> List T= を =Cons= とかく.
 また, =in= の逆射は =out: List T -> 1 + (T,List T)= である.
@@ -127,7 +127,7 @@ zygomorphismの双対.
 
 とかけることに注意.
 
-** catamorphism
+** list catamorphism
 
 #+BEGIN_SRC haskell
   cata : (F a -> a) -> List t -> a
@@ -143,7 +143,7 @@ zygomorphismの双対.
 
 となるが, これはfoldとよばれる.
 
-** anamorphism
+** list anamorphism
 
 #+BEGIN_SRC haskell
   ana : (a -> F a) -> a -> List t
@@ -160,7 +160,7 @@ zygomorphismの双対.
 
 となるが, これはunfoldとよばれる.
 
-** hylomorphism
+** list hylomorphism
 
 #+BEGIN_SRC haskell
   hylo : (F b -> b) -> (a -> F a) -> a -> b
@@ -177,7 +177,7 @@ zygomorphismの双対.
 
 =a= から =b= の関数を, 一旦リストを作ってから畳み込むという方法で計算することができるようになる.
 
-** metamorphism
+** list metamorphism
 
 #+BEGIN_SRC haskell
   meta : (F a -> a) -> (a -> F a) -> List t -> List t
@@ -194,7 +194,7 @@ zygomorphismの双対.
 
 何に使うんだこれ
 
-** paramorphism
+** list paramorphism
 
 #+BEGIN_SRC haskell
   para : (F(List t,a) -> a) -> List t -> a
@@ -210,7 +210,7 @@ zygomorphismの双対.
 
 paramorphismは再帰関数のstep caseで, 再帰の値 =para tnil tcons y= 以外に入力だった値 =y= も利用できる. このとき, =tcons= が =y= を使用しないならばこのparamorphismはcatamorphismに一致する.
 
-** apomorphism
+** list apomorphism
 
 #+BEGIN_SRC haskell
   apo : (a -> F (List t + a)) -> a -> List t
@@ -230,7 +230,7 @@ paramorphismは再帰関数のstep caseで, 再帰の値 =para tnil tcons y= 以
 
 anamorphismの拡張.
 
-** histomorphism
+** list histomorphism
 
 #+BEGIN_SRC haskell
   data Cofree f a = a :< f (Cofree f a)
@@ -248,7 +248,7 @@ anamorphismの拡張.
 
 catamorphismでは直前の値しか参照できなかったのに対し, histomorphismは過去に作った全ての値が参照できるようになる. =cata= の第二引数に渡されている =tcons a cfa :< cfa= の部分では, =cfa= がこのステップまでに得られた値で, それらを使って次の値 =tcons a cfa= を作り, これを =cfa= の先頭に追加して次の再帰のステップに進む.
 
-** futumorphism
+** list futumorphism
 
 #+BEGIN_SRC haskell
   data Free f a = a + f (Free f a)
@@ -267,7 +267,7 @@ catamorphismでは直前の値しか参照できなかったのに対し, histom
 
 anamorphismはlistの要素を1つずつ作って追加していたが, futumorphismでは一度に同時に複数のlistを作っていくことができるようになる.
 
-** chronomorphism
+** list chronomorphism
 
 #+BEGIN_SRC haskell
   chrono : (a -> F (Free F a)) -> (F (Cofree F b) -> b) -> a -> b
@@ -283,7 +283,7 @@ anamorphismはlistの要素を1つずつ作って追加していたが, futumorp
 
 hylomorphismのように一旦Listを作ってから畳み込むが, Listを作るときと畳み込む時にそれぞれ直前の値だけでなく他の値も使えるようになる.
 
-** zygomorphism
+** list zygomorphism
 
 #+BEGIN_SRC haskell
   zygo : (F b -> b) -> (F (b,a) -> a) -> List t -> a
@@ -297,7 +297,7 @@ hylomorphismのように一旦Listを作ってから畳み込むが, Listを作�
 
 畳み込みだが、実際に作る =a= 以外に =b= というデータを作って利用しながら畳み込むことができる.
 
-** cozygomorphism
+** list cozygomorphism
 
 #+BEGIN_SRC haskell
   cozygo : (b -> F b) -> (a -> F (b + a)) -> a -> List t
@@ -311,7 +311,7 @@ hylomorphismのように一旦Listを作ってから畳み込むが, Listを作�
     ; Right a -> q a }) (Right a)
 #+END_SRC
 
-** dynamorphism
+** list dynamorphism
 
 #+BEGIN_SRC haskell
   dyna : (a -> F a) -> (F b -> b) -> a -> b
@@ -332,7 +332,7 @@ anamorphismで作ったデータに対し、その時点で作られた全ての
 
 =F:C -> C= をfunctorとする.
 *F-algebra* とは, 対象 =A= と射 =m : FA -> A= の組である. しばしば射だけでF-algebraとよぶ.
-=m: FA -> A= から =n: FB -> B= への *F-algebraのmorphism* とは, morphism =A -> B= であって, 誘導される四角形が可換になるもののこと: =m; f = fmap F f; n=.
+ =m: FA -> A= から =n: FB -> B= への *F-algebraのmorphism* とは, morphism =A -> B= であって, 誘導される四角形が可換になるもののこと: ~m; f = fmap F f; n~.
 
 これの双対, すなわち =m' : A -> FA= を *F-coalgebra* とよぶ.
 
@@ -342,10 +342,10 @@ anamorphismで作ったデータに対し、その時点で作られた全ての
 
 Proof) initial F-algebraを =p : FI -> I= とする.
 ここで, =fmap F p : FFI -> FI= はF-algebraである.
-=p= のinitialityにより, F-algebra morphism =h : I -> FI= が一意に存在して, =p; h = fmap F h; fmap F p= を満たす.
+ =p= のinitialityにより, F-algebra morphism =h : I -> FI= が一意に存在して, ~p; h = fmap F h; fmap F p~ を満たす.
 
 さて, =h= が =p= の逆射であることを示そう.
-=h; p: I -> I= は, =p= から =p= へのF-algebra morphismであることが次の計算によってわかる:
+ =h; p: I -> I= は, =p= から =p= へのF-algebra morphismであることが次の計算によってわかる:
 
 #+BEGIN_SRC text
   p; (h; p) = p; h; p
@@ -354,7 +354,7 @@ Proof) initial F-algebraを =p : FI -> I= とする.
 #+END_SRC
 
 よって, =p= のinitialityにより, =h; p = id= である.
-そして, =p; h = id= であることが, 次の計算によってわかる.
+そして, ~p; h = id~ であることが, 次の計算によってわかる.
 
 #+BEGIN_SRC text
   p; h = fmap F h; fmap F p
@@ -367,10 +367,10 @@ Proof) initial F-algebraを =p : FI -> I= とする.
 
 ** Fix & Cofix
 
-=F(f)(x) = f x= のinitial F-algebraは, 存在すれば =D(f) = f (D(f))= を満たす. これはfixpointと呼ばれる.
+~F(f)(x) = f x~ のinitial F-algebraは, 存在すれば ~D(f) = f (D(f))~ を満たす. これはfixpointと呼ばれる.
 fixの双対をcofixと呼ぶ.
 
-例えば, =f(a)(b) = 1 + (a,b)= のfixpoint =Fix(f)(a)= は =a= のリストである.
+例えば, ~f(a)(b) = 1 + (a,b)~ のfixpoint =Fix(f)(a)= は =a= のリストである.
 
 
 * 参考文献
