@@ -3,4 +3,4 @@ languageCode = "ja"
 title = "The curse of λ"
 theme = "muon"
 pygmentscodefences = true
-pygmentsstyle = "manni"
+pygmentsstyle = "tango"
