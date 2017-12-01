@@ -710,7 +710,6 @@ moreover/ultimatelyというキーワードを使うと、それまでに示さ�
 
 これは帰納法を使った時も同じことが出来る
 
-
 * Isabelle/HOLを用いた証明
 
 今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。
@@ -760,31 +759,24 @@ Isabelleで文字列リテラルは ~''hoge''~ と、シングルクオート2�
 
 ** 1. Arithmetic and Boolean Expression
 
-さて、arithmetic expressionとboolean expressionを定義しましょう。
+さて、arithmetic expressionとboolean expressionを定義しよう。
+
+arithmetic expressionはnat型のtermで、数値リテラル、(nat型の)変数、あるいはaexp同士の和・差・積のいずれか。
+boolean expressionはbool型のtermで、true、false、aexp同士の比較、bexpのかつや否定をとったもののいずれか。
 
 #+BEGIN_SRC text
+  section {* Arithmetic and Boolean Expressions *}
+
+  subsection {* Syntax *}
+
   datatype aexp = ANum nat | AId id | APlus aexp aexp | AMinus aexp aexp | AMult aexp aexp
   datatype bexp = BTrue | BFalse | BEq aexp aexp | BLeq aexp aexp | BAnd bexp bexp | BNot bexp
 #+END_SRC
 
-データ型はdatatypeで定義します。Haskellと同じような感じで、コンストラクタの後に引数の型を並べて書いたものを縦棒で繋ぎます。コンストラクタも型も大文字でも小文字でも自由です。
-ところで、説明していませんでしたがIsabelleでは型変数はクオートを付けて前置するきまりになっています。
-ので、例えばリストは
+** 2. Evaluation of AExp, BExp
 
-#+BEGIN_SRC text
-  datatype 'a list = nil | cons 'a "'a list"
-#+END_SRC
-
-とやって定義します。ここで、consの第二引数にはダブルクオーテーションが必須なことに注意してください。('a listを1つの項として扱いたいので)
-
-datatypeによって型を定義するとコンストラクタだけでなく、構造帰納法などが同時に生成されます。
-このことは後で説明します。
-
-** Evaluation of AExp, BExp
-
-さてevaluationを定義します。
-本来ならばaexp,bexpのevaluationも帰納的な関係として定めるのですが、aexp,bexpは普通に関数として扱ってしまうことができるので
-ここでは手を抜いてそうしてしまいます。
+さてaexp, bexpのevaluationを定義しよう。
+aexp, bexpの評価は常に可能(常に有限ステップで停止する関数がかける)ので大人しくfunで関数として定義することにする。
 
 #+BEGIN_SRC text
   subsection {* Evaluation *}
@@ -808,13 +800,14 @@ datatypeによって型を定義するとコンストラクタだけでなく、
     "bool_to_bexp b = (if b then BTrue else BFalse)"
 #+END_SRC
 
-aeval,bevalはstate(変数の情報)を受け取ってaexp,bexpをそれぞれnat,boolになるように計算を行います。
-ついでに =bool_to_bexp= を定義しました。あとで使います。
+aeval, bevalともに評価を行う際に変数の値を参照したりする可能性があるのでstateを引数として渡している。
+ついでに =bool_to_bexp= を定義しておいた。後で使う。
 
-** Commands
+** 3. Commands
 
-さてaexp, bexpを定義したところでIMPの本体であるところの命令たちを定義しましょう。
-これをコマンドとよび、変数代入、IF文、WHILE文などがあります。
+さて次にcommandを定義する。
+
+これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
 
 #+BEGIN_SRC text
   section {* Commands *}
@@ -831,11 +824,8 @@ aeval,bevalはstate(変数の情報)を受け取ってaexp,bexpをそれぞれna
     CWhile ("WHILE _ DO _" 90)
 #+END_SRC
 
-またしてもdatatypeによってcomを定義しています。
-さて、コンストラクタを演算子として使いたいので、そのためにnotationという記法で新たな演算子を定義しています。
-
-演算子はinfix operatorとそうでないものがあり、infix operatorは =infix, infixr, infixl= と演算子優先度を指定して定めます。
-例えばこのようなnotationを定めることで、
+comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。
+このように定義しておくと、例えば以下のような記述ができるようになる。
 
 #+BEGIN_SRC text
   WHILE BLeq (AId ''X'') (ANum 0) DO
@@ -846,7 +836,6 @@ aeval,bevalはstate(変数の情報)を受け取ってaexp,bexpをそれぞれna
       SKIP
 #+END_SRC
 
-のような記述ができるようになります。
 
 ** Operational semantics
 
@@ -902,7 +891,6 @@ inductiveが何をしているのかよくわからんという人のために�
 
 csmallはsmall-step、cbigはbig-stepの評価を定めています。
 それぞれ演算子定義により、 =<c,st> --> <c',st'>= や =<c,st1> ⇓ st2= などと書けるようになっていることが分かるでしょうか。
-
 
 
 
