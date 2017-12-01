@@ -1,0 +1,372 @@
+---
+title: Isabelle/HOLの基本 その1
+date: 2017-12-01T23:28:22+09:00
+draft: true
+toc: true
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 2日目の記事です。*
+
+さて今回よりIsabelle/HOL(HOLはライブラリの名前)の基本の解説をしていきます。
+一応極基本的なことを最初に少し説明をしてから、あとは実践形式で実際に証明を書きながら細かい機能などの説明をしていく予定です。
+説明に割くページ数とコンテンツの内容と時間的な問題で、定理証明とは何かなどは詳しく話しません。
+
+* Isabelle資料
+
+Isabelleのお勉強のための資料をまとめておきます。
+
+- [[https://isabelle.in.tum.de/dist/Isabelle2017/doc/prog-prove.pdf][prog-prove.pdf]]: 公式チュートリアルの一番基本のやつ。入門するならこれだけは *必ず読みましょう* 。チュートリアルは他にもトピックごとに色々あるよ！
+- [[https://isabelle.in.tum.de/dist/Isabelle2017/doc/isar-ref.pdf][isar-ref]]: 主にIsarに関するReference Manualだけど慣れてきたら参照する機会が多いと思う。
+- [[http://d.hatena.ne.jp/caeruiro/20100314/1268569131][caeruiroさんのIsabelle Tutorialシリーズ]]: 大変貴重な日本語の入門記事。Isabelle-2009を使っているらしいのでもしかしたら古い記述もあるかもしれない。
+- [[http://www.concrete-semantics.org/][Concrete Semantics]]: Isabelleでプログラミング言語のセマンティクスとかやるテキスト。前半はIsabelle入門、後半はCSのテキストみたいな構成。
+- [[https://www.isa-afp.org/][AFP]]: Archive of Formal Proofs; Isabelleで証明されたあれこれが投稿されてる証明集みたいなサイト
+- [[https://qiita.com/myuon_myon/items/11bb5bfc2e274fdaea7c][Isabelleの入門の入門]]: 遥か昔に書いた記事; 何かの役には立つかもしれない
+
+* このシリーズの目的
+
+prog-prove.pdfを読んでねでチュートリアルを済ませてしまっても良いのですが、まぁ読んでって言って読んでもらった試しがないので
+もう少し実際に証明を書きながら解説をすることで、英語が読みたくない人や雰囲気だけ知りたい人にも優しい解説シリーズになればいいかなと思っています。
+ひとまずこのIsabelle/HOLの基本シリーズでは上のprog-prove.pdfに沿って話を進めていきます。
+
+内容全部やるなら単なる翻訳になってしまうので適度にぶっ飛ばしつつ要所要所を解説していく感じにします。
+定理証明全くしたことないと厳しいこともあるかもぐらいでお願いします。
+
+* はじめに. jEditについて
+
+現在Isabelleが公式にサポートしているのはjEditのみです[fn:1]。
+jEditを起動し、エディター画面とアウトプットパネルが表示されていれば問題ありません。アウトプットパネルはなければ =Plugins>Isabelle= から表示させます。
+
+よく使うパネルを一通り説明しておきます。
+
+- Documentation: Isabelleは豊富な公式ドキュメントが用意されています。
+- Sidekick: 現在開いているファイルのアウトライン的なものが表示されます。
+- State: なんやねんこれ
+- Theories: 複数のファイルを開いている場合に、各ファイルのどの辺りまでcheckerが走っているかが一覧で表示されたものです。
+- Output: ここに情報が表示されます。証明は基本的にこのパネルを見ながら書きます。
+- Query: 既知の定理の検索などを行います。
+- Sledgehammer: 現在focusしている証明に対してsledgehammer(後述)を実行することができます。
+- Symbols: unicode symbolを入力するために使います。
+
+* 1. Introduction
+
+HOLとはhigher-order-logicの略で、Isabelleの標準ライブラリの1つです。
+Isabelleでは組み込みのロジックの上に適当な公理系を構成したものをライブラリとして提供しており、HOLやZFC(ZFCはFOLの上のライブラリ)などがあります。
+
+最初はHOLから入るのが良いでしょう。ZFC上で形式化とかしたい人はZFCとか使うのもいいと思います。
+また、変数の名前の付け替えなどをいい感じにアレする[fn:2]Nominalという考え方もあり、それを使ったNominal HOLなんかもサードパーティライブラリとして開発されています。
+
+* 2. Programming and Proving
+
+** 2.1 Basics
+
+*** 型とか
+
+HOLはsimply-typedなlanguageにlogicを組み込んだみたいなやつ
+
+- base type: bool, natとか色々
+- function type: ~=>~ でかく。
+- type variable: 型変数はシングルクオートを前につけて ~'a~ とか ='b= とかかく。MLとかの記法らしい。
+
+例えば ~cons : 'a => 'a list => 'a list~ とか。
+
+- term: MLぽい感じでifとかletとかcaseとかある
+- formula: formulaはbool型のtermで、TrueとFalseとandとかorとかの命題結合子たちからなる。implicationは ~-->~
+- equality: ~= : 'a => 'a => bool~ でかく組み込みのrelation symbol。
+- quantifier: forall, existが使える
+
+- judgement: ~|- Fm : Typ~ みたいな形のjudgementを扱う。型は適当に推論されるので省略できるときはする。
+
+最後に、HOLではなくてIsabelle側の特殊な論理記号としてuniversal quantifier ~⋀~ (大きい∧)と implication ~==>~ があって、これはHOLのロジックとは別物でIsabelle組み込みのコマンドといい感じに組み合わさって動いたりするやつ。多分使ってたらわかる。
+
+*** theoryの宣言
+
+Isabelleのファイルは =.thy= という拡張子で保存し、1ファイルに1つのtheory(モジュール的なもの)を基本とする。
+
+#+BEGIN_SRC text
+  theory Test
+  imports Main
+  begin
+
+  end
+#+END_SRC
+
+=theory= の後にはファイル名と同じ名前を書く。
+ =imports Main= は =Main= というtheoryを読み込むことを表す。
+ =begin ... end= の間に証明を書く。
+
+
+** 2.2 Types bool,nat,list
+
+*** datatype
+
+bool, nat, listは
+
+#+BEGIN_SRC text
+  datatype bool = True | False
+  datatype nat = Zero | Suc nat
+  datatype 'a list = nil | cons 'a "'a list"
+#+END_SRC
+
+で定義できる。(組み込みの型はZeroを0とかくなどのnotationの違いはある)
+ここで、1つの「Isabelleの項」はスペースを含む場合に必ずダブルクオーテーションで囲まないといけないことに注意。
+
+*** function
+
+例えばadd関数はパターンマッチを使って
+
+#+BEGIN_SRC text
+  fun add :: "nat ⇒ nat ⇒ nat" where
+    "add 0 n = n"
+    | "add (Suc m) n = Suc (add m n)"
+#+END_SRC
+
+とかやって定義できる。
+functionでもダブルクオーテーションに注意。
+
+パターンマッチを使うとexhaustive checkが働くのでパターンマッチが網羅的でないと警告が出る。
+
+項の即時評価には =value= というコマンドが使えて、
+
+#+BEGIN_SRC text
+  value "add (Suc (Suc 0)) (Suc 0)"
+  (* "Suc (Suc (Suc 0))" :: "nat" と表示される *)
+#+END_SRC
+
+とかやる。
+
+*** 写経
+
+pdfに載ってるtheory of listを写経したらこうなる:
+
+#+BEGIN_SRC text
+  theory MyList
+  imports Main
+  begin
+
+  datatype 'a list = Nil | Cons 'a "'a list"
+
+  fun app :: "'a list ⇒ 'a list ⇒ 'a list" where
+    "app Nil ys = ys"
+    | "app (Cons x xs) ys = Cons x (app xs ys)"
+
+  fun rev :: "'a list ⇒ 'a list" where
+    "rev Nil = Nil"
+    | "rev (Cons x xs) = app (rev xs) (Cons x Nil)"
+
+  value "rev (Cons True (Cons False Nil))"
+  (* "Cons False (Cons True Nil)" :: "bool list" と表示される *)
+
+  (* コメント *)
+
+  end
+#+END_SRC
+
+*** 定理証明界のfizzbuzz
+
+さて定理証明界のfizzbuzzこと[fn:3]リストが2回reverseすると元に戻るという定理を示そう。
+まずはステートメントを述べる。
+
+#+BEGIN_SRC text
+  theorem rev_rev: "rev (rev xs) = xs"
+#+END_SRC
+
+theoremかlemmaに続けてformulaを書くと定理として認識される。(theorem, lemmaに違いはない)
+ ~rev_rev:~ と書いておくと名前がついて示したあとで使えるようになるけど省略しても良い。
+
+さてこれをxsについての帰納法で示したいので次のようにしよう。
+
+#+BEGIN_SRC text
+  apply (induction xs)
+#+END_SRC
+
+するとアウトプットパネルに2つのゴールが表示されると思う。
+まぁよくわからないけど勝手に証明してくれ頼むってしたいときはautoコマンドを使う。
+
+#+BEGIN_SRC text
+  apply auto
+#+END_SRC
+
+さてゴール1は自動で証明されてゴール2が残った。このゴールはいきなり示すのは難しいので、いくつか補題を置いてがんばることにする。
+
+*** 最初の補題
+
+#+BEGIN_SRC text
+  lemma rev_app [simp]: "rev (app xs ys) = app (rev ys) (rev xs)"
+#+END_SRC
+
+先程も言ったとおりlemmaはtheoremと同じ。
+ちなみに ~[simp]~ というのが(attributeという)くっついているけど、これを付けておくとsimpコマンドを使った時に自動的にこの定理も(使用可能ならば)使ってくれるようになるというもの。
+
+さてこの補題を示そう。xsについての帰納法が良さそうなのでそうする。
+
+#+BEGIN_SRC text
+  apply (induction xs)
+#+END_SRC
+
+またゴールが2つ表示されるけれど、これはautoコマンドでIsabelle頼む〜ってやるとまたしても上手く行かない。
+さらに補題が必要そうなので補題をおく。
+
+*** 次の補題
+
+必要な補題をじゃんじゃんおいて示そう。
+
+#+BEGIN_SRC text
+  lemma app_Nil [simp]: "app xs Nil = xs"
+  apply (induction xs)
+  apply auto
+  done
+
+  lemma app_assoc [simp]: "app (app xs ys) zs = app xs (app ys zs)"
+  apply (induction xs)
+  apply auto
+  done
+#+END_SRC
+
+ご覧の通りIsabelleのautoコマンドが強力すぎて楽勝だなという気分になってくる。
+
+さて、この2つの補題を使うとさっきの =rev_app= が示せるようになる。
+ =[simp]= アトリビュートをつけた補題が自動的にautoコマンドで使われるのでさっきはダメだった証明が今度は上手く行くようになる。
+
+#+BEGIN_SRC text
+  lemma rev_app [simp]: "rev (app xs ys) = app (rev ys) (rev xs)"
+  apply (induction xs)
+  apply auto
+  done
+#+END_SRC
+
+さて一番最初の =rev_rev= も同じようにするだけ。 
+
+#+BEGIN_SRC text
+  lemma "rev (rev xs) = xs"
+  apply (induction xs)
+  apply auto
+  done
+#+END_SRC
+
+
+** 2.3 Type and Function Definitions
+
+*** type synonym
+
+型のエイリアスには ~type_synonym~ を使う。
+
+#+BEGIN_SRC text
+  type_synonym string = "char list"
+#+END_SRC
+
+*** datatype
+
+データ型の宣言には ~datatype~ を使うことはすでに見た。
+datatypeで宣言すると、そのデータに関する構造帰納法が自動生成される。上でも自作のlist型に対してinductionコマンドを使っていたが、そのときには生成された構造帰納法を使って式を変形していた。
+
+*** definition
+
+定義をするにはdefinitionを使う。
+これはrecursiveでないfunctionの定義に使う。
+
+#+BEGIN_SRC text
+  definition sq :: "nat => nat" where
+    "sq n = n * n"
+#+END_SRC
+
+funと違ってこちらはsimpなどを使っても勝手に展開されない。 ~sq n~ を ~n * n~ に変形したいときは自動生成された定理 ~sq_def~ を使う。
+
+*** abbreviations
+
+#+BEGIN_SRC text
+  abbreviation sq' :: "nat => nat" where
+    "sq' n == n * n"
+#+END_SRC
+
+abbreviationはdefinitionみたいなものだけど中が勝手に展開される。 ~sq'_def~ は自動生成されない(必要ないので)。
+abbreviationはdefinitionと違って ~=~ ではなく ~==~ (または ~\<equiv>~) を使うことに注意。
+
+
+** 2.4 Induction Heuristics
+
+帰納法をするときにある変数を任意にとりたいことがある。
+例えば
+
+#+BEGIN_SRC text
+  lemma "P xs ys = Q xs ys"
+#+END_SRC
+
+これを示す時に、 =apply (induction xs)= としてしまうと ~forall xs ys. (P xs ys = Q xs ys)~ をxsについての帰納法になるので、
+
+#+BEGIN_SRC text
+   1. forall ys. P Nil ys = Q Nil ys
+   2. forall x xs ys. (P xs ys = Q xs ys) --> (P (Cons x xs) ys = Q (Cons x xs) ys)
+#+END_SRC
+
+なるゴールに変形されてしまう。
+しかしこれを ~forall xs. (forall ys. P xs ys = Q xs ys)~ とysを事前に量化したものについて帰納法を適用して欲しいと思うことがある。その時はarbitraryを付けて
+
+#+BEGIN_SRC text
+  apply (induction xs arbitrary: ys)
+#+END_SRC
+
+とかくことができる。するとゴールが次の形になる。
+
+#+BEGIN_SRC text
+  1. forall ys. P Nil ys = Q Nil ys
+  2. forall x xs. (forall ys. P xs ys = Q xs ys) --> (forall ys. P (Cons x xs) ys = Q (Cons x xs) ys)
+#+END_SRC
+
+たまに使うテクなので覚えておくと良いと思う。
+
+
+** 2.5 Simplification
+
+simplificationはsimpコマンドによって行う。autoコマンドを使った時は自動で行われる。
+simplificationは =[simp]= アトリビュートをつけた定理を
+
+- ~l = r~ のときはlをrに書き換える
+- 可能な限り行う
+
+という感じでやる。
+
+*** simpコマンド
+
+また、 =[simp]= はつけていないけれどsimpコマンドを行う時に使う定理を追加することができる。
+
+#+BEGIN_SRC text
+  apply (simp add: thm1 thm2 .. thmn)
+
+  (* あるいはautoでも使える *)
+
+  apply (auto simp add: thm1 thm2)
+#+END_SRC
+
+後でも述べるが、autoコマンドはゴールが複数ある時に全てのゴールに対して変形を行う。
+simpを全てのゴールに対して行う =simp_all= コマンドもある。
+
+
+*** case splitting
+
+次のように、caseによる場合分けをする必要がある定理を示したいとする。
+
+#+BEGIN_SRC text
+  lemma "P (case e of 0 => a | Suc n => b n) = ((e = 0 --> P a) /\ (∀n. e = Suc n --> P (b n)))"
+#+END_SRC
+
+この時は =split= をつけて
+
+#+BEGIN_SRC text
+  apply (simp split: nat.split)
+#+END_SRC
+
+のようにできる。
+
+* まとめ的な
+
+2章では簡単に型や関数などの主にプログラミング言語的な側面を中心にみていき、さらに簡単な証明も書いてみました。
+3章ではよりIsabelleそのものに踏み込んだ内容になります。
+
+キリがいいので今日はここまでです。
+
+続きはまた明日。
+
+[fn:1] ProofGeneralはかつてサポートされていたけど切られてしまった…
+
+[fn:2] シリーズ後半でこれにも触れます
+
