@@ -1,7 +1,6 @@
 ---
 title: Isabelle/HOLの基本 その1
-date: 2017-12-01T23:28:22+09:00
-draft: true
+date: 2017-12-02T00:00:44+09:00
 toc: true
 ---
 
