@@ -20,7 +20,7 @@
     <title>{{ block "title" . }} {{ .Site.Title }} {{ end }}</title>
     <meta name="author" content="myuon">
     <meta name="description" content="{{ if .IsPage }}{{ .Summary }}{{ else }}λに捧げよ{{ end }}" />
-    <link rel="canonical" href="{{ .Site.BaseURL }}">
+    <link rel="canonical" href="{{ .Permalink }}">
 
     <link rel="stylesheet" href="/semantic-ui-css/semantic.min.css" />
     <link rel="stylesheet" href="/css/default.css" />
