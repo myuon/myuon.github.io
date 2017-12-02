@@ -1,0 +1,185 @@
+---
+title: Isabelle/HOLの基本 その2
+date: 2017-12-03T00:01:48+09:00
+toc: true
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 3日目の記事です。*
+
+-----
+
+テキスト代わりのチュートリアル: [[https://isabelle.in.tum.de/dist/Isabelle2017/doc/prog-prove.pdf][prog-prove.pdf]]
+
+前回は導入と型・関数・証明について学びました。
+今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。
+
+* 3. Logic and Proof Beyond Equality
+
+** 3.1 Formulas
+
+HOLのformulaの定義は次: 
+
+#+BEGIN_SRC text
+  form
+    ::= True | False | term = term
+    | ¬ form | form ∧ form | form ∨ form | form --> form | ∀x. form | ∃x. form
+#+END_SRC
+
+termはラムダ式とifとかcaseとかletとかそのへん
+
+** 3.2 Sets
+
+~'a~ のsetを ~'a set~ とかく。次のようなnotationが定義されている。
+
+- ~{}~ , ~{e1,e2,e3}~
+- ~e ∈ A~ , ~A ⊆ B~
+- ~A ∪ B~ , ~A ∩ B~ , ~A − B~, ~− A~
+- ~{x | P}~
+
+HOLのsetはかなり便利なので積極的に使っていこう。
+
+** 3.3 Proof Automation
+
+proof assistantを用いた証明というのは程度の差はあれコンピューターの力を借りて証明を進めるのであるが、
+Isabelleはその点では大変強力な証明の自動化ツールを揃えていると言える。
+
+すでに見たsimp, autoコマンドなどもこの意味で自動証明を行うためのコマンドといえよう。
+
+以下ではその他の重要な証明コマンドや、Isabelleをやるにあたって最も重要と思われるsledgehammerについても触れる。
+
+**** simpとauto
+
+さてsimpとautoの2つのproof methodはすでに見た。
+このセクションではより強力な自動証明や証明ツールをみていく。
+
+この2つの特徴として
+
+- 上手く行かなかったら(ゴールの解消を途中で諦めた場合は)、ゴールを変形したところで止める
+- 証明可能な命題だからといって必ずこれらで証明できるわけではない。むしろ出来ないものもたくさんある。
+
+**** fastforce
+
+autoより強力なproof methodにfastforceがある:
+
+#+BEGIN_SRC text
+  lemma "⟦ ∀ xs ∈ A. ∃ys. xs = ys @ ys; us ∈ A ⟧ ⟹ ∃ n. length us = n + n"
+  by fastforce
+#+END_SRC
+
+これはquantifierが複雑なのでautoでは証明できない。
+fastforceは失敗することもあり、また最初のゴールに対してしか作用しない。fastforceは複雑なlogicに弱いがequality reasoningに強い。
+
+**** blast
+
+さらに複雑なゴールを示せるproof methodにblastがある。
+
+#+BEGIN_SRC text
+  lemma "⟦ ∀x y. T x y ∨ T y x; ∀x y. A x y ∧ A y x ⟶ x = y; ∀x y. T x y ⟶ A x y ⟧ ⟹ ∀x y. A x y ⟶ T x y"
+  by blast
+#+END_SRC
+
+blastも失敗することもあり、logic,setに強いがequality reasoningに弱い。
+
+**** sledgehammer
+
+sledgehammerはproof searchを行うコマンドである。
+これは現在証明可能な定理とblast,auto,simpなどのproof methodを組み合わせて現在のゴールを解消するような証明を自動生成するツールである。
+
+#+BEGIN_SRC text
+  lemma "⟦ xs @ ys = ys @ xs; length xs = length ys ⟧ ⟹ xs = ys"
+#+END_SRC
+
+ここでsledgehammerと入力するか、またはjEditのsledgehammerパネルでApplyのボタンを押す。
+するといくつかの候補が表示されるので、好きな証明をクリックするとそれが実際に挿入される。
+
+#+BEGIN_SRC text
+    using append_eq_append_conv by blast
+#+END_SRC
+
+ここで、使われている ~append_eq_append_conv~ という補題が自動的に採用されていることに注意。
+
+sledgehammerはいくつかのsolverをそれぞれ回して証明を探索するので、いくつかの証明が得られることもあれば難しい命題の場合には全て諦めてしまうこともある。
+sledgehammerが ~metis~ を含む証明を提案した場合、metisは与えられた補題だけからゴールを解消するためのコマンドであり、現実的な時間で応答が返らないこともあることに注意。
+
+**** arithmetic
+
+arithmetic formula (変数、数値、 ~+,-,=,<~)の解消には ~arith~ を使う。
+
+#+BEGIN_SRC text
+  lemma "⟦ (a::nat) ≤ x + b; 2*x < c ⟧ ⟹ 2*a + 1 ≤ 2*b + c"
+  by arith
+#+END_SRC
+
+簡単なarithmetic formulaならautoやsimpでも解ける可能性はある。
+また、arithは整数や実数が対象でもよい。
+
+**** try
+
+全てのproof methodを試すなら ~try~ コマンドを使う。あるいは ~try0~ というより簡単なものを使っても良い。
+
+** 3.4 Single Step Proofs
+
+**** rule
+
+導入規則を適用するruleというコマンドがある。
+ruleは定理を1つ受け取ってそれをintroルールとして現在のゴールに適用する。いくつかのintro ruleはすでに知っているので省略できることもある。
+
+**** OF/of
+
+定理が ~A ==> B~ の形の時(ここでのimplicationは ~==>~ であって ~-->~ ではないことに注意。後者は単なるHOLのlogical connectiveだが前者はIsabelleで特別な意味を持つ)、 ~A~ に何かを適用したいときはOFを使う:
+例えば ~r: A ==> B~ かつ ~s: A~ のとき、 ~r [OF s]~ は ~B~ という定理を表す。
+
+さらに、定理が自由変数(~?hoge~ のような形の変数)を含んでいる時、これをofで束縛できる:
+例えば、 ~r: ?P ?x~ のとき、 ~r [of "λx. x = 10" 20]~ は ~20 = 10~ という命題を表す。
+
+OF/ofは複数適用する場合はスペース区切りで横に並べる。1つの項がスペースを含む場合は例によってダブルクオーテーションで囲むこと。
+
+例：
+
+#+BEGIN_SRC text
+  thm conjI[OF refl[of a] refl[of b]]
+  (* は、 a=a /\ b=b という定理になる *)
+#+END_SRC
+
+**** intro/dest modifier
+
+fastforce,blast,autoに対して、modifier ~intro, dest~ が用意されている。
+
+- intro: ~blast intro: [thm]~ などとすることで、 ~A ==> B~ の定理を用いて結論のBをAに書き換えて証明を行う
+- dest: ~blast dest: [thm]~ などとすることで、 ~A ==> B~ の定理を用いて仮定のA(あるいはAを含む定理)をBに書き換えて証明を行う
+
+** 3.5 Inductive Definitions
+
+**** inductive predicate
+
+inductive predicateをinductiveキーワードを使って定義できる。
+
+#+BEGIN_SRC text
+  inductive even :: "nat => bool" where
+    ev0: "ev 0"
+  | evS: "ev n ==> ev (n + 2)"
+#+END_SRC
+
+は、 ~ev n = True~ とnが偶数であることが同値であるような述語を表す。
+
+**** cases/induct
+
+inductiveで定義した述語に対する場合分けや構造帰納法などが自動で生成される。
+上のようにevenを定めた場合、例えばjEditのQueryパネルに ~name:even~ と入力することで ~even.cases~ や ~even.induct~ などの定理が自動で生成されていることがわかるだろう。
+
+この帰納法を用いて証明を行う場合、次のように書ける:
+
+#+BEGIN_SRC text
+  lemma "even m ==> P m"
+  apply (induction m rule: even.induct)
+#+END_SRC
+
+* まとめ
+
+3章ではHOLについて、自動証明について、最後にinductive definitionについて触れた。
+
+キリがよいので本日はここまで。
+
+次回は4章でIsarと呼ばれる自然言語に近い証明記述を可能にする言語に触れて、一旦このチュートリアルをやるシリーズはおしまいです。
+
+

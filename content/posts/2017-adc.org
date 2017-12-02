@@ -913,7 +913,9 @@ big-stepな方では、 ~<c,st1> ⇓ st2~ と 「cをst1の下で評価したら
 これは関係cbigが部分関数であること(値を返す入力に対してはwell-definedであること)を言っている。
 これを示すためにはいくつか補題が必要になるので以下ではそれを先に示していく。
 
-** 6. Coherent lemmas: SKIP
+** 6. Coherent lemmas
+
+*** SKIP
 
 #+BEGIN_SRC text
   subsection {* Coherent lemmas *}
@@ -924,27 +926,10 @@ big-stepな方では、 ~<c,st1> ⇓ st2~ と 「cをst1の下で評価したら
   using cbig.cases [OF assms] by auto
 #+END_SRC
 
-最初はSKIPのケースです。 =<SKIP,st> ⇓ st'= のとき、当然 =st=st'= であることが期待されます。
-ところで上のlemmaは初めて出てきた形かも知れません。 ~[| A; B |] ==> C~ などと書く他に、 =assumes A and B shows C= などと書くことも出来ます。
+始めの補題はSKIPについてで、 ~<SKIP,st> ⇓ st'~ ならば ~st = st'~ というものである。
+直観的には明らかであろうし、証明も場合分けをするだけで済む。
 
-さて、これは仮定に対する場合分けを行えば良さそうなので、 =cbig.cases= という定理を使います。
-
-この =cbig.cases= とは何でしょうか？特に証明した覚えはありませんが…。
-とりあえずQueryパネルで =name: "cbig.cases"= としてみてください。やたら長い定理が得られればそれが =cbig.cases= です。
-実はこれは =cbig= をinductiveによって定義したので、cbigのコンストラクタが何かわかっているため場合分けの定理をIsabelleが自動で生成してくれているのです。
-
-inductiveでXを定義した場合、書き換え規則 =X.simps= 、場合分け規則 =X.cases= 、帰納法 =X.induct= の3つが自動生成されます。このことを覚えておいてください。
-
-さらに上の証明では、 =using cbig.cases [OF assms]= と書いています。
- =[OF assms]= は、考えている定理が ~A ==> B~ の形の時、 =A= 型の定理を適用することを表しています。
-また、 =assumes ... shows ...= で宣言した定理のassumes部分のstatementは =assms= で参照できます。(スペースまたはandで区切られたものが複数ある時は =assms(1)= =assms(2)=)
-よって、上の =cbig.cases [OF assms]= は、 =<SKIP,st> ⇓ st'= を =cbig.cases= に適用したものです。つまり =<SKIP,st> ⇓ st'= についての場合分けということですね。
-
-=cbig.cases= を追加するとこの補題はautoで解けます。
-
-** Coherent lemmas: Ass
-
-さてどんどん行きます。次は ~<x ::= a,st> ⇓ st'~ の時に何が言えるかです。
+*** Ass
 
 #+BEGIN_SRC text
   lemma coh_B_Ass:
@@ -953,10 +938,9 @@ inductiveでXを定義した場合、書き換え規則 =X.simps= 、場合分�
   using cbig.cases [OF assms] by auto
 #+END_SRC
 
-~<x ::= a , st> ⇓ st'~ ならば, ~st' = st [x ↦ aeval st a]~ であるべきということですね。
-証明自体はさっきと同じなのでいいでしょう。
+次は変数への代入。これも簡単なので省略。
 
-** Coherent lemmas: Seq
+*** Seq
 
 前2の定理はあまりに簡単すぎてあっけなかったですが次はもう少し難しいです。
  ~<c1 ;; c2 , st> ⇓ st'~ に対して言えることは何か？……そう、あるst''が存在してc1とstからst''へ、c2とst''からst'という感じのことが言えますね。
