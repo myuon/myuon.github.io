@@ -725,7 +725,6 @@ IMPの定義をし、そのevaluationを定めます。
 ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。
 このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。
 
-
 ** 0. States
 
 IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。
@@ -836,11 +835,35 @@ comを定義した後、notationによって各コンストラクタをよりそ
       SKIP
 #+END_SRC
 
+** 4. Operational semantics
 
-** Operational semantics
+さていよいよcommandの評価を行えるようにする。
 
-さていよいよcommandの評価を行えるようにします。
-評価は関数ではなく関係として定めます。
+commandにはWHILEが含まれていることからも分かる通り無限ループが書けるので、一般に評価は停止しない。
+このため、「commandを実行したら(有限ステップで停止し)rという結果になった」ということを表現するための関係を定義する。
+
+あるいは、これはevalという部分関数のグラフだと思っても良いが、domain上でのwell-definednessは後にeval_deterministicという形で示すまでは単なる関係である。
+
+*** small-step vs big-step
+
+これは直接IMPとは関係のない話だけれどしておかないとまずそうなのでここでする。
+
+operational semanticsとは「評価」や「簡約」と言った操作を定めるが、この定め方としてsmall-stepまたはbig-stepという手法が使われる。
+small-stepとは、与えられたtermの次のステップを具体的に与えるようなもので、big-stepとは与えられたtermのsubtermを評価した結果を用いて次のステップを与えるようなもの。
+(これもだいぶ怪しい説明な気がするがなんて言ったらいいのかヨクワカラナイ)
+
+small-stepは1ステップ分を定義してそれを順次繋いでいくという比較的直観に沿った与え方である。
+例えば ~M~ という項を評価すると ~r~ という結果になるような場合、 ~M -> M1 -> M2 -> ... -> r~ のようなステップを1つ1つ進んでいくような仕方で簡約が進むやり方(ここでの矢印1つ1つ)がsmall-stepである。
+
+対してbig-stepはrecursive functionの定義のように、 ~eval(M)~ の定義の中で ~eval(M')~ (M'はMのsubterm)なる結果を用いることができる。
+
+small-stepとbig-stepのどちらがよいというようなものではなく、大抵の場合は片方を定めたらもう一方も簡単に導出でき、しかも同値である(small-stepを繰り返したものとbig-stepは関係として一致する)ことが示せることが多い。
+(極稀に一方では定めにくい言語があるがそうそう遭遇するものではないと思う)
+
+
+というわけで今回も、IMPのoperational semanticsをsmall-stepとbig-stepの両方で定め、それが同値になることを後々に示すことになる。
+
+*** コード
 
 #+BEGIN_SRC text
   section {* Small-step operational semantics *}
@@ -871,44 +894,26 @@ comを定義した後、notationによって各コンストラクタをよりそ
   | B_WhileStep: "⟦ beval st b = True; <c,st> ⇓ st'; <WHILE b DO c , st'> ⇓ st'' ⟧ ⟹ <WHILE b DO c , st> ⇓ st''"
 #+END_SRC
 
-帰納的な関係をinductiveキーワードで定めています。
-inductiveは帰納的な関係を定義し、さらに構造帰納法などを生成してくれます。
+定め方自体はごく標準的な仕方で取った。
+面倒なので逐一説明はしないけど(よく知らないって人には申し訳ないです)それぞれWHILEの評価をどうやっているかに注目しておくといいんじゃなかろうかと思う。
 
-inductiveが何をしているのかよくわからんという人のために、csmallの定義は書き下すと次のようになります。
-(あんまり変わってないのでこれでも分からないかもしれないけどまぁそのへんは雰囲気で)
+small-stepの方では ~WHILE b DO c -> IF b THEN (c ;; WHILE b DO c ELSE SKIP)~ とやっているのに対して、
+big-stepの方では ~WHILE b DO c~ の ~b~ をまず評価し、それがfalseなら何もしない、trueなら ~c~ の実行と ~WHILE b DO c~ の実行を順次帰納的に行うことにしている。
 
-#+BEGIN_SRC text
-  Def. com×state上の関係 --> を次のような規則からなるものとして定める。
-  (S_AssNum)  <x ::= n , st> --> <SKIP , st[x := n]>
-  (S_AssStep) <x ::= a , st> --> <x ::= aeval st a , st>
-  (S_SeqSkip) <SKIP ;; c , st> --> <c,st>
-  (S_SeqStep) <c1,st> --> <c1',st'> ならば、 <c1 ;; c2 , st> --> <c1' ;; c2 , st'>
-  (S_IfTrue)  <IF true THEN c1 ELSE c2 , st> --> <c1,st>
-  (S_IfFalse) <IF false THEN c1 ELSE c2 , st> --> <c2,st>
-  (S_IfStep)  <IF b THEN c1 ELSE c2 , st> --> <IF beval st b THEN c1 ELSE c2 , st>
-  (S_WHIE)    <WHILE b DO c , st> --> <IF b THEN (c ;; WHILE b DO c ELSE SKIP) , st>
-#+END_SRC
+big-stepな方では、 ~<c,st1> ⇓ st2~ と 「cをst1の下で評価したら停止してst2になる」ことが同値になる(関係の中に停止性が含まれている)のでこのような定義になっていることに注意しよう。
 
-csmallはsmall-step、cbigはbig-stepの評価を定めています。
-それぞれ演算子定義により、 =<c,st> --> <c',st'>= や =<c,st1> ⇓ st2= などと書けるようになっていることが分かるでしょうか。
+** 5. Deterministic
 
-
-
-** Deterministic
-
-さて順番が多少前後しますが、示したい定理を先に述べておきます。
-1つめのゴールとしては、evaluationのdeterministicがあります。
-先ほど定めたcbigは単なる関係ですが =<c,st1> ⇓ st2= が入力 =c,st1= に対して部分関数になること(結果が存在すれば1つになる)を示すのがここでの目的です。
+さて実際の証明とは前後するが、ここで示したい定理のうちの1つを述べる。
 
 #+BEGIN_SRC text
   lemma cbig_deterministic: "⟦ <c,st> ⇓ st'; <c,st> ⇓ st'' ⟧ ⟹ st' = st''"
 #+END_SRC
 
-ここで、 =⟦ P1; P2 ⟧ ⟹ Q= は =P1 ⟹ P2 ⟹ Q= と同じです(仮定が複数ある時の記法)。
-さてこれの証明について考えてみると、 =<c,st> ⇓ st'= についての帰納法がよさそうです。このときこのまま帰納法を行うとゴールにcやstについての記法などが乱れ飛んで散らかるので、先に補題の形で =<c,st1> ⇓ st2= のcが具体的な形の時に何が言えるかを述べておきます。
-(このように、帰納法をそのまま使うと散らかるからよくない、みたいな感覚は定理証明では意外と重要です。散らかりすぎると自動証明が証明を諦めてしまったりします)
+これは関係cbigが部分関数であること(値を返す入力に対してはwell-definedであること)を言っている。
+これを示すためにはいくつか補題が必要になるので以下ではそれを先に示していく。
 
-** Coherent lemmas: SKIP
+** 6. Coherent lemmas: SKIP
 
 #+BEGIN_SRC text
   subsection {* Coherent lemmas *}

@@ -5,5 +5,5 @@ build:
   cd blog && stack build && stack exec site build
 
 publish:
-  cd blog/_site && git add . && git commit -m 'build' && git push origin master
+  cd public && git add . && git commit -m 'build' && git push origin master
 

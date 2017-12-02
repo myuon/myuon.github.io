@@ -7,14 +7,11 @@
 
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@myuon_myon" />
-    <meta name="twitter:title" content="{{ .Title }}{{ if .IsPage }} - {{ .Site.Title }}{{ end }}" />
-    <meta name="twitter:description" content="{{ if .IsPage }}{{ .Summary }}{{ else }}λに捧げよ{{ end }}" />
-    <meta name="twitter:image" content="/images/icon_top.png" />
     <meta name="og:site_name" content="{{ .Site.Title }}" />
     <meta name="og:title" content="{{ .Title }}{{ if .IsPage }} - {{ .Site.Title }}{{ end }}" />
     <meta name="og:description" content="{{ if .IsPage }}{{ .Summary }}{{ else }}λに捧げよ{{ end }}" />
     <meta name="og:type" content="blog" />
-    <meta name="og:url" content="{{ .Site.BaseURL }}" />
+    <meta name="og:url" content="{{ .Permalink }}" />
     <meta name="og:image" content="/images/icon_top.png" />
 
     <meta itemprop="name" content="{{ .Title }}{{ if .IsPage }} - {{ .Site.Title }}{{ end }}" />
