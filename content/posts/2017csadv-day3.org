@@ -137,6 +137,12 @@ OF/ofは複数適用する場合はスペース区切りで横に並べる。1�
 例：
 
 #+BEGIN_SRC text
+  thm conjI
+  (* conjIが ?P ==> ?Q ==> ?P /\ ?Q であるとき *)
+
+  thm refl
+  (* reflが ?P = ?P であるとき *)
+
   thm conjI[OF refl[of a] refl[of b]]
   (* は、 a=a /\ b=b という定理になる *)
 #+END_SRC
