@@ -5,6 +5,10 @@ draft: true
 toc: true
 ---
 
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 6日目の記事です。*
+
+-----
+
 前回はaexp/bexpとそのevaluationを定めた。
 
 * 3. Commands

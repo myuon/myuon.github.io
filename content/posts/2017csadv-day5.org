@@ -4,6 +4,10 @@ date: 2017-12-05T00:02:29+09:00
 toc: true
 ---
 
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 5日目の記事です。*
+
+-----
+
 今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。
 そしてこの記事は一人computer scienceアドベントカレンダーなのでCSらしい話題を、ということで、
 IMPのoperational semanticsの話でもしようと思います。

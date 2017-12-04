@@ -5,6 +5,10 @@ draft: true
 toc: true
 ---
 
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 8日目の記事です。*
+
+-----
+
 前回は、big-stepがdeterministicであることを示した。
 
 * 9. Small-step long reduction
