@@ -5,711 +5,6 @@ draft: true
 toc: true
 ---
 
-* Isabelle/HOLの基本
-
-さて、Isabelle/HOL(HOLはライブラリの名前)の解説をしていきます。
-一応極基本的なことを最初に少し説明をしてから、あとは実践形式で実際に証明を書きながら細かい機能などの説明をしていく予定です。
-説明に割くページ数とコンテンツの内容と時間的な問題で、定理証明とは何かなどは詳しく話しません。
-
-** Isabelle資料
-
-Isabelleのお勉強のための資料をまとめておきます。
-
-- [[https://isabelle.in.tum.de/dist/Isabelle2017/doc/prog-prove.pdf][prog-prove.pdf]]: 公式チュートリアルの一番基本のやつ。入門するならこれだけは *必ず読みましょう* 。チュートリアルは他にもトピックごとに色々あるよ！
-- [[https://isabelle.in.tum.de/dist/Isabelle2017/doc/isar-ref.pdf][isar-ref]]: 主にIsarに関するReference Manualだけど慣れてきたら参照する機会が多いと思う。
-- [[http://d.hatena.ne.jp/caeruiro/20100314/1268569131][caeruiroさんのIsabelle Tutorialシリーズ]]: 大変貴重な日本語の入門記事。Isabelle-2009を使っているらしいのでもしかしたら古い記述もあるかもしれない。
-- [[http://www.concrete-semantics.org/][Concrete Semantics]]: Isabelleでプログラミング言語のセマンティクスとかやるテキスト。前半はIsabelle入門、後半はCSのテキストみたいな構成。
-- [[https://www.isa-afp.org/][AFP]]: Archive of Formal Proofs; Isabelleで証明されたあれこれが投稿されてる証明集みたいなサイト
-
-** このシリーズの目的
-
-prog-prove.pdfを読んでねでチュートリアルを済ませてしまっても良いのですが、まぁ読んでって言って読んでもらった試しがないので
-もう少し実際に証明を書きながら解説をすることで、英語が読みたくない人や雰囲気だけ知りたい人にも優しい解説シリーズになればいいかなと思っています。
-ひとまずこのIsabelle/HOLの基本シリーズでは上のprog-prove.pdfに沿って話を進めていきます。
-
-内容全部やるなら単なる翻訳になってしまうので適度にぶっ飛ばしつつ要所要所を解説していく感じにします。
-定理証明全くしたことないと厳しいこともあるかもぐらいでお願いします。
-
-** はじめに. jEditについて
-
-現在Isabelleが公式にサポートしているのはjEditのみです[fn:1]。
-jEditを起動し、エディター画面とアウトプットパネルが表示されていれば問題ありません。アウトプットパネルはなければ =Plugins>Isabelle= から表示させます。
-
-よく使うパネルを一通り説明しておきます。
-
-- Documentation: Isabelleは豊富な公式ドキュメントが用意されています。
-- Sidekick: 現在開いているファイルのアウトライン的なものが表示されます。
-- State: なんやねんこれ
-- Theories: 複数のファイルを開いている場合に、各ファイルのどの辺りまでcheckerが走っているかが一覧で表示されたものです。
-- Output: ここに情報が表示されます。証明は基本的にこのパネルを見ながら書きます。
-- Query: 既知の定理の検索などを行います。
-- Sledgehammer: 現在focusしている証明に対してsledgehammer(後述)を実行することができます。
-- Symbols: unicode symbolを入力するために使います。
-
-** 1. Introduction
-
-HOLとはhigher-order-logicの略で、Isabelleの標準ライブラリの1つです。
-Isabelleでは組み込みのロジックの上に適当な公理系を構成したものをライブラリとして提供しており、HOLやZFC(ZFCはFOLの上のライブラリ)などがあります。
-
-最初はHOLから入るのが良いでしょう。ZFC上で形式化とかしたい人はZFCとか使うのもいいと思います。
-また、変数の名前の付け替えなどをいい感じにアレする[fn:2]Nominalという考え方もあり、それを使ったNominal HOLなんかもサードパーティライブラリとして開発されています。
-
-** 2. Programming and Proving
-
-*** 2.1 Basics
-
-**** 型とか
-
-HOLはsimply-typedなlanguageにlogicを組み込んだみたいなやつ
-
-- base type: bool, natとか色々
-- function type: ~=>~ でかく。
-- type variable: 型変数はシングルクオートを前につけて ~'a~ とか ='b= とかかく。MLとかの記法らしい。
-
-例えば ~cons : 'a => 'a list => 'a list~ とか。
-
-- term: MLぽい感じでifとかletとかcaseとかある
-- formula: formulaはbool型のtermで、TrueとFalseとandとかorとかの命題結合子たちからなる。implicationは ~-->~
-- equality: ~= : 'a => 'a => bool~ でかく組み込みのrelation symbol。
-- quantifier: forall, existが使える
-
-- judgement: ~|- Fm : Typ~ みたいな形のjudgementを扱う。型は適当に推論されるので省略できるときはする。
-
-最後に、HOLではなくてIsabelle側の特殊な論理記号としてuniversal quantifier ~⋀~ (大きい∧)と implication ~==>~ があって、これはHOLのロジックとは別物でIsabelle組み込みのコマンドといい感じに組み合わさって動いたりするやつ。多分使ってたらわかる。
-
-**** theoryの宣言
-
-Isabelleのファイルは =.thy= という拡張子で保存し、1ファイルに1つのtheory(モジュール的なもの)を基本とする。
-
-#+BEGIN_SRC text
-  theory Test
-  imports Main
-  begin
-
-  end
-#+END_SRC
-
-=theory= の後にはファイル名と同じ名前を書く。
- =imports Main= は =Main= というtheoryを読み込むことを表す。
- =begin ... end= の間に証明を書く。
-
-
-*** 2.2 Types bool,nat,list
-
-**** datatype
-
-bool, nat, listは
-
-#+BEGIN_SRC text
-  datatype bool = True | False
-  datatype nat = Zero | Suc nat
-  datatype 'a list = nil | cons 'a "'a list"
-#+END_SRC
-
-で定義できる。(組み込みの型はZeroを0とかくなどのnotationの違いはある)
-ここで、1つの「Isabelleの項」はスペースを含む場合に必ずダブルクオーテーションで囲まないといけないことに注意。
-
-**** function
-
-例えばadd関数はパターンマッチを使って
-
-#+BEGIN_SRC text
-  fun add :: "nat ⇒ nat ⇒ nat" where
-    "add 0 n = n"
-    | "add (Suc m) n = Suc (add m n)"
-#+END_SRC
-
-とかやって定義できる。
-functionでもダブルクオーテーションに注意。
-
-パターンマッチを使うとexhaustive checkが働くのでパターンマッチが網羅的でないと警告が出る。
-
-項の即時評価には =value= というコマンドが使えて、
-
-#+BEGIN_SRC text
-  value "add (Suc (Suc 0)) (Suc 0)"
-  (* "Suc (Suc (Suc 0))" :: "nat" と表示される *)
-#+END_SRC
-
-とかやる。
-
-**** 写経
-
-pdfに載ってるtheory of listを写経したらこうなる:
-
-#+BEGIN_SRC text
-  theory MyList
-  imports Main
-  begin
-
-  datatype 'a list = Nil | Cons 'a "'a list"
-
-  fun app :: "'a list ⇒ 'a list ⇒ 'a list" where
-    "app Nil ys = ys"
-    | "app (Cons x xs) ys = Cons x (app xs ys)"
-
-  fun rev :: "'a list ⇒ 'a list" where
-    "rev Nil = Nil"
-    | "rev (Cons x xs) = app (rev xs) (Cons x Nil)"
-
-  value "rev (Cons True (Cons False Nil))"
-  (* "Cons False (Cons True Nil)" :: "bool list" と表示される *)
-
-  (* コメント *)
-
-  end
-#+END_SRC
-
-**** 定理証明界のfizzbuzz
-
-さて定理証明界のfizzbuzzこと[fn:3]リストが2回reverseすると元に戻るという定理を示そう。
-まずはステートメントを述べる。
-
-#+BEGIN_SRC text
-  theorem rev_rev: "rev (rev xs) = xs"
-#+END_SRC
-
-theoremかlemmaに続けてformulaを書くと定理として認識される。(theorem, lemmaに違いはない)
-=rev_rev:= と書いておくと名前がついて示したあとで使えるようになるけど省略しても良い。
-
-さてこれをxsについての帰納法で示したいので次のようにしよう。
-
-#+BEGIN_SRC text
-  apply (induction xs)
-#+END_SRC
-
-するとアウトプットパネルに2つのゴールが表示されると思う。
-まぁよくわからないけど勝手に証明してくれ頼むってしたいときはautoコマンドを使う。
-
-#+BEGIN_SRC text
-  apply auto
-#+END_SRC
-
-さてゴール1は自動で証明されてゴール2が残った。このゴールはいきなり示すのは難しいので、いくつか補題を置いてがんばることにする。
-
-**** 最初の補題
-
-#+BEGIN_SRC text
-  lemma rev_app [simp]: "rev (app xs ys) = app (rev ys) (rev xs)"
-#+END_SRC
-
-先程も言ったとおりlemmaはtheoremと同じ。
-ちなみに ~[simp]~ というのが(attributeという)くっついているけど、これを付けておくとsimpコマンドを使った時に自動的にこの定理も(使用可能ならば)使ってくれるようになるというもの。
-
-さてこの補題を示そう。xsについての帰納法が良さそうなのでそうする。
-
-#+BEGIN_SRC text
-  apply (induction xs)
-#+END_SRC
-
-またゴールが2つ表示されるけれど、これはautoコマンドでIsabelle頼む〜ってやるとまたしても上手く行かない。
-さらに補題が必要そうなので補題をおく。
-
-**** 次の補題
-
-必要な補題をじゃんじゃんおいて示そう。
-
-#+BEGIN_SRC text
-  lemma app_Nil [simp]: "app xs Nil = xs"
-  apply (induction xs)
-  apply auto
-  done
-
-  lemma app_assoc [simp]: "app (app xs ys) zs = app xs (app ys zs)"
-  apply (induction xs)
-  apply auto
-  done
-#+END_SRC
-
-ご覧の通りIsabelleのautoコマンドが強力すぎて楽勝だなという気分になってくる。
-
-さて、この2つの補題を使うとさっきの =rev_app= が示せるようになる。
- =[simp]= アトリビュートをつけた補題が自動的にautoコマンドで使われるのでさっきはダメだった証明が今度は上手く行くようになる。
-
-#+BEGIN_SRC text
-  lemma rev_app [simp]: "rev (app xs ys) = app (rev ys) (rev xs)"
-  apply (induction xs)
-  apply auto
-  done
-#+END_SRC
-
-さて一番最初の =rev_rev= も同じようにするだけ。 
-
-#+BEGIN_SRC text
-  lemma "rev (rev xs) = xs"
-  apply (induction xs)
-  apply auto
-  done
-#+END_SRC
-
-
-*** 2.3 Type and Function Definitions
-
-**** type synonym
-
-型のエイリアスには ~type_synonym~ を使う。
-
-#+BEGIN_SRC text
-  type_synonym string = "char list"
-#+END_SRC
-
-**** datatype
-
-データ型の宣言には ~datatype~ を使うことはすでに見た。
-datatypeで宣言すると、そのデータに関する構造帰納法が自動生成される。上でも自作のlist型に対してinductionコマンドを使っていたが、そのときには生成された構造帰納法を使って式を変形していた。
-
-**** definition
-
-定義をするにはdefinitionを使う。
-これはrecursiveでないfunctionの定義に使う。
-
-#+BEGIN_SRC text
-  definition sq :: "nat => nat" where
-    "sq n = n * n"
-#+END_SRC
-
-funと違ってこちらはsimpなどを使っても勝手に展開されない。 ~sq n~ を ~n * n~ に変形したいときは自動生成された定理 ~sq_def~ を使う。
-
-**** abbreviations
-
-#+BEGIN_SRC text
-  abbreviation sq' :: "nat => nat" where
-    "sq' n == n * n"
-#+END_SRC
-
-abbreviationはdefinitionみたいなものだけど中が勝手に展開される。 ~sq'_def~ は自動生成されない(必要ないので)。
-abbreviationはdefinitionと違って ~=~ ではなく ~==~ (または ~\<equiv>~) を使うことに注意。
-
-
-*** 2.4 Induction Heuristics
-
-帰納法をするときにある変数を任意にとりたいことがある。
-例えば
-
-#+BEGIN_SRC text
-  lemma "P xs ys = Q xs ys"
-#+END_SRC
-
-これを示す時に、 =apply (induction xs)= としてしまうと ~forall xs ys. (P xs ys = Q xs ys)~ をxsについての帰納法になるので、
-
-#+BEGIN_SRC text
-   1. forall ys. P Nil ys = Q Nil ys
-   2. forall x xs ys. (P xs ys = Q xs ys) --> (P (Cons x xs) ys = Q (Cons x xs) ys)
-#+END_SRC
-
-なるゴールに変形されてしまう。
-しかしこれを ~forall xs. (forall ys. P xs ys = Q xs ys)~ とysを事前に量化したものについて帰納法を適用して欲しいと思うことがある。その時はarbitraryを付けて
-
-#+BEGIN_SRC text
-  apply (induction xs arbitrary: ys)
-#+END_SRC
-
-とかくことができる。するとゴールが次の形になる。
-
-#+BEGIN_SRC text
-  1. forall ys. P Nil ys = Q Nil ys
-  2. forall x xs. (forall ys. P xs ys = Q xs ys) --> (forall ys. P (Cons x xs) ys = Q (Cons x xs) ys)
-#+END_SRC
-
-たまに使うテクなので覚えておくと良いと思う。
-
-
-*** 2.5 Simplification
-
-simplificationはsimpコマンドによって行う。autoコマンドを使った時は自動で行われる。
-simplificationは =[simp]= アトリビュートをつけた定理を
-
-- ~l = r~ のときはlをrに書き換える
-- 可能な限り行う
-
-という感じでやる。
-
-**** simpコマンド
-
-また、 =[simp]= はつけていないけれどsimpコマンドを行う時に使う定理を追加することができる。
-
-#+BEGIN_SRC text
-  apply (simp add: thm1 thm2 .. thmn)
-
-  (* あるいはautoでも使える *)
-
-  apply (auto simp add: thm1 thm2)
-#+END_SRC
-
-後でも述べるが、autoコマンドはゴールが複数ある時に全てのゴールに対して変形を行う。
-simpを全てのゴールに対して行う =simp_all= コマンドもある。
-
-
-**** case splitting
-
-次のように、caseによる場合分けをする必要がある定理を示したいとする。
-
-#+BEGIN_SRC text
-  lemma "P (case e of 0 => a | Suc n => b n) = ((e = 0 --> P a) /\ (∀n. e = Suc n --> P (b n)))"
-#+END_SRC
-
-この時は =split= をつけて
-
-#+BEGIN_SRC text
-  apply (simp split: nat.split)
-#+END_SRC
-
-のようにできる。
-
-** 3. Logic and Proof Beyond Equality
-
-*** 3.1 Formulas
-
-formulaの定義は次: 
-
-#+BEGIN_SRC text
-  form
-    ::= True | False | term = term
-    | ¬ form | form ∧ form | form ∨ form | form --> form | ∀x. form | ∃x. form
-#+END_SRC
-
-termはラムダ式とifとかcaseとかletとかそのへん
-
-*** 3.2 Sets
-
-~'a~ のsetを ~'a set~ とかく。次のようなnotationが定義されている。
-
-- ~{}~ , ~{e1,e2,e3}~
-- ~e ∈ A~ , ~A ⊆ B~
-- ~A ∪ B~ , ~A ∩ B~ , ~A − B~, ~− A~
-- ~{x | P}~
-
-HOLのsetはかなり便利なので積極的に使っていこう。
-
-*** 3.3 Proof Automation
-
-**** simpとauto
-
-さてsimpとautoの2つのproof methodはすでに見た。
-このセクションではより強力な自動証明や証明ツールをみていく。
-
-この2つの特徴として
-
-- 上手く行かなかったら(ゴールの解消を途中で諦めた場合は)、ゴールを変形したところで止める
-- 証明可能な命題だからといって必ずこれらで証明できるわけではない。むしろ出来ないものもたくさんある。
-
-**** fastforce
-
-autoより強力なproof methodにfastforceがある:
-
-#+BEGIN_SRC text
-  lemma "⟦ ∀ xs ∈ A. ∃ys. xs = ys @ ys; us ∈ A ⟧ ⟹ ∃ n. length us = n + n"
-  by fastforce
-#+END_SRC
-
-これはquantifierが複雑なのでautoでは証明できない。
-fastforceは失敗することもあり、また最初のゴールに対してしか作用しない。fastforceは複雑なlogicに弱いがequality reasoningに強い。
-
-**** blast
-
-さらに複雑なゴールを示せるproof methodにblastがある。
-
-#+BEGIN_SRC text
-  lemma "⟦ ∀x y. T x y ∨ T y x; ∀x y. A x y ∧ A y x ⟶ x = y; ∀x y. T x y ⟶ A x y ⟧ ⟹ ∀x y. A x y ⟶ T x y"
-  by blast
-#+END_SRC
-
-blastも失敗することもあり、logic,setに強いがequality reasoningに弱い。
-
-**** sledgehammer
-
-sledgehammerはproof searchを行うコマンドである。
-これは現在証明可能な定理とblast,auto,simpなどのproof methodを組み合わせて現在のゴールを解消するような証明を自動生成するツールである。
-
-#+BEGIN_SRC text
-  lemma "⟦ xs @ ys = ys @ xs; length xs = length ys ⟧ ⟹ xs = ys"
-#+END_SRC
-
-ここでsledgehammerと入力するか、またはjEditのsledgehammerパネルでApplyのボタンを押す。
-するといくつかの候補が表示されるので、好きな証明をクリックするとそれが実際に挿入される。
-
-#+BEGIN_SRC text
-    using append_eq_append_conv by blast
-#+END_SRC
-
-ここで、使われている ~append_eq_append_conv~ という補題が自動的に採用されていることに注意。
-
-sledgehammerはいくつかのsolverをそれぞれ回して証明を探索するので、いくつかの証明が得られることもあれば難しい命題の場合には全て諦めてしまうこともある。
-sledgehammerが ~metis~ を含む証明を提案した場合、metisは与えられた補題だけからゴールを解消するためのコマンドであり、現実的な時間で応答が返らないこともあることに注意。
-
-**** arithmetic
-
-arithmetic formula (変数、数値、 ~+,-,=,<~)の解消には ~arith~ を使う。
-
-#+BEGIN_SRC text
-  lemma "⟦ (a::nat) ≤ x + b; 2*x < c ⟧ ⟹ 2*a + 1 ≤ 2*b + c"
-  by arith
-#+END_SRC
-
-簡単なarithmetic formulaならautoやsimpでも解ける可能性はある。
-また、arithは整数や実数が対象でもよい。
-
-**** try
-
-全てのproof methodを試すなら ~try~ コマンドを使う。あるいは ~try0~ というより簡単なものを使っても良い。
-
-*** 3.4 Single Step Proofs
-
-**** rule
-
-導入規則を適用するruleというコマンドがある。
-ruleは定理を1つ受け取ってそれをintroルールとして現在のゴールに適用する。いくつかのintro ruleはすでに知っているので省略できることもある。
-
-**** OF/of
-
-定理が ~A ==> B~ の形の時(ここでのimplicationは ~==>~ であって ~-->~ ではないことに注意。後者は単なるHOLのlogical connectiveだが前者はIsabelleで特別な意味を持つ)、 ~A~ に何かを適用したいときはOFを使う:
-例えば ~r: A ==> B~ かつ ~s: A~ のとき、 ~r [OF s]~ は ~B~ という定理を表す。
-
-さらに、定理が自由変数(~?hoge~ のような形の変数)を含んでいる時、これをofで束縛できる:
-例えば、 ~r: ?P ?x~ のとき、 ~r [of "λx. x = 10" 20]~ は ~20 = 10~ という命題を表す。
-
-OF/ofは複数適用する場合はスペース区切りで横に並べる。1つの項がスペースを含む場合は例によってダブルクオーテーションで囲むこと。
-
-例：
-
-#+BEGIN_SRC text
-  thm conjI[OF refl[of a] refl[of b]]
-  (* は、 a=a /\ b=b という定理になる *)
-#+END_SRC
-
-**** intro/dest modifier
-
-fastforce,blast,autoに対して、modifier ~intro, dest~ が用意されている。
-
-- intro: ~blast intro: [thm]~ などとすることで、 ~A ==> B~ の定理を用いて結論のBをAに書き換えて証明を行う
-- dest: ~blast dest: [thm]~ などとすることで、 ~A ==> B~ の定理を用いて仮定のA(あるいはAを含む定理)をBに書き換えて証明を行う
-
-*** 3.5 Inductive Definitions
-
-**** inductive predicate
-
-inductive predicateをinductiveキーワードを使って定義できる。
-
-#+BEGIN_SRC text
-  inductive even :: "nat => bool" where
-    ev0: "ev 0"
-  | evS: "ev n ==> ev (n + 2)"
-#+END_SRC
-
-は、 ~ev n = True~ とnが偶数であることが同値であるような述語を表す。
-
-**** cases/induct
-
-inductiveで定義した述語に対する場合分けや構造帰納法などが自動で生成される。
-上のようにevenを定めた場合、例えばjEditのQueryパネルに ~name:even~ と入力することで ~even.cases~ や ~even.induct~ などの定理が自動で生成されていることがわかるだろう。
-
-この帰納法を用いて証明を行う場合、次のように書ける:
-
-#+BEGIN_SRC text
-  lemma "even m ==> P m"
-  apply (induction m rule: even.induct)
-#+END_SRC
-
-** 4. Isar: A Language for Structured Proofs
-
-IsabelleはIsarという、structured proofを記述するための言語を別に提供している。
-これはapplyを繋げて証明をするのとは違い、構造化された証明をキーワードを組み合わせて記述する、より自然言語による証明に近い記述を可能にする言語である。
-
-Isarのsyntaxのコアは次のようになっている(実際はもっと膨大):
-
-#+BEGIN_SRC text
-  proof
-    = 'by' method
-    | 'proof' [method] step* 'qed'
-
-  step
-    = 'fix' variables
-    | 'assume' proposition
-    | ['from' fact+] ('have' | 'show') proposition proof
-
-  proposition = [name :] "formula"
-#+END_SRC
-
-
-*** 4.1 Isar by Example
-
-初めにIsarによる証明を見せるので眺めてみよう。
-
-#+BEGIN_SRC text
-  lemma "¬ surj (f :: 'a ⇒ 'a set)"
-  proof -
-    assume srjf: "surj f"
-    from srjf have fa: "∀A. ∃a. A = f a" by (simp add: surj_def)
-    from fa have fa2: "∃a. {x. x ∉ f x} = f a" by blast
-    from fa2 show False by blast
-  qed
-#+END_SRC
-
-assumeによって仮定を導入し、その後はfrom..have..を繰り返して最後にshowで締めているのが分かる。
-各have/showの部分では命題を宣言し、その後に証明をかくという仕方で証明を進めている。
-
-また、proofの直後にはproof methodを並べて事前に何かを適用することができるが(~proof (rule A; simp)~ とかけば、証明を始める前に ~rule A; simp~ を適用できる)何も適用したくない場合はハイフンをつけると良い。
-
-**** this/then/hence/thus
-
-まず、全ての命題に名前を付ける必要があるのは不便だろう。直前に示した命題は ~this~ という名前で参照できる。
-上の最初の部分は
-
-#+BEGIN_SRC text
-  assume "surj f"
-  from this have ...
-#+END_SRC
-
-と書き換えられる。
-
-そしてthisを用いて
-
-- ~then~ = ~from this~
-- ~thus~ = ~then show~
-- ~hence~ = ~then have~
-
-と定められているので、上の証明は次のように簡単に書ける。
-
-#+BEGIN_SRC text
-  proof
-    assume "surj f"
-    hence "∀A. ∃a. A = f a" by (simp add: surj_def)
-    hence "∃a. {x. x ∉ f x} = f a" by blast
-    thus False by blast
-  qed
-#+END_SRC
-
-また、 ~from~ のように使用する定理を前置するのではなく後置する方法もある。
-
-- ~'have' prop 'using' fact~ = ~'from' fact 'have' prop~
-- ~'have' prop 'with' fact~ = ~'from' fact this 'have' prop~
-
-**** structured lemma
-
-証明だけではなく補題ももう少し構造化された方法で宣言できる。
-
-#+BEGIN_SRC text
-  lemma
-    fixes f :: "'a => 'a set"
-    assumes s: "surj f"
-    shows False
-#+END_SRC
-
-- fixes は変数を固定し、型を宣言するために使う。通常省略することも多い。
-- assumes/shows は仮定と結論を述べるために使う。仮定が複数ある場合はandで繋ぐ。
-
-~[| A; B; C |] ==> D~ を ~assumes A and B and C / shows D~ とかけるようになるということを覚えておけばよい。
-
-
-*** 4.2 Proof Patterns
-
-**** next
-
-ゴールが複数ある場合、proofのセクションをnextで区切って書く:
-
-#+BEGIN_SRC text
-  lemma P
-  proof
-    ...
-    show P1
-  next
-    ...
-    show P2
-  next
-    ...
-    show P3
-  qed
-#+END_SRC
-
-**** obtain
-
-existを使った定理から一時的に変数を束縛して使用するためにobtainを使う。
-
-#+BEGIN_SRC text
-  have p: "∃x. P(x)" ...
-
-  obtain x where k: "P (x)" using p by auto
-#+END_SRC
-
-obtain...where... それ自体命題の宣言なのでこれにも証明が必要なことに注意。
-obtain以降の行では束縛したxが変数として使えるようになる。
-
-
-*** 4.3 Streamlining Proofs
-
-**** pattern matching
-
-宣言する命題の部分に ~is~ を用いて名前を付けることができる。(名前は ~?~ から始める必要がある)
-
-#+BEGIN_SRC text
-  show "form1 <--> form2" (is "?L <--> ?R")
-#+END_SRC
-
-このように名前をつけると、showの中のproof...qedセクションではform1の代わりに ~?L~ などと書けるようになる。
-このisはパターンマッチを行い、無視したい(利用しない)パターンはアンダーバーで潰すことができる。
-
-また、showおよびlemmaの中では宣言した命題全体を ~?thesis~ で参照できる。
-つまり上の例では ~?thesis~ は ~form1 <--> form2~ のことである。
-
-**** quotation
-
-haveなどで示した命題は、名前をつけていなくてもクオートで囲むことで参照できる。
-
-#+BEGIN_SRC text
-  have "x > 0"
-  ...
-  from `x > 0` ...
-#+END_SRC
-
-**** moreover
-
-thenなどにより直前の命題は参照できるがそれ以前の命題は参照できない。
-moreover/ultimatelyというキーワードを使うと、それまでに示された全ての命題を仮定に追加して証明ができる。
-
-#+BEGIN_SRC text
-  have P1 ...
-  moreover have P2 ...
-  moreover
-  ...
-  moreover have Pn ...
-  ultimatery have ..  (* ここで、P1 .. Pnの全ての命題が仮定に追加される *)
-#+END_SRC
-
-**** proof block
-
-証明のスコープを明示するのに ~{}~ で囲むことができる。
-
-#+BEGIN_SRC text
-  proof-
-    { fix k
-      assume ...
-      ...
-      have ... }
-    then show ...　(* ここのthenでは直前のproof block {}部分全体を参照する *)
-#+END_SRC
-
-複数のゴールを示す際にnextで区切る代わりにproof blockを並べることもできる。
-
-
-*** 4.4 Case Analysis and Induction
-
-**** cases/inducts
-
-場合分けを行う場合、casesコマンドを用いてコンストラクタごとにゴールを分離する。
-このときIsar proofでもcaseというキーワードで場合分けを使った証明を書くことができる。
-
-#+BEGIN_SRC text
-  proof (cases xs)
-    case Nil
-    ...
-  next
-    case (Cons y ys)
-    ...
-  qed
-#+END_SRC
-
-これは帰納法を使った時も同じことが出来る
-
 * Isabelle/HOLを用いた証明
 
 今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。
@@ -846,7 +141,7 @@ commandにはWHILEが含まれていることからも分かる通り無限ル�
 
 *** small-step vs big-step
 
-これは直接IMPとは関係のない話だけれどしておかないとまずそうなのでここでする。
+これは直接IMPとは関係のない話だけれどして念の為ここで説明しておく。
 
 operational semanticsとは「評価」や「簡約」と言った操作を定めるが、この定め方としてsmall-stepまたはbig-stepという手法が使われる。
 small-stepとは、与えられたtermの次のステップを具体的に与えるようなもので、big-stepとは与えられたtermのsubtermを評価した結果を用いて次のステップを与えるようなもの。
@@ -942,22 +237,14 @@ big-stepな方では、 ~<c,st1> ⇓ st2~ と 「cをst1の下で評価したら
 
 *** Seq
 
-前2の定理はあまりに簡単すぎてあっけなかったですが次はもう少し難しいです。
- ~<c1 ;; c2 , st> ⇓ st'~ に対して言えることは何か？……そう、あるst''が存在してc1とstからst''へ、c2とst''からst'という感じのことが言えますね。
-
-これを言うためには存在を表す定理を宣言します。
-
 #+BEGIN_SRC text
   lemma coh_B_Seq:
     assumes "<c1 ;; c2 , st> ⇓ st'"
     obtains st'' where "<c1 , st> ⇓ st''" and "<c2 , st''> ⇓ st'"
 #+END_SRC
 
-〜な条件を満たす〜が存在すると言いたいときは、 =obtains ... where ...= を使います。
-ステートメント自体は良いと思います。
-
-これの証明は、以前にも紹介した、人間に優しい証明が書けるIsarという言語を使いましょう。
-Isarは定理の証明をコマンドではなく =proof ... qed= で囲んで書きます。
+~<c1 ;; c2,st> ⇓ st'~ ならば、 ~c1~ を実行すると評価が停止し、さらにその後 ~c2~ を実行すると ~st'~ の状態になって評価が停止するということが言えるはずである。
+上では後々の便利さのために ~obtains ... where ...~ で補題を宣言しているが、証明は存在量化を使った命題を示すという感じでやる。
 
 #+BEGIN_SRC text
     proof-
@@ -970,33 +257,240 @@ Isarは定理の証明をコマンドではなく =proof ... qed= で囲んで�
     qed
 #+END_SRC
 
-=proof= の直後にはコマンドを書くことが出来ますが今はそれはせず =proof -= とハイフンを置いています。あまり気にしなくていいです。
+証明の内容自体は場合分けくらいしかしてないのでよいと思う。
 
-Isarの証明は、 =have [ステートメント] [証明]= をいくつか並べ、最後に =show [ゴール] [証明]= を置くのが基本の形です。
-順番に行きましょう。
+*** If
 
-#+BEGIN_SRC text
-  have "<c1 ;; c2 , st> ⇓ st' ⟹ ∃st''. (<c1 , st> ⇓ st'') ∧ (<c2 , st''> ⇓ st')"
-    by (erule cbig.cases, auto)
-#+END_SRC
-
-=have X= でXが成り立つという意味です。当然成り立つと宣言するだけではダメで証明をその後に書く必要があります。
-haveの後の証明パートは今までの定理の証明と全く同じで、applyなどが使えます。
-説明していませんでしたが、 =apply (...); done= のように、applyが1度しか使われない証明は =by (...)= と書くことができるのでここではそうしています。
-
-また、 =erule= という新しいコマンドが出現しました。
-これは「次の定理を除去規則として適用せよ」みたいな意味です。ここでは場合分けを仮定の方に対して除去するように使って欲しかったのでこう書いています。
+~<IF b THEN c1 ELSE c2 , st> ⇓ st'~ のときにst'がどうなるかは ~b~ が何になるかによって変わるのでここでは2つ補題をおく。
 
 #+BEGIN_SRC text
-  then obtain st'' where "<c1 , st> ⇓ st''" and "<c2 , st''> ⇓ st'"
-    by (simp add: assms, auto)
+  lemma coh_B_IfTrue:
+    assumes "<IF b THEN c1 ELSE c2 , st> ⇓ st'"
+    and "beval st b = True"
+    shows "<c1 , st> ⇓ st'"
+  proof-
+    have "<IF b THEN c1 ELSE c2 , st> ⇓ st' ⟹ <c1,st> ⇓ st'"
+      apply (cases rule: cbig.cases, auto)
+      using assms(2) apply auto
+      done
+    then show ?thesis by (simp add: assms(1))
+  qed
+
+  lemma coh_B_IfFalse:
+    assumes "<IF b THEN c1 ELSE c2 , st> ⇓ st'"
+    and "beval st b = False"
+    shows "<c2 , st> ⇓ st'"
+  proof-
+    have "<IF b THEN c1 ELSE c2 , st> ⇓ st' ⟹ <c2,st> ⇓ st'"
+      apply (cases rule: cbig.cases, auto)
+      using assms(2) apply auto
+      done
+    then show ?thesis by (simp add: assms(1))
+  qed
 #+END_SRC
 
-次に、証明中の =obtain .. where ...= で〜が存在して〜ということを表します。
-obtainの前に付いている =then= は、直前に示した事実 (=have ...= のやつ) を仮定として使いますという意味です。
-つまりこの部分は、「直前に示したことを仮定に追加した上で、st''が存在して〜が成り立つ」という宣言です。
+見たままではあるが、bがtrueになるときはc1が実行され、bがfalseになるときはc2が実行される。
+ところでbはboolではなくbexpだったので、場合分けは ~beval st b~ によって行うことに注意。
 
-証明は簡単なので良いでしょう。
+*** While
+
+さて最後にWHILEである。
+WHILEもIFと同じく与えられた条件が成り立つかによって場合分けを行う。
+
+#+BEGIN_SRC text
+  lemma coh_B_WhileFalse:
+    assumes "beval st b = False"
+    and "<WHILE b DO c , st> ⇓ st'"
+    shows "st = st'"
+  proof-
+    have "<WHILE b DO c , st> ⇓ st' ⟹ st = st'"
+      apply (erule cbig.cases, auto)
+      apply (simp add: assms(1))
+      done
+    then show ?thesis by (simp add: assms(2))
+  qed
+
+  lemma coh_B_WhileStep:
+    assumes "beval st b = True"
+    and "<WHILE b DO c , st> ⇓ st''"
+    obtains "st'" where "<c,st> ⇓ st'" and "<WHILE b DO c , st'> ⇓ st''"
+  proof-
+    have "<WHILE b DO c , st> ⇓ st'' ⟹ ∃st'. (<c,st> ⇓ st') ∧ (<WHILE b DO c , st'> ⇓ st'')"
+      by (erule cbig.cases, auto simp add: assms(1))
+    then obtain "st'" where "<c,st> ⇓ st'" and "<WHILE b DO c , st'> ⇓ st''"
+      by (simp add: assms, auto)
+    then show ?thesis
+      using that by blast
+  qed
+#+END_SRC
+
+これも場合分けやるだけ。
+
+** 7. Proof of Determinism
+
+いよいよ目標だったcbigのDeterminismを示そう。
+
+#+BEGIN_SRC text
+  subsection {* Determinism *}
+
+  lemma cbig_deterministic: "⟦ <c,st> ⇓ st'; <c,st> ⇓ st'' ⟧ ⟹ st' = st''"
+  proof-
+    have "<c,st> ⇓ st' ⟹ (∀st''. (<c,st> ⇓ st'') ⟶ st' = st'')"
+      apply (induction rule: cbig.induct)
+        apply (simp add: coh_B_Skip)
+        apply (rule, rule) using coh_B_Ass apply auto[1]
+        apply (rule, rule, erule coh_B_Seq, simp)
+        using coh_B_IfTrue apply blast
+        using coh_B_IfFalse apply blast
+        apply (simp add: coh_B_WhileFalse)
+        by (metis coh_B_WhileStep)
+    then show "⟦ <c,st> ⇓ st'; <c,st> ⇓ st'' ⟧ ⟹ st' = st''"
+      by simp
+  qed
+#+END_SRC
+
+といっても証明自体は上で示した補題を使うだけなので簡単。
+ちなみにこの証明は、inductionの行以外は全てsledgehammerで導出しているのでマウスでボタンをぽちぽちやっているだけで証明が終わる。
+
+さて、上のcoherent lemmaでは場合分けしか行わなかったが、実際にこの補題は必要なのだろうか？と疑問に思うかもしれない。
+やってみると分かるのだが、この証明を上のような補題なしで直接行うのはかなり困難である。caseによる場合分けが必要であることがわかっても、今示そうとしている命題はかなり複雑なので解の探索が上の補題に比べてずっと難しくなる。
+
+補題をおくということは仮定を減らすことでもあり、本当に必要な仮定だけにしないと現実的な時間で探索が終わらないということはよくあるので、このように適切な補題をおくのは(証明が再利用できるだけでなく)大切なことである。
+
+** 8. Small-step & Big-step
+
+次に目標となる定理は次である。
+
+#+BEGIN_SRC text
+  theorem "<c,st> ⟶* <SKIP,st'> ⟷ <c,st> ⇓ st'"
+#+END_SRC
+
+これはsmall-stepとbig-stepの関係を表す定理である。
+(ここで、 ~<c,st> ⟶* <SKIP,st'>~ はcsmallを何回かしたやつ、みたいな意味で、まだ定義していないが下で定める。)
+
+以下でこの定理を示していく。
+
+** 9. Small-step long reduction
+
+csmallを複数回適用した、ということを表す関係を ~<_,_> ⟶* <_,_>~ でかいて、次のように定める。
+
+#+BEGIN_SRC text
+  subsubsection {* small-step long reduction *}
+
+  inductive csmall_long ("<_,_> ⟶* <_,_>") where
+    SL_refl: "<c,st> ⟶* <c,st>"
+  | SL_trans1: "⟦ <c,st> ⟶ <c',st'>; <c',st'> ⟶* <c'',st''> ⟧ ⟹ <c,st> ⟶* <c'',st''>"
+
+  lemma SL_trans: "⟦ <c,st> ⟶* <c',st'>; <c',st'> ⟶* <c'',st''> ⟧ ⟹ <c,st> ⟶* <c'',st''>"
+  apply (induction arbitrary: c'' st'' rule: csmall_long.induct)
+  apply simp
+  apply (blast intro: SL_trans1)
+  done
+
+  lemma SL_SeqStep: "<c1,st> ⟶* <c1',st'> ⟹ <c1;;c2,st> ⟶* <c1';;c2,st'>"
+  apply (induction arbitrary: c2 rule: csmall_long.induct)
+  apply (rule SL_refl)
+  using SL_trans1 S_SeqStep by blast
+#+END_SRC
+
+csmall_longは見ての通り、reflexitivityとtransitivityを使って定義しているが、これは次のように定めることと同値である。
+
+#+BEGIN_SRC text
+    inductive csmall_long ("<_,_> ⟶* <_,_>") where
+      SL_refl: "<c,st> ⟶* <c,st>"
+    | SL_trans: "⟦ <c,st> ⟶* <c',st'>; <c',st'> ⟶* <c'',st''> ⟧ ⟹ <c,st> ⟶* <c'',st''>"
+#+END_SRC
+
+前者の定義ではtransitivityが1ステップとnステップの組み合わせで書かれているのに対し、後者ではnステップとnステップの組み合わせで書かれている。
+これらが同値であることも示せるが、上のような定義を採用したのは帰納法を適用する際に若干楽になるからである。
+
+代わりにnステップ同士のtransitivityは ~SL_trans~ として改めて示している。
+ ~SL_SeqStep~ はあとで必要になる補題である。
+
+** 10. Proof of Small-step & Big-step
+
+さて目標となる定理を示そう。
+
+#+BEGIN_SRC text
+  lemma csmall_step: "⟦ <c,st> ⟶ <c',st'>; <c',st'> ⇓ st'' ⟧ ⟹ <c,st> ⇓ st''"
+  apply (induction arbitrary: st'' rule: csmall.induct)
+    apply (metis B_Ass aeval.simps(1) coh_B_Skip)
+    using B_Ass coh_B_Ass apply fastforce
+    using B_Seq B_Skip apply blast
+    apply (meson B_Seq coh_B_Seq)
+    apply (simp add: B_IfTrue)
+    apply (simp add: B_IfFalse)
+    apply (metis B_IfFalse B_IfTrue beval.simps(1) beval.simps(2) bool_to_bexp.simps coh_B_IfFalse coh_B_IfTrue)
+    apply (metis B_WhileFalse B_WhileStep coh_B_IfFalse coh_B_IfTrue coh_B_Seq coh_B_Skip)
+    done
+
+  lemma csmall_steps: "⟦ <c,st> ⟶* <c',st'>; <c',st'> ⇓ st'' ⟧ ⟹ <c,st> ⇓ st''"
+  apply (induction arbitrary: st'' rule: csmall_long.induct)
+  apply simp
+  apply (simp add: csmall_step)
+  done
+#+END_SRC
+
+初めに、small-stepしてからbig-stepしたものは全体としてbig-stepしたものになるという補題を示した。
+(ふわっとした説明しかできないけどなんて言ったらいいのかよくわからないので)
+
+#+BEGIN_SRC text
+  theorem "<c,st> ⟶* <SKIP,st'> ⟷ <c,st> ⇓ st'"
+  proof rule
+    assume hyp: "<c,st> ⟶* <SKIP,st'>"
+    have "<SKIP,st'> ⇓ st'" by rule
+    then show "<c,st> ⇓ st'"
+      by (rule csmall_steps [OF hyp])
+  next
+    show "<c,st> ⇓ st' ⟹ <c,st> ⟶* <SKIP,st'>"
+      apply (erule cbig.inducts)
+      apply (simp add: SL_refl)
+      apply (meson S_AssNum S_AssStep csmall_long.simps)
+      using SL_SeqStep SL_trans SL_trans1 S_SeqSkip apply blast
+      apply (metis SL_trans1 S_IfStep S_IfTrue bool_to_bexp.simps)
+      apply (metis S_IfFalse S_IfStep bool_to_bexp.simps csmall_long.simps)
+      apply (metis SL_refl SL_trans1 S_IfFalse S_IfStep S_WHILE bool_to_bexp.simps)
+      proof-
+        fix st b c st' st''
+        assume b: "beval st b = True"
+        and "<c,st> ⇓ st'"
+        and h: "<c,st> ⟶* <SKIP,st'>"
+        and "<WHILE b DO c,st'> ⇓ st''"
+        and j: "<WHILE b DO c,st'> ⟶* <SKIP,st''>"
+      
+        have "<WHILE b DO c,st> ⟶* <IF b THEN c ;; WHILE b DO c ELSE SKIP,st>"
+          using SL_refl SL_trans1 S_WHILE by blast
+        moreover have "<IF b THEN c ;; WHILE b DO c ELSE SKIP,st> ⟶* <c ;; WHILE b DO c , st>"
+          using b by (metis S_IfStep S_IfTrue bool_to_bexp.simps csmall_long.simps)
+        moreover have "<c ;; WHILE b DO c , st> ⟶* <SKIP ;; WHILE b DO c , st'>"
+          by (rule SL_SeqStep, rule h)
+        moreover have "<SKIP ;; WHILE b DO c , st'> ⟶* <WHILE b DO c , st'>"
+          by (rule, rule, rule)
+        moreover have "<WHILE b DO c , st'> ⟶* <SKIP,st''>"
+          by (rule j)
+        ultimately show "<WHILE b DO c,st> ⟶* <SKIP,st''>"
+          using SL_trans by blast
+      qed
+  qed
+#+END_SRC
+
+
+順に見ていこう。
+
+まず ~<c,st> ⟶* <SKIP,st'> ⟹ <c,st> ⇓ st'~ は、 ~<SKIP,st'> ⇓ st'~ と先ほど示したcsmall_stepsにより示される。
+
+~<c,st> ⇓ st' ⟹ <c,st> ⟶* <SKIP,st'>~ の方は、 ~<c,st> ⇓ st'~ についての場合分けを行う。
+場合分けはWHILE_true以外は明らかで、WHILE_trueのところは次のような式変形を示しているのが分かると思う:
+
+#+BEGIN_SRC text
+  <WHILE b DO c,st>
+  ⟶* <IF b THEN c ;; WHILE b DO c ELSE SKIP,st>
+  ⟶* <c ;; WHILE b DO c,st>
+  ⟶* <SKIP ;; WHILE b DO c,st'>
+  ⟶* <WHILE b DO c,st'>
+  ⟶* <SKIP,st''>
+#+END_SRC
+
 
 * Footnotes
 

@@ -1,0 +1,226 @@
+---
+title: Isabelle/HOLの基本 その3
+date: 2017-12-04T00:39:09+09:00
+toc: true
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 4日目の記事です。*
+
+-----
+
+テキスト代わりのチュートリアル: [[https://isabelle.in.tum.de/dist/Isabelle2017/doc/prog-prove.pdf][prog-prove.pdf]]
+
+前回はHOLと自動証明についてやりました。
+今回やる4章では、Isarという新しい言語(？)について見ていきます。
+
+* 4. Isar: A Language for Structured Proofs
+
+IsabelleはIsarという、structured proofを記述するための言語を別に提供している。
+これはapplyを繋げて証明をするのとは違い、構造化された証明をキーワードを組み合わせて記述する、より自然言語による証明に近い記述を可能にする言語である。
+
+Isarのsyntaxのコアは次のようになっている(実際はもっと膨大):
+
+#+BEGIN_SRC text
+  proof
+    = 'by' method
+    | 'proof' [method] step* 'qed'
+
+  step
+    = 'fix' variables
+    | 'assume' proposition
+    | ['from' fact+] ('have' | 'show') proposition proof
+
+  proposition = [name :] "formula"
+#+END_SRC
+
+
+** 4.1 Isar by Example
+
+初めにIsarによる証明を見せるので眺めてみよう。
+
+#+BEGIN_SRC text
+  lemma "¬ surj (f :: 'a ⇒ 'a set)"
+  proof -
+    assume srjf: "surj f"
+    from srjf have fa: "∀A. ∃a. A = f a" by (simp add: surj_def)
+    from fa have fa2: "∃a. {x. x ∉ f x} = f a" by blast
+    from fa2 show False by blast
+  qed
+#+END_SRC
+
+assumeによって仮定を導入し、その後はfrom..have..を繰り返して最後にshowで締めているのが分かる。
+各have/showの部分では命題を宣言し、その後に証明をかくという仕方で証明を進めている。
+
+また、proofの直後にはproof methodを並べて事前に何かを適用することができるが(~proof (rule A; simp)~ とかけば、証明を始める前に ~rule A; simp~ を適用できる)何も適用したくない場合はハイフンをつけると良い。
+
+*** this/then/hence/thus
+
+まず、全ての命題に名前を付ける必要があるのは不便だろう。直前に示した命題は ~this~ という名前で参照できる。
+上の最初の部分は
+
+#+BEGIN_SRC text
+  assume "surj f"
+  from this have ...
+#+END_SRC
+
+と書き換えられる。
+
+そしてthisを用いて
+
+- ~then~ = ~from this~
+- ~thus~ = ~then show~
+- ~hence~ = ~then have~
+
+と定められているので、上の証明は次のように簡単に書ける。
+
+#+BEGIN_SRC text
+  proof
+    assume "surj f"
+    hence "∀A. ∃a. A = f a" by (simp add: surj_def)
+    hence "∃a. {x. x ∉ f x} = f a" by blast
+    thus False by blast
+  qed
+#+END_SRC
+
+また、 ~from~ のように使用する定理を前置するのではなく後置する方法もある。
+
+- ~'have' prop 'using' fact~ = ~'from' fact 'have' prop~
+- ~'have' prop 'with' fact~ = ~'from' fact this 'have' prop~
+
+*** structured lemma
+
+証明だけではなく補題ももう少し構造化された方法で宣言できる。
+
+#+BEGIN_SRC text
+  lemma
+    fixes f :: "'a => 'a set"
+    assumes s: "surj f"
+    shows False
+#+END_SRC
+
+- fixes は変数を固定し、型を宣言するために使う。通常省略することも多い。
+- assumes/shows は仮定と結論を述べるために使う。仮定が複数ある場合はandで繋ぐ。
+
+~[| A; B; C |] ==> D~ を ~assumes A and B and C / shows D~ とかけるようになるということを覚えておけばよい。
+
+
+** 4.2 Proof Patterns
+
+*** next
+
+ゴールが複数ある場合、proofのセクションをnextで区切って書く:
+
+#+BEGIN_SRC text
+  lemma P
+  proof
+    ...
+    show P1
+  next
+    ...
+    show P2
+  next
+    ...
+    show P3
+  qed
+#+END_SRC
+
+*** obtain
+
+existを使った定理から一時的に変数を束縛して使用するためにobtainを使う。
+
+#+BEGIN_SRC text
+  have p: "∃x. P(x)" ...
+
+  obtain x where k: "P (x)" using p by auto
+#+END_SRC
+
+obtain...where... それ自体命題の宣言なのでこれにも証明が必要なことに注意。
+obtain以降の行では束縛したxが変数として使えるようになる。
+
+
+** 4.3 Streamlining Proofs
+
+*** pattern matching
+
+宣言する命題の部分に ~is~ を用いて名前を付けることができる。(名前は ~?~ から始める必要がある)
+
+#+BEGIN_SRC text
+  show "form1 <--> form2" (is "?L <--> ?R")
+#+END_SRC
+
+このように名前をつけると、showの中のproof...qedセクションではform1の代わりに ~?L~ などと書けるようになる。
+このisはパターンマッチを行い、無視したい(利用しない)パターンはアンダーバーで潰すことができる。
+
+また、showおよびlemmaの中では宣言した命題全体を ~?thesis~ で参照できる。
+つまり上の例では ~?thesis~ は ~form1 <--> form2~ のことである。
+
+*** quotation
+
+haveなどで示した命題は、名前をつけていなくてもクオートで囲むことで参照できる。
+
+#+BEGIN_SRC text
+  have "x > 0"
+  ...
+  from `x > 0` ...
+#+END_SRC
+
+*** moreover
+
+thenなどにより直前の命題は参照できるがそれ以前の命題は参照できない。
+moreover/ultimatelyというキーワードを使うと、それまでに示された全ての命題を仮定に追加して証明ができる。
+
+#+BEGIN_SRC text
+  have P1 ...
+  moreover have P2 ...
+  moreover
+  ...
+  moreover have Pn ...
+  ultimatery have ..  (* ここで、P1 .. Pnの全ての命題が仮定に追加される *)
+#+END_SRC
+
+*** proof block
+
+証明のスコープを明示するのに ~{}~ で囲むことができる。
+
+#+BEGIN_SRC text
+  proof-
+    { fix k
+      assume ...
+      ...
+      have ... }
+    then show ...　(* ここのthenでは直前のproof block {}部分全体を参照する *)
+#+END_SRC
+
+複数のゴールを示す際にnextで区切る代わりにproof blockを並べることもできる。
+
+
+** 4.4 Case Analysis and Induction
+
+*** cases/inducts
+
+場合分けを行う場合、casesコマンドを用いてコンストラクタごとにゴールを分離する。
+このときIsar proofでもcaseというキーワードで場合分けを使った証明を書くことができる。
+
+#+BEGIN_SRC text
+  proof (cases xs)
+    case Nil
+    ...
+  next
+    case (Cons y ys)
+    ...
+  qed
+#+END_SRC
+
+これは帰納法を使った時も同じことが出来る。
+
+
+* まとめ
+
+4章では証明記述言語Isarについて見ました。
+
+というわけで長かったですがチュートリアルはこれで一通り終わったことになります。
+(重要度が低いと判断したところは飛ばしたりしているので、時間がある人は元のpdfにもあたっておいた方がいいかもしれません)
+
+チュートリアル prog-prove.pdfは終わったので入門編は今日でおしまいとなり、明日からはいよいよ実践的な証明を書いていく予定です。
+
+

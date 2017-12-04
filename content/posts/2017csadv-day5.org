@@ -1,0 +1,6 @@
+---
+title: "2017csadv Day5"
+date: 2017-12-04T19:52:03+09:00
+draft: true
+---
+
