@@ -8,14 +8,11 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@myuon_myon" />
     <meta name="og:site_name" content="{{ .Site.Title }}" />
-    <meta name="og:title" content="{{ .Title }}{{ if .IsPage }} - {{ .Site.Title }}{{ end }}" />
+    <meta itemprop="name" name="og:title" content="{{ .Title }}{{ if .IsPage }} - {{ .Site.Title }}{{ end }}" />
     <meta name="og:description" content="{{ if .IsPage }}{{ .Summary }}{{ else }}λに捧げよ{{ end }}" />
     <meta name="og:type" content="blog" />
     <meta name="og:url" content="{{ .Permalink }}" />
-    <meta name="og:image" content="{{ .Site.BaseURL }}images/icon_top.png" />
-
-    <meta itemprop="name" content="{{ .Title }}{{ if .IsPage }} - {{ .Site.Title }}{{ end }}" />
-    <meta itemprop="image" content="{{ .Site.BaseURL }}images/icon_top.png" />
+    <meta itemprop="image" name="og:image" content="{{ .Site.BaseURL }}/images/icon_top.png" />
 
     <title>{{ block "title" . }} {{ .Site.Title }} {{ end }}</title>
     <meta name="author" content="myuon">
