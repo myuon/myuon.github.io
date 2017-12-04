@@ -1,6 +1,110 @@
 ---
-title: "2017csadv Day5"
+title: IMPのoperational semantics その1
 date: 2017-12-04T19:52:03+09:00
 draft: true
+toc: true
 ---
+
+今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。
+そしてこの記事は一人computer scienceアドベントカレンダーなのでCSらしい話題を、ということで、
+IMPのoperational semanticsの話でもしようと思います。
+
+* IMPについて
+
+IMPとはimperative languageの頭文字を取ったもので、natとboolを基本型にもつ簡単な手続き型言語です。
+CSの教科書とかでよく見かけるやつです。
+IMPの定義をし、そのevaluationを定めます。
+
+ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。
+このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。
+
+* 0. States
+
+IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。
+
+#+BEGIN_SRC text
+  section {* States *}
+
+  type_synonym id = string
+  type_synonym state = "id ⇒ nat"
+
+  definition empty :: "state" where
+    "empty _ = 0"
+
+  no_syntax
+    "_maplet"  :: "['a, 'a] ⇒ maplet"             ("_ /↦/ _")
+
+  fun update :: "state ⇒ id ⇒ nat ⇒ state" ("_[_ ↦ _]" [80,80,80] 80) where
+    "update st x n y = (if x = y then n else st y)"
+#+END_SRC
+
+sectionコマンドは証明には影響を与えないが、Sidekickにsectionとして表示されたりLaTeXに出力すると実際に節として扱われたりするもの。chapter, subsectio, subsubsectionなどもある。
+
+さて、 ~id~ で変数名を表すことにし、さらに環境を表す ~state~ を定めた。
+ここでは ~id~ として ~string~ を、 ~state~ としてidを受け取ってnatを返す関数を使うことにした。(変数に格納される値は常にnatである)
+
+Isabelleで文字列リテラルは ~''hoge''~ と、シングルクオート2つで囲って表現する[fn:1]。
+
+さてここではupdateというstateを更新する関数を定義しているが、その前になにやらno_syntaxという箇所がある。
+これは、update関数を演算子として ~st [x ↦ n]~ のように書きたいのだが、この記法がすでにある ~_maplet~ という記法と被ってしまうため既存の記法を解除するためのものである。
+このように記法が被った場合、すでにある演算子の定義を調べ(jEditならCtrlを押しながらクリックとかで定義箇所に飛べる)、それをno_syntaxやno_notationで解除することができる。
+
+* 1. Arithmetic and Boolean Expression
+
+さて、arithmetic expressionとboolean expressionを定義しよう。
+
+arithmetic expressionはnat型のtermで、数値リテラル、(nat型の)変数、あるいはaexp同士の和・差・積のいずれか。
+boolean expressionはbool型のtermで、true、false、aexp同士の比較、bexpのかつや否定をとったもののいずれか。
+
+#+BEGIN_SRC text
+  section {* Arithmetic and Boolean Expressions *}
+
+  subsection {* Syntax *}
+
+  datatype aexp = ANum nat | AId id | APlus aexp aexp | AMinus aexp aexp | AMult aexp aexp
+  datatype bexp = BTrue | BFalse | BEq aexp aexp | BLeq aexp aexp | BAnd bexp bexp | BNot bexp
+#+END_SRC
+
+* 2. Evaluation of AExp, BExp
+
+さてaexp, bexpのevaluationを定義しよう。
+aexp, bexpの評価は常に可能(常に有限ステップで停止する関数がかける)ので大人しくfunで関数として定義することにする。
+
+#+BEGIN_SRC text
+  subsection {* Evaluation *}
+
+  fun aeval :: "state ⇒ aexp ⇒ nat" where
+    "aeval st (ANum n) = n"
+    | "aeval st (AId x) = st x"
+    | "aeval st (APlus a1 a2) = aeval st a1 + aeval st a2"
+    | "aeval st (AMinus a1 a2) = aeval st a1 - aeval st a2"
+    | "aeval st (AMult a1 a2) = aeval st a1 * aeval st a2"
+
+  fun beval :: "state ⇒ bexp ⇒ bool" where
+    "beval st BTrue = True"
+    | "beval st BFalse = False"
+    | "beval st (BEq a1 a2) = (aeval st a1 = aeval st a2)"
+    | "beval st (BLeq a1 a2) = (aeval st a1 ≤ aeval st a2)"
+    | "beval st (BNot b) = (¬ beval st b)"
+    | "beval st (BAnd b1 b2) = (beval st b1 ∧ beval st b2)"
+
+  fun bool_to_bexp :: "bool ⇒ bexp" where
+    "bool_to_bexp b = (if b then BTrue else BFalse)"
+#+END_SRC
+
+aeval, bevalともに評価を行う際に変数の値を参照したりする可能性があるのでstateを引数として渡している。
+ついでに =bool_to_bexp= を定義しておいた。後で使う。
+
+
+
+
+* まとめ
+
+(今回は準備回なのであんまり何もしてないけど)Stateの定義をし、aexp/bexpを定めその評価を行う関数を定義した。
+
+明日はcommandを定義します。
+
+* Footnotes
+
+[fn:1] ダブルクオーテーションが取られてしまっているので致し方ないのだろうけどなんとかなんない？って思う(なんともならない)
 

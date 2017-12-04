@@ -1,0 +1,151 @@
+---
+title: IMPのoperational semantics その4
+date: 2017-12-04T20:10:38+09:00
+draft: true
+toc: true
+---
+
+前回は、big-stepがdeterministicであることを示した。
+
+* 9. Small-step long reduction
+
+csmallを複数回適用した、ということを表す関係を ~<_,_> ⟶* <_,_>~ でかいて、次のように定める。
+
+#+BEGIN_SRC text
+  subsubsection {* small-step long reduction *}
+
+  inductive csmall_long ("<_,_> ⟶* <_,_>") where
+    SL_refl: "<c,st> ⟶* <c,st>"
+  | SL_trans1: "⟦ <c,st> ⟶ <c',st'>; <c',st'> ⟶* <c'',st''> ⟧ ⟹ <c,st> ⟶* <c'',st''>"
+
+  lemma SL_trans: "⟦ <c,st> ⟶* <c',st'>; <c',st'> ⟶* <c'',st''> ⟧ ⟹ <c,st> ⟶* <c'',st''>"
+  apply (induction arbitrary: c'' st'' rule: csmall_long.induct)
+  apply simp
+  apply (blast intro: SL_trans1)
+  done
+
+  lemma SL_SeqStep: "<c1,st> ⟶* <c1',st'> ⟹ <c1;;c2,st> ⟶* <c1';;c2,st'>"
+  apply (induction arbitrary: c2 rule: csmall_long.induct)
+  apply (rule SL_refl)
+  using SL_trans1 S_SeqStep by blast
+#+END_SRC
+
+csmall_longは見ての通り、reflexitivityとtransitivityを使って定義しているが、これは次のように定めることと同値である。
+
+#+BEGIN_SRC text
+    inductive csmall_long ("<_,_> ⟶* <_,_>") where
+      SL_refl: "<c,st> ⟶* <c,st>"
+    | SL_trans: "⟦ <c,st> ⟶* <c',st'>; <c',st'> ⟶* <c'',st''> ⟧ ⟹ <c,st> ⟶* <c'',st''>"
+#+END_SRC
+
+前者の定義ではtransitivityが1ステップとnステップの組み合わせで書かれているのに対し、後者ではnステップとnステップの組み合わせで書かれている。
+これらが同値であることも示せるが、上のような定義を採用したのは帰納法を適用する際に若干楽になるからである。
+
+代わりにnステップ同士のtransitivityは ~SL_trans~ として改めて示している。
+ ~SL_SeqStep~ はあとで必要になる補題である。
+
+* 10. Proof of Small-step & Big-step
+
+さて目標となる定理を示そう。
+
+#+BEGIN_SRC text
+  lemma csmall_step: "⟦ <c,st> ⟶ <c',st'>; <c',st'> ⇓ st'' ⟧ ⟹ <c,st> ⇓ st''"
+  apply (induction arbitrary: st'' rule: csmall.induct)
+    apply (metis B_Ass aeval.simps(1) coh_B_Skip)
+    using B_Ass coh_B_Ass apply fastforce
+    using B_Seq B_Skip apply blast
+    apply (meson B_Seq coh_B_Seq)
+    apply (simp add: B_IfTrue)
+    apply (simp add: B_IfFalse)
+    apply (metis B_IfFalse B_IfTrue beval.simps(1) beval.simps(2) bool_to_bexp.simps coh_B_IfFalse coh_B_IfTrue)
+    apply (metis B_WhileFalse B_WhileStep coh_B_IfFalse coh_B_IfTrue coh_B_Seq coh_B_Skip)
+    done
+
+  lemma csmall_steps: "⟦ <c,st> ⟶* <c',st'>; <c',st'> ⇓ st'' ⟧ ⟹ <c,st> ⇓ st''"
+  apply (induction arbitrary: st'' rule: csmall_long.induct)
+  apply simp
+  apply (simp add: csmall_step)
+  done
+#+END_SRC
+
+初めに、small-stepしてからbig-stepしたものは全体としてbig-stepしたものになるという補題を示した。
+(ふわっとした説明しかできないけどなんて言ったらいいのかよくわからないので)
+
+csmall_stepのinduction以下は全部sledgehammerで進むので簡単。csmall_stepsも普通に帰納法するだけ。
+
+#+BEGIN_SRC text
+  theorem "<c,st> ⟶* <SKIP,st'> ⟷ <c,st> ⇓ st'"
+  proof rule
+    assume hyp: "<c,st> ⟶* <SKIP,st'>"
+    have "<SKIP,st'> ⇓ st'" by rule
+    then show "<c,st> ⇓ st'"
+      by (rule csmall_steps [OF hyp])
+  next
+    show "<c,st> ⇓ st' ⟹ <c,st> ⟶* <SKIP,st'>"
+      apply (erule cbig.inducts)
+      apply (simp add: SL_refl)
+      apply (meson S_AssNum S_AssStep csmall_long.simps)
+      using SL_SeqStep SL_trans SL_trans1 S_SeqSkip apply blast
+      apply (metis SL_trans1 S_IfStep S_IfTrue bool_to_bexp.simps)
+      apply (metis S_IfFalse S_IfStep bool_to_bexp.simps csmall_long.simps)
+      apply (metis SL_refl SL_trans1 S_IfFalse S_IfStep S_WHILE bool_to_bexp.simps)
+      proof-
+        fix st b c st' st''
+        assume b: "beval st b = True"
+        and "<c,st> ⇓ st'"
+        and h: "<c,st> ⟶* <SKIP,st'>"
+        and "<WHILE b DO c,st'> ⇓ st''"
+        and j: "<WHILE b DO c,st'> ⟶* <SKIP,st''>"
+      
+        have "<WHILE b DO c,st> ⟶* <IF b THEN c ;; WHILE b DO c ELSE SKIP,st>"
+          using SL_refl SL_trans1 S_WHILE by blast
+        moreover have "<IF b THEN c ;; WHILE b DO c ELSE SKIP,st> ⟶* <c ;; WHILE b DO c , st>"
+          using b by (metis S_IfStep S_IfTrue bool_to_bexp.simps csmall_long.simps)
+        moreover have "<c ;; WHILE b DO c , st> ⟶* <SKIP ;; WHILE b DO c , st'>"
+          by (rule SL_SeqStep, rule h)
+        moreover have "<SKIP ;; WHILE b DO c , st'> ⟶* <WHILE b DO c , st'>"
+          by (rule, rule, rule)
+        moreover have "<WHILE b DO c , st'> ⟶* <SKIP,st''>"
+          by (rule j)
+        ultimately show "<WHILE b DO c,st> ⟶* <SKIP,st''>"
+          using SL_trans by blast
+      qed
+  qed
+#+END_SRC
+
+
+順に見ていこう。
+
+まず ~<c,st> ⟶* <SKIP,st'> ⟹ <c,st> ⇓ st'~ は、 ~<SKIP,st'> ⇓ st'~ と先ほど示したcsmall_stepsにより示される。
+
+~<c,st> ⇓ st' ⟹ <c,st> ⟶* <SKIP,st'>~ の方は、 ~<c,st> ⇓ st'~ についての場合分けを行う。
+場合分けはWHILE_true以外は明らかで(当然ながらsledgehammer使った)、WHILE_trueのところは次のような式変形を示しているのが分かると思う:
+
+#+BEGIN_SRC text
+  <WHILE b DO c,st>
+  ⟶* <IF b THEN c ;; WHILE b DO c ELSE SKIP,st>
+  ⟶* <c ;; WHILE b DO c,st>
+  ⟶* <SKIP ;; WHILE b DO c,st'>
+  ⟶* <WHILE b DO c,st'>
+  ⟶* <SKIP,st''>
+#+END_SRC
+
+* 最後に:証明全体
+
+最後に証明全体を貼っておく。
+
+<script src="https://gist.github.com/myuon/e0c10a5bb0c14a70ad0eca5460cb7231.js"></script>
+
+* まとめ
+
+というわけで4回に分けてゆっくりめに説明してきたIMP編も終わりです。
+
+証明自体は割と教科書的な内容だったと思います。
+あんまり真面目に解説はしていないので、Isabelle入門したての人だとこれだけ読んでもわからん、となるかもしれませんが自分なりに手を動かしたり色々やってみるといいと思います。
+
+この4本の記事を読んでIsabelleがバリバリ使えるようになるわけではありませんが、まぁ補題をおくのって大事だなとか、sledgehammer使いまくりだなとかそういう雰囲気だけ感じ取ってもらえればいいかなくらいの気持ちです。
+
+
+明日の記事はまた少し別の話題になります。
+それではお疲れ様でした。
+

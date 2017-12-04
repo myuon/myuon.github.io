@@ -1,0 +1,179 @@
+---
+title: IMPのoperational semantics その3
+date: 2017-12-04T20:07:51+09:00
+draft: true
+toc: true
+---
+
+前回はcommandとcommandの評価を定義した。
+
+* 6. Coherent lemmas
+
+** SKIP
+
+#+BEGIN_SRC text
+  subsection {* Coherent lemmas *}
+
+  lemma coh_B_Skip:
+    assumes "<SKIP,st> ⇓ st'"
+    shows "st = st'"
+  using cbig.cases [OF assms] by auto
+#+END_SRC
+
+始めの補題はSKIPについてで、 ~<SKIP,st> ⇓ st'~ ならば ~st = st'~ というものである。
+直観的には明らかであろうし、証明も場合分けをするだけで済む。
+
+** Ass
+
+#+BEGIN_SRC text
+  lemma coh_B_Ass:
+    assumes "<x ::= a , st> ⇓ st'"
+    shows "st' = st [x ↦ aeval st a]"
+  using cbig.cases [OF assms] by auto
+#+END_SRC
+
+次は変数への代入。これも簡単なので省略。
+
+** Seq
+
+#+BEGIN_SRC text
+  lemma coh_B_Seq:
+    assumes "<c1 ;; c2 , st> ⇓ st'"
+    obtains st'' where "<c1 , st> ⇓ st''" and "<c2 , st''> ⇓ st'"
+#+END_SRC
+
+~<c1 ;; c2,st> ⇓ st'~ ならば、 ~c1~ を実行すると評価が停止し、さらにその後 ~c2~ を実行すると ~st'~ の状態になって評価が停止するということが言えるはずである。
+上では後々の便利さのために ~obtains ... where ...~ で補題を宣言しているが、証明は存在量化を使った命題を示すという感じでやる。
+
+#+BEGIN_SRC text
+    proof-
+      have "<c1 ;; c2 , st> ⇓ st' ⟹ ∃st''. (<c1 , st> ⇓ st'') ∧ (<c2 , st''> ⇓ st')"
+	by (erule cbig.cases, auto)
+      then obtain st'' where "<c1 , st> ⇓ st''" and "<c2 , st''> ⇓ st'"
+	by (simp add: assms, auto)
+      then show ?thesis
+	using that by blast
+    qed
+#+END_SRC
+
+証明の内容自体は場合分けくらいしかしてないのでよいと思う。
+
+** If
+
+~<IF b THEN c1 ELSE c2 , st> ⇓ st'~ のときにst'がどうなるかは ~b~ が何になるかによって変わるのでここでは2つ補題をおく。
+
+#+BEGIN_SRC text
+  lemma coh_B_IfTrue:
+    assumes "<IF b THEN c1 ELSE c2 , st> ⇓ st'"
+    and "beval st b = True"
+    shows "<c1 , st> ⇓ st'"
+  proof-
+    have "<IF b THEN c1 ELSE c2 , st> ⇓ st' ⟹ <c1,st> ⇓ st'"
+      apply (cases rule: cbig.cases, auto)
+      using assms(2) apply auto
+      done
+    then show ?thesis by (simp add: assms(1))
+  qed
+
+  lemma coh_B_IfFalse:
+    assumes "<IF b THEN c1 ELSE c2 , st> ⇓ st'"
+    and "beval st b = False"
+    shows "<c2 , st> ⇓ st'"
+  proof-
+    have "<IF b THEN c1 ELSE c2 , st> ⇓ st' ⟹ <c2,st> ⇓ st'"
+      apply (cases rule: cbig.cases, auto)
+      using assms(2) apply auto
+      done
+    then show ?thesis by (simp add: assms(1))
+  qed
+#+END_SRC
+
+見たままではあるが、bがtrueになるときはc1が実行され、bがfalseになるときはc2が実行される。
+ところでbはboolではなくbexpだったので、場合分けは ~beval st b~ によって行うことに注意。
+
+** While
+
+さて最後にWHILEである。
+WHILEもIFと同じく与えられた条件が成り立つかによって場合分けを行う。
+
+#+BEGIN_SRC text
+  lemma coh_B_WhileFalse:
+    assumes "beval st b = False"
+    and "<WHILE b DO c , st> ⇓ st'"
+    shows "st = st'"
+  proof-
+    have "<WHILE b DO c , st> ⇓ st' ⟹ st = st'"
+      apply (erule cbig.cases, auto)
+      apply (simp add: assms(1))
+      done
+    then show ?thesis by (simp add: assms(2))
+  qed
+
+  lemma coh_B_WhileStep:
+    assumes "beval st b = True"
+    and "<WHILE b DO c , st> ⇓ st''"
+    obtains "st'" where "<c,st> ⇓ st'" and "<WHILE b DO c , st'> ⇓ st''"
+  proof-
+    have "<WHILE b DO c , st> ⇓ st'' ⟹ ∃st'. (<c,st> ⇓ st') ∧ (<WHILE b DO c , st'> ⇓ st'')"
+      by (erule cbig.cases, auto simp add: assms(1))
+    then obtain "st'" where "<c,st> ⇓ st'" and "<WHILE b DO c , st'> ⇓ st''"
+      by (simp add: assms, auto)
+    then show ?thesis
+      using that by blast
+  qed
+#+END_SRC
+
+これも場合分けやるだけ。
+
+* 7. Proof of Determinism
+
+いよいよ目標だったcbigのDeterminismを示そう。
+
+#+BEGIN_SRC text
+  subsection {* Determinism *}
+
+  lemma cbig_deterministic: "⟦ <c,st> ⇓ st'; <c,st> ⇓ st'' ⟧ ⟹ st' = st''"
+  proof-
+    have "<c,st> ⇓ st' ⟹ (∀st''. (<c,st> ⇓ st'') ⟶ st' = st'')"
+      apply (induction rule: cbig.induct)
+        apply (simp add: coh_B_Skip)
+        apply (rule, rule) using coh_B_Ass apply auto[1]
+        apply (rule, rule, erule coh_B_Seq, simp)
+        using coh_B_IfTrue apply blast
+        using coh_B_IfFalse apply blast
+        apply (simp add: coh_B_WhileFalse)
+        by (metis coh_B_WhileStep)
+    then show "⟦ <c,st> ⇓ st'; <c,st> ⇓ st'' ⟧ ⟹ st' = st''"
+      by simp
+  qed
+#+END_SRC
+
+といっても証明自体は上で示した補題を使うだけなので簡単。
+ちなみにこの証明は、inductionの行以外は全てsledgehammerで導出しているのでマウスでボタンをぽちぽちやっているだけで証明が終わる。
+
+さて、上のcoherent lemmaでは場合分けしか行わなかったが、実際にこの補題は必要なのだろうか？と疑問に思うかもしれない。
+やってみると分かるのだが、この証明を上のような補題なしで直接行うのはかなり困難である。caseによる場合分けが必要であることがわかっても、今示そうとしている命題はかなり複雑なので解の探索が上の補題に比べてずっと難しくなる。
+
+補題をおくということは仮定を減らすことでもあり、本当に必要な仮定だけにしないと現実的な時間で探索が終わらないということはよくあるので、このように適切な補題をおくのは(証明が再利用できるだけでなく)大切なことである。
+* 8. Small-step & Big-step
+
+次に目標となる定理は次である。
+
+#+BEGIN_SRC text
+  theorem "<c,st> ⟶* <SKIP,st'> ⟷ <c,st> ⇓ st'"
+#+END_SRC
+
+これはsmall-stepとbig-stepの関係を表す定理である。
+(ここで、 ~<c,st> ⟶* <SKIP,st'>~ はcsmallを何回かしたやつ、みたいな意味で、まだ定義していないが下で定める。)
+
+以下でこの定理を示していく。
+
+* まとめ
+
+というところで今回はおしまい。
+
+次回はこの、small-stepとbig-stepを関係づける定理を示してこのIMP編も終わりになります。
+
+
+
+

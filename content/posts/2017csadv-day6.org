@@ -1,0 +1,127 @@
+---
+title: IMPのoperational semantics その2
+date: 2017-12-04T19:58:23+09:00
+draft: true
+toc: true
+---
+
+前回はaexp/bexpとそのevaluationを定めた。
+
+* 3. Commands
+
+さて次にcommandを定義する。
+
+これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
+
+#+BEGIN_SRC text
+  section {* Commands *}
+
+  subsection {* Syntax *}
+
+  datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com
+
+  notation
+    CSkip ("SKIP") and
+    CAssign ("_ ::= _" [50,50] 90) and
+    CSeq (infixr ";;" 30) and
+    CIf ("IF _ THEN _ ELSE _" 80) and
+    CWhile ("WHILE _ DO _" 90)
+#+END_SRC
+
+comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。
+このように定義しておくと、例えば以下のような記述ができるようになる。
+
+#+BEGIN_SRC text
+  WHILE BLeq (AId ''X'') (ANum 0) DO
+    IF BTrue THEN
+      ''X'' ::= ANum 1 ;;
+      ''Y'' ::= ANum 10
+    ELSE
+      SKIP
+#+END_SRC
+
+* 4. Operational semantics
+
+さていよいよcommandの評価を行えるようにする。
+
+commandにはWHILEが含まれていることからも分かる通り無限ループが書けるので、一般に評価は停止しない。
+このため、「commandを実行したら(有限ステップで停止し)rという結果になった」ということを表現するための関係を定義する。
+
+あるいは、これはevalという部分関数のグラフだと思っても良いが、domain上でのwell-definednessは後にeval_deterministicという形で示すまでは単なる関係である。
+
+** small-step vs big-step
+
+これは直接IMPとは関係のない話だけれどして念の為ここで説明しておく。
+
+operational semanticsとは「評価」や「簡約」と言った操作を定めるが、この定め方としてsmall-stepまたはbig-stepという手法が使われる。
+small-stepとは、与えられたtermの次のステップを具体的に与えるようなもので、big-stepとは与えられたtermのsubtermを評価した結果を用いて次のステップを与えるようなもの。
+(これもだいぶ怪しい説明な気がするがなんて言ったらいいのかヨクワカラナイ)
+
+small-stepは1ステップ分を定義してそれを順次繋いでいくという比較的直観に沿った与え方である。
+例えば ~M~ という項を評価すると ~r~ という結果になるような場合、 ~M -> M1 -> M2 -> ... -> r~ のようなステップを1つ1つ進んでいくような仕方で簡約が進むやり方(ここでの矢印1つ1つ)がsmall-stepである。
+
+対してbig-stepはrecursive functionの定義のように、 ~eval(M)~ の定義の中で ~eval(M')~ (M'はMのsubterm)なる結果を用いることができる。
+
+small-stepとbig-stepのどちらがよいというようなものではなく、大抵の場合は片方を定めたらもう一方も簡単に導出でき、しかも同値である(small-stepを繰り返したものとbig-stepは関係として一致する)ことが示せることが多い。
+(極稀に一方では定めにくい言語があるがそうそう遭遇するものではないと思う)
+
+
+というわけで今回も、IMPのoperational semanticsをsmall-stepとbig-stepの両方で定め、それが同値になることを後々に示すことになる。
+
+** コード
+
+#+BEGIN_SRC text
+  section {* Small-step operational semantics *}
+
+  subsection {* Definition *}
+
+  inductive csmall :: "com ⇒ state ⇒ com ⇒ state ⇒ bool" ("<_,_> ⟶ <_,_>" [10,10,10,10] 90) where
+    S_AssNum: "<x ::= ANum n , st> ⟶ <SKIP , st [x ↦ n]>"
+  | S_AssStep: "<x ::= a , st> ⟶ <x ::= ANum (aeval st a) , st>"
+  | S_SeqSkip: "<SKIP ;; c , st> ⟶ <c,st>"
+  | S_SeqStep: "<c1,st> ⟶ <c1',st'> ⟹ <c1 ;; c2 , st> ⟶ <c1' ;; c2 , st'>"
+  | S_IfTrue: "<IF BTrue THEN c1 ELSE c2 , st> ⟶ <c1 , st>"
+  | S_IfFalse: "<IF BFalse THEN c1 ELSE c2 , st> ⟶ <c2 , st>"
+  | S_IfStep: "<IF b THEN c1 ELSE c2 , st> ⟶ <IF (bool_to_bexp (beval st b)) THEN c1 ELSE c2 , st>"
+  | S_WHILE: "<WHILE b DO c , st> ⟶ <IF b THEN c ;; WHILE b DO c ELSE SKIP , st>"
+
+  section {* Big-step operational semantics *}
+
+  subsection {* Definition *}
+
+  inductive cbig :: "com ⇒ state ⇒ state ⇒ bool" ("<_,_> ⇓ _" [10,10,10] 70) where
+    B_Skip: "<SKIP,st> ⇓ st"
+  | B_Ass: "<x ::= a , st> ⇓ (st [x ↦ aeval st a])"
+  | B_Seq: "⟦ <c1,st1> ⇓ st2; <c2,st2> ⇓ st3 ⟧ ⟹ <c1 ;; c2 , st1> ⇓ st3"
+  | B_IfTrue: "⟦ beval st b = True; <c1,st> ⇓ st' ⟧ ⟹ <IF b THEN c1 ELSE c2 , st> ⇓ st'"
+  | B_IfFalse: "⟦ beval st b = False; <c2,st> ⇓ st' ⟧ ⟹ <IF b THEN c1 ELSE c2 , st> ⇓ st'"
+  | B_WhileFalse: "beval st b = False ⟹ <WHILE b DO c , st> ⇓ st"
+  | B_WhileStep: "⟦ beval st b = True; <c,st> ⇓ st'; <WHILE b DO c , st'> ⇓ st'' ⟧ ⟹ <WHILE b DO c , st> ⇓ st''"
+#+END_SRC
+
+定め方自体はごく標準的な仕方で取った。
+面倒なので逐一説明はしないけど(よく知らないって人には申し訳ないです)それぞれWHILEの評価をどうやっているかに注目しておくといいんじゃなかろうかと思う。
+
+small-stepの方では ~WHILE b DO c -> IF b THEN (c ;; WHILE b DO c ELSE SKIP)~ とやっているのに対して、
+big-stepの方では ~WHILE b DO c~ の ~b~ をまず評価し、それがfalseなら何もしない、trueなら ~c~ の実行と ~WHILE b DO c~ の実行を順次帰納的に行うことにしている。
+
+big-stepな方では、 ~<c,st1> ⇓ st2~ と 「cをst1の下で評価したら停止してst2になる」ことが同値になる(関係の中に停止性が含まれている)のでこのような定義になっていることに注意しよう。
+
+
+* 5. Deterministic
+
+さて実際の証明とは前後するが、ここで示したい定理のうちの1つを述べる。
+
+#+BEGIN_SRC text
+  lemma cbig_deterministic: "⟦ <c,st> ⇓ st'; <c,st> ⇓ st'' ⟧ ⟹ st' = st''"
+#+END_SRC
+
+これは関係cbigが部分関数であること(値を返す入力に対してはwell-definedであること)を言っている。
+これを示すためにはいくつか補題が必要になるので以下ではそれを先に示していく。
+
+
+* まとめ
+
+というところで今回は終わりです。
+次回は今回の記事の最後に述べた定理を示します。
+
