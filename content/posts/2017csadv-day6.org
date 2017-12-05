@@ -1,7 +1,6 @@
 ---
 title: IMPのoperational semantics その2
-date: 2017-12-04T19:58:23+09:00
-draft: true
+date: 2017-12-06T00:07:53+09:00
 toc: true
 ---
 
