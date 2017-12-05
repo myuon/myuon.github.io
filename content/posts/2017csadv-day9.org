@@ -1,0 +1,148 @@
+---
+title: Nominal IsabelleとChurch-Rosser その1
+date: 2017-12-05T19:42:10+09:00
+draft: true
+toc: true
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 9日目の記事です。*
+
+-----
+
+前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。
+今回はより発展的な話題として、Nominal Isabelleを用いてラムダ計算のChurch-Rosser性を示してみようと思います。
+
+定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。
+
+今回解説するコードは以下に置いてあります。
+
+[[https://gist.github.com/myuon/6ac863426d27f5d4df3a4dea4112eb7d][myuon/CR.thy]]
+
+* 前置き
+
+** ラムダ計算
+
+この記事をわざわざ読む人はラムダ計算についてはある程度知っている人が多いと思うのですが、簡単に説明をしておきます。
+
+ラムダ計算は計算のモデルとなるべく作られた言語で、「関数を作る・作った関数を呼び出す(関数を適用すること)」の2つの操作を基本とします。
+ここでの「計算」とは数を与えたら数を返す、のような、電卓で行われるような最も我々がイメージしやすい計算のことです。ラムダ計算ではこの「計算」を、項を別の項に変換するような操作によって実現します。
+これは単に ~1+2~ という項があったらそれを ~3~ へと変換する、あるいは ~f(x)=x+2~ という項があるときに、 ~f(10)~ を ~12~ へと変換する、そういう操作を計算と呼びますというだけなので難しいことはありません。
+
+さてラムダ計算の項(何がラムダ計算の項かはまだちゃんと説明していないけど)は通常変数の付け替えを同一視します。具体的には ~f(x)=x~ と ~f(y)=y~ を区別しないのですが、この同値をα同値と呼びます。
+
+ラムダ計算の定理証明で最も厄介なのはこのα同値性の扱いで、というか定理証明による形式化ではそもそも「同一視」とか「同値関係で割る」みたいな操作を扱うのがめちゃくちゃ苦手です。
+これは主に、一般に同一視されているかが計算によって判定可能でないこと[fn:1]と、同一視された項同士の計算はしばしば(人間は気にしないけど)それらの項の変形の構成に依存するからだと個人的には思っています。
+
+はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。
+
+** Nominal Isabelle
+
+Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。
+binderは ~[x]. M~ のような形をしていて、この束縛変数 ~x~ の変数名の付け替えを区別しないような項である。
+
+Nominal Isabelleではこの変数の付け替え、「例えば変数 ~x~ を ~y~ に付け替える」という操作を「置換 ~(x,y)~ を作用させる」という操作とみなす、というところからスタートする。
+より厳密には次のようなことである: 無限の変数からなる集合 ~V~ が与えられている時、 ~List (V×V)~ の元を置換と呼ぶ。このとき置換の作用を ~∙~ でかくことにし、 ~((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M~ のようにして定める。
+
+上の変数の書き換えの部分は当然項 ~M~ が属するデータ型がどのように定義されているかに依存するが、この辺のあれこれをいい感じにやってくれるのがNominal Isabelleであり、Nominal Isabelleが提供するコマンドだったりするわけである。
+
+また、以下でも登場するが、ある変数 ~x~ が項 ~M~ (複数ある場合はタプルとかにする)に(自由)出現しない、ということを ~x♯M~ で表す。
+
+* nominal_datatype
+
+さて御託を並べるのはこのくらいにして、実際の証明の解説に入る。
+
+#+BEGIN_SRC text
+  theory CR
+  imports "~~/src/HOL/Nominal/Nominal"
+  begin
+#+END_SRC
+
+Nominal IsabelleはHOLのライブラリ群の中に含まれているはずで、 =~~/src/HOL/Nominal/Nominal= とかでインポートできる。(=~~= でIsabelleがインストールされているパスを表す)
+ライブラリのコードはNominal theoryそのものが[[https://isabelle.in.tum.de/dist/library/HOL/HOL-Nominal/index.html][ここ]]、例が[[https://isabelle.in.tum.de/dist/library/HOL/HOL-Nominal-Examples/index.html][ここ]]にあるので見ると良いかもしれない。
+
+#+BEGIN_SRC text
+  atom_decl var
+
+  nominal_datatype lambda =
+    Var var
+  | App lambda lambda (infixl "$" 120)
+  | Abs "«var»lambda" ("lam [_]._" [100,100] 100)
+#+END_SRC
+
+~atom_decl~ はatomicな型を宣言するためのもの(Nominal Isabelleとは関係ない)。
+
+~nominal_datatype~ はdatatypeのようなものであるが、binderを指定すると上にも述べたような置換の作用と関連する大量の補題が全て自動で定義される。
+binderの指定は ~«var»~ のように行う。
+
+** strong_induction
+
+nominal_datatypeで定義された項は内部的には通常のdatatypeをα同値で割った型として定義されるので、通常のdatatypeとは少し挙動が違ったりする。
+代わりにnominal_datatype(と他のいくつかのコマンド)は通常のinductionの他にstrong_inductという帰納法を生成する。
+
+~lambda.induct~ と ~lambda.strong_induct~ を比べてみよう。
+
+#+BEGIN_SRC text
+  thm lambda.induct
+
+  (⋀var. ?P (Var var)) ⟹
+  (⋀lambda1 lambda2. ?P lambda1 ⟹ ?P lambda2 ⟹ ?P (lambda1 $ lambda2)) ⟹
+  (⋀var lambda. ?P lambda ⟹ ?P (lam [var].lambda)) ⟹ ?P ?lambda
+
+  thm lambda.strong_induct
+
+  (⋀var z. ?P z (Var var)) ⟹
+  (⋀lambda1 lambda2 z.
+      (⋀z. ?P z lambda1) ⟹ (⋀z. ?P z lambda2) ⟹ ?P z (lambda1 $ lambda2)) ⟹
+  (⋀var lambda z. var ♯ z ⟹ (⋀z. ?P z lambda) ⟹ ?P z (lam [var].lambda)) ⟹
+  ?P ?z ?lambda
+#+END_SRC
+
+strong_inductの方には余分な引数 ~z~ が追加されており、ラムダ抽象の部分では新たに ~var ♯ z~ が帰納法の仮定に追加されている。
+この部分がまさにstrong_inductであり、「帰納法を回す際に、binderの変数として与えられた項とはかぶらないものが取れる」ということを言っている。
+
+より正確には、α同値により、「もし仮に ~lam[x].M~ のxがzに出現した場合、freshな変数x'をとり、α同値性により ~lam[x].M = lam[x']. [(x,x')]∙M~ なので、命題中の ~M~ を ~[(x,x')]∙M~ に、 ~x~ を ~x'~ に取り替えることで最初から ~x~ はzの中でfreshなものとしてとってきてもよい」ということを含んでいるのがこのstrong_inductである。
+
+* substitution
+
+項の代入を行うsubstitutionを定義しよう。
+
+#+BEGIN_SRC text
+  nominal_primrec subst ("_[_::=_]" [100,100,100] 120) where
+    "(Var x)[y ::= s] = (if x = y then s else Var x)"
+  | "(M1 $ M2)[y ::= s] = (M1 [y ::= s]) $ (M2 [y ::= s])"
+  | "x♯(y,s) ⟹ (lam [x]. M)[y ::= s] = lam [x]. (M[y ::= s])"
+  apply (finite_guess+, auto)
+  apply (simp add: abs_fresh)
+  apply (fresh_guess+)
+  done
+#+END_SRC
+
+nominal_datatypeについてのprimitive recursive functionは ~nominal_primrec~ で定義する。
+primrecとほぼ同じだが、nominal_primrecは定義に出現している項がいくつかの性質を満たしていることを示す必要がある。 ~finite_guess~ と ~fresh_guess~ を上手く使うとなんとかなることが多い。
+
+また、ラムダ抽象の項に対する代入は当然ながら束縛変数と代入する変数が被らないようにしないと色々まずいのでここでは仮定として追加している。
+
+
+* lemmas for substitution
+
+代入関連の補題を先に示しておく。
+
+#+BEGIN_SRC text
+  lemma subst_gfresh':
+    assumes "x ♯ t" "x ♯ s" "x ≠ y"
+    shows "x ♯ t [y ::= s]"
+  using assms
+  apply (nominal_induct t avoiding: x y s rule: lambda.strong_induct)
+    apply (simp add: assms(2))
+    apply simp
+    apply (metis abs_fresh(1) fresh_prod lambda.fresh(3) simps(3))
+  done
+#+END_SRC
+
+まずは、 ~x~ が ~t~ と ~s~ に出現せず ~y~ と異なる時、 ~x~ は ~t[y::=s]~ に自由出現であるという補題である。
+さてこれを示すためには ~t~ についての帰納法をすればよさそうだが、今 ~t~ はnominal_datatypeなのでそのままの帰納法は使えない。nominal_datatypeに対する帰納法を行うコマンドに、 *nominal_induct* がある。
+n
+ominal_inductは ~rule~ によってどの帰納法を使うか(~lambda.strong_induct~ はnominal_datatypeが自動で導出した帰納法である)
+
+[fn:1] 逆に、計算によって判定可能な関係を含む項書換えについては計算機で扱いやすい形でよく使われていると思う
+
