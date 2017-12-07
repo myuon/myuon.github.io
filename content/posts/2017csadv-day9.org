@@ -47,18 +47,22 @@ Nominal Isabelleではこの変数の付け替え、「例えば変数 ~x~ を ~
 
 また、以下でも登場するが、ある変数 ~x~ が項 ~M~ (複数ある場合はタプルとかにする)に(自由)出現しない、ということを ~x♯M~ で表す。
 
+(余談だが、こういうbinderの変数のつらみというのはほか言語でも当然あるので、例えば(こちらはde Bruijn indexを使った代入規則の自動化に限定されてはいるが)[[https://www.ps.uni-saarland.de/autosubst/][Coqのautosubst]]というライブラリもあって、同じくラムダ計算の定理証明などに威力を発揮するようだ。)
+
 * nominal_datatype
 
-さて御託を並べるのはこのくらいにして、実際の証明の解説に入る。
+** はじめに
 
-#+BEGIN_SRC text
-  theory CR
-  imports "~~/src/HOL/Nominal/Nominal"
-  begin
-#+END_SRC
-
-Nominal IsabelleはHOLのライブラリ群の中に含まれているはずで、 =~~/src/HOL/Nominal/Nominal= とかでインポートできる。(=~~= でIsabelleがインストールされているパスを表す)
+Nominal IsabelleはHOLのライブラリ群の中に含まれているはずで、 =imports "~~/src/HOL/Nominal/Nominal"= とかでインポートできる。(=~~= でIsabelleがインストールされているパスを表す)
 ライブラリのコードはNominal theoryそのものが[[https://isabelle.in.tum.de/dist/library/HOL/HOL-Nominal/index.html][ここ]]、例が[[https://isabelle.in.tum.de/dist/library/HOL/HOL-Nominal-Examples/index.html][ここ]]にあるので見ると良いかもしれない。
+
+また、チュートリアルというかマニュアルが以下にあるので必要に応じて参照して欲しい。
+
+[[https://nms.kcl.ac.uk/christian.urban/Nominal/manual/nominal_datatype_manual.pdf][nominal_datatype_manual.pdf]]
+
+** nominal_datatype
+
+さて御託を並べるのはこのくらいにして、実際の証明の解説に入る。
 
 #+BEGIN_SRC text
   atom_decl var
@@ -142,7 +146,58 @@ primrecとほぼ同じだが、nominal_primrecは定義に出現している項�
 まずは、 ~x~ が ~t~ と ~s~ に出現せず ~y~ と異なる時、 ~x~ は ~t[y::=s]~ に自由出現であるという補題である。
 さてこれを示すためには ~t~ についての帰納法をすればよさそうだが、今 ~t~ はnominal_datatypeなのでそのままの帰納法は使えない。nominal_datatypeに対する帰納法を行うコマンドに、 *nominal_induct* がある。
 
-nominal_inductは ~rule~ によってどの帰納法を使うか(~lambda.strong_induct~ はnominal_datatypeが自動で導出した帰納法である)
+nominal_inductは ~rule~ によってどの帰納法を使うか(~lambda.strong_induct~ はnominal_datatypeが自動で導出した帰納法である)を指定する必要がある。
+また、strong_inductを用いる場合には ~avoiding~ というattributeにより与えれた項にfreshな変数を使って帰納法が回るようになる。
+
+上のstrong_inductのところでみた ~var ♯ z~ のzとしてこの ~avoiding~ で与えた項をとって帰納法を回すことになる。
+言い換えれば、 ~avoiding:z~ とかくと ~t = lam[x].t'~ の形の時にxがzにfreshであるという仮定を追加することができるようになる。
+
+
+Nominal Isabelleで最も大切なのがこのstrong_inductを用いたnominal_inductで、このようにbinderに出現する変数を特定の項に被らないようにして帰納法が回せるというのがポイントである。
+
+#+BEGIN_SRC text
+  lemma subst_fresh: "x ♯ s ⟹ x ♯ t[x ::= s]"
+  apply (nominal_induct t avoiding: x s rule: lambda.strong_induct)
+  apply (auto simp add: fresh_atm abs_fresh)
+  done
+
+  lemma subst_gfresh:
+    fixes x y :: var
+    assumes "x ♯ t" "x ♯ s"
+    shows "x ♯ t [y ::= s]"
+  apply (cases "x = y")
+    using assms(2) subst_fresh apply blast
+    using assms(1) assms(2) subst_gfresh' apply auto
+  done
+
+  lemma no_subst: "x ♯ t ⟹ t[x ::= s] = t"
+  apply (nominal_induct t avoiding: x s rule: lambda.strong_induct)
+    apply (simp add: fresh_atm)
+    apply simp
+    apply (simp add: abs_fresh(1) fresh_atm)
+  done
+
+  lemma substitution:
+    assumes "x ≠ y" "x ♯ L"
+    shows "M [x ::= N] [y ::= L] = M [y ::= L] [x ::= N [y ::= L]]"
+  using assms 
+  apply (nominal_induct M avoiding: x y N L rule: lambda.strong_induct)
+    apply (simp add: no_subst)
+    apply simp
+    apply (simp add: fresh_atm subst_gfresh')
+  done
+#+END_SRC
+
+あとの補題はさらっと見るだけにしよう。
+
+どれも基本的な補題であるが、最後のsubstitution lemmaは割とよく使われる重要な性質である。
+ステートメント自体は有名だが仮定にxとyが異なること、そしてxがLにfreshなことが必要であることに注意しよう。
+
+* まとめ
+
+Nominal Isabelleの説明をして補題を示したら長くなってしまったので一旦ここで分割する。
+次回はbeta reductionとかの諸々の証明をします。
+
 
 [fn:1] 逆に、計算によって判定可能な関係を含む項書換えについては計算機で扱いやすい形でよく使われていると思う
 

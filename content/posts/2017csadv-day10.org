@@ -1,0 +1,277 @@
+---
+title: Nominal Isabelleとラムダ計算 その2
+date: 2017-12-07T15:55:25+09:00
+draft: true
+toc: true
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 10日目の記事です。*
+
+-----
+
+前回はNominal Isabelleの説明と証明を少しだけしました。
+今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。
+
+
+* equivarianceとnominal_inductive
+
+** 補題
+
+さて2つの補題を示しておく。
+
+#+BEGIN_SRC text
+  lemma subst_eqvt[eqvt]:
+    fixes π :: "var prm"
+    shows "π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]"
+  apply (nominal_induct t avoiding: x s rule: strong_induct)
+  apply (simp add: perm_bij)
+  apply (simp)
+  apply (simp add: fresh_bij)
+  done
+
+  lemma subst_rename:
+    assumes "x ♯ t"
+    shows "([(x,y)]∙t) [x ::= s] = t [y ::= s]"
+  using assms
+  apply (nominal_induct t avoiding: x y s rule: lambda.strong_induct)
+  apply (auto simp add: swap_simps fresh_atm abs_fresh)
+  done
+#+END_SRC
+
+subst_eqvtに ~[eqvt]~ というattributeがついていることに注目して欲しい。
+これはprm(変数の置換)の作用に関する等式につけるattributeで、実際にsubst_eqvtは ~π∙M = ..~ みたいな形をしているのが分かると思う。
+
+これが以下の話に関わってくる。
+
+** β変換
+
+さてβ簡約を定義しよう。1ステップのβ簡約は普通にinductive relationとして定められる。
+
+#+BEGIN_SRC text
+  inductive beta (infixl "→β" 50) where
+    b_app1: "t1 →β t2 ⟹ t1 $ s →β t2 $ s"
+  | b_app2: "t1 →β t2 ⟹ s $ t1 →β s $ t2"
+  | b_abs: "t →β s ⟹ lam[x].t →β lam[x].s"
+  | b_beta': "x ♯ s ⟹ (lam [x]. t) $ s →β t[x ::= s]"
+
+  equivariance beta
+
+  nominal_inductive beta
+  by (simp_all add: abs_fresh subst_fresh)
+#+END_SRC
+
+β変換を行うb_beta'では、freshnessの条件がついていることに注意。
+そしてその下では、equivarianceとnominal_inductiveというのがあるが、これの説明をしよう。
+
+** nominal_inductive
+
+nominal_inductiveはnominal_datatypeの時のようなstrong_inductを生成するためのコマンドである。つまり、上のbetaでいうならば ~M →β M'~ についての帰納法で、b_abs規則の ~lam[x].t →β lam[x].s~ 部分でxが特定の項にfreshになるようにとれるようなものである。
+このようなstrong_inductを生成するのがnominal_inductiveである。
+
+実際に導出されるstrong_inductを見てみよう。
+
+#+BEGIN_SRC text
+  thm beta.strong_induct
+
+    Lambda.beta.strong_induct:
+      ?x1.0 →β ?x2.0 ⟹
+      (⋀t1 t2 s y. t1 →β t2 ⟹ (⋀z. ?P z t1 t2) ⟹ ?P y (t1 $ s) (t2 $ s)) ⟹
+      (⋀t1 t2 s y. t1 →β t2 ⟹ (⋀z. ?P z t1 t2) ⟹ ?P y (s $ t1) (s $ t2)) ⟹
+      (⋀t1 t2 x y. x ♯ y ⟹ t1 →β t2 ⟹ (⋀z. ?P z t1 t2) ⟹ ?P y (lam [x].t1) (lam [x].t2)) ⟹
+      (⋀x s t y. x ♯ y ⟹ x ♯ s ⟹ ?P y ((lam [x].t) $ s) (t[x::=s])) ⟹ ?P ?z ?x1.0 ?x2.0
+#+END_SRC
+
+b_absとb_beta'のところで、新たに ~x ♯ y~ が追加され、xが与えられた項を回避できるようになっていることがわかる。
+
+さて、このstrong_inductは ~lam[x].t1 →β lam[x].t2~ の項があるならばこれを適当にアルファ変換して ~x ♯ y~ となるようにxを取りなおす、ということをしているので、
+当然ながらこのようなアルファ変換が出来る必要があり、具体的に言えば ~π∙(lam[x].t1 →β lam[x].t2) = (π∙(lam[x].t1) →β π∙(lam[x].t2))~ が言えなければならない。
+
+このような置換の作用に関する等式をいい感じに導出してくれるのがequivarianceでああり、そこからstrong_inductを導出するのがnominal_inductiveである。
+
+まとめると、inductive relationに対するstrong_inductを使うためにはequivariance→nominal_inductの流れだけを抑えておけばよい。
+しかし、例えば上のbetaの定義にはsubstが出現するが、それについての置換の作用は自動では導出できないので、その場合は上でsubst_eqvtを示したように、置換の作用でどうなるかを ~[eqvt]~ attributeを付けて示す必要がある場合がある。
+
+
+* confluenceへ
+
+さて今回はNominal Isabelleの解説が目的ではなく(いやそれもあるけど)ラムダ計算の定理証明が目的だったのでそのへんの話をしよう。
+以下ではChurch-Rosserを示していくが、ここではparallel beta変換を用いる手法を用いることにする。
+
+(parallel beta変換て何という人もきっと証明を追いかけていれば分かると思うので(ほんまか)安心して欲しい)
+
+** parallel beta
+
+初めにparallel beta変換を定義する。上でもやったようにparallel betaのstrong_inductも導出しておく。
+
+#+BEGIN_SRC text
+  inductive par_beta (infixl "⇒β" 50) where
+    pb_var: "Var x ⇒β Var x"
+  | pb_app: "⟦ t1 ⇒β t2; s1 ⇒β s2 ⟧ ⟹ t1 $ s1 ⇒β t2 $ s2"
+  | pb_abs: "t ⇒β s ⟹ lam[x].t ⇒β lam[x].s"
+  | pb_beta: "⟦ x ♯ (s1,s2); t1 ⇒β t2; s1 ⇒β s2 ⟧ ⟹ (lam [x]. t1) $ s1 ⇒β t2 [x ::= s2]"
+
+  equivariance par_beta
+
+  nominal_inductive par_beta
+  by (simp_all add: abs_fresh subst_fresh)
+#+END_SRC
+
+parallel betaは普通のbeta簡約より少し強力で、1度(1ステップで)に複数のβ基を同時に簡約することを許している。
+例えば、 ~(lam [x]. (lam [y]. M) N) L~ の両方のβ基を簡約するのがparallel betaだと1ステップでできる。
+
+ただしparallel betaは「すでに見えているβ基を同時に複数簡約出来るだけで」あって、「β変換を行うことによって初めて得られるβ基の簡約はできない」ことに注意。
+例えば、 ~(lam [x]. (lam [y]. M)) N L~ を ~(lam [y]. M[x::=N]) L~ にはできるが、このyとLの簡約は最初の項から直接は行えない。このような違いがCRの証明に関わってくるので注意しよう。
+
+** CR property
+
+CRを言うためにparallel betaを導入したが、実際に必要になるのは以下の3性質である:
+
+1. one_to_par: ~M →β N ⟹ M ⇒β N~
+1. par_to_longbeta: ~M ⇒β N ⟹ M ⟶β N~
+1. par_to_star: ~⟦ t ⟶* t1; t ⇒β t2 ⟧ ⟹ t2 ⇒β t1~
+
+~⟶*~ は、あとで定義するがβ基を全て簡約する変換である。
+
+** parallel betaの補題
+
+いくつか補題を示す。
+
+#+BEGIN_SRC text
+  lemma pb_refl: "t ⇒β t"
+  apply (induction t rule: lambda.induct)
+  apply (rule, rule, simp, simp, rule, simp)
+  done
+
+  lemma one_to_par: "M →β N ⟹ M ⇒β N"
+  apply (induction rule: beta.induct)
+    apply (rule, simp, rule pb_refl)
+    apply (rule, rule pb_refl, simp)
+    apply (rule, simp, rule)
+    apply (auto simp add: pb_refl)
+  done
+#+END_SRC
+
+pb_reflはよいだろう。
+
+one_to_parは重要な性質で、parallel betaは通常のbetaを含んでいることを表している。
+
+** long beta
+
+次にlong beta簡約を定義する。といっても普通のbetaのreflexive transitive closureを取るだけで、さらにrefl-trans closureはIsabelleに組み込みのものがあるのでそれを使うことにする。
+
+#+BEGIN_SRC text
+    abbreviation long_beta (infixl "⟶β" 50) where
+      "long_beta == beta⇧*⇧*"
+#+END_SRC
+
+ところで関係はないが、このように定義したlong_betaをrelationとするreasoningをしようとすると、Isarのhave...also have...などの途中でcalculationの計算が停止しなくなることがあるようだ。
+おそらくこれはrefl-trans closureのtransitive ruleの定め方が特殊なせいだと思うのだが、実際にこういう不便な側面もあるので普通にinductiveで定義するほうがいいのかもしれない。
+
+以下では、 ~r_into_rtranclp: beta M N ==> long_beta M N~ と ~rtranclp_trans~ (単なるtransitivity)をよく使う。
+
+あとで使う補題を示しておく。
+証明は簡単なのでステートメントだけ列挙しておく。
+
+#+BEGIN_SRC text
+  lemma lb_app1: "t1 ⟶β t2 ⟹ t1 $ s ⟶β t2 $ s"
+  lemma lb_app2: "s1 ⟶β s2 ⟹ t $ s1 ⟶β t $ s2"
+  lemma lb_abs: "t ⟶β s ⟹ lam[x].t ⟶β lam[x].s"
+
+  lemma perm_fresh_lambda:
+    fixes M :: lambda and x y :: var
+    assumes "y ♯ (x,M)"
+    shows "x ♯ ([(y,x)] ∙ M)"
+
+  lemma lb_subst1: "t →β s ⟹ t[x ::= p] ⟶β s[x ::= p]"
+  lemma lb_subst: "⟦ t1 ⟶β t2; s1 ⟶β s2 ⟧ ⟹ t1[x ::= s1] ⟶β t2[x ::= s2]"
+
+  lemma par_to_longbeta: "M ⇒β N ⟹ M ⟶β N"
+  apply (induction rule: par_beta.induct)
+    apply (simp)
+    apply (rule rtranclp_trans, rule lb_app1, simp, rule lb_app2, simp)
+    apply (rule lb_abs, simp)
+    apply (rule rtranclp_trans, rule r_into_rtranclp, rule, simp)
+    apply (simp add: lb_subst)
+  done
+
+#+END_SRC
+
+正直補題自体は特別言うこともないが、最後のpar_to_longbetaは重要で、parallel betaはlong_betaに変換できることを言っている。
+
+** star変換
+
+さてβ基を一度に全て簡約するstar変換を定義する。
+このstar変換は常に行うことができるが(どんなラムダ項も1-step star変換が可能だが)、それを直接nominal_primrecとして定義してさらに停止性まで言うのは難しいので一旦relationとして定める。
+
+#+BEGIN_SRC text
+  nominal_primrec nonabs :: "lambda ⇒ bool" where
+    "nonabs (lam [_]._) = False"
+    | "nonabs (Var _) = True"
+    | "nonabs (App _ _) = True"
+  by (finite_guess+, rule+, fresh_guess+)
+
+  lemma nonabs_eqvt[eqvt]:
+    fixes π :: "var prm" and M :: lambda
+    shows "π ∙ nonabs M = nonabs (π ∙ M)"
+  by (nominal_induct M rule: lambda.strong_induct, auto)
+
+  inductive bstar (infixl "⟶*" 50) where
+    bs_var: "Var x ⟶* Var x"
+  | bs_abs: "M ⟶* M' ⟹ lam [x]. M ⟶* lam [x]. M'"
+  | bs_app: "⟦ nonabs M1; M1 ⟶* M2; N1 ⟶* N2 ⟧ ⟹ M1 $ N1 ⟶* M2 $ N2"
+  | bs_beta': "⟦ x ♯ (N1,N2); M1 ⟶* M2; N1 ⟶* N2 ⟧ ⟹ (lam [x]. M1) $ N1 ⟶* M2 [x ::= N2]"
+
+  equivariance bstar
+
+  nominal_inductive bstar
+  by (simp_all add: abs_fresh subst_fresh)
+#+END_SRC
+
+みて分かる通り、ラムダ項がapplicationの場合は1項目がabstractionかどうかで場合分けが必要だが、そのために ~nonabs~ という関数を用意し、そのeqvt lemmaも示しておいた。
+
+さて、bstarの定義ではbeta変換の部分でfreshnessを仮定に追加したが、これはequivarianceなどのために(Isabelleが自動導出できなくなるので)つけていたもので、
+この仮定は適当なアルファ変換を行うことではずすことができる。
+
+実は通常のbetaでも同じことができるが必要にならなかったので示さなかった。
+
+#+BEGIN_SRC text
+  lemma bs_beta:
+    assumes "M1 ⟶* M2" "N1 ⟶* N2"
+    shows "(lam [x]. M1) $ N1 ⟶* M2 [x ::= N2]"
+  proof-
+    obtain y :: var where y: "y ♯ (x,M1,M2,N1,N2)"
+      using exists_fresh [of "(x,M1,M2,N1,N2)"]
+      using fs_var1 by blast
+    have "(lam [x]. M1) $ N1 = (lam [y]. ([(y,x)]∙M1)) $ N1"
+      apply (simp add: lambda.inject alpha, rule disjI2, auto)
+      using y apply (meson fresh_atm fresh_prodD(1))
+      apply (simp add: perm_swap)
+      apply (rule perm_fresh_lambda, simp add: y)
+      done
+    also have "… ⟶* ([(y,x)]∙M2)[y ::= N2]"
+      by (rule, simp add: y, simp add: assms bstar.eqvt, rule assms)
+    also have "… = M2[x ::= N2]"
+      by (auto simp add: subst_rename y)
+    finally show "(lam [x]. M1) $ N1 ⟶* M2 [x ::= N2]"
+      by simp
+  qed
+#+END_SRC
+
+証明の概要は、次のとおりである。
+
+1. freshなyをとる
+1. ~(lam [x]. M1) $ N1 = (lam [y]. ([(y,x)]∙M1)) $ N1~ なるアルファ変換を行う。
+1. yのfreshnessによりベータ簡約ができて、 ~… ⟶* ([(y,x)]∙M2)[y ::= N2]~ とできる。
+1. 再びアルファ変換により ~… = M2[x ::= N2]~
+
+yのfreshnessが効いてきてこういうことが言えるのだけど詳細は証明読んでって感じ。
+
+
+* まとめ
+
+意外と説明することが多くて(そもそもラムダ計算の内容自体それなりにあるのでしょうがないけど)記事が長くなりすぎて驚愕してる。
+
+CR編は次回で終わりだけど次回も結構分量があります。
+死なない程度についてきてくれると嬉しいですね。
+
+
