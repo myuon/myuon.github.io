@@ -55,6 +55,7 @@ Nominal Isabelleではこの変数の付け替え、「例えば変数 ~x~ を ~
 
 Nominal IsabelleはHOLのライブラリ群の中に含まれているはずで、 =imports "~~/src/HOL/Nominal/Nominal"= とかでインポートできる。(=~~= でIsabelleがインストールされているパスを表す)
 ライブラリのコードはNominal theoryそのものが[[https://isabelle.in.tum.de/dist/library/HOL/HOL-Nominal/index.html][ここ]]、例が[[https://isabelle.in.tum.de/dist/library/HOL/HOL-Nominal-Examples/index.html][ここ]]にあるので見ると良いかもしれない。
+(例に今回の目標と同じCRを示しているのがあるけれど、(大まかな流れは同じだけど)これは特に見てないので私の証明とは色々違うと思います)
 
 また、チュートリアルというかマニュアルが以下にあるので必要に応じて参照して欲しい。
 

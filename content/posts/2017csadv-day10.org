@@ -153,7 +153,7 @@ CRを言うためにparallel betaを導入したが、実際に必要になる�
 
 pb_reflはよいだろう。
 
-one_to_parは重要な性質で、parallel betaは通常のbetaを含んでいることを表している。
+one_to_parは先にも言った重要な性質で、parallel betaは通常のbetaを含んでいることを表している。
 
 ** long beta
 
@@ -196,7 +196,7 @@ one_to_parは重要な性質で、parallel betaは通常のbetaを含んでい�
 
 #+END_SRC
 
-正直補題自体は特別言うこともないが、最後のpar_to_longbetaは重要で、parallel betaはlong_betaに変換できることを言っている。
+正直補題自体は特別言うこともないが、最後のpar_to_longbetaは先も出てきたやつの2つ目で、parallel betaはlong_betaに変換できることを言っている。
 
 ** star変換
 
