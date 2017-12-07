@@ -1,0 +1,263 @@
+---
+title: Nominal Isabelleとラムダ計算 その4
+date: 2017-12-07T20:10:08+09:00
+draft: true
+toc: true
+---
+
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 12日目の記事です。*
+
+-----
+
+さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。
+流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。
+
+まぁCRに比べればずっと簡単なのでいけるでしょ(適当)
+
+今回解説するコードは以下にあります:
+
+[[https://github.com/myuon/typed/blob/1f735c6580ce8c55a5fbf51e35b29ee00bae7e2c/theory/Simply.thy][myuon:typed/theory/Simply.thy]]
+
+* Simply-typed
+
+#+BEGIN_SRC text
+  nominal_datatype simply = TVar string | TArr simply simply (infixr "→" 90)
+#+END_SRC
+
+simply-typedな型はtype variableとfunction typeからなる。
+typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。
+
+** valid context
+
+さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。
+
+#+BEGIN_SRC text
+  inductive valid :: "(name × simply) list ⇒ bool" where
+    valid_nil: "valid []"
+  | valid_cons: "⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)"
+
+  equivariance valid
+
+  lemma elim_valid_cons: "valid ((x,T)#Γ) ⟹ valid Γ ∧ x ♯ Γ"
+  by (cases rule: valid.cases, auto)
+
+  lemma fresh_notin:
+    fixes x :: name and Γ :: "(name × simply) list"
+    assumes "x ♯ Γ"
+    shows "(x,y) ∉ set Γ"
+  using assms
+  apply (induction Γ arbitrary: x, simp, simp add: fresh_list_cons)
+  apply (rule, auto simp add: fresh_prod fresh_atm)
+  done
+
+  lemma valid_ctx_unique:
+    assumes "valid Γ" "(x,σ) ∈ set Γ" "(x,τ) ∈ set Γ"
+    shows "σ = τ"
+  using assms apply (induction Γ arbitrary: x, auto)
+    using fresh_notin apply simp
+    using fresh_notin apply simp
+  done
+#+END_SRC
+
+validから言えることなどを補題で示した。
+
+** typing rules
+
+typing ruleを定めよう。ここではwell-typedな項であることを表す述語をinductiveに定める。
+
+#+BEGIN_SRC text
+  inductive typed ("_ ⊢ _ : _" 40) where
+    st_var: "⟦ valid Γ; (x,σ) ∈ set Γ ⟧ ⟹ Γ ⊢ Var x : σ"
+  | st_app: "⟦ Γ ⊢ M : (σ → τ); Γ ⊢ N : σ ⟧ ⟹ Γ ⊢ App M N : τ"
+  | st_abs: "⟦ x ♯ Γ; (x,σ)#Γ ⊢ M : τ ⟧ ⟹ Γ ⊢ (lam [x]. M) : (σ → τ)"
+
+  equivariance typed
+
+  lemma fresh_type:
+    fixes x :: name
+    and T :: simply
+    shows "x ♯ T"
+  by (nominal_induct T rule:simply.strong_induct, simp_all add: fresh_string)
+  
+  nominal_inductive typed
+    by (simp_all add: fresh_type abs_fresh)
+#+END_SRC
+
+(~♯~ はnominalのfreshnessだが ~#~ はリストのcons記号なことに注意)
+
+equivarianceはよいのだが、strong_inductを言う場合には ~x ♯ Γ~ となるようにxを取り直せることを保証する必要があり、それに際してtypeが常にvariableとfreshなことが必要になるのでそれを示した。
+
+** context lemmas
+
+well-typednessとcontextに関連する補題を述べる。
+それぞれweakening、well-typedならばcontextはすでにcontextであること、contextは順序に依らないこと(の弱い形)である。
+
+#+BEGIN_SRC text
+  lemma weak_ctx:
+    assumes "set Γ ⊆ set Γ'" "valid Γ'" "Γ ⊢ M : σ"
+    shows "Γ' ⊢ M : σ"
+
+  lemma typed_valid: "Γ ⊢ M : A ⟹ valid Γ"
+
+  lemma ctx_swap_head_typed: "(x,t) # (y,s) # Γ ⊢ M : A ⟹ (y,s) # (x,t) # Γ ⊢ M : A"
+#+END_SRC
+
+ctx_swap_head_typedはもう少し強められるが、これはたまたまこの補題があとで必要になったことと、「順序をどう変えてもよい」ことをステートメントとして述べるのもそれを示すのもかなり大変なのでやらなかった。
+
+** coherence lemmas
+
+#+BEGIN_SRC text
+  lemma gen_typed_valid: "Γ ⊢ M : σ ⟹ valid Γ"
+
+  lemma gen_typed_var: "Γ ⊢ Var x : σ ⟹ (x,σ) ∈ set Γ"
+
+  lemma gen_typed_app:
+    assumes "Γ ⊢ M $ N : τ"
+    obtains σ where "Γ ⊢ M : (σ → τ)" "Γ ⊢ N : σ"
+
+  lemma gen_typed_abs:
+    assumes "Γ ⊢ lam [x]. M : ρ" "x ♯ Γ"
+    obtains σ τ where "(x,σ)#Γ ⊢ M : τ" "ρ = σ → τ"
+#+END_SRC
+
+さて、well-typednessのcoherenceである。
+どれも場合分け(typed.strong_cases)でいける。
+
+** towards soundness
+
+初めに2つの補題を示す。
+最初のやつは次の補題に必要になっただけなので大事なのは2つ目。
+
+#+BEGIN_SRC text
+  lemma typed_var_unique: "(x,σ)#Γ ⊢ Var x : τ ⟹ σ = τ"
+  apply (cases rule: typed.strong_cases, auto simp add: lambda.inject)
+  using elim_valid_cons apply (rule, simp)
+    using fresh_notin apply auto
+  apply (generate_fresh name)
+  by (meson gen_typed_valid gen_typed_var list.set_intros(1) valid_ctx_unique)
+
+  lemma subst_typed: "⟦ (x,σ)#Γ ⊢ M : τ; Γ ⊢ N : σ ⟧ ⟹ Γ ⊢ M[x::=N] : τ"
+  apply (nominal_induct M avoiding: x N σ Γ arbitrary: τ rule: lambda.strong_induct)
+    apply (auto elim!: gen_typed_var)
+    using typed_var_unique apply fastforce
+    using gen_typed_var [of "(x,σ)#Γ" _ σ] apply simp
+    apply (meson Pair_inject gen_typed_valid gen_typed_var set_ConsD st_var)
+      apply (rule gen_typed_app, simp)
+      apply (rule, blast, blast)
+  proof-
+    fix name lambda x N σ Γ τ
+    assume name_fresh: "name ♯ x" "name ♯ N" "name ♯ σ" "name ♯ Γ"
+    and IH: "⋀b ba bb bc τ. (b, bb) # bc ⊢ lambda : τ ⟹ bc ⊢ ba : bb ⟹ bc ⊢ lambda[b::=ba] : τ"
+    and hyp: "(x, σ) # Γ ⊢ lam [name].lambda : τ" "Γ ⊢ N : σ"
+
+    obtain τ1 τ2 where tau: "τ = τ1 → τ2" "(name, τ1) # (x, σ) # Γ ⊢ lambda : τ2"
+      by (metis fresh_list_cons fresh_prod fresh_type gen_typed_abs hyp(1) name_fresh(1) name_fresh(4))
+    have "(name,τ1) # Γ ⊢ lambda[x::=N] : τ2"
+      apply (rule IH)
+      apply (rule ctx_swap_head_typed)
+      apply (rule tau)
+      apply (rule weak_ctx [of Γ], auto)
+      apply (rule, rule typed_valid, rule hyp, rule name_fresh, rule hyp)
+      done
+    thus "Γ ⊢ lam [name].lambda[x::=N] : τ"
+      apply (simp add: tau(1))
+      by (simp add: name_fresh(4) st_abs)
+  qed
+
+#+END_SRC
+
+subst_typedはtypingに関するsubstitution lemmaなどと呼ばれるやつである。
+well-typedな項から代入した項のwell-typednessが言える。Mがabstractionの時に名前のfreshnessなどが問題になるのでそれを頑張って示しているのがここの証明である。
+
+** preservation
+
+さてpreservation、つまりβ簡約によってもwell-typedが保たれることを示そう。
+これはβ簡約についての帰納法でよく、一番難しいのはβ変換のときだが、これもsubst_typedなどからすぐ言える。
+
+betaだけでなくlong_betaでも同じことが言える。
+
+#+BEGIN_SRC text
+  lemma preservation_one:
+    assumes "M →β M'"
+    shows "Γ ⊢ M : σ ⟹ Γ ⊢ M' : σ"
+  apply (nominal_induct avoiding: Γ arbitrary: σ rule: beta.strong_induct [OF assms])
+  apply (erule gen_typed_app, rule)
+  prefer 2 apply (simp, simp)
+  apply (erule gen_typed_app, rule)
+  apply (simp, simp)
+  apply (erule gen_typed_abs, simp, simp, rule, simp, simp)
+  apply (erule gen_typed_app, erule gen_typed_abs, simp)
+  apply (rule subst_typed, simp add: simply.inject, simp add: simply.inject)
+  done
+
+  lemma preservation:
+    assumes "M ⟶β* M'"
+    shows "Γ ⊢ M : σ ⟹ Γ ⊢ M' : σ"
+  by (induct rule: long_beta.induct [OF assms], auto simp add: preservation_one)
+#+END_SRC
+
+** progress
+
+progressとは、プログラムの実行(簡約)が値を吐くまで続くという性質である。
+このラムダ計算では値とは関数(lambda abstraction)のことであるので、任意のラムダ項はabstractionになるまで簡約が停止しない(ただしprogressはcontextが空の時という条件が付いていることに注意。 ~Var x~ とかはそれ以上簡約できないがclosedでない項は普通考えないので)。
+
+#+BEGIN_SRC text
+  nominal_primrec Value :: "lambda ⇒ bool" where
+    "Value (lam [_]._) = True"
+    | "Value (Var _) = False"
+    | "Value (App _ _) = False"
+  by (finite_guess+, rule+, fresh_guess+)
+
+  lemma Value_abs:
+    assumes "Value M"
+    obtains x M' where "M = lam [x]. M'"
+  using assms by (nominal_induct M rule: lambda.strong_induct, auto)
+  
+  lemma progress: "[] ⊢ M : σ ⟹ Value M ∨ (∃M'. M →β M')"
+  proof-
+    have "⋀Γ. ⟦ Γ ⊢ M : σ; Γ = [] ⟧ ⟹ Value M ∨ (∃M'. M →β M')"
+      proof-
+        fix Γ
+        show "⟦ Γ ⊢ M : σ; Γ = [] ⟧ ⟹ Value M ∨ (∃M'. M →β M')"
+          apply (nominal_induct rule: typed.strong_induct, auto)
+          apply (erule Value_abs, simp, rule, rule b_beta)
+          done
+      qed
+    thus "[] ⊢ M : σ ⟹ Value M ∨ (∃M'. M →β M')" by simp
+  qed
+
+#+END_SRC
+
+~Value~ はnominal_primrecで定義することにして(これはexistenceなどを陽に扱いたくないという理由による)、あとは帰納法を回すため。
+なのだが、 ~[] ⊢ M : σ ⟹ ...~ に対してそのまま帰納法をすると「contextが空である」という情報が捨てられてしまうので(Isabelleとしてはこういう情報をどうやって扱ったらいいのか分からないので)、これを明示的にするために ~⋀Γ. ⟦ Γ ⊢ M : σ; Γ = [] ⟧ ⟹ Value M ∨ (∃M'. M →β M')~ の形に変形してから帰納法を回している。
+
+証明は簡単。
+
+** soundness
+
+preservation & progressを組み合わせて、「well-typed項はValueになるまで停止しない」ことを示すことができる。
+これが(simply-typed lambda calculusの)type soundnessである。
+
+#+BEGIN_SRC text
+  theorem soundness:
+    assumes "[] ⊢ M : σ" "M ⟶β* M'"
+    shows "Value M' ∨ (∃ M''. M' →β M'')"
+  by (rule progress, rule preservation, rule assms, rule assms)
+#+END_SRC
+
+というわけで証明完了！やったね！
+
+
+* まとめ
+
+まぁ証明自体は結構簡単で、Nominal Isabelleが手に馴染んでいれば結構すんなり証明できるのでは〜という感じだった。
+Strong Normalizationも実は示そうと今やっているところなのだけれど、間に合わなかったのとこっちはtype soundnessとは違って本気で大変なのでアドベントカレンダーでやるのは厳しそう。
+
+いずれにせよ4日に渡ってやってきたラムダ計算編は、Isabelle知らない人には(Nominal) Isabelleの強力さを、ラムダ計算での定理証明知らない人には定理証明の雰囲気を感じ取ってもらえるような内容になったのではないかなと思います。
+(どっちも知らない人にはつらかったと思います、すみません…って思ったけどどっちも知らない人はここまで読まなそう;まだ読んでない人は読まなくていいですよ)
+
+とりあえず、前半のIsabelle編もこれでおしまいになります。
+
+後半はHaskell編ということで、ここまでにやってきた定理証明の知識も使って後半はproof assistantのあれこれをやっていくのでお楽しみに〜！
+

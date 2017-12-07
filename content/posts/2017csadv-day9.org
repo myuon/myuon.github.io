@@ -10,7 +10,7 @@ toc: true
 -----
 
 前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。
-今回はより発展的な話題として、Nominal Isabelleを用いてラムダ計算の性質などを示してみようと思います。
+今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。
 
 定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。
 
