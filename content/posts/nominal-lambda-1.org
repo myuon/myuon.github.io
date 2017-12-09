@@ -1,7 +1,6 @@
 ---
 title: Nominal Isabelleとラムダ計算 その1
-date: 2017-12-05T19:42:10+09:00
-draft: true
+date: 2017-12-10T00:13:17+09:00
 toc: true
 ---
 
