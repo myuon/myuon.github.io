@@ -1,9 +1,12 @@
 ---
 title: IsabelleについてのQ&A
-date: 2017-12-07T23:04:29+09:00
-draft: true
+date: 2017-12-09T00:03:23+09:00
 toc: true
 ---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 9日目の記事です。*
+
+-----
 
 さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。
 
