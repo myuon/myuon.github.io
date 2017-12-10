@@ -4,7 +4,7 @@ date: 2017-12-10T00:13:17+09:00
 toc: true
 ---
 
-*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 9日目の記事です。*
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 10日目の記事です。*
 
 -----
 
