@@ -1,0 +1,230 @@
+---
+title: Coroutineモナドとステートマシン
+date: 2017-12-12T20:34:14+09:00
+draft: true
+toc: true
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 14日目の記事です。*
+
+-----
+
+今回は小ネタです。
+
+[[https://www.stackage.org/lts-9.11/package/monad-coroutine-0.9.0.3][monad-coroutine]]というライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。
+
+* Coroutine-monad
+
+** example: coroutine
+
+名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。
+
+サンプルとしては次のような感じ:
+
+#+BEGIN_SRC haskell
+  countup :: Coroutine (Yield Int) IO ()
+  countup = do
+    lift $ print "counting..."
+    yield 1
+    lift $ print "counting..."
+    yield 2
+    return ()
+
+  printProduce :: Show x => Coroutine (Yield x) IO r -> IO r
+  printProduce producer = pogoStick (\(Yield x cont) -> lift (print x) >> cont) producer
+
+  {-
+  > printProduce countup
+  counting...
+  1
+  counting...
+  2
+  -}
+#+END_SRC
+
+countup内ではyieldという関数が使われていて、 ~yield :: Monad m => x -> Coroutine (Yield x) m ()~ なので ~Coroutine (Yield x) m ()~ ではx型の値をyieldして停止することができる。
+pogoStickは ~Yield x r~ の挙動を指定して、それを使ってCoroutineを潰すことができる。
+
+** monadic structure
+
+さて上の例は正直つまらない例だが、これでもCoroutine monadの構造について触れるには十分だろう。
+
+#+BEGIN_SRC haskell
+  newtype Coroutine s m r = Coroutine { resume :: m (Either (s (Coroutine s m r)) r) }
+#+END_SRC
+
+Coroutineは実行すると、 ~s (Coroutine s m r)~ か ~r~ のいずれかがモナド付きで返ってくる。
+先ほどのYieldの例がどうなってたのかを調べてみよう。
+
+#+BEGIN_SRC haskell
+  suspend :: (Monad m, Functor s) => s (Coroutine s m x) -> Coroutine s m x
+  suspend s = Coroutine (return (Left s))
+
+  data Yield x y
+    = Yield x y
+    deriving Functor
+
+  yield :: Monad m => x -> Coroutine (Yield x) m ()
+  yield x = suspend $ Yield x (return ())
+#+END_SRC
+
+上の ~Coroutine s m r~ のsは ~* -> *~ なので、引数を1つとる。なのでYieldは2引数の型である。
+
+yield関数はxを受け取り、 ~suspend (Yield x (return ()))~ すなわち ~Coroutine (return (Left (Yield x (return ()))))~ を返す。
+型が合っていることは分かるだろう。
+
+yieldの挙動をよりよく理解するためにいくつか例を見てみる。
+
+#+BEGIN_SRC haskell
+  -- さっきのやつ
+  countup :: Coroutine (Yield Int) IO ()
+  countup = do
+    lift $ print "counting..."
+    yield 1
+    lift $ print "counting..."
+    yield 2
+    return ()
+
+  > resume countup :: IO (Either (Yield Int (Coroutine (Yield Int) IO ())) ())
+  -- これは次と等しい
+  == do
+    lift $ print "counting..."
+    return $ Left $ Yield 1 $ do
+      lift $ print "counting..."
+      yield 2
+      return ()
+
+  > resume (yield 1) :: IO (Either (Yield Int (Coroutine (Yield Int) IO ())) ())
+  == return $ Left $ Yield 1 (return ())
+
+  > resume (lift $ print "piyo")
+  == do
+    lift $ print "piyo"
+    return $ Right ()
+
+  > Left (Yield n cont) <- resume countup
+  -- このとき,次のように束縛されている
+  n == 1
+  cont == do
+    lift $ print "counting..."
+    yield 2
+    return ()
+
+#+END_SRC
+
+あくまで擬似的なコード(コードでもないけど)だが、雰囲気は伝わるだろうか。
+
+resumeは一番最初に出現するyieldの箇所まで一度に実行が走り、もしも(yieldがなく)最後まで実行し終えたらRightを返して終了する。もしもyieldを発見すれば、その値とプログラムの残り(継続みたいなもの)を組にしてLeftに入れて返してくる。
+
+
+実際にはsuspendが(つまり ~Coroutine (return ...)~ という形が)このような挙動を制御している。
+
+気になる人はmonadのinstanceの定義も見ておくとよいかもしれない。
+
+
+
+* ステートマシン
+
+** example: 状態A,B,C
+
+さてタイトル詐欺にならぬようステートマシンの話をします。
+
+例えば次のようなプログラムを考える:
+
+1. プログラムは状態A,B,Cがある。
+1. Aの状態で入力n(整数)を受け取ると、2倍した値を出力して状態Bへと移行する。
+1. Bの状態で入力s(文字列)を受け取ると、反転した値を出力して状態Cへと移行する。
+1. Cの状態で1秒待機し、状態Aへと移行する。
+
+実際にこのようなプログラムを実行するには、入力を受け付けるために待機するみたいな機構が必要になるが、あまり細かいことは気にせずあくまで上の仕様は概念的なもので、それっぽいものができればよいことにする。
+
+多分これを簡単にやるなら(まぁステートマシンっていうぐらいだし)Stateモナドを使うのが素直な実装だろうか。
+(そうでもないかもしれない、わからん)
+
+#+BEGIN_SRC haskell
+  data IState = A | B | C
+  data I = IA Int | IB String | IC ()
+
+  machine :: MonadIO m => Input -> StateT IState m ()
+  machine (IA n) = do
+    liftIO $ print $ n*2
+    modify $ \A -> B
+  machine (IB s) = do
+    liftIO $ print $ reverse s
+    modify $ \B -> C
+  machine (IC ()) = do
+    wait (sec 1)
+    modify $ \C -> A
+#+END_SRC
+
+** Coroutineによるステートマシン
+
+上のやつをCoroutineモナドで書いてみよう。
+
+#+BEGIN_SRC haskell
+  data MachineF y
+    = AtoB (Int -> y)
+    | BtoC (String -> y)
+
+  machineA :: MonadIO m => Coroutine MachineF m ()
+  machineA = do
+    n <- suspend $ AtoB return
+    liftIO $ print $ n*2
+    machineB
+
+  machineB :: MonadIO m => Coroutine MachineF m ()
+  machineB = do
+    s <- suspend $ BtoC return
+    liftIO $ print $ reverse s
+    machineC
+
+  machineC :: MonadIO m => Coroutine MachineF m ()
+  machineC = do
+    wait (sec 1)
+    machineA
+#+END_SRC
+
+変わったところとして、先の例ではInputとStateが分けられていたが、これがMachineFになって統合されたこと、各machine内部で ~suspend $ AtoB return~ のように書けるようになった。
+constructorが ~A -> y~ の形は、コルーチンを再開する際にAを与える必要があるようなもので、これはAwaitとしてライブラリですでに定義されている。
+
+#+BEGIN_SRC haskell
+  data Await x y = Await (x -> y)
+    deriving Functor
+
+  await :: MonadIO m => Coroutine (Await x) m x
+  await = suspend $ Await return
+#+END_SRC
+
+これはawait、つまり入力を待機するために使う。
+
+という目で見れば、上のMachineFでも ~suspend $ AtoB return~ や ~suspend $ BtoC return~ がawaitとして機能しているのがわかるだろう。
+
+上のmachineA,machineB,machineCは実行すると入力を待機する状態になるまで実行される。
+実際にこれを実行する場合は、例えばユーザーからの入力を受け取ってその結果を待機中のmachineに食わせるみたいな部分が必要になるだろう。
+
+一応コード例ぽいものも示しておく。
+
+#+BEGIN_SRC haskell
+  runMachine :: Coroutine MachineF IO () -> IO ()
+  runMachine m = do
+    r <- resume m
+    case r of
+      AtoB cont -> runMachine $ cont (Intの値を生成する関数)
+      BtoC cont -> runMachine $ cont (Stringの値を生成する関数)
+#+END_SRC
+
+これで最初に意図したような挙動になるはず。
+
+* まとめ
+
+オチなんてものはなくて、まぁmonad-coroutineはステートマシンぽい書き方をしたい時には割と便利ですよって言いたかっただけ。
+多分こういう場合はそれこそmachinesとかpipesとかを使いたくなるかもしれないけれど、ああいうライブラリに比べてこちらは(仕組みが複雑でない分)汎用性は高いと思う。
+
+いわゆるストリームライブラリ的なのは本当にストリームっぽい状況じゃないとちょっと使いにくいという気持ちがあるかもしれないのでそれより薄い仕組みで気軽に使えていいですよという宣伝でした。
+
+ちなみに上でも見たとおり、Coroutineモナドはsに自分自身を適用するという形をしているので、再帰的なデータ構造をかなり汎用的な形で表現しているので実はコルーチン以外にも結構色々な使い方を秘めていると思う。
+逆に言うとコルーチンという機能をまともに表現するためにはここまで強力な構造が必要になるということなのだろうか。私はイマイチよくわかっていないのだけれど、Coroutineの形と継続の表現力の強さは何かしら関係したりしてそ〜って書いてて思いました。
+
+おしまい
+
+

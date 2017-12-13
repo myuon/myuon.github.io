@@ -1,0 +1,58 @@
+---
+title: extensibleなrecordとvariant
+date: 2017-12-12T19:37:33+09:00
+draft: true
+toc: true
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 14日目の記事です。*
+
+-----
+
+ライブラリ紹介記事ということで、extensible recordやらextensible effectやらなんやらを提供する[[https://hackage.haskell.org/package/extensible][extensible]]というライブラリを紹介します。
+私は必要だと思ったら普通に使うのですが便利さの割にはあんまり広まってないイメージがあるので選んでみました。
+
+あと今回はextensible-effect関係の話はしません。(自分が使ってないので)
+
+* 参考
+
+ちなみにライブラリ作者のfumievalさんが色々記事を書いているので先にそっちを見る方がいいかもしれません。
+
+- [[http://fumieval.hatenablog.com/entry/2016/10/10/000011][割とすぐに始められるextensibleチュートリアル(レコード編)]]: 日本語で入りやすいのはこの辺
+- [[http://fumieval.hatenablog.com/entry/2017/08/02/230422][快速のExtensible effects]]: extensible effect周り
+- [[https://www.schoolofhaskell.com/user/fumieval/extensible/named-extensible-effects][Named extensible effects]]: extensible effectのちょっと変わった使い方について
+  
+* extensible record
+
+extensible recordというのは代数的データ型のrecord構文をextensibleに、つまりレコードAを拡張してレコードBを作るというようなことができるようなものですね。
+
+Pure Haskellでは現在こういうことはできず、さらにGHC拡張でもOverloadedRecordFieldsは(後少しと言ったところですが)まだです。
+
+以下のような例で雰囲気を察して欲しい(わがまま)。
+
+#+BEGIN_SRC haskell
+  -- Fooを宣言
+  -- 普通のHaskellで書くと
+  -- data Foo = Foo { number :: Int, string :: String }
+  type Foo = Record '["number" >: Int, "string" >: String]
+
+  -- Fooレコードの値を定義
+  foo :: Foo
+  foo = #number @= 42
+     <: #string @= "foo"
+     <: nil
+
+  -- fooの例えばnumberフィールドへのアクセスは
+  -- foo ^. #number
+  -- とかやるとできる
+
+  type Bar = Record '["number" >: Int, ]
+
+
+#+END_SRC
+
+レコード構文は上のようになります。(DataKindsなどのGHC拡張は適宜オンに)
+まぁ簡単ですね。
+
+さてFooに新しくDouble型の値を追加してみましょう。
+
