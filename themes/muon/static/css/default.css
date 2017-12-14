@@ -80,14 +80,14 @@ header nav .divider {
 }
 
 .article-info {
-    margin-top: 0.5em;
+    margin: 0;
     padding: 0;
+    margin-top: 0.5em;
 }
 
 .article-info .item {
     display: inline-block;
     vertical-align: top;
-//    line-height: 0;
 }
 
 body > div.container {
