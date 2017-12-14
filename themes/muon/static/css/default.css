@@ -79,6 +79,17 @@ header nav .divider {
     margin: 5px;
 }
 
+.article-info {
+    margin-top: 0.5em;
+    padding: 0;
+}
+
+.article-info .item {
+    display: inline-block;
+    vertical-align: top;
+//    line-height: 0;
+}
+
 body > div.container {
     padding-top: 2rem;
 }
