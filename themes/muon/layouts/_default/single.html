@@ -5,17 +5,14 @@
 {{ define "main" }}
 <article>
   <section class="header">
-    <section class="ui horizontal list">
+    <div class="item">
+      {{ with .Params.tags }}<div>Tags:{{ range . }} <a href="/tags/{{ . }}/">#{{ . }}</a>{{ end }}</div>{{ end }}
+    </div>
+    <section class="share ui horizontal list">
       <div class="item">
         <span class="ui label tiny basic date">{{ .Date.Format "2006-01-02" }}</span>
       </div>
 
-      <div class="item">
-        <span class="ui label tiny basic date">{{ .Date.Format "2006-01-02" }}</span>
-      </div>
-    </section>
-    <br>
-    <section class="share ui horizontal list">
       <div class="item bottom aligned">
         <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="{{ .Title }} - {{ .Site.Title }}" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
       </div>
