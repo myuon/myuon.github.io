@@ -1,7 +1,6 @@
 ---
 title: Coroutineモナドとステートマシン
-date: 2017-12-12T20:34:14+09:00
-draft: true
+date: 2017-12-14T00:03:01+09:00
 toc: true
 ---
 

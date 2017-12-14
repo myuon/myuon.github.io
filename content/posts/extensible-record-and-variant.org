@@ -1,18 +1,16 @@
 ---
-title: extensibleなrecordとvariant
+title: extensible探訪
 date: 2017-12-12T19:37:33+09:00
 draft: true
 toc: true
 ---
 
-*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 14日目の記事です。*
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 15日目の記事です。*
 
 -----
 
-ライブラリ紹介記事ということで、extensible recordやらextensible effectやらなんやらを提供する[[https://hackage.haskell.org/package/extensible][extensible]]というライブラリを紹介します。
-私は必要だと思ったら普通に使うのですが便利さの割にはあんまり広まってないイメージがあるので選んでみました。
-
-あと今回はextensible-effect関係の話はしません。(自分が使ってないので)
+ライブラリ紹介記事ということで、extensible recordやらextensible effectやらなんやらを提供する[[https://hackage.haskell.org/package/extensible][extensible]]というライブラリの話です。
+extensibleはかなり大規模なライブラリで色々な用途があるのですが、この記事ではそんなextensibleの中を開いてその秘密を探っていきたいと思います。
 
 * 参考
 
@@ -24,35 +22,132 @@ toc: true
   
 * extensible record
 
-extensible recordというのは代数的データ型のrecord構文をextensibleに、つまりレコードAを拡張してレコードBを作るというようなことができるようなものですね。
+今回は主に中身の話がしたいのでextensible自体の説明は面倒なんでしません(ググって欲しい)
 
-Pure Haskellでは現在こういうことはできず、さらにGHC拡張でもOverloadedRecordFieldsは(後少しと言ったところですが)まだです。
-
-以下のような例で雰囲気を察して欲しい(わがまま)。
+それっぽい例を作ってみたので眺めてください。
 
 #+BEGIN_SRC haskell
-  -- Fooを宣言
-  -- 普通のHaskellで書くと
-  -- data Foo = Foo { number :: Int, string :: String }
-  type Foo = Record '["number" >: Int, "string" >: String]
+  -- recordの定義
+  -- data Item = Item { price :: Int, message :: String, size :: (Double,Double) }
+  -- のようなものだと思えばいい
+  type Item = Record [ "price" >: Int, "message" >: String, "size" >: (Double,Double) ]
 
-  -- Fooレコードの値を定義
-  foo :: Foo
-  foo = #number @= 42
-     <: #string @= "foo"
-     <: nil
+  -- Item型の値を与える
+  item :: Item
+  item
+    = #price @= 10
+    <: #message @= "piyo"
+    <: #size @= (10,20)
+    <: nil
 
-  -- fooの例えばnumberフィールドへのアクセスは
-  -- foo ^. #number
-  -- とかやるとできる
+  -- priceフィールドの値を取得する
+  getPriceOfItem :: Item -> Int
+  getPriceOfItem item = item ^. #price
 
-  type Bar = Record '["number" >: Int, ]
+  -- messageフィールドの値を上書きする
+  setMessageOfItem :: String -> Item -> Item
+  setMessageOfItem s item = item & #message .~ s
 
+  -- 別のレコードを定義
+  -- priceというフィールドはItemとかぶっているが特に問題はない
+  type Item2 = Record [ "price" >: Int, "onSale" >: Bool ]
+
+  -- getPriceをItemにもItem2にも使えるように一般化する
+  -- ここは、「"price" >: Intをフィールドとして持つ任意のrに対し`r -> Int`」と読むとわかりやすい？かも
+  getPrice :: Associate "price" Int r => Record r -> Int
+  getPrice r = r ^. #price
+
+  getPriceOfItem' :: Item -> Int
+  getPriceOfItem' = getPrice
+
+  getPriceOfItem2 :: Item2 -> Int
+  getPriceOfItem2 = getPrice
+
+  -- このようにgetPriceがItem,Item2のいずれからも値を取得できる関数になっていることがわかる
+#+END_SRC
+
+直観的だしわかりやすいしいいですね？
+
+** OverloadedLabels lens
+
+例は大変分かりやすくていいんですが実際になぜこのようなことができるのかというとそれなりに色々なトリックが働いているのでそれをゆっくり説明していきます。
+
+まず上の例では ~#price~ や ~#message~ がlensとして機能しているのが分かります。getPriceOfItemでは ~#price :: Lens' Item Int~ という型(にunify可能な型)のlensとして使われています。
+が、下のgetPriceを見ると、どうも ~#price~ とかくだけで ~#price :: Associate "price" Int r => Lens' (Record r) Int~ くらいまで一般化されたlensになっていそうということが予想されます。
+
+さてこの#がついたやつは[[https://ghc.haskell.org/trac/ghc/wiki/Records/OverloadedRecordFields/OverloadedLabels][OverloadedLabels]]というGHC拡張で使えるようになる機能で、例えば ~#price~ は内部で次で定義されるIsLabelを使って ~fromLabel @"price"~ に自動で変換されます。
+
+#+BEGIN_SRC haskell
+  class IsLabel (x :: Symbol) a where
+    fromLabel :: a
+#+END_SRC
+
+というわけで、上の ~#price~ や ~#message~ はこのIsLabelのinstanceになっているようです。
+しかしそんなinstanceを書いた覚えはないので、このIsLabelのinstanceがライブラリのどこかで定義されているのでしょう。
+
+答えを言ってしまうとこれはData.Extensible.Labelにて次のようなinstanceが与えられています。
+
+#+BEGIN_SRC haskell
+  instance k ~ l => IsLabel k (Proxy l)
+  instance (Extensible f p e
+    , Associate k v xs
+    , Labelling k p
+    , Wrapper h
+    , ExtensibleConstr e (Field h) xs (k >: v)
+    , rep ~ Repr h v
+    , s ~ e (Field h) xs
+    , s ~ t
+    , rep ~ rep'
+    )
+    => IsLabel k (p rep (f rep') -> p s (f t))
+#+END_SRC
+
+いや読めねーよってなるかもしれませんが、2つ目のinstanceの型は ~IsLabel k (p rep (f rep') -> p s (f t))~ となっており、これはOptic ~p a (f b) -> p s (f t)~ の特殊な形であることが分かります。
+ので、これは ~IsLabel k (Optic p f s t rep rep')~ で、どうも先ほどのラベル記法がlensになるのはここからきているのだと分かります。
+
+ところでinstanceの前提が色々ありますが等式は無理矢理代入して消去してもっと簡単な形にすると次です。
+
+#+BEGIN_SRC haskell
+  instance (Extensible f p e
+           , Associate k v xs
+           , Labelling k p
+           , Wrapper h
+           , ExtensibleConstr e (Field h) xs (k >: v))
+    => IsLabel k (Optic' p f (e (Field h) xs) (Repr h v))
+#+END_SRC
+
+随分と簡単な形になりました。これを見れば、さっきの ~#price :: Associate "price" Int r => Lens' (Record r) Int~ を与えるIsLabelのinstanceは
+
+#+BEGIN_SRC haskell
+  -- 仮定に Associate k v xs があるので、
+  -- k = "price"
+  -- v = Int
+  -- xs = r
+  -- を代入する
+
+  instance (Extensible f p e
+           , Labelling "price" p
+           , Wrapper h
+           , ExtensibleConstr e (Field h) r ("price" >: Int))
+    => IsLabel k (Optic' p f (e (Field h) r) (Repr h Int))
 
 #+END_SRC
 
-レコード構文は上のようになります。(DataKindsなどのGHC拡張は適宜オンに)
-まぁ簡単ですね。
+の形です。この形から、 ~#price~ は ~Lens' (e (Field h) r) (Repr h Int)~ として働きそうな感じがします。
+さてこの ~e~ はExtensibleというinstanceで束縛されていますがこのExtensibleという型クラスは何者でしょうか。
 
-さてFooに新しくDouble型の値を追加してみましょう。
+** Extensible typeclass
+
+Extensibleの定義は次です。
+
+#+BEGIN_SRC haskell
+  class (Functor f, Profunctor p) => Extensible f p (t :: (k -> *) -> [k] -> *) where
+    type ExtensibleConstr t (h :: k -> *) (xs :: [k]) (x :: k) :: Constraint
+    type ExtensibleConstr t h xs x = ()
+    pieceAt :: ExtensibleConstr t h xs x => Membership xs x -> Optic' p f (t h xs) (h x)
+#+END_SRC
+
+型が複雑ですが、pieceAtは ~Membership xs x -> Optic' p f (t h xs) (h x)~ という、Membershipという謎のデータを受け取ってOpticを返すものだということが分かれば十分です。
+
+
 
