@@ -66,7 +66,27 @@ extensibleはかなり大規模なライブラリで色々な用途があるの�
   -- このようにgetPriceがItem,Item2のいずれからも値を取得できる関数になっていることがわかる
 #+END_SRC
 
-直観的だしわかりやすいしいいですね？
+なぜこのようなことができるのかを説明するのがこの記事の目的です。
+
+** Record
+
+#+BEGIN_SRC haskell
+  type Record = RecordOf Identity
+  type RecordOf h = (:*) (Field h)
+  -- RecordOf :: (v -> *) -> [Assoc k v] -> *
+#+END_SRC
+
+Recordは ~:*~ と ~Field~ からなります。
+順に説明をしましょう。
+
+** Data.Extensible.Product
+
+#+BEGIN_SRC haskell
+  data h :* s
+  -- (:*) :: (k -> *) -> [k] -> *
+#+END_SRC
+
+
 
 ** OverloadedLabels lens
 
