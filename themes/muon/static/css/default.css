@@ -90,6 +90,10 @@ header nav .divider {
     vertical-align: top;
 }
 
+.article-info .item .date, .article-info .item .tag-item {
+    margin-right: 0.3rem;
+}
+
 body > div.container {
     padding-top: 2rem;
 }
@@ -155,14 +159,6 @@ footer {
 
 article .disqus-area {
     margin-top: 1.5rem;
-}
-
-.date, .comment-count {
-    font-size: small;
-}
-
-.date {
-    margin-right: 0.5rem;
 }
 
 .comment-count {

@@ -6,9 +6,9 @@
 <article>
   <section class="article-header">
     <div class="article-info">
-      <div class="item"><span class="ui label small basic date">{{ .Date.Format "2006-01-02" }}</span></div>
+      <div class="item"><span class="ui label basic date">{{ .Date.Format "2006-01-02" }}</span></div>
       {{ with .Params.tags }}
-        {{ range . }}<span class="item"><a class="ui small label" href="/tags/{{ . }}/">#{{ . }}</a></span>{{ end }}
+        {{ range . }}<div class="item"><a class="ui label tag-item" href="/tags/{{ . }}/">#{{ . }}</a></div>{{ end }}
       {{ end }}
     </div>
 
