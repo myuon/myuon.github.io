@@ -1,0 +1,293 @@
+---
+title: Proof Assistantを作る・実装編 その1
+date: 2017-12-17T20:38:50+09:00
+draft: true
+toc: true
+tags: [定理証明, haskell]
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 18日目の記事です。*
+
+-----
+
+Proof Assistant 「Claire」の実装について説明していきます。
+
+リポジトリはこちら: [[https://github.com/myuon/claire][myuon/claire]]
+
+* Syntax: FOL, LK, Claire
+
+初めにSyntaxの定義をしてからパーサーを用意します。
+これがないと何も出来ないので。
+
+** FOL
+
+[[https://github.com/myuon/claire/blob/master/src/Claire/Syntax/FOL.hs][Claire.Syntax.FOL]]
+
+#+BEGIN_SRC haskell
+  data Term
+    = Var Ident
+    | Abs [Ident] Term
+    | App Term [Term]
+    deriving (Eq, Show)
+
+  data Formula
+    = Pred Ident [Term]
+    | Top
+    | Bottom
+    | Formula :/\: Formula
+    | Formula :\/: Formula
+    | Formula :==>: Formula
+    | Forall Ident Formula
+    | Exist Ident Formula
+    deriving (Eq, Show)
+#+END_SRC
+
+それぞれfirst-order logicの項と論理式の定義です。
+
+項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。
+論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。
+
+さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。
+例えばiffの記号を ~fml1 :<==>: fml2 = (fml1 :==>: fml2) :/\: (fml2 :==>: fml1)~ と定義したいところですがそれは上の定義だと出来ません。
+~:<==>:~ をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。
+
+そもそもこのFormulaはProof Assistantのメタロジックを表すもので、Proof Assistantにおいてメタロジックが正しい(おかしなことがおこらない)ことは絶対に必要なことですがこのことはProof Assistantによって直接検証することは出来ません。
+Proof Assistantはメタロジックを用いて現在考えているロジックの上で証明を書く道具なので、メタロジックとしてのFormulaを変えるような操作はしてはいけません。
+
+これがわざわざIsabelleやこのClaireでも標準ライブラリでロジックを再定義する理由で、このメタロジックとロジックの区別は今後も大変重要になるので覚えておいてください。
+
+
+** LK
+
+[[https://github.com/myuon/claire/blob/master/src/Claire/Syntax/LK.hs][Claire.Syntax.LK]]
+
+#+BEGIN_SRC haskell
+  data Rule
+    = I | Cut Formula
+    | AndL1 | AndL2 | AndR
+    | OrL | OrR1 | OrR2
+    | ImpL | ImpR
+    | BottomL | TopR
+    | ForallL Term | ForallR Ident
+    | ExistL Ident | ExistR Term
+    | WL | WR
+    | CL | CR
+    | PL Int | PR Int
+    deriving (Eq, Show)
+
+  data Judgement = Judgement [Formula] [Formula] deriving (Eq)
+#+END_SRC
+
+LKの推論規則とJudgementを定めます。
+Judgementは仮定と命題をそれぞれ表し、 ~Qm..Q1 |- P1..Pn~ を ~Judgement [Q1..Qm] [P1..Pn]~ で表すので順番に気をつけてください。
+
+
+** Claire
+
+[[https://github.com/myuon/claire/blob/master/src/Claire/Syntax/Claire.hs][Claire.Syntax.Claire]]
+
+ClaireはProof Assistantの名前ですが証明記述言語の名前でもあります(分かりにくいですね; 例を挙げると前者がCoqで後者がGallinaみたいなものかな？)。
+
+#+BEGIN_SRC haskell
+  data Claire = Claire [Decl]
+
+  data Decl
+    = ThmD ThmIndex Formula Proof
+    | AxiomD ThmIndex Formula
+    | ImportD String
+    | PrintProof
+    | ConstD Ident Type
+    | HsFile String
+    | NewDecl Ident [Argument]
+
+  data Proof
+    = Proof [Command]
+
+  type Pairs = [(Ident,Predicate)]
+
+  data Command
+    = Apply [Rule]
+    | Use ThmIndex Pairs
+    | Inst Ident Predicate
+    | NoApply Rule
+    | NewCommand Ident Argument
+
+  data Argument
+    = ArgEmpty
+    | ArgPreds [Predicate]
+    | ArgTerms [Term]
+    | ArgTyped Ident Type
+    | ArgIdents [(Ident,Pairs)]
+#+END_SRC
+
+見てもらうと分かる通り、Claire型がまずあり、これがDeclarationのリストからなります[fn:1]。
+これはClaireのファイルがDeclarationを並べたものからなる、という意味でこう定義しています。
+
+Declは色々コンストラクターがありますが例えば ~ThmD ThmIndex Formula Proof~ に注目しましょう。
+ThmIndexが定理の名前、Formulaが証明したい論理式、Proofが証明です。Proofの定義を見ればProofはCommandの列からなるのが分かりますね。
+
+まぁ細かく見ていくと時間かかりそうなので、syntaxの説明は後で必要になったらするとして今は先に進みましょう。
+
+* Alex/Happy
+
+さてASTを定義したのでパーサーを書きます。
+ここでは字句解析器を生成する[[https://www.haskell.org/alex/][alex]]と構文解析器を生成する[[https://www.haskell.org/happy/][happy]]を使います。いわゆるlex/yaccに似た感じのツールのようです(触ったことないからしらんけど)。
+
+** cabal-build integration
+
+alex/happyはコマンドラインツールで、.x, .yファイルをHaskellモジュールに変換しますが、stackから使いたい場合はpackage.yamlに次のように書くといいです:
+
+#+BEGIN_SRC yaml
+  extra-source-files:
+  - src/Claire/Parser/Lexer.x
+  - src/Claire/Parser/Parser.y
+
+  build-tools:
+  - alex
+  - happy
+
+  other-modules:
+  - Claire.Parser.Lexer
+  - Claire.Parser.Parser
+#+END_SRC
+
+これでビルドするときにalex, happyが走ります。
+
+** alex
+
+alex/happyの使い方をここで一からやる気はないのですが、一応コードの読み方だけ説明しておきます。
+
+[[https://github.com/myuon/claire/blob/master/src/Claire/Parser/Lexer.x][src/Claire/Parser/Lexer.x]]
+
+#+BEGIN_SRC haskell
+  {
+  module Claire.Parser.Lexer where
+
+  }
+
+  %wrapper "basic"
+
+  $digit = [0-9]
+  $alpha = [a-zA-Z]
+
+  tokens :-
+    $white+   ;
+    "#".*     ;
+    Forall    { \s -> TokenForall }
+    Exist     { \s -> TokenExist }
+    ...
+    $alpha [$alpha $digit \_ \']*      { TokenIdent }
+
+  {
+  data Token
+    = TokenForall
+    | TokenExist
+    ...
+    | TokenIdent String
+  }
+#+END_SRC
+
+~{}~ で囲まれた部分はそのままHaskellのコードとして埋め込まれます。
+lexerの方はTokenを定義して、文字列をどのようなトークンの列に変換するかを定義します。 ~tokens :-~ の下に、「どんな文字列を」「どんなトークン(Token型)」に変換するかを指定します。
+
+文字列の方は正規表現が使えます。トークン変換部分は文字列を受け取ってTokenを返す関数を書きます。
+
+上の定義だと、
+
+- 連続する空白は無視する
+- #から始まる行は無視する
+- Forallという文字列はTokenForallに変換
+- Existという文字列はTokenExistに変換
+- ~$alpha [$alpha $digit \_ \']*~ の文字列はそれを引数に渡してTokenIdentを返す
+
+みたいな感じですね。
+
+** happy
+
+alexによって文字列はトークンの列に変換されるので今度はそれをASTの形に変換するのがhappyです。
+
+[[https://github.com/myuon/claire/blob/master/src/Claire/Parser/Parser.y][src/Claire/Parser/Parser.y]]
+
+#+BEGIN_SRC haskell
+  {
+  module Claire.Parser.Parser where
+
+  import Claire.Syntax
+  import Claire.Parser.Lexer
+  }
+
+  %name claireparser
+  %name declparser Decl
+  %name comparser Command
+  %name folparser Formula
+  %name termparser Term
+
+  %tokentype { Token }
+
+  %token
+    forall    { TokenForall }
+    exist     { TokenExist }
+    ...
+
+  %right '==>'
+  %left and or
+  %nonassoc '~'
+
+  %right '=>'
+
+  %%
+
+  Laire :: { Laire }
+    : Decls  { Laire $1 }
+
+  Decls :: { [Decl] }
+    : {- empty -}  { [] }
+    | Decl Decls   { $1 : $2 }
+
+  Decl :: { Decl }
+    : theorem ident ':' Formula Proof  { ThmD $2 $4 $5 }
+  ...
+
+  {
+  happyError s = error $ show s
+  }
+
+#+END_SRC
+
+~%%~ より下の行がパーサーの定義です。書き方は大体BNFみたいな感じですね。
+パーサーの定義の中で使えるtokenは事前に ~%%token~ のところで定義しておくと便利です。
+
+本当はこの辺の定義を逐一見ていくべきかもしれませんが、一度にやると大変なので後で項目ごとに説明することにします。
+
+** 実行
+
+定義ができたら、パーサーを実行することが出来ます。
+
+alexはalexScanTokens、happyは ~%name~ で指定したパーサーを関数として生成するのでそれを使って試してみます。
+
+#+BEGIN_SRC haskell
+  > folparser $ alexScanTokens $ "p ==> (q /\\ q' ==> r)"
+  Pred "p" [] :==>: ((Pred "q" [] :/\: Pred "q'" []) :==>: Pred "r" [])
+
+  > folparser $ alexScanTokens $ "P(a,b,c)"
+  Pred "P" [Var "a", Var "b", Var "c"]
+
+  > declparser $ alexScanTokens
+    $ "theorem id: a ==> a \
+    \ proof \
+    \   apply (ImpR, I) \
+    \ qed"
+  ThmD "id" (Pred "a" [] :==>: Pred "a" []) (Proof [Apply [ImpR, I]])
+#+END_SRC
+
+みたいな感じになれば成功です。
+
+* まとめ
+
+今回はClaireのsyntaxとパーサーをalex/happyで書く話を簡単にしました。
+といいつつsyntaxの説明を一切していないのでこれもそのうちしないとだめですね。
+
+明日はLKのcheckerを書きます。
+
+[fn:1] ソースコードの方直ってないかもしれないけど気にしないでください。もともと証明記述言語の方はlaireという名前にして区別しようかと思ったけど途中でめんどくさくなってやめた跡です。
+

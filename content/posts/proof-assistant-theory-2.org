@@ -1,7 +1,6 @@
 ---
 title: Proof Assistantを作る・理論編 その2
-date: 2017-12-16T19:34:32+09:00
-draft: true
+date: 2017-12-17T00:17:12+09:00
 toc: true
 tags: [定理証明]
 ---
