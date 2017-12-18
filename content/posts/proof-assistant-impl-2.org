@@ -1,7 +1,6 @@
 ---
 title: Proof Assistantを作る・実装編 その2
-date: 2017-12-18T19:48:28+09:00
-draft: true
+date: 2017-12-19T00:00:24+09:00
 toc: true
 tags: [定理証明, haskell]
 ---
