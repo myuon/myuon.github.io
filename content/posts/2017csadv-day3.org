@@ -2,6 +2,7 @@
 title: Isabelle/HOLの基本 その2
 date: 2017-12-03T00:01:48+09:00
 toc: true
+tags: [AdC2017,Isabelle]
 ---
 
 *これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 3日目の記事です。*

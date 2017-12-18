@@ -2,6 +2,7 @@
 title: Nominal Isabelleとラムダ計算 その2
 date: 2017-12-11T00:13:11+09:00
 toc: true
+tags: [AdC2017,Isabelle,計算機科学,ラムダ計算]
 ---
 
 *これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 11日目の記事です。*

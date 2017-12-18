@@ -2,6 +2,7 @@
 title: IMPのoperational semantics その2
 date: 2017-12-06T00:07:53+09:00
 toc: true
+tags: [AdC2017,Isabelle,計算機科学]
 ---
 
 *これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 6日目の記事です。*

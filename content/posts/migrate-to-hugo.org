@@ -2,6 +2,7 @@
 title: "HakyllからHugoに移行した"
 date: 2017-11-10T02:37:31+09:00
 toc: true
+tags: [Haskell,Webサイト]
 ---
 
 * 移行理由

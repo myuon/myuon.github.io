@@ -2,6 +2,7 @@
 title: IsabelleについてのQ&A
 date: 2017-12-09T00:03:23+09:00
 toc: true
+tags: [AdC2017,Isabelle]
 ---
 
 *これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 9日目の記事です。*

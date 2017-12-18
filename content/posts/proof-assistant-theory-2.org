@@ -2,7 +2,7 @@
 title: Proof Assistantを作る・理論編 その2
 date: 2017-12-17T00:17:12+09:00
 toc: true
-tags: [定理証明]
+tags: [AdC2017,定理証明]
 ---
 
 *これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 17日目の記事です。*
