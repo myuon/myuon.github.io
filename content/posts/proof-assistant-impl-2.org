@@ -1,0 +1,153 @@
+---
+title: Proof Assistantを作る・実装編 その2
+date: 2017-12-18T19:48:28+09:00
+draft: true
+toc: true
+tags: [定理証明, haskell]
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 19日目の記事です。*
+
+-----
+
+Proof Assistant 「Claire」の実装について説明していきます。
+
+リポジトリはこちら: [[https://github.com/myuon/claire][myuon/claire]]
+
+* LK proofchecker
+
+** ルールの適用
+
+LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
+
+例として次のルールを考えます。
+
+#+BEGIN_SRC text
+  Γ,A |- Δ
+  ----------- (AndL1)
+  Γ,A∧B |- Δ
+#+END_SRC
+
+このようなルールは下から上に向かって適用します。ので、 ~Γ,A∧B |- Δ~ のJudgementを ~Γ,A |- Δ~ に変換します。
+
+LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
+
+#+BEGIN_SRC text
+  Γ |- Δ,A    A,Γ |- Δ
+  -------------------- (Cut)
+         Γ |- Δ
+#+END_SRC
+
+
+このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
+
+#+BEGIN_SRC haskell
+  data Rule
+    = I
+    | Cut Formula    -- CutはFormulaを引数に取る
+    ...
+#+END_SRC
+
+** チェッカー
+
+[[https://github.com/myuon/claire/blob/master/src/Claire/Checker.hs][Claire.Checker]]
+
+#+BEGIN_SRC haskell
+  newGoal :: Formula -> [Judgement]
+  newGoal fml = [Judgement [] (return fml)]
+
+  judge :: [Rule] -> [Judgement] -> Either (Rule, [Judgement]) [Judgement]
+  judge rs js = foldl (\m r -> m >>= go r) (Right js) rs where
+    go I (Judgement assms props : js) | length assms == 1 && assms == props = Right js
+    go (Cut fml) (Judgement assms props : js) = Right $ Judgement assms (fml:props) : Judgement (fml:assms) props : js
+    go AndL1 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fa:assms) props : js
+    go AndL2 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fb:assms) props : js
+    go AndR (Judgement assms ((fa :/\: fb):props) : js) = Right $ Judgement assms (fa:props) : Judgement assms (fb:props) : js
+    go OrL (Judgement ((fa :\/: fb):assms) props : js) = Right $ Judgement (fa:assms) props : Judgement (fb:assms) props : js
+    go OrR1 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fa:props) : js
+    go OrR2 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fb:props) : js
+    go ImpL (Judgement ((fa :==>: fb):assms) props : js) = Right $ Judgement assms (fa:props) : Judgement (fb:assms) props : js
+    go ImpR (Judgement assms ((fa :==>: fb):props) : js) = Right $ Judgement (fa:assms) (fb:props) : js
+    go BottomL (Judgement (Bottom:assms) props : js) = Right js
+    go TopR (Judgement assms (Top:props) : js) = Right js
+    go (ForallL t) (Judgement (Forall x fml:assms) props : js) = Right $ Judgement (substTerm x t fml:assms) props : js
+    go (ForallR y) (Judgement assms (Forall x fml:props) : js) = Right $ Judgement assms (substTerm x (Var y) fml:props) : js
+    go (ExistL y) (Judgement (Exist x fml:assms) props : js) = Right $ Judgement (substTerm x (Var y) fml:assms) props : js
+    go (ExistR t) (Judgement assms (Exist x fml:props) : js) = Right $ Judgement assms (substTerm x t fml:props) : js
+
+    go WL (Judgement (_:assms) props : js) = Right $ Judgement assms props : js
+    go WR (Judgement assms (_:props) : js) = Right $ Judgement assms props : js
+    go CL (Judgement (fml:assms) props : js) = Right $ Judgement (fml:fml:assms) props : js
+    go CR (Judgement assms (fml:props) : js) = Right $ Judgement assms (fml:fml:props) : js
+    go (PL k) (Judgement assms props : js) | k < length assms = Right $ Judgement (assms !! k : deleteAt k assms) props : js
+    go (PR k) (Judgement assms props : js) | k < length props = Right $ Judgement assms (props !! k : deleteAt k props) : js
+
+    go r js = Left (r,js)
+
+    deleteAt k xs = take k xs ++ drop (k+1) xs
+#+END_SRC
+
+証明の際に「ゴール」になるのはJudgementですが、一般にゴールは複数扱えるほうが都合がいいのでJudgementのリストをゴールとして考えることにします。
+
+newGoalは論理式Aをゴール ~[[] |- A]~ へ変換します。
+judgeがルールの列を現在のゴールに適用してゆく関数です。これは一般に失敗する場合があることに注意します。
+
+さきほど説明したAndL1の部分を見てみると
+
+#+BEGIN_SRC haskell
+    go AndL1 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fa:assms) props : js
+#+END_SRC
+
+となっていて、確かに先のルールをそのままコードに起こした形になっています。
+
+** 実行
+
+judge関数を動かしてみます。
+
+#+BEGIN_SRC haskell
+  > judge [I] [Judgement [Pred "a" []] [Pred "a" []]]
+  Right []
+
+  > judge [I] [Judgement [] [Pred "p" []]]
+  Left ...
+
+  > judge [AndL1] [Judgement [Pred "a" [] :/\: Pred "b" []] []]
+  Right [Judgement [Pred "a" []] []]
+#+END_SRC
+
+ところでJudgementのリストはゴールを表していたので、judgeの実行結果が空リストになったらゴールが全て解消されたことを表すので証明終了です。
+
+* Claire proofchecker
+
+というわけで、今までのことを踏まえるとClaireの証明の流れは次のようになります。
+
+1. 論理式Pが(示したい命題として)入力される
+1. ゴールが ~[] |- P~ の形になる
+1. ルールの列 rs を入力する
+1. ~judge rs ([] |- P)~ を実行する
+1. 全てのゴールが解消されたら証明完了と表示する ゴールが残っているなら2に戻る
+
+さてところでルールの列を入力する方法について、普通ならばこれは証明ファイルに ~apply rs; apply rs'~ みたいなのを読み取ってrsを適用し、rs'を適用し、みたいな感じでcheckerを走らせます。
+が、一方でClaireはインタラクティブシェル的なもので証明を書く仕組みも提供しています。
+
+なので、通常ファイルに書くような証明1行1行を読み取って動くインタラクティブシェル的なものを作ります。
+
+** インタラクティブシェル
+
+インタラクティブシェルを作るにあたって、現在どういう状態にいるかということを考える必要があります。
+例えば次のようなフローになります。
+
+1. Claireを起動する; declarationモードに入る
+1. (declarationモード) 論理式を入力する; proofモードに入る
+1. (proofモード) ルールの列を入力する; 証明が完了したらdeclarationモードに戻る
+
+みたいに、現在のモードによって受け付けるデータが変わるのでこの辺をいい感じにしないといけません。
+
+というのが次の課題になります。
+
+* まとめ
+
+というわけでLKのcheckerを書きました。
+ので、次回はインタラクティブシェルを作りつつClaire自体のproofcheckerを作ります。
+
+
