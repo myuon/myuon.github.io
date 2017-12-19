@@ -2,7 +2,7 @@
 title: Proof Assistantを作る・実装編 その2
 date: 2017-12-19T00:00:24+09:00
 toc: true
-tags: [AdC2017,定理証明, haskell]
+tags: [AdC2017,定理証明,Haskell]
 ---
 
 *これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 19日目の記事です。*

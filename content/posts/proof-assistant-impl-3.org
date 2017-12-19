@@ -1,0 +1,205 @@
+---
+title: Proof Assistantを作る・実装編 その3
+date: 2017-12-19T18:10:53+09:00
+draft: true
+toc: true
+tags: [AdC2017,定理証明,Haskell]
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 20日目の記事です。*
+
+-----
+
+Proof Assistant 「Claire」の実装について説明していきます。
+
+リポジトリはこちら: [[https://github.com/myuon/claire][myuon/claire]]
+
+* Proofchecker state machine
+
+さてClaireのproofcheckerを作っていきます。
+
+前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。
+これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。
+
+** proof state
+
+初めに仕様を固めます。
+
+- (state:toplevel) :: Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する
+- (state:command) :: Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る
+
+注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。
+このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。
+
+** Coroutine monad
+
+さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？
+察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 [[https://myuon.github.io/posts/coroutine-monad-as-state-machine/][Coroutineモナドとステートマシン]] でも説明したとおり、Coroutine monadを使います[fn:1]。
+
+[[https://github.com/myuon/claire/blob/master/src/Claire/Checker.hs][Claire.Checker]]
+
+*** Command Machine Suspender
+
+簡単な方から行きます。
+
+#+BEGIN_SRC haskell
+  data ComSuspender y
+    = ComAwait (Command -> y)
+    | CommandError Ident SomeException y
+    deriving (Functor)
+
+  commandM :: (Monad m, MonadIO m) => Env -> Coroutine ComSuspender (StateT [Judgement] m) ()
+  commandM = ...
+#+END_SRC
+
+Coroutine monadは最初に受け取る型の形によってawaitになったりyieldになったりします。
+ComSuspenderは2つのコンストラクタがあり、ComAwaitがawaitとして、CommandErrorがエラー生成部分として機能します。
+
+ところでCommandErrorではSomeExceptionを使っていて、以下でも度々SomeExceptionを使います。
+ここはもっと具体的なexceptionを使うこともできますが、この辺は内部の実装のあれこれを表層に出さず隠蔽するという設計を取った結果です。
+
+commandMの型から、command machineはJudgementのリスト(つまりゴール)を変形するようなステートマシンであることが分かります。
+
+*** Toplevel Machine Suspender
+
+#+BEGIN_SRC haskell
+  data DeclSuspender y
+    = DeclAwait (Decl -> y)
+    | ProofNotFinished [Judgement] (Command -> y)
+    | RunCommandError Ident SomeException y
+    | DeclError Ident SomeException y
+    deriving (Functor)
+
+  toplevelM :: (Monad m, MonadIO m) => Coroutine DeclSuspender (StateT Env m) ()
+  toplevelM = ...
+#+END_SRC
+
+DeclSuspenderは(1)Declを受け取るawait (2)Proofが終了していない状態(コマンドを受け付ける状態) (3)コマンドの実行中にエラーが出た状態 (4)Declの解釈中にエラーが出た状態
+のいずれかからなります。
+
+toplevelMはEnvを変えるステートマシンです。
+
+* Commands
+
+commandMは、コマンドをawaitで受け取り、コマンドを実行し、ゴールが全て解消されていなければ再びcommandMを繰り返すという単純な実装です。
+
+#+BEGIN_SRC haskell
+  commandM :: (Monad m, MonadIO m) => Env -> Coroutine ComSuspender (StateT [Judgement] m) ()
+  commandM env = do
+    com <- suspend $ ComAwait return
+    let insts fml pairs = foldlM (\f (idt,pred) -> substPred ('?':idt) pred f) fml pairs
+
+    case com of
+      _ -> ここにコマンドの実装を追加する
+
+    js <- lift get
+    unless (null js) $ commandM env
+
+#+END_SRC
+
+さて実際にcommandMの実装がどうなっているかを説明するために、ClaireのCommandについてちゃんと説明する必要がありますのでそれを先にしましょう。
+
+Claireに組み込みのコマンド(ゴールを変形する仕組み)は5つあります。
+
+** Apply [rule]
+
+applyはLKのルールを現在のゴールに対して適用します。
+
+#+BEGIN_SRC haskell
+      Apply rs -> do
+        js <- lift get
+        case judge env rs js of
+          Left (r,js') -> do
+            suspend $ CommandError "apply" (toException $ CannotApply r js') (return ())
+            commandM env
+          Right js' -> lift $ put js'
+#+END_SRC
+
+中では普通にjudgeを読んで、エラーがあればCommandErrorを、なければそのままゴールを書き換えるということをします。
+
+** NoApply rule
+
+#+BEGIN_SRC haskell
+      NoApply r -> do
+        js <- lift get
+        case judge env [r] js of
+          Left (r,js') -> do
+            suspend $ CommandError "noapply" (toException $ CannotApply r js') (return ())
+            commandM env
+          Right js' -> do
+            liftIO $ putStrLn $ "= NoApply " ++ show r ++ " result"
+            liftIO $ mapM_ print js'
+            liftIO $ putStrLn $ "=\n"
+#+END_SRC
+
+noapplyは「applyを実行し、その結果を画面に表示するが実際にゴールは書き換えない」というコマンドです。
+これはインタラクティブシェルで証明を書く際に「うっかり意図しないルールを適用しちゃった」を防ぐために、applyコマンドのプレビューができるように作ったものです。
+
+実装はapplyのときとほぼ同じで、ただしゴールには触れずにprintするというところが違います。
+
+** Use thmindex [(identifier,predicate)]
+
+useは「すでに証明した定理を仮定に追加する」です。
+
+さてここでメタロジックについて考える必要があります。
+すでに証明した定理を仮定に勝手に追加してよいか？ということは、つまり次のことが言えるかどうかということです。
+
+*Question(in LK):* ⊢ Pの証明が存在するとする。このとき任意の論理式Qに対し、P ⊢ Qの証明が存在するならば⊢ Qの証明も存在するか？
+
+Answer) Yes: P ⊢ Qと⊢ Pがあるならば、Cut規則により⊢ Qが言えるから。
+このとき、⊢ Pの証明はPの自由変数のとり方によらないことを用いると、Pの自由変数に適当な値を代入して得られるP'に対して、P' ⊢ Qの証明が存在すれば⊢ Qの証明も存在することが分かる。
+
+というわけでuseコマンドは使っても問題なく、さらにすでに示した定理の自由変数を別のものに取り替えても良さそうです。
+なので、useの第一引数に証明した定理の名前、第二引数には自由変数への名前の付け替えを要求します。syntaxとしては ~use hoge_theorem {P: (x,y) => Q(x), S: x => R(x)}~ みたいな感じで使えるようにしてあります。
+
+#+BEGIN_SRC haskell
+      Use idx pairs | idx `M.member` thms env -> do
+        let fml = thms env M.! idx
+        case insts fml pairs of
+          Right r -> lift $ modify $ \(Judgement assms props : js) -> Judgement (r:assms) props : js
+          Left err -> suspend $ CommandError "inst" (toException $ CannotInstantiate err) (return ())
+#+END_SRC
+
+実装としては、環境から対応する定理を引っ張ってきて自由変数を書き換えて仮定に追加するだけです。
+
+このような、自由変数を書き換えて使えるというのは意外と証明の書きやすさに影響してくるのでuseに機能として持たせることにしました。
+これはIsabelleでも自由変数Pは一度証明すると?Pの形になり、OFで後から代入したり出来ましたがそれと同じことです。
+
+** Inst identifier predicate
+
+instは「自由変数への代入を行う」です。
+上のuseが仮定に追加しさらに代入を行うことが出来ましたが、この代入部分だけ取り出したものです。
+
+元々はuseが仮定への追加のみ、instで代入と分けていたんですがinstをいっぱい書くのが面倒になったのでuseがinstの機能も含むようになってしまっただけです。
+ただしひとまず仮定へと追加して、代入を後で行うことができるのでこれはこれで必要な場面があります。
+
+#+BEGIN_SRC haskell
+      Inst idt pred -> do
+        js <- lift get
+        case js of
+          [] -> suspend $ CommandError "inst" (toException (error "empty judgement" :: ErrorCall)) (return ())
+          (Judgement (assm:assms) props : js') -> do
+            case substPred ('?':idt) pred assm of
+              Right r -> lift $ put $ Judgement (r:assms) props : js'
+              Left err -> suspend $ CommandError "inst" (toException $ CannotInstantiate err) (return ())
+#+END_SRC
+
+代入するのは仮定の一番最初の項だけなことに注意します。
+
+** NewCommand identifier argument
+
+最後は組み込みのコマンドではなく、マクロで定義されたコマンドの読み込みです。
+
+これは一旦置いておいてあとの方で説明しましょう。
+
+* まとめ
+
+というわけで組み込みのコマンド Command型を説明しました。
+次にClaireのメインの文法にあたるDeclを説明する必要があるのでそれはまた明日ということで。
+
+コアに近い機能から説明しているのでなんか説明がとっちらかっているような気がしますが
+次回・次次回くらいで一通りproofcheckerが動くところまで行けるはずなので、そこまでは辛抱ください。
+
+
+[fn:1] ここで使いたいからわざわざこの記事を途中に挟んだ……つまりこの前の記事は今日の記事のための伏線だったのさ！！ハーハッハッハッハ！！
+

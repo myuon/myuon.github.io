@@ -58,8 +58,8 @@
 
     <div class="ui text container">
       <main role="main">
-        {{ if .NextInSection }}Next: <a href="{{ .NextInSection.Permalink }}">{{ .NextInSection.Title }}</a><br />{{ end }}
-        {{ if .PrevInSection }}Prev: <a href="{{ .PrevInSection.Permalink }}">{{ .PrevInSection.Title }}</a>{{ end }}
+        {{ if .PrevInSection }}Prev: <a href="{{ .PrevInSection.Permalink }}">{{ .PrevInSection.Title }}</a><br />{{ end }}
+        {{ if .NextInSection }}Next: <a href="{{ .NextInSection.Permalink }}">{{ .NextInSection.Title }}</a>{{ end }}
 
         <h1>{{ .Title }}</h1>
         {{ block "main" . }}
