@@ -1,7 +1,6 @@
 ---
 title: Proof Assistantを作る・実装編 その3
-date: 2017-12-19T18:10:53+09:00
-draft: true
+date: 2017-12-20T00:12:26+09:00
 toc: true
 tags: [AdC2017,定理証明,Haskell]
 ---
