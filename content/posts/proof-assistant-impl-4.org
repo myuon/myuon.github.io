@@ -1,0 +1,291 @@
+---
+title: Proof Assistantを作る・実装編 その4
+date: 2017-12-21T00:20:35+09:00
+toc: true
+tags: [AdC2017,定理証明,Haskell]
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 21日目の記事です。*
+
+-----
+
+Proof Assistant 「Claire」の実装について説明していきます。
+
+リポジトリはこちら: [[https://github.com/myuon/claire][myuon/claire]]
+
+昨日に引き続いてClaireの宣言(Decl)について説明していきます。
+
+* Declarations
+
+まずはtoplevelMの定義から。
+
+#+BEGIN_SRC haskell
+  toplevelM :: (Monad m, MonadIO m) => Coroutine DeclSuspender (StateT Env m) ()
+  toplevelM = forever $ do
+    let typecheck fml u k = do {
+      env <- lift get;
+      utyp <- liftIO $ try $ infer env fml;
+      case utyp of
+        Left err -> suspend $ DeclError "typecheck" (toException $ TypeError fml err) (return ())
+        Right typ | u == typ -> k
+        Right typ -> suspend $ DeclError "typecheck" (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ())
+    }
+ 
+    decl <- suspend (DeclAwait return)
+    env <- lift get
+    case decl of
+      ここに実装を書く
+#+END_SRC
+
+Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。
+とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。
+
+** ThmD thmindex formula proof
+
+定理と証明を宣言します。
+
+#+BEGIN_SRC haskell
+  ThmD idx fml (Proof coms) -> typecheck fml Prop $ do
+    lift $ modify $ \env -> env { proof = [] }
+    runThmD idx fml coms
+
+    where
+      runThmD :: (Monad m, MonadIO m) => ThmIndex -> Formula -> [Command] -> Coroutine DeclSuspender (StateT Env m) ()
+      runThmD idx fml coms = do
+        env <- lift get
+        go (commandM env) (newGoal fml) coms
+        lift $ modify $ insertThm idx fml
+
+        where
+          go :: (Monad m) => Coroutine ComSuspender (StateT [Judgement] m) () -> [Judgement] -> [Command] -> Coroutine DeclSuspender (StateT Env m) ()
+          go machine js coms = do
+            env <- lift get
+            (result,js') <- lift $ lift $ runStateT (resume machine) js
+
+            case result of
+              Right () -> return ()
+              Left (ComAwait cont) -> do
+                case coms of
+                  [] -> do
+                    com' <- suspend $ ProofNotFinished js' return
+                    go (suspend $ ComAwait cont) js' [com']
+                  (c:cs) -> do
+                    go (cont c) js' cs
+              Left (z@(CommandError idt err cont)) -> do
+                suspend $ RunCommandError idt err (return ())
+                go cont js coms
+#+END_SRC
+
+ThmDは中でcommandMを走らせ、その結果によって挙動を決めます。
+
+commandMが問題なく終了した時(=与えられたProofが与えられた命題の証明を完成させた時)、示した論理式を環境に追加して終了します。
+commandMがコマンドを要求するComAwaitで終了したとき、toplevelM全体をProofNotFinishedという証明が完了していないことを表すsuspenderでsuspendします。
+commandMがエラーになった時toplevelM全体をRunCommandErrorで返します。
+
+syntaxは次のような感じです。
+
+#+BEGIN_SRC text
+  theorem hoge: a ==> a
+  proof
+    apply ImpR
+    apply I
+  qed
+#+END_SRC
+
+** AxiomD thmindex formula
+
+公理として指定された論理式を追加します。
+
+#+BEGIN_SRC haskell
+      AxiomD idx fml -> typecheck fml Prop $ do
+        lift $ modify $ insertThm idx fml
+#+END_SRC
+
+環境に定理として追加するだけ。
+
+** ImportD path
+
+他の証明ファイルをインポートします。
+
+#+BEGIN_SRC haskell
+      ImportD path -> do
+        env <- lift get
+        env' <- liftIO $ claire env . (\(Laire ds) -> ds) . pLaire =<< readFile path
+        lift $ put $ env'
+#+END_SRC
+
+あとで定義しますがclaireというClaireの証明ファイル(というかClaire型の値)そのものを解釈して動くproofchecker machineをあとで定義するのでそれを使います。
+そしてそれを実行後に環境を現在の環境に上書きします。
+
+** ConstD identifier type
+
+ある型のtermを追加します。
+これは型チェッカーの話をする時についでに説明しますが、ADTみたいなsyntaxが今のところないのでconstructorはこのdeclarationによって追加します。
+
+#+BEGIN_SRC haskell
+      ConstD p typ -> do
+        lift $ modify $ \env -> env { types = M.insert p typ (types env) }
+#+END_SRC
+
+** Print_Proof
+
+直前の証明をprintします。
+これは証明を入力するたびにそれを証明に追加していくという方法で実装しています。詳細はまた後ほど。
+
+#+BEGIN_SRC haskell
+      PrintProof -> do
+        env <- lift get
+        liftIO $ putStrLn $ print_proof env
+#+END_SRC
+
+** HsFile, NewDecl
+
+この辺はマクロ関係の機能なので今は保留。
+
+#+BEGIN_SRC haskell
+      HsFile file -> ...
+      NewDecl dec args -> ...
+#+END_SRC
+
+* Claire Proofchecker
+
+色々説明していないこともありますがまぁそれはそれとして、Claireのproofcheckerを定義します。
+
+#+BEGIN_SRC haskell
+  claire :: Env -> [Decl] -> IO Env
+  claire = go toplevelM where
+    go :: Coroutine DeclSuspender (StateT Env IO) () -> Env -> [Decl] -> IO Env
+    go machine env decls = do
+      (result,env') <- flip runStateT env (resume machine)
+      case result of
+        Left (DeclAwait cont) -> case decls of
+          [] -> return env'
+          (d:ds) -> go (cont d) env' ds
+        Left z -> do
+          print z
+          return env'
+#+END_SRC
+
+これは基本的には、受け取ったDeclのリストをtoplevelMに食わしながらループをぐるぐる回すだけですね。
+toplevelMは(foreverで定義されているのでresumeすると常にDeclAwaitが出現し続けるという)無限の深さの構造をもつので、戻り値は必ずLeftﾅﾝﾄｶの形になります。
+
+DeclAwaitになったらそのまま実行を続け、そうでなければエラーなので画面に出力してそこでproofcheckerを止めます。
+
+* Main.hs
+
+さて、今までの機能を使ってとにかく動くところまでやりたいので、Main.hsの実装を説明します。
+
+[[https://github.com/myuon/claire/blob/master/app/Main.hs][app/Main.hs]]
+
+#+BEGIN_SRC haskell
+  main :: IO ()
+  main = do
+    xs <- getArgs
+    case (xs /= []) of
+      True -> do
+        env <- claire defEnv . (\(Laire ds) -> ds) . pLaire =<< readFile (head xs)
+        putStrLn "= Constants ="
+        mapM_ print $ M.assocs $ types env
+        putStrLn "= Proved Theorems ="
+        mapM_ print $ M.assocs $ thms env
+      False -> do
+        mapM_ putStrLn $
+          [ "========================="
+          , "=== Welcome to Claire ==="
+          , "========================="
+          , ""
+          ]
+        clairepl defEnv
+#+END_SRC
+
+main関数は、ファイルを受け取ってproofcheckerを走らせるか、インタラクティブシェルを起動するかのいずれかです。
+proofcheckerは先程説明したclaireを実行するだけですね。
+
+インタラクティブシェルは次のような実装になっています。
+
+#+BEGIN_SRC haskell
+  clairepl :: Env -> IO ()
+  clairepl env = go env toplevelM where
+    go :: Env -> Coroutine DeclSuspender (StateT Env IO) () -> IO ()
+    go env k = do
+      (result,env') <- flip runStateT env $ resume k
+
+      case result of
+        Right () -> go env' k
+        Left (DeclAwait k) -> do
+          t <- safep (putStr "decl>" >> hFlush stdout) pDecl
+          go env' (k t)
+        Left (ProofNotFinished js cont) -> do
+          mapM_ print js
+          (t,raw) <- safep (putStr "command>" >> hFlush stdout) (\s -> let s' = pCommand s in s' `seq` (s',s))
+          let addProof env k = env { proof = proof env ++ [k] }
+          go (addProof env' (t,raw)) (cont t)
+        Left (z@(RunCommandError idt err cont)) -> do
+          print z
+          let unaddProof env | length (proof env) >= 1 = env { proof = init (proof env) }
+              unaddProof env = env
+          go (unaddProof env') cont
+        Left (z@(DeclError idt err cont)) -> do
+          print z
+          go env cont
+
+    safep :: IO () -> (String -> a) -> IO a
+    safep ma p = ma >> (p <$!> getLine) `catch` (\err -> print (err :: ErrorCall) >> safep ma p)
+
+#+END_SRC
+
+これはtoplevelMを使って実際にどのように実行するかを記述するものです。
+
+toplevelMを実行すると、DeclAwait, ProofNotFinished, RunCommandError, DeclErrorなどの様々な状態が返ってきます。
+DeclAwaitが返ってきたらDeclをユーザーに入力させ、ProofNotFinishedが返ってきたらCommandをユーザーに入力させる、みたいなことをしているのが上のコードです。
+コマンドの入力は証明の入力なので、上でも触れましたがPrint_Proofができるようにするために入力した証明を環境に追加しておきます。
+
+ところで、ユーザーの入力が例えばパース不可能な文字列である場合があるので、そのような場合にはエラーを出力しもう一度入力をさせるための関数がsafepです。
+
+toplevelMの結果エラーが返ってきたらエラー内容を画面に出力して、もう一度入力をさせます。
+
+注目してほしいこととして、証明チェックに関する実装は全てtoplevelMが請け負っていて、claireplもclaireも共通したコードで実装ができているということですね。
+Coroutineモナドを使ったことにより、証明の実装自体は共通化させ、実際にマシーンが停止状態に入った時にエラーを画面に表示するか、それともユーザーからの入力を受け付けるのか、というUI部分は後から実装を与えて挙動を変えているというのが大事なところです。
+
+* 実行
+
+以上のような仕組みで、Claireのproofcheckerとインタラクティブシェルが動きます。
+
+例えば実行してみると、次のような操作で証明を記述することが出来ます。
+
+#+BEGIN_SRC text
+  =========================
+  === Welcome to Claire ===
+  =========================
+
+  decl>theorem id: a ==> a
+
+  [] |- [Pred "a" [] :==>: Pred "a" []]
+
+  command>apply ImpR
+
+  [Pred "a" []] |- [Pred "a" []]
+
+  command>apply I
+
+  decl>print_proof
+
+  = proof of the previous theorem =
+  proof
+    apply ImpR
+    apply I
+  qed
+#+END_SRC
+
+decl>, command> の部分がユーザーの入力です。
+
+* まとめ
+
+はてさて、だいぶ形になってきたように思います。
+一応今回でClaireの証明チェックに関するコアの部分の説明は終わりです。
+
+あと、型システムの説明と(と言っても特別なことはないので説明することもないですが)、マクロ機能の説明をしたらClaireの解説はおしまいになります。
+
+というわけでお疲れ様でした。
+
+
