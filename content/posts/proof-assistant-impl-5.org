@@ -1,0 +1,341 @@
+---
+title: Proof Assistantを作る・実装編 その5
+date: 2017-12-21T20:38:56+09:00
+draft: true
+toc: true
+tags: [AdC2017,定理証明,Haskell]
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 21日目の記事です。*
+
+-----
+
+Proof Assistant 「Claire」の実装について説明していきます。
+
+リポジトリはこちら: [[https://github.com/myuon/claire][myuon/claire]]
+
+機能まででproofcheckerのコア機能については説明しました。
+今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
+
+* Environment
+
+proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。
+説明していませんでしたが一応紹介しておきます。
+
+[[https://github.com/myuon/claire/blob/master/src/Claire/Env.hs][Claire.Env]]
+
+#+BEGIN_SRC haskell
+  data Env
+    = Env
+    { thms :: M.Map ThmIndex Formula
+    , types :: M.Map Ident Type
+    , proof :: [(Command, String)]
+    , newcommands :: M.Map Ident (Env -> Argument -> [Judgement] -> [Command])
+    , newdecls :: M.Map Ident ([Argument] -> [Decl])
+    }
+#+END_SRC
+
+上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。
+
+また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。
+
+具体的には、
+
+#+BEGIN_SRC haskell
+  theorem id: a ==> a
+  proof
+    ...
+  qed
+
+  -- この証明の直後、Envのthmsには
+  ("id", Pred "?a" [] :==>: Pred "?a" [])
+  -- が追加されている
+#+END_SRC
+
+変数に?をつけただけじゃん、というのはまぁそうなのですが、パーサーの定義により変数名に?は使えないのでこの変数はユーザーからアクセすることは出来ません。
+これを具体化するにはuseコマンドやinstコマンドを使う必要があります。
+
+定理を証明して環境に追加、と一口で言ってもこのような処理が行われます。
+
+このgeneralize自体は、当然ながら別に必ずしも必要ではありませんが、このようにしておくことで変数の書き換えという頻繁に発生するユーザーの操作の手間を軽減できます。
+あらゆる命題にForallを付けてくださいということにしてもまぁよいのですが、aを変数とする時に ~P(a)~ の証明図の存在と ~Forall a. P(a)~ の証明図の存在はメタロジックでは同値なのでコマンドでサポートしてあげても良いでしょうということです。
+
+* Type System
+
+simply-typedです。以上。
+
+で分かる人には分かると思うんですが別に面白いことは何もないです。
+ただしFOLはsortが2つ、FormulaとTermとあり、それぞれに型が付きます。Formulaはprop型しかないのでまぁ簡単ですが、命題変数はある型のTermを受け取ってprop型を返すような関数とみなします。
+
+具体的には、
+
+#+BEGIN_SRC haskell
+  -- Formulaの型は全部prop
+  (:/\:) :: prop -> prop -> prop
+  Not :: prop -> prop
+
+  -- ですが、例えば
+  P(a) ==> Q(x,y,z)
+  -- とあるときは、
+  P :: A -> prop
+  Q :: X -> Y -> Z -> prop
+  -- みたいになる
+#+END_SRC
+
+さらにTermについては普通にラムダ式が使えるので色んな型が来る可能性があるので、ちゃんと型チェックしないと不便そうです。
+
+** Type Definition
+
+simply-typedなので型はfunction type、組み込みのprop、あとはコンスタントです。
+
+[[https://github.com/myuon/claire/blob/master/src/Claire/Syntax/FOL.hs][Claire.Syntax.FOL]]
+
+#+BEGIN_SRC haskell
+  data TypeForm a
+    = VarT a
+    | ConT Ident [TypeForm a]
+    | ArrT (TypeForm a) (TypeForm a)
+    | Prop
+    deriving (Eq, Ord, Show, Functor, Foldable, Traversable)
+
+  type Type = TypeForm Ident
+#+END_SRC
+
+syntaxはIsabelleに合わせ、型変数は前にクォートを付けて ~'a~ のように、関数は ~=>~ 、propはpropそのまま、それ以外はconTとしてパースされます。
+
+termは型を付けて一々宣言することでしか定義できません。さらにdatatype宣言的なものもないので、inductionは手動で(!)公理として追加することになります。
+
+#+BEGIN_SRC text
+  constant true : bool
+  constant false : bool
+
+  axiom bool_induction: P(true) ==> P(false) ==> P(b)
+#+END_SRC
+
+不便ですがまぁ理論的には何の問題もないのでいいことにします(よくない)。
+
+typecheck自体は上のようにconstant宣言した時、axiomとtheoremで命題を宣言した時などに走ります。
+
+#+BEGIN_SRC haskell
+    let typecheck fml u k = do {
+      env <- lift get;
+      utyp <- liftIO $ try $ infer env fml;
+      case utyp of
+        Left err -> suspend $ DeclError "typecheck" (toException $ TypeError fml err) (return ())
+        Right typ | u == typ -> k
+        Right typ -> suspend $ DeclError "typecheck" (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ())
+    }
+
+    case decl of
+      AxiomD idx fml -> typecheck fml Prop $ ...
+      ThmD idx fml (Proof coms) -> typecheck fml Prop $ ...
+#+END_SRC
+
+みたいにしていました。
+
+typechecker(type inference)自体は実装が間違ってなければ普通のHM型推論のはずです。
+Formulaの中にTermが混ざってくるみたいなsyntaxのせいで普通のラムダ計算の型推論とはちょっと違いますがまぁそのくらいですね。
+
+
+* Claireによる証明
+
+さてここまで来るとClaireで証明を書くことが可能です。
+
+[[https://github.com/myuon/claire/blob/master/lib/preliminaries.cl][lib/preliminaries.cl]]
+
+#+BEGIN_SRC text
+  # equality
+  constant eq: 'a => 'a => prop
+
+  axiom refl: eq(r,r)
+  axiom subst: eq(a,b) ==> P(a) ==> P(b)
+
+  theorem sym: eq(r,s) ==> eq(s,r)
+  proof
+    ...
+  qed
+
+  theorem trans: eq(r,s) ==> eq(s,t) ==> eq(r,t)
+  proof
+    ...
+  qed
+#+END_SRC
+
+(実はまだ説明していないマクロで定義されたコマンドを使っているので証明はまだ見せませんが)、例えば上のようにしてeqという述語を定義し、refl/substを公理として追加するとsymmetricityとtransitivityが証明できます。
+今の組み込みのコマンドだけで示すのはかなり大変ですが、もし興味があればやってみてください。
+
+** Proof of Curry
+
+何も示さないのもちょっとアレなので、1つくらい定理を示してみます。
+
+Claireを起動して次のCurryを入力します。
+
+#+BEGIN_SRC text
+  =========================
+  === Welcome to Claire ===
+  =========================
+
+  decl>theorem Curry: (P ==> Q ==> R) ==> (P /\ Q ==> R)
+  [] |- [(Pred "P" [] :==>: (Pred "Q" [] :==>: Pred "R" [])) :==>: ((Pred "P" [] :/\: Pred "Q" []) :==>: Pred "R" [])]
+#+END_SRC
+
+かつとならばを用いた *メタロジックでの* Curry化に関する定理です。
+
+さて、下に表示されているのがゴールです。とりあえず|-の右側(命題)が ~_ :==>: _~ の形なので、ImpRが使えそうです。
+
+#+BEGIN_SRC text
+  command>apply ImpR
+  [Pred "P" [] :==>: (Pred "Q" [] :==>: Pred "R" [])] |- [(Pred "P" [] :/\: Pred "Q" []) :==>: Pred "R" []]
+#+END_SRC
+
+ならばの先頭が左に移りました。再びImpRします。
+
+#+BEGIN_SRC text
+  command>apply ImpR
+  [Pred "P" [] :==>: (Pred "Q" [] :==>: Pred "R" []),Pred "P" [] :/\: Pred "Q" []] |- [Pred "R" []]
+#+END_SRC
+
+さて、今度は左辺にならばを2つも含む項があります。
+これをバラしたいのでImpLしたいところですが、ルールのapplyは仮定の一番右の項に適用されるので、左の項を仮定の先頭に持ってくる必要があります。
+
+というわけでここではPLを使って仮定の順番を入れ替える(指定した仮定を先頭に移動する)ことにします。
+
+#+BEGIN_SRC text
+  command>apply PL 1
+  [Pred "P" [] :/\: Pred "Q" [],Pred "P" [] :==>: (Pred "Q" [] :==>: Pred "R" [])] |- [Pred "R" []]
+#+END_SRC
+
+そしてImpLします。
+
+#+BEGIN_SRC text
+  command>apply ImpL
+  [Pred "P" [] :/\: Pred "Q" []] |- [Pred "P" [],Pred "R" []]
+  [Pred "P" [] :/\: Pred "Q" [],Pred "Q" [] :==>: Pred "R" []] |- [Pred "R" []]
+#+END_SRC
+
+ゴールが2つのsubgoalに別れました。
+
+最初のやつは、仮定のかつをバラせばすぐ言えそうですね。
+
+#+BEGIN_SRC text
+  command>apply AndL1
+  [Pred "P" []] |- [Pred "P" [],Pred "R" []]
+  [Pred "P" [] :/\: Pred "Q" [],Pred "Q" [] :==>: Pred "R" []] |- [Pred "R" []]
+  command>noapply WR
+  = NoApply WR result
+  [Pred "P" []] |- [Pred "R" []]
+  [Pred "P" [] :/\: Pred "Q" [],Pred "Q" [] :==>: Pred "R" []] |- [Pred "R" []]
+  =
+
+  [Pred "P" []] |- [Pred "P" [],Pred "R" []]
+  [Pred "P" [] :/\: Pred "Q" [],Pred "Q" [] :==>: Pred "R" []] |- [Pred "R" []]
+  command>apply PR 1
+  [Pred "P" []] |- [Pred "R" [],Pred "P" []]
+  [Pred "P" [] :/\: Pred "Q" [],Pred "Q" [] :==>: Pred "R" []] |- [Pred "R" []]
+  command>apply WR
+  [Pred "P" []] |- [Pred "P" []]
+  [Pred "P" [] :/\: Pred "Q" [],Pred "Q" [] :==>: Pred "R" []] |- [Pred "R" []]
+  command>apply I
+  [Pred "P" [] :/\: Pred "Q" [],Pred "Q" [] :==>: Pred "R" []] |- [Pred "R" []]
+#+END_SRC
+
+(そしてコマンド確認用にnoapplyを使う)
+
+さて、ゴールが1つになったので、また似たような感じで証明を進めます。
+
+#+BEGIN_SRC text
+  command>apply ImpL
+  [Pred "P" [] :/\: Pred "Q" []] |- [Pred "Q" [],Pred "R" []]
+  [Pred "P" [] :/\: Pred "Q" [],Pred "R" []] |- [Pred "R" []]
+  command>apply AndL2
+  [Pred "Q" []] |- [Pred "Q" [],Pred "R" []]
+  [Pred "P" [] :/\: Pred "Q" [],Pred "R" []] |- [Pred "R" []]
+  command>apply PR 1
+  [Pred "Q" []] |- [Pred "R" [],Pred "Q" []]
+  [Pred "P" [] :/\: Pred "Q" [],Pred "R" []] |- [Pred "R" []]
+  command>apply WR
+  [Pred "Q" []] |- [Pred "Q" []]
+  [Pred "P" [] :/\: Pred "Q" [],Pred "R" []] |- [Pred "R" []]
+  command>apply I
+  [Pred "P" [] :/\: Pred "Q" [],Pred "R" []] |- [Pred "R" []]
+#+END_SRC
+
+ゴールがまた1つになったので、最後は仮定をいじって終わりです。
+
+#+BEGIN_SRC text
+  command>noapply WL
+  = NoApply WL result
+  [Pred "P" [] :/\: Pred "Q" []] |- [Pred "R" []]
+  =
+
+  [Pred "P" [] :/\: Pred "Q" [],Pred "R" []] |- [Pred "R" []]
+  command>apply PL 1
+  [Pred "R" [],Pred "P" [] :/\: Pred "Q" []] |- [Pred "R" []]
+  command>apply WL
+  [Pred "R" []] |- [Pred "R" []]
+  command>apply I
+  decl>
+#+END_SRC
+
+無事に証明が終わったようです。証明を出力してみましょう。
+
+#+BEGIN_SRC text
+  decl>print_proof
+  = proof of the previous theorem =
+  proof
+    apply ImpR
+    apply ImpR
+    apply PL 1
+    apply ImpL
+    apply AndL1
+    apply PR 1
+    apply WR
+    apply I
+    apply ImpL
+    apply AndL2
+    apply PR 1
+    apply WR
+    apply I
+    apply PL 1
+    apply WL
+    apply I
+  qed
+#+END_SRC
+
+縦に長いのでダラダラしていますがまぁこんな感じですね。
+証明のまとまりごとに(ゴールが減るのはIなのでIの部分で)見やすく分けるとよいかもしれません。
+
+#+BEGIN_SRC text
+  proof
+    apply (ImpR, ImpR, PL 1, ImpL)
+      apply (AndL1, PR 1, WR, I)
+      apply ImpL
+        apply (AndL2, PR 1, WR, I)
+        apply (PL 1, WL, I)
+  qed
+#+END_SRC
+
+いやぁ素晴らしい！ちゃんとProof Assistantとして動いてくれましたね！！
+
+
+* マクロへ
+
+さて、Claireをちょっと触ると分かりますが(いや触らなくても分かると思いますが)コマンドが貧弱すぎて証明を書くのが非常に大変です。
+
+例を一つ上げておくと、
+
+#+BEGIN_SRC text
+    [Pred "P" [] :/\: Pred "Q" [],Pred "R" []] |- [Pred "R" []]
+#+END_SRC
+
+なんかは、「いや仮定に命題と同じものがあるんだから明らかでしょ」という気持ちにまぁなりますよね。
+
+というわけで、例えばこういう状況でPLやWLを適当にやってくれるコマンドなどがあると便利なので、そういうものをマクロで定義できるようにしましょう。
+というのが次の話になります。
+
+* まとめ
+
+というわけで環境、型システム、それにClaireによる定理証明を行いました。
+
+お疲れ様でした。
+
