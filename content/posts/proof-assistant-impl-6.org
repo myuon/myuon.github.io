@@ -184,7 +184,7 @@ HsFileが来たらそれを読み込み、export_declとexport_command部分を�
 
 実装は、Judgementの中の形を見てPL,WL,PR,WRをいい感じに組み合わせたコマンド列を返します。
 
-** implyR (thm : a ==> b)?
+** implyR (thm:a ==> b)?
 
 implyRは ~thm: a ==> b~ を受け取って ~assms |- b, props~ を ~assms |- a, props~ に変形します。
 引数を省略した場合は ~assms, a ==> b |- b, props~ を ~assms |- a, props~ に変形します。
@@ -221,7 +221,7 @@ implyRは ~thm: a ==> b~ を受け取って ~assms |- b, props~ を ~assms |- a,
 
 コメントのところ見てもらうとわかるんじゃないですかね。
 
-** implyL (thm : a ==> b)?
+** implyL (thm:a ==> b)?
 
 implyRと逆で ~assms, a |- props~ を ~assms, b |- props~ に変えます。
 
