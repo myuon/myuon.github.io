@@ -1,0 +1,427 @@
+---
+title: Proof Assistantを作る・マクロ編 その6
+date: 2017-12-23T00:04:55+09:00
+toc: true
+tags: [AdC2017,定理証明,Haskell]
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 21日目の記事です。*
+
+-----
+
+Proof Assistant 「Claire」の実装について説明していきます。
+
+リポジトリはこちら: [[https://github.com/myuon/claire][myuon/claire]]
+
+今回はClaireのマクロ機能について説明します。
+
+* マクロ記述言語
+
+Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。
+
+Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。
+
+Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。
+
+マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。
+
+* マクロの実装
+
+マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。
+
+** マクロ定義モジュール
+
+定義は適当なHaskellのモジュールとして記述します。
+export_command, export_declに定義したマクロを列挙します。
+
+#+BEGIN_SRC haskell
+  module Commands where
+
+  import Claire
+
+  macro :: Env -> Argument -> [Judgement] -> [Command]
+  macro = ...
+
+  export_command :: [(String, Env -> Argument -> [Judgement] -> [Command])]
+  export_command =
+    [ ("name", macro)
+    ]
+
+  declmacro :: [Argument] -> [Decl]
+  declmacro = ...
+
+  export_decl :: [(String, [Argument] -> [Decl])]
+  export_decl =
+    [ ("name", declmacro)
+    ]
+
+
+#+END_SRC
+
+これを使いたいときは、ClaireのファイルにHs_fileを記述します。
+
+#+BEGIN_SRC text
+  Hs_file "lib/Commands.hs"
+#+END_SRC
+
+原始的ですね。
+
+ちなみに上のArgumentって何かというと、マクロに来る可能性のある引数を全部まとめた型ですね。
+
+#+BEGIN_SRC haskell
+  data Argument
+    = ArgEmpty
+    | ArgPreds [Predicate]
+    | ArgTerms [Term]
+    | ArgTyped Ident Type
+    | ArgIdents [(Ident,Pairs)]
+#+END_SRC
+
+定義はこうなっていて、パーサーの定義は次です。
+
+#+BEGIN_SRC text
+  Argument :: { Argument }
+    : {- empty -}				{ ArgEmpty }
+    | 'p[' Predicates ']'  		{ ArgPreds $2 }
+    | 'n[' ident ':' Type ']'  	 	{ ArgTyped $2 $4 }
+    | 't[' Terms ']'  	 		{ ArgTerms $2 }
+    | 'i[' IdentPairs ']'  		{ ArgIdents $2 }
+#+END_SRC
+
+まぁなんてひどい！
+これ使うときは、例えば ~newcommand p[(x,y) => P(x), Q]~ みたいに書くので大変uglyなんですがこれはcontext-dependentなパーサーを書きたくなかったがゆえのものです。
+
+実際つらいので察してほしい。
+
+** マクロの実装
+
+実装にはこのHaskellファイルを読みだして実行するということをしないといけないので[[https://www.stackage.org/package/hint][hint]]というパッケージを使ってGHCをinterpreterとして呼び出して実行します。
+
+[[https://github.com/myuon/claire/blob/master/src/Claire/Checker.hs][Claire.Checker]]
+
+#+BEGIN_SRC haskell
+      HsFile file -> do
+        r <- liftIO $ runInterpreter $ do
+          loadModules [file]
+          setTopLevelModules [takeBaseName file]
+          ds <- interpret "export_decl" (as :: [(String, [Argument] -> [Decl])])
+          cs <- interpret "export_command" (as :: [(String, Env -> Argument -> [Judgement] -> [Command])])
+          return $ (ds,cs)
+        case r of
+          Left err -> suspend $ DeclError "HsFile" (toException $ HsFileLoadError err) (return ())
+          Right (ds,cs) -> lift $ modify $ \env -> env
+            { newdecls = M.union (M.fromList ds) (newdecls env)
+            , newcommands = M.union (M.fromList cs) (newcommands env)
+            }
+#+END_SRC
+
+HsFileが来たらそれを読み込み、export_declとexport_command部分を評価して環境に突っ込みます。
+
+ちなみに呼び出し部分はこう。
+
+それぞれ、対応するproofcheckerステートマシンを呼ぶだけなので簡単ですね。
+
+*** NewCommand
+
+#+BEGIN_SRC haskell
+      NewCommand com args | M.member com (newcommands env) -> do
+        js <- lift get
+        r <- liftIO $ try $ execStateT (comrunner env ((newcommands env M.! com) env args js)) js
+        case r of
+          Right js' -> lift $ put js'
+          Left err -> suspend $ CommandError com err (return ())
+      NewCommand com args -> suspend $ CommandError com (toException NoSuchCommand) (return ())
+#+END_SRC
+
+*** NewDecl
+
+#+BEGIN_SRC haskell
+      NewDecl dec args | M.member dec (newdecls env) -> do
+        r <- liftIO $ try $ execStateT (declrunner ((newdecls env M.! dec) args)) env
+        case r of
+          Right env' -> lift $ put env'
+          Left err -> suspend $ DeclError dec err (return ())
+      NewDecl dec args -> suspend $ DeclError dec (toException NoSuchDecl) (return ())
+#+END_SRC
+
+
+* 標準ライブラリのマクロ
+
+さて、実際にどんなマクロを例えば定義しているのかを見ていきます。
+
+[[https://github.com/myuon/claire/blob/master/lib/Commands.hs][lib/Commands.hs]] 読んででもまぁいいんですけれども一応。
+
+** defer
+
+これは実はコマンド構文木を生成するのでは書けないので組み込みコマンドなんですが、Isabelleのdeferと同じく現在注目しているゴールを一番最後に回すコマンドです。
+
+ゴールがたくさんある場合に、「さきにこっちのsubgoal示したいんだけど」って時に使います。
+
+** assumption
+
+現在フォーカスしているゴールで、命題のいずれかが仮定のいずれかに一致している時にそれを証明するコマンドです。
+
+要は前回の最後に言った ~P,Q |- R,P~ のときに一発で証明してくれるやつです。
+
+大変便利(っていうかこれがないのがキツイんだけど)なのでよく使います。
+
+#+BEGIN_SRC haskell
+  onlyL :: Int -> Int -> [Rule]
+  onlyL i n = concat $ replicate i [WL] ++ replicate (n-i-1) [PL 1, WL]
+
+  onlyR :: Int -> Int -> [Rule]
+  onlyR i n = concat $ replicate i [WR] ++ replicate (n-i-1) [PR 1, WR]
+
+  assumption :: Env -> Argument -> [Judgement] -> [Command]
+  assumption env ArgEmpty (js@(Judgement assms props:_)) = case findIndex (`elem` toList assms) props of
+    Nothing -> throwM $ CannotSolve js
+    Just i ->
+      let Just j = elemIndex (toList props !! i) (toList assms)
+      in return $ Apply $ onlyR i (length props) ++ onlyL j (length assms) ++ [I]
+  assumption env arg _ = throwM $ WrongArgument arg
+#+END_SRC
+
+
+実装は、Judgementの中の形を見てPL,WL,PR,WRをいい感じに組み合わせたコマンド列を返します。
+
+** implyR (thm : a ==> b)?
+
+implyRは ~thm: a ==> b~ を受け取って ~assms |- b, props~ を ~assms |- a, props~ に変形します。
+引数を省略した場合は ~assms, a ==> b |- b, props~ を ~assms |- a, props~ に変形します。
+
+#+BEGIN_SRC haskell
+  {-| implyR
+  thm: a ==> b
+  goal: assms |- b, props
+  use thm
+    assms, a ==> b |- b, props
+  apply ImpL
+    assms |- a, b, props
+    assms, b |- b, props
+  defer
+    assms, b |- b, props
+    assms |- a, b, props
+  assumption
+    assms |- a, b, props
+  apply (PR 1, WR)
+    assms |- a, props
+  -}
+  implyR :: Env -> Argument -> [Judgement] -> [Command]
+  implyR env (ArgIdents [(i,ps)]) js = Use i ps : implyR env ArgEmpty js
+  implyR env ArgEmpty _ = coms where
+    coms =
+      [ Apply [ImpL]
+      , NewCommand "defer" ArgEmpty
+      , NewCommand "assumption" ArgEmpty
+      , Apply [PR 1, WR]
+      ]
+  implyR env arg _ = throwM $ WrongArgument arg
+#+END_SRC
+
+
+コメントのところ見てもらうとわかるんじゃないですかね。
+
+** implyL (thm : a ==> b)?
+
+implyRと逆で ~assms, a |- props~ を ~assms, b |- props~ に変えます。
+
+実装略
+
+** genR
+
+~assms |- P(a), props~ を ~assms |- (Forall a. P(a)), props~ に変えます。
+
+たまに便利かもしれない(ほんまか)
+
+#+BEGIN_SRC haskell
+  {-| genR
+  goal: assms |- P(a), props
+  apply Cut [Forall a. P(a)]
+    assms |- Forall a. P(a), P(a), props
+    assms, Forall a. P(a) |- P(a), props
+  defer
+    assms, Forall a. P(a) |- P(a), props
+    assms, |- Forall a. P(a), P(a), props
+  apply (ForallL [a])
+    assms, P(a) |- P(a), props
+    assms, |- Forall a. P(a), P(a), props
+  assumption
+    assms, |- Forall a. P(a), P(a), props
+  apply (PR 1, WR)
+    assms, |- Forall a. P(a), props
+  -}
+  genR :: Env -> Argument -> [Judgement] -> [Command]
+  genR env (ArgIdents [(i,[])]) (js@(Judgement _ (p:_):_)) = coms where
+    coms =
+      [ Apply [Cut $ Forall i p]
+      , NewCommand "defer" ArgEmpty
+      , Apply [ForallL (Var i)]
+      , NewCommand "assumption" ArgEmpty
+      , Apply [PR 1, WR]
+      ]
+  genR env arg _ = throwM $ WrongArgument arg
+
+#+END_SRC
+
+** genL
+
+~assms, P(a) |- props~ を ~assms, Forall a. P(a) |- props~ に変えます。
+
+実装略。
+
+** absR
+
+~assms, a |- b, props~ を ~assms |- a ==> b, props~ に変えます。
+
+要は==>のelimination ruleなのですが、適用したい補題の仮定がならばの形になっている時なんかに便利ですね。
+
+#+BEGIN_SRC haskell
+  {-| absR
+  goal: assms, a |- b, props
+  apply Cut [a ==> b]
+    assms, a |- a ==> b, b, props
+    assms, a, a ==> b |- b, props
+  defer
+    assms, a, a ==> b |- b, props
+    assms, a |- a ==> b, b, props
+  apply ImpL
+    assms, a |- a, b, props
+    assms, a, b |- b, props
+    assms, a |- a ==> b, b, props
+  assumption [2]
+    assms, a |- a ==> b, b, props
+  apply (PR 1, WR, WL)
+    assms |- a ==> b, props
+  -}
+
+  absL :: Env -> Argument -> [Judgement] -> [Command]
+  absL env ArgEmpty (js@(Judgement (a:_) (b:_):_)) =
+    [ Apply [Cut $ a :==>: b]
+    , NewCommand "defer" ArgEmpty
+    , Apply [ImpL]
+    , NewCommand "assumption" ArgEmpty
+    , NewCommand "assumption" ArgEmpty
+    , Apply [PR 1, WR, WL]
+    ]
+#+END_SRC
+
+
+** decl definition
+
+これはdeclに対するマクロです。
+
+~definition (name :: type) body~ とかくと ~constant name :: type; axiom name_def body~ が宣言されます。
+
+Isabelleのdefinitionをまぁパクった感じなんですが、constantとかaxiomとか一々かくのやってらんねーよという感じなので定義してあります。
+
+まぁsyntaxがひどいのでどっこいですが。
+
+#+BEGIN_SRC haskell
+  definition :: [Argument] -> [Decl]
+  definition [ArgTyped i typ, ArgPreds [PredFml body]] =
+    [ ConstD i typ
+    , AxiomD (i ++ "_def") body
+    ]
+  definition arg = throwM $ WrongArguments arg
+#+END_SRC
+
+* いざ証明
+
+さて色々マクロを定義してみたので、実際に使ってみましょう。
+
+前回と同じCurryを証明してみます。
+
+#+BEGIN_SRC text
+  =========================
+  === Welcome to Claire ===
+  =========================
+
+  decl>Hs_file "lib/Commands.hs"
+  decl>theorem Curry: (P ==> Q ==> R) ==> (P /\ Q) ==> R
+  [] |- [(Pred "P" [] :==>: (Pred "Q" [] :==>: Pred "R" [])) :==>: ((Pred "P" [] :/\: Pred "Q" []) :==>: Pred "R" [])]
+#+END_SRC
+
+まず、最初にHs_fileで上で定義したコマンドを読み込みます。割と時間がかかります。
+
+最初は前回と同じようにならばをバラしたりします。
+
+#+BEGIN_SRC text
+  command>apply ImpR
+  [Pred "P" [] :==>: (Pred "Q" [] :==>: Pred "R" [])] |- [(Pred "P" [] :/\: Pred "Q" []) :==>: Pred "R" []]
+  command>apply ImpR
+  [Pred "P" [] :==>: (Pred "Q" [] :==>: Pred "R" []),Pred "P" [] :/\: Pred "Q" []] |- [Pred "R" []]
+  command>apply PL 1
+  [Pred "P" [] :/\: Pred "Q" [],Pred "P" [] :==>: (Pred "Q" [] :==>: Pred "R" [])] |- [Pred "R" []]
+  command>apply ImpL
+  [Pred "P" [] :/\: Pred "Q" []] |- [Pred "P" [],Pred "R" []]
+  [Pred "P" [] :/\: Pred "Q" [],Pred "Q" [] :==>: Pred "R" []] |- [Pred "R" []]
+#+END_SRC
+
+まぁここまでは同じですね。
+
+最初のゴールは左辺がかつなので、これもバラします。
+
+#+BEGIN_SRC text
+  command>apply AndL1
+  [Pred "P" []] |- [Pred "P" [],Pred "R" []]
+  [Pred "P" [] :/\: Pred "Q" [],Pred "Q" [] :==>: Pred "R" []] |- [Pred "R" []]
+#+END_SRC
+
+ここで、最初のゴールの命題と仮定は同じものを含むので、assumptionコマンドが使えます。
+
+#+BEGIN_SRC text
+  command>assumption
+  [Pred "P" [] :/\: Pred "Q" [],Pred "Q" [] :==>: Pred "R" []] |- [Pred "R" []]
+#+END_SRC
+
+ゴールが1つに減りました。このゴールは仮定に ~Q ==> R~ を、命題に ~R~ を含むので、implyRを使って命題を ~Q~ に変形します。
+
+#+BEGIN_SRC text
+  command>implyR
+  [Pred "P" [] :/\: Pred "Q" []] |- [Pred "Q" []]
+#+END_SRC
+
+あとはかつをバラしてassumptionです。
+
+#+BEGIN_SRC text
+  command>apply AndL2
+  [Pred "Q" []] |- [Pred "Q" []]
+  command>apply I
+#+END_SRC
+
+証明はまとめると次のようになります。
+
+#+BEGIN_SRC text
+  proof
+    apply (ImpR, ImpR, PL 1, ImpL)
+    apply AndL1
+    assumption
+    implyR
+    apply (AndL2, I)
+  qed
+#+END_SRC
+
+前回の証明と比べて、そこまで行数が減っているわけではないのであんまり変わんねーじゃんと思うかもしれませんが、
+実際は証明の書きやすさは天と地ほどの差があります。
+
+今回定義したいくつかのコマンドのおかげで、より人間的な直観に近いゴールの変形が可能になったので随分証明も書きやすくなりました。
+
+(というか、実際はこういう証明を書きながら「あ、こんなコマンドがあると便利だな」で追加するので書きやすくなるのは当たり前といえば当たり前ですが)
+
+
+* まとめ
+
+今回導入したマクロは、応用的な話ではありますが実際に定理証明に使うならないとこのくらいはできないと話にならないので是非実装したい機能でした。
+
+それらしく導入できたのはよかったかなと思います。
+
+さて、これを触ってみると分かりますがHs_fileは死ぬほど遅いです。まぁGHCを実行時に呼び出してHaskellファイルのコンパイルとかしてるんで遅いに決まっているのですが、これはインタープリターでゴリ押したのが悪いですね。
+
+実用できるProof Assistantを作るならマクロ記述言語をちゃんと用意することは必須でしょう。
+
+
+今回でClaireの説明もおしまいです。明日はProof Assistant実装を振り返って、だったり今後の改良点だったりの話をします。
+
+お疲れ様でした。
+
+
