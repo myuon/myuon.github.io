@@ -62,8 +62,15 @@
         {{ if .NextInSection }}Next: <a href="{{ .NextInSection.Permalink }}">{{ .NextInSection.Title }}</a>{{ end }}
 
         <h1>{{ .Title }}</h1>
-        {{ block "main" . }}
-        {{ end }}
+        {{ block "main" . }}{{ end }}
+
+        <div class="ui divider"></div>
+
+        {{ if .PrevInSection }}Prev: <a href="{{ .PrevInSection.Permalink }}">{{ .PrevInSection.Title }}</a><br />{{ end }}
+        {{ if .NextInSection }}Next: <a href="{{ .NextInSection.Permalink }}">{{ .NextInSection.Title }}</a>{{ end }}
+        <div class="ui divider"></div>
+
+        {{ block "comment-area" . }}{{ end }}
       </main>
     </div>
 
