@@ -1,0 +1,96 @@
+---
+title: Proof Assistantを作る・発展編 その7
+date: 2017-12-23T21:12:29+09:00
+draft: true
+toc: true
+tags: [AdC2017,定理証明,Haskell]
+---
+
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 23日目の記事です。*
+
+-----
+
+Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
+
+* 実装すべき機能など
+
+** prover
+
+さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
+
+Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
+
+** unifier
+
+一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。
+この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。
+
+各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。
+
+あくまで一例ですが、 ~goal: |- P(a) /\ P(b) ==> P(a)~ かつ ~thm: ?X /\ ?Y ==> ?Z~ のとき、
+このゴールを解消する ~exact thm~ を ~use thm; unify; assumption~ みたいに定義できるとよさそうです。
+
+** HOLの実装
+
+大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。
+
+ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
+
+それに関連するrefl, substなどのコマンドを定義しておくと便利です。
+
+** マクロ記述言語
+
+前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。
+
+* Isabelleとの関連
+
+ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。
+
+** prop? bool?
+
+Isabelleではprop型というのはあまり見ない(存在しますが、チュートリアルを少しやったくらいでは見ないかもしれません)と思います。
+
+IsabelleのpropはClaireのprop型と同じく、メタロジックの基本型です。
+しかし一方でHOLにはbool型というのが組み込みの型であり、これが要は「項の型」になります。
+
+前回も説明したと思いますが、型はFormulaとTermと2つにつき、Formulaにはprop型、Termには他の適当な型がつくことになっています。
+bool型というのはTermの方につく型なのですね。
+
+さらにHOLではboolをpropに持ち上げるcoercionが定義されていてこれが効いているので、 ~lemma: True~ とか書けますが、これは本来は ~T :: bool => prop~ みたいなのがあって ~T(True)~ と解釈されています。
+ので、Isabelleを書いていると基本の型はboolでしょ、みたいな気持ちになると思いますがメタロジックの論理式の型はpropで、boolはあくまで項につく型だったのです。
+
+** メタロジックの結合子
+
+IsabelleのメタロジックはPure logicと呼ばれるものです。
+
+Claireではメタロジックの結合子としてForall, Exist, ==>などが提供されています。
+Pure logicでは結合子として⋀(forall), ==>などが提供されています。
+
+それに対して、Isabelle/HOLでは∀,∃,-->などが提供されています。
+これらは定義されているのがPure logicか、それともHOLかという違いがあり、定義も微妙に違います。
+さらにコマンドやproverはPure logicをベースにして作られていることが多いので、sledgehammerを使いたい場合はPure logicに合わせるほうがいいです。
+
+** NewDecl
+
+Isabelleにはdefintion, fun, inductiveなどの色々な宣言をよく使います。
+が、これらのほとんどは組み込みではなく後から定義された宣言です。
+
+Claireでもこれに倣ってNewDeclという仕組みで(マクロで)あとから宣言を追加できるようにしました。
+
+例えば ~definition name where "name == body"~ は、 ~name~ の存在を宣言した後、 ~name_def: name = body~ をaxiomとして追加します。
+
+ほかのものもそうですが、実際に宣言を行う場合はIsabelleのconstやconstdef、Claireのconstantなど「存在の宣言(主に型チェックなどに使う)」と「公理の追加」の2つで大体事足ります。
+マクロで定義されるdeclは大体「適切な公理を追加する」のを自動化するために使います。
+
+これは、勝手な公理を追加することを許すと危険なのでaxiomはあまりユーザーに見せないほうがよいということもあります。
+
+* まとめ
+
+Claireのお話は以上です。
+
+Isabelleを見ながらClaireを実装してたらIsabelleのことに詳しくなれました。
+
+というわけでまぁこのシリーズ7(+2)回もあって長いんですがよかったらみなさんも自分なりにProof Assistantを作ってみてください。
+
+というわけでここまでお疲れ様でした。
+
