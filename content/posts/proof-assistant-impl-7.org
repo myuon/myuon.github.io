@@ -5,7 +5,7 @@ toc: true
 tags: [AdC2017,定理証明,Haskell]
 ---
 
-*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 23日目の記事です。*
+*これは[[https://qiita.com/advent-calendar/2017/myuon_myon_cs][一人Computer Scienceアドベントカレンダー]] 24日目の記事です。*
 
 -----
 
