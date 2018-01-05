@@ -1,9 +1,8 @@
 ---
 title: V.S. Hask圏
-date: 2018-01-05T20:32:14+09:00
-draft: true
+date: 2018-01-05T22:52:56+09:00
 toc: true
-tags: ["日記","ポエム"]
+tags: ["日記","ポエム", "Haskell"]
 ---
 
 * Hask圏
