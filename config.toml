@@ -4,3 +4,4 @@ title = "The curse of λ"
 theme = "muon"
 pygmentscodefences = true
 pygmentsstyle = "tango"
+hasCJKLanguage = true
