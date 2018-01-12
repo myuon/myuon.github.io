@@ -1,7 +1,6 @@
 ---
 title: GHC拡張一覧を眺める
-date: 2018-01-12T20:57:10+09:00
-draft: true
+date: 2018-01-13T00:38:01+09:00
 toc: true
 tags: ["Haskell"]
 ---
