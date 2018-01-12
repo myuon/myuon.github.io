@@ -1,0 +1,154 @@
+---
+title: GHC拡張一覧を眺める
+date: 2018-01-12T20:57:10+09:00
+draft: true
+toc: true
+tags: ["Haskell"]
+---
+
+GHC-8.2.2のGHC拡張を眺めます。
+
+- [[https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/lang.html][10. GHC Language Features]] User's Guideの該当セクション
+- [[https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/flags.html?highlight=flag#language-options][7.6.12. Language options]] 単に一覧が欲しいだけならここの ~-X~ から始まるものを見ると良い
+
+上から順に見ていって後から関連するものとかを再編します。
+
+* GHC拡張一覧
+
+- AllowAmbiguousTypes :: 型変数が全て決定していないものを通すようにする (個人的)非推奨[fn:1]
+- Arrows :: arrow notationを使えるようにする FRPする人なんかは使う
+- ApplicativeDo :: do-notationがApplicativeに対しても使えるようになる 個人的には嫌い
+- BangPatterns :: 関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする
+- BinaryLiterals :: バイナリ表現が使えるようになる( ~0b11001001~ みたいなやつ); 使ったことない
+- CApiFFI :: FFI関連; 使ったことない
+- ConstrainedClassMethods :: 型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ)
+- ConstraintKinds :: Constraintというカインドが使えるようになる
+- CPP :: Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる
+- DataKinds :: データ型の宣言をカインドの宣言へ昇格する
+- DefaultSignatures :: 型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる
+- DeriveAnyClass :: defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう
+- DeriveDataTypeable :: ~deriving Data~ ってかける
+- DeriveFunctor :: ~deriving Functor~ ってかける
+- DeriveFoldable :: ~deriving Foldable~ ってかける
+- DeriveGeneric :: ~deriving Generic~ ってかける
+- DeriveLift :: ~deriving Lift~ ってかける LiftはTHの[[https://hackage.haskell.org/package/template-haskell-2.4.0.1/docs/Language-Haskell-TH-Syntax.html#t:Lift][これ]]で、値をsyntactic expressionに変換できるようにするやつ
+- DeriveTraversable :: ~deriving Traversable~ ってかける
+- DerivingStrategies :: derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ
+- DisambiguateRecordFields :: ~\k -> k {hoge = x}~ におけるkのような、推論可能だが曖昧なレコード名を許す
+- EmptyCase :: ~case x of {}~ ってかける Void型を扱う時なんかに使える
+- EmptyDataDecls :: ~data Empty~ のようなコンストラクタを持たない型の宣言を許す
+- ExistentialQuantification :: exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい
+- ExplicitForall :: 型宣言のimplicitな全称量化をexplicitにかけるようにする ~id : forall a. a -> a~ みたいな
+- ExplicitNamespace :: type operatorをimportする際に ~import Module (type (++))~ みたいにかけるようにする
+- ExtendedDefaultRules :: 型のdefaultingをより強力にするやつ GHCiも使ってる (defaultの選び方について要調査)
+- FlexibleContexts :: class宣言に出現する型制約を、「クラス名に型変数を適用したやつだけ」じゃなくてもいいことにする 今すぐデフォルトONにしてほしい
+- FlexibleInstances :: 上のinstance宣言バージョン これも今すぐデフォルトにしてくれ
+- ForeignFunctionInterface :: FFIをONにする
+- FunctionalDependencies :: 型クラスに ~class C a b | a -> b~ みたいにかけるようになる これはaが決まるとbが決まるという意味で、型推論の際にinstanceの選択をある程度制御できるようになる 便利
+- GADTs :: GADTをONにする 各コンストラクタの戻り値を制限できる
+- GADTSyntax :: ~data ... where ...~ とかけるようにする GADTとGADTSyntaxは分けられてるのか〜なるほど〜と思った(こなみ)
+- GeneralizedNewtypeDeriving :: newtypeは中の型とisoなので中の型が満たすinstanceをnewtypeの方に自動導出する まーコンストラクタ開け閉めするだけやからな
+- ImplicitParams :: implicit parameterをONにする [[https://www.stackage.org/lts-10.3/package/reflection-2.1.2][reflection]]もよろしく
+- NoImplicitPrelude :: Preludeのimplicit importをOFFにする
+- ImpredicativeTypes :: 「polymorphic typeの変数のインスタンス化はmonomorphic typeに限る」という制限を外す 詳しいことよくわからないけどこれ結構型推論の難しい話に足をつっこんでるような気がするのでヤバイ例とかありそう
+- IncoherentInstances :: incoherentなinstance宣言を許す 非推奨
+- TypeFamilyDependencies :: ~type family F a b | a -> b~ みたいにtype familyについてもdependencyをかけるようにする
+- InstanceSigs :: instance宣言にtype signatureが書けるようになる 分かりやすくなるし使ってもいいんちゃうか
+- KindSignatures :: data/type/class宣言とforallの変数についてkindをかけるようにする
+- LambdaCase :: ~\x -> case x of ...~ を ~\case~ とかけるようにする 便利 オフサイドルールに注意
+- LiberalTypeSynonyms :: (具体的な)型名を受け取る場所でtype synonymが来たらunfoldしてからcheckを行うようにする
+- MagicHash :: identifierにhash ~#~ を付けられるようにする GHCではunboxed type(ラップされてないprimitive type的なやつ)にはhashを付けてあるのでそれらを扱えるようにする
+- MonadComprehensions :: 任意のモナドに対してリスト内包表記的なのができる do-notation使え
+- MonoLocalBinds :: let-bindやwhere-bindで出現するlocal bindに制限をかける TypeFamiliesまたはGADTをONにすると自動でONになる、型推論をしやすくするために入れるらしい 詳しいことはよく知らない
+- NoMonomorphismRestriction :: HM型推論でmonomorphism restriction([[https://www.haskell.org/onlinereport/decls.html#sect4.5.5][これ]])というのがあるらしく、これをはずす拡張 すでにデフォルトでON 型推論のよい性質を保証しなくていいから推論能力あげようぜとかではずされたのだろうか(よくわかってないけど)
+- MultiParamTypeClasses :: typeclassで複数の型パラメーターが受け取れるようにする デフォルトONにしてほしい
+- MultiWayIf :: ifにガードが使えるようになる caseで事足りるのであんまり要らない
+- NamedFieldPuns :: recordをパターンで受け取る時に ~r {field = field}~ を ~r {field}~ のように省略できるようにする
+- NamedWildCards :: 名前付きwildcard(~_x~)がかけるようにする 複数出現するholeに名前をつけ、かつ一部のholeを共通化したりできる
+- NegativeLiterals :: 負の数のリテラルの脱糖を変える
+- NPlusKPatterns :: パターンに ~x+k~ みたいにプラス記号が使えるようになる Haskell98では使えたけど2010でOFFになったぽい
+- NullaryTypeClasses :: パラメーターを受け取らないtypeclassが使える なんか型クラスのヒエラルキーを作ってinstanceで型が属する階層をハッキリさせるんだぜ的なことをしたい人が喜びそう
+- NumDecimals :: ~1.2e10~ みたいなリテラルはFractional instanceの型と推論されるがこれをNum instanceの型と推論できるようにする
+- OverloadedLabels :: identifierの先頭にhashをつけて ~#hoge~ を ~fromLabel @"hoge"~ と脱糖できるようにする 型レベルほげほげで超便利
+- OverloadedLists :: リストリテラルをIsList instanceの型に推論されるようにする
+- OverloadedStrings :: 文字列リテラルをIsString instanceの型に推論されるようにする
+- PackageImports :: importするときにどのパッケージからimportするかを ~import "network" Network.Socket~ みたいに指定できる 多分うっかり衝突したとき用だけど使う機会はないと思う
+- ParallelListComp :: リスト内包表記でリストから元をとってくるnotationをパラレルにかけるようにする 内部ではzip的なものに変換される(これいる？)
+- PartialTypeSignatures :: 型の一部をワイルドカードにした状態でも(推論が可能なら)コンパイルが通るようにする
+- NoPatternGuards :: パターンガードを切る Haskell98だとONになる
+- PatternSynonyms :: pattern keywordにより新たなパターンが定義できるようになる 便利of便利of便利 デフォルトONはよ
+- PolyKinds :: カインド推論を(デフォルトだと ~*~ になるところを)一般的なカインド変数を使って推論するようにする
+- PostfixOperators :: ~(e !)~ みたいにoperatorをprefix的に使えるようにするやつ
+- QuasiQuotes :: 準クォートが使えるようになる プログラムの一部を文字列として受け取って代わりにマクロを埋め込むみたいなやつ
+- Rank2Types :: forallの出現位置が ~->~ の左側に来るごとにrankというのが上がるがrank2の型を許すもの ~(forall a. hoge) -> piyo~ とかけるようになる RankNTypesがあるからdeprecatedらしいよ
+- RankNTypes :: rank nの型を許す
+- RebindableSyntax :: Preludeで定義されているdesugarを上書きできるようにする これで数値リテラルをNumでないものに推論させるとかできるようになる オレオレPrelude作りたい人向け
+- RecordWildPuns :: recordのパターンで ~r {f = f}~ の代わりに ~r {..}~ と省略できるようにする
+- RecursiveDo :: do-notationでbindをrecursiveに(左辺で束縛する名前が右辺に再び出現しても良い)できるようにする　MonadFixのinstanceが使われる
+- RoleAnnotations :: GHCでは型変数が実行時の表現に影響するかどうかを調べたりするのだけどそれをユーザーが宣言できるようにする
+- Safe :: このモジュールは安全で、かつ安全なモジュールしかimportしないことを宣言する
+- ScopedTypeVariables :: forallで量化された変数を適当な変数に固定するような宣言を許すようにする
+- StandaloneDeriving :: データ型の宣言以外の場所でderivingがかけるようにする derivingの表現力が若干上がる
+- StaticPointers :: closed expressionへのstatic pointerを作れるようにする 便利なのだろうか、気になる
+- StrictData :: データ型のフィールドがStrictになる
+- TemplateHaskell :: マクロ
+- TemplateHaskellQuotes :: THのsplice syntax(~$(..)~ みたいなやつ)以外をONにする
+- NoTraditionalRecordSyntax :: record syntaxを切る
+- TransformListComp :: リスト内包表記にSQLぽいキーワード(group, by, using)を使った書き方ができるようにする ナニコレその2
+- Trustworthy :: Safeよりちょい緩いやつ(雑)
+- TupleSections :: ~(,e)~ とかかけるようになる
+- TypeFamilies :: type family, data familyが使えるようになる
+- TypeInType :: kindが消滅して全部typeになる kind systemこわれる 超非推奨
+- TypeOperators :: 型の演算子も使えるようにする
+- TypeSynonymInstances :: type synonymに対するinstanceがかけるようになる
+- UnboxedTuples :: ~(# e1,e2 #)~ みたいにunboxed typeのtupleがかけるようになる
+- UnboxedSums :: ~(# e1|e2 #)~ みたいにunboxed typeのsumがかけるようになる
+- UndecidableInstances :: 非推奨
+- UnicodeSyntax :: ~=>~ の代わりに ~⇒~ とかかけるようになる
+- Unsafe :: モジュールがunsafeであることを宣言
+- ViewPatterns :: パターンの中で一旦関数を適用できるようにする ~hoge (view -> pat)~ みたいにviewを適用した結果に対してパターンマッチができる
+
+* デフォルトONにしてほしい拡張一覧
+
+- DeriveFunctor
+- FlexibleInstances
+- FlexibleContexts
+- LambdaCase
+- MultiWayIf
+- TupleSections
+
+後方互換性を壊さず、明らかに便利で、濫用されることはなく、デフォルトONになってれば使うんだけどプラグマかくのが面倒だから使わないんだよなみたいなやつら
+
+* 型レベルほげほげでなんだかんだ必要になる拡張一覧
+
+- (AllowAmbiguousTypes: 本当は入れたくないけど諦めて結局入れる羽目になることが多い)
+- ConstraintKinds
+- DataKinds
+- FlexibleContexts
+- FlexibleInstances
+- FunctionalDependencies
+- GADTs
+- KindSignatures
+- OverloadedLabels
+- PolyKinds
+- RankNTypes
+- TypeOperators
+
+気がついたらこの辺は入れてる
+
+* (個人的に)より詳しい知りたい拡張一覧
+
+- DerivingStrategies
+- ExtendedDefaultRules
+- ImpredicativeTypes
+- MonoLocalBinds
+
+* おわりに
+
+GHC拡張全てに目を通したのは初めてだったけど意外と知ってた いくつか存在を知らないのもあったけど
+
+結構気になるのもあるのでユーザーガイド読んだりしたい
+
+
+[fn:1] 以下でも「非推奨」というものが出てきますが、GHCが非推奨と言っているわけではなく、何が起こるかも分からず使うのはやめたほうがいいし、これが欲しくなるのは設計がおかしいことが多いのでちょっと考えたほうがいいと個人的に思うというぐらいの意味です
+
