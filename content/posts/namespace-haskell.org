@@ -1,0 +1,81 @@
+---
+title: "Namespace Haskell"
+date: 2018-02-04T13:55:38+09:00
+toc: true
+tags: ["Haskell"]
+---
+
+Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。
+
+* 主な機能
+
+** open import
+
+Agdaにもある機能で、importをimport(モジュール読み込み)とopen(現在のコンテキストに名前を公開)に分割する.
+
+- ~import M~ とすると, ~M.func~ によってモジュールMの関数funcにアクセスできる
+- ~open M~ とすると, それを指定したブロックでMの関数を修飾子なしでアクセスできる
+- ~open import M~ とすると, ~import M; open M~ の意味になる(現在のHaskellのimport)
+
+openをwhereブロック内で宣言することで、一部でしか使わないimportをあっちこっちで展開するのを防げる。
+
+** public export
+
+現在のHaskellではモジュール宣言時に ~module M(..) where~ でexportする関数を選べる。
+
+そして ~module M where~ は全て公開の意味になるが、これを全て非公開に変更し、モジュール内で ~export (..)~ のように宣言したもののみexportすることにする。
+
+** associated function
+
+要は「メソッド」機能なんだけどtypeclassの関数のことをメソッドって呼ぶことがあるような気がするので名前の衝突を避けるためにここではassociated functionとよぶ.
+
+次のような、データ型とそれに対する特別な関数定義を行うスコープを用意する。
+
+#+BEGIN_SRC haskell
+  -- 例
+  data List a = Nil | Cons a (List a)
+
+  impl (this :: List a) where {
+    reverse :: List a
+    reverse = ...
+
+    fold :: Monoid m => (a -> m) -> m
+    fold = ...
+  }
+
+  -- 以下では
+  -- xs#reverse :: List a
+  -- xs#fold :: (a -> m) -> m
+  -- のようにしてメソッドを呼び出せる
+  -- 記号はどうでもよいがドットは関数合成と衝突するので難しそう
+#+END_SRC
+
+現在のHaskellとの互換も考えて、 ~open List~ とするとメソッドは普通の関数として振る舞う(~this~ の部分は第一引数になる)、などとしておくと良いかもしれない。
+
+** namespace
+
+最後に新たなnamespaceを導入する機能。正直これを入れるだけでもHaskellはめちゃくちゃ書きやすくなると思うし、逆に言うと今のHaskellは1ファイルに1モジュールのみなどの厳しすぎる制限のせいで無用な苦しみを生み出していると言う他ない。
+
+#+BEGIN_SRC haskell
+  namespace Hoge where {
+    ...
+
+    namespace Piyo where {
+        ...
+    }
+  }
+#+END_SRC
+
+namespaceは入れ子にできて、各namespaceはopenするか ~Hoge.Piyo....~ みたいにしてアクセスする。
+
+要はモジュールのネストだけどHaskellとの互換を考えると新しい名前にした方がいいんではないかなと思ったりした。
+
+* お気持ち
+
+という感じのものを早く導入して欲しいという気持ちがあるけど組み込むのは割と面倒そう。
+
+最初はnamespace haskell -> haskellトランスレーターを作ればよいのでは？と思っていたのだけど、openしてる部分を解釈する時に現在定義されている関数の一覧と見比べて名前解決をする必要があるのでそのへんどうするのかとか
+あとinstanceを複数のnamespaceに分割するとかやられると意外と面倒かもしれない。
+
+ていうかこれくらいのサポートないと(ずぼら人間だから)大規模なコードとか書く気が起きないんだよな〜名前衝突するしファイル分けまくるのも面倒だし〜〜〜
+
