@@ -1,0 +1,196 @@
+---
+title: Fluxを再発明する
+date: 2018-06-16T08:00:49-07:00
+tags: ["Haskell"]
+toc: true
+---
+
+* Haskellの2D graphics libraryを作った
+
+作った: [[https://github.com/myuon/refluxive][refluxible]]
+
+与太話に興味がない人は[[#refluxible][解説]]まで飛んでください
+
+** なにこれ
+
+大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。
+
+** なぜ
+
+大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。
+候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。
+一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。
+
+---
+
+なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。
+画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。
+
+グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。
+
+** Flux
+
+JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。
+といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。
+
+** Haskellとは
+
+HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。
+Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。
+
+** テクいところ
+
+最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。
+performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。
+
+
+* refluxible
+
+ライブラリの中身を超簡単に解説します。
+「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。
+
+あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。
+
+** 構成要素
+
+- Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない
+- Model: Componentの内部状態
+- Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる
+- ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる
+- Graphical: Viewの表現
+- UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる
+
+** 例:ボタン
+
+とりあえず例をやろうということでボタン。
+
+[[https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs][https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs]]
+
+動作例は次のようになります
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="ja" dir="ltr">ボタンのめんどくささよ <a href="https://t.co/ImMyAwXJ7G">pic.twitter.com/ImMyAwXJ7G</a></p>&mdash; みょん (@myuon_myon) <a href="https://twitter.com/myuon_myon/status/1007983200868552704?ref_src=twsrc%5Etfw">June 16, 2018</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+*** Component
+
+Componentはbuttonとappの2つ
+
+まずbuttonから。
+
+#+BEGIN_SRC haskell
+  data ButtonState = None | Hover | Clicking
+    deriving Eq
+
+  instance Component UI "button" where
+    type ModelParam "button" = Record
+      [ "label" >: T.Text
+      , "clicked_label" >: (Int -> T.Text)
+      , "size" >: SDLP.Pos
+      ]
+
+    data Model "button" = ButtonModel
+      { label :: T.Text
+      , clickedLabel :: Int -> T.Text
+      , size :: SDLP.Pos
+      , buttonState :: ButtonState
+      , clickCounter :: Int
+      }
+
+  data Signal "button" = Click
+
+#+END_SRC
+
+ModelParamがコンストラクタの引数で、Modelが実際の内部状態の定義。Signalは今回はクリックだけ拾えればいいのでClickだけ。
+他にメソッドとしてモデルの初期化をするnewModel, インスタンス化した直後にイベントハンドラーとかを定義するためのinitComponent, viewを作るgetGraphicalとかがある。
+
+例えばイベントハンドラーの登録は次のようになっている。
+
+#+BEGIN_SRC haskell
+  ...
+      addWatchSignal self $ watch b $ \rs -> \case
+        BuiltInSignal (SDL.Event _ (SDL.MouseButtonEvent (SDL.MouseButtonEventData _ SDL.Pressed _ SDL.ButtonLeft _ (SDL.P v)))) -> do
+          model <- get
+          when (inRange (fmap fromEnum $ coordinate rs, fmap fromEnum $ coordinate rs + size model) (fmap fromEnum v)) $ do
+            modify $ \model -> model { buttonState = Clicking }
+            lift $ emit self Click
+  ...
+
+#+END_SRC
+
+MouseButtonのイベントが来て、カーソルがエリア内部だったら内部状態をClickingにして、Clickイベントを送出するという感じ。
+ちなみにこのコールバックの中ではそれが呼ばれた瞬間の内部状態と、その時のオブジェクトの画面上の位置などに依存できるようになっている。
+
+一応appの方も
+
+#+BEGIN_SRC haskell
+  instance Component UI "app" where
+    type ModelParam "app" = ()
+    data Model "app" = AppModel { button :: ComponentView "button" }
+    data Signal "app"
+
+    newModel () = do
+      button <- new @"button" $
+        #label @= "Click me!"
+        <: #clicked_label @= (\n -> "You clicked " `T.append` T.pack (show n) `T.append` " times")
+        <: #size @= V2 250 40
+        <: nil
+      register button
+
+      return $ AppModel
+        { button = button
+        }
+
+    initComponent self = do
+      return ()
+
+    getGraphical model = do
+      buttonView <- view $ button model
+
+      return $ translate (V2 50 50) $ buttonView
+
+#+END_SRC
+
+appはアプリケーション本体の方で、中にはbutton componentを1つ抱えているがまぁ難しいことは特にしてない。
+
+*** main
+
+あとはmain関数。
+
+#+BEGIN_SRC haskell
+  main = runUI $ do
+    setClearColor (V4 255 255 255 255)
+
+    app <- new @"app" ()
+    register app
+
+    mainloop [asRoot app]
+
+#+END_SRC
+
+なんと分かりやすい。
+
+** ライブラリについて
+
+100行程度書けば上のボタンが動くようになるならまぁいいんじゃないですかねという感じの評価です。
+イベントハンドラーがかったるいけどまぁそれ以外は割といい感じのプログラムになってると思います。ちょっと記述が冗長なところもあるがそのへんはTHでどうとでもなるのでさほど問題ではない(ほんまか？)。
+
+あとは今はComponentの継承というかプラグイン化というか、機能を付け足していくみたいなことができないと多分不便なのでそういうのもできるようにしていきたい。
+
+裏側ではそれなりに色々やってるけどユーザーには見せないようにちゃんと隠蔽しているのでフレームワークに乗っかるのは難しくないと信じている。どうせ中身もペラペラなので中読むのも簡単だけど。
+
+とりあえずUI部品を充実させること、ドキュメントの整備(これは本当に必要だと思う)、あと前に作ろうとしてたゲームをこれで書き直そうかなーというあれ。
+
+* 終わりに(はじめに)
+
+これは明らかにはじめにに書くべきことだったが今思い出したのでここに書く。
+前にHaskellでゲーム作ろうとして、こういうUIフレームワークが必要になってどうにか色々考えたりして自分で作ったりしたけど、純粋/非純粋の分割に潔癖になりすぎたり型の操作が重すぎてコード書きにくかったり色々問題が多かったので、今回再挑戦してみた。
+
+最近はIOに関してもそこまで恐れるものではないなという感じに考えが変わってきたりした。特にunsafePerformIOとかも使いどころを見つけてもっと気軽につかっていくべきだし、そうでなくともIOがかかってくること自体はHaskellでは普通なのでそこまで非純粋を敬遠する必要はないなと思ったりもしている。
+
+とりあえずゆっくり開発しつつしばらくは様子を見ます。
+誰か使ってissueとか投げてくれるとすごく嬉しいけどどうだろう、そもそもHaskellでグラフィカルなもの作る人がほとんどいないって問題が大きいんだよなー。
+
+あと、本当はもっとFluxの設計についてのあれこれとHaskellでの実装とを比較してあれこれみたいなことを書きたかったが色々書いてるうちに何を書こうとしていたのかを忘れてしまったのでまた次の機会に。
+
+以上
+
