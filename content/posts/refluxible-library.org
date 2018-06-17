@@ -7,7 +7,7 @@ toc: true
 
 * Haskellの2D graphics libraryを作った
 
-作った: [[https://github.com/myuon/refluxive][refluxible]]
+作った: [[https://github.com/myuon/refluxive][refluxive]]
 
 与太話に興味がない人は[[#refluxible][解説]]まで飛んでください
 
@@ -44,7 +44,7 @@ Haskellらしいコードになったかという意味では、default-extensio
 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。
 
 
-* refluxible
+* refluxive
 
 ライブラリの中身を超簡単に解説します。
 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。
