@@ -1,0 +1,139 @@
+---
+title: HaskellでDIする
+date: 2018-07-06T05:51:00-07:00
+draft: true
+tags: ["Haskell"]
+---
+
+* DI
+
+DIの重要性はここ数年で急速に高まってきている。
+依存性が注入されたりとかそういうことはどうでもよくて、設計と実装を分けたい、人類はそれだけのために色々と工夫をこらし最終的にたどり着いたのがDIであったのだろう。
+
+Haskellでも設計と実装を分けるためにDIしたいというのは自然な流れである。
+
+ここでは型も含めて設計が実装に依存してはいけないということを要求する。
+例えば設計でMySqlConnection、みたいな型が出現することも分離できていないので禁止とする。
+
+** 問題点
+
+設計を定義するときには他の言語ではインターフェイスなどの仕組みが使われることが多い。
+Haskellには型システムという仕組みがあるのでこれがインターフェイス相当の機能として紹介される場合がある。
+
+しかし型システムはインターフェイスとは違い、型を固定する仕組みがない。型クラス ~TypeClass a~ のインスタンスの値が ~x:TypeClass a => a~ と ~y:TypeClass a => a~ のように2つ与えられたとしても、xとyが同じ型である保証はないし、これが同じ型であることを強制するためにはxとyを同時に作って常に同時に運ぶ必要がある。
+
+というわけでインターフェイスを使うと型が固定できないのでDIしようとすると困ったことになる、と私はずっと思っていた。
+
+** 存在型とreflection
+
+型を固定する仕組みは実はどうにかすることができて、要は存在型を使って ~data Trapped = forall a. TypeClass a => Trapped a~ とやると型を外から見えないように隠蔽することができる。
+
+存在型は中を開いたときにもともと何が入っていたかはわからなくなるが、設計ではそれを意識する必要がないはずなので特に問題がない。
+
+さらに、いわゆるDIコンテナ的な仕組みでは生成したオブジェクトを必要なところに注入してくれるという機能があることが多いが、実はこれと同じこともHaskellではできる。
+
+[[https://www.stackage.org/lts-11.16/package/reflection-2.1.3][reflection]]というパッケージがあり、これはconfigデータを外から与えるためによく使用される。 ~Given a => ...~ なる型をもつプログラムは ~given~ と書くといつでも好きなタイミングで外から挿入されたaの値を取り出すことができる。
+
+同じ型に対しては1つの値しか注入できないが、実際にDIするときは利用する型は1つだけなので問題がない。
+
+というわけでこれでHaskellでもDIできそう！ということが分かる。
+
+* Loggerの例
+
+例えばLoggerを作る例を考える。
+
+** 設計
+
+#+BEGIN_SRC haskell
+  class Logger a where
+    writeLog :: a -> String -> IO ()
+#+END_SRC
+
+ロガーは文字列を受け取って何かするというインターフェイスを実装した型のことであろう。ここでの ~a~ に、具体的なLogger型が挿入される。
+
+#+BEGIN_SRC haskell
+  data SomeLogger = forall a. Logger a => SomeLogger a
+
+  instance Logger SomeLogger where
+    writeLog (SomeLogger i) = writeLog i
+#+END_SRC
+
+先程も説明したとおりに ~SomeLogger~ という型を用意しておく。SomeLoggerはロガーのinstanceが閉じ込められている。
+また、SomeLoggerは自明にLoggerとしての機能を与えることができるのでそれも与えておく。
+
+#+BEGIN_SRC haskell
+  type UseLogger = Given SomeLogger
+
+  useLogger :: UseLogger => SomeLogger
+  useLogger = given
+#+END_SRC
+
+reflectionのAPIを専用関数としてラップしたものを用意しておく。この辺は好み(巷のDIコンテナのノリに合わせた)。
+
+** 実装
+
+実装をエイヤって与える。
+
+#+BEGIN_SRC haskell
+  data StdoutLoggerImpl = StdoutLoggerImpl
+
+  instance Logger StdoutLoggerImpl where
+    writeLog _ str = putStrLn str
+
+  newLogger :: SomeLogger
+  newLogger = SomeLogger StdoutLoggerImpl
+#+END_SRC
+
+せやなという感じ。
+
+** 使うとき
+
+ロガーを使いたいときは次のようにすれば良い。
+
+#+BEGIN_SRC haskell
+  something :: UseLogger => ...
+  something = do
+    writeLog useLogger "write to log!"
+#+END_SRC
+
+~UseLogger =>~ の中では ~useLogger~ を使うことができてロガーを使うことができる。ここではロガーの具体的な型には言及しなくてもよいところが大事。
+
+** 注入
+
+注入したいときは ~give StdoutLoggerImpl.newLogger $ ...~ ってやる。
+
+アプリケーションの一番外側のレイヤーでやればよい。
+
+
+
+
+* DIを用いたアプリでの例
+
+「ロガーは分かったがアプリケーションのノリがわからん」という人もいるかもしれないので具体的なアプリケーションの例も示しておく。
+
+「伝統的なDIコンテナを用いたオブジェクト指向言語でのwebアプリケーション」という想定で書いてみたので名前がそういう感じになっている。
+
+[[https://github.com/myuon/di-example-store-app][di-example-store-app]]
+
+実際はサーバーとしては動かないしところどころ実装が雑なところがあるがまぁノリは察せられると思う。
+
+* この手法について
+
+多分Someﾅﾝﾄｶの型を作るところとかがボイラープレートだらけなのでそのへんだけはもうちょっと色々提供してあげてもいいと思う。
+例えば上のnewLoggerで間違えて ~StdoutLoggerImpl~ を提供した場合、これをgiveしようとするとエラーになるがそういうときのエラーメッセージはあまり親切ではないと思う。
+
+ただ実際にやってることとしては薄いのでフレームワークってほど難しくもないので使うのは簡単じゃないかなと思う。
+
+誰か使ってみて感想を教えてほしい。
+
+* おわりに
+
+「あれ、そういえばこうやったらHaskellでもDIできるな？」って思ってやってみたら思いの外ほぼ完全にDIコンテナのノリになりまじかよって思ったので個人的には比較的満足している出来です。
+
+ていうか、思いついてしまえばめちゃくちゃ簡単だった。存在型とreflection知ってれば誰でも思いつくんじゃないかこれという気持ちになってきた。
+
+いやていうかこれに気がついていなかったの私だけでは？？？みんな知ってて当たり前の話だから誰もわざわざ言及してなかっただけでは？？？？？
+
+今ちょうど、分かってしまえば何もかも自明に見える病にかかっているのでよくわかりません。
+設計と実装を分けたくなったら自分でも使ってみようと思います。
+
