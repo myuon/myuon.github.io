@@ -1,8 +1,8 @@
 ---
 title: HaskellでDIする
 date: 2018-07-06T05:51:00-07:00
-draft: true
 tags: ["Haskell"]
+toc: true
 ---
 
 * DI
