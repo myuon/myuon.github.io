@@ -5,3 +5,4 @@ theme = "muon"
 pygmentscodefences = true
 pygmentsstyle = "tango"
 hasCJKLanguage = true
+staticDir = ["static"]

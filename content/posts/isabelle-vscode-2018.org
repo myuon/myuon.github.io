@@ -1,0 +1,61 @@
+---
+title: VSCodeでIsabelle2018環境構築
+date: 2018-07-28T11:46:33+09:00
+toc: true
+---
+
+* こうなるよ
+
+スクショ
+
+{{< figure src="/images/20180728.png" class="center" width="640" >}}
+
+* 環境構築
+
+ほぼこれにある通りでOK
+
+[[https://marketplace.visualstudio.com/items?itemName=makarius.isabelle][https://marketplace.visualstudio.com/items?itemName=makarius.isabelle]]
+
+
+*** Isabelleのインストール
+
+[[http://isabelle.in.tum.de/devel/release_snapshot][http://isabelle.in.tum.de/devel/release_snapshot]]
+
+から対応するプラットフォームのファイルをダウンロードして展開しとく
+
+*** VSCode pluginのインストール
+
+- Isabelle
+- Prettify Symbols Mode
+- bibtexLanguage (optional)
+
+を入れる
+
+*** VSCode config
+
+user configを開いて次を追加
+
+#+BEGIN_SRC text
+  "isabelle.home": [Isabelle2018のルートへのパス],
+#+END_SRC
+
+VSCodeをリロードすると、初回であればビルドが走って、それが終われば"Welcome to Isabelle ..."って出る
+
+これで環境構築はOK
+
+** 対応状況
+
+VSCodeサポートは残念ながら完璧とはいえない
+
+- state: VSCodeで ~Isabelle: Show State~ しましょう, output panelが出る(白背景に勝手になるんだけどこれは設定できないのだろうか, ダークテーマだとつらい)
+- syntax highlight: これは問題なし
+- unicode symbolの入力: ~\<forall>~ とかで入力できるが結構カーソル移動の制御とかがキモイ, あと ~!!~ とかの入力方法が分からない(記号のままだと正しく変換されない)
+- sledgehammer: vampireがnot activatedなのでvampire_noncommercialをyesにしろってメッセージが出てvampireが使えない. 設定方法は不明だが他のproverは使えるのでまぁセーフか？
+- 他panel: Query, Sledgehammerパネルはまだない模様
+- 一部state画面に出ないものがある: solve_directのメッセージとかが出てくれない. 対応する箇所にエディタ側で下線が引かれてマウスカーソルをあてるとメッセージが出たりする(けどちゃんと対応してほしい)
+
+一方でVSCodeがベースなのでauto-completionのUIが使いやすい(というかjEditが本当にひどかった)とか, VSCodeのemacs keybind pluginは出来がいいので快適にemacs keybindで証明が書けるなどのよさがあります.
+
+使っていきたい
+
+
