@@ -2,3 +2,6 @@
 	path = public
 	url = git@github.com:myuon/myuon.github.io.git
 	branch = master
+[submodule "for-muon"]
+	path = themes/muon/static/semantic-ui-css
+	url = https://github.com/Semantic-Org/Semantic-UI-CSS
