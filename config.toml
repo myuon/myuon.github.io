@@ -1,7 +1,7 @@
 baseURL = "https://myuon.github.io"
 languageCode = "ja"
 title = "The curse of λ"
-theme = "muon"
+theme = "simplicity"
 pygmentscodefences = true
 pygmentsstyle = "tango"
 hasCJKLanguage = true
