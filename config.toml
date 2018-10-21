@@ -1,8 +1,32 @@
 baseURL = "https://myuon.github.io"
-languageCode = "ja"
-title = "The curse of λ"
+defaultContentLanguage = "ja"
+disqusShortname = "the-curse-of-lambda"
+enableEmoji = true
+enableRobotsTXT = true
+googleAnalytics = "UA-33072399-3"
+languageCode = "ja-jp"
+pygmentsCodeFences = true
+pygmentsStyle = "native"
+pygmentsUseClasses =  true
 theme = "simplicity"
-pygmentscodefences = true
-pygmentsstyle = "tango"
-hasCJKLanguage = true
-staticDir = ["static"]
+title = "The curse of λ"
+[author]
+  email = "ioi.joi.koi.loi@gmail.com"
+  github = "https://github.com/myuon"
+  twitter = "https://twitter.com/myuon_myon"
+  homepageText = "The curse of λ"
+  name = "myuon"
+[imaging]
+  anchor = "smart"
+  resampleFilter = "box"
+  quality = 75
+[outputs]
+  home = ["HTML"]
+  page = ["HTML"]
+  section = ["HTML", "RSS"]
+  taxonomy = ["HTML", "RSS"]
+  taxonomyTerm = ["HTML"]
+[params]
+  description = "λに捧げよ"
+[pygmentsOptions]
+  linenos = false
