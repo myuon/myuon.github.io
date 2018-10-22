@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMPのoperational semantics その2 - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="IMPのoperational semantics その2" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 6日目の記事です。
+前回はaexp/bexpとそのevaluationを定めた。
+3. Commands さて次にcommandを定義する。
+これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
+section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&#34;SKIP&#34;) and CAssign (&#34;_ ::= _&#34; [50,50] 90) and CSeq (infixr &#34;;;&#34; 30) and CIf (&#34;IF _ THEN _ ELSE _&#34; 80) and CWhile (&#34;WHILE _ DO _&#34; 90) comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day6/" />
+
+
+
+<meta property="article:published_time" content="2017-12-06T00:07:53&#43;09:00"/>
+
+<meta property="article:modified_time" content="2017-12-06T00:07:53&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="IMPのoperational semantics その2">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 6日目の記事です。
+前回はaexp/bexpとそのevaluationを定めた。
+3. Commands さて次にcommandを定義する。
+これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
+section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&#34;SKIP&#34;) and CAssign (&#34;_ ::= _&#34; [50,50] 90) and CSeq (infixr &#34;;;&#34; 30) and CIf (&#34;IF _ THEN _ ELSE _&#34; 80) and CWhile (&#34;WHILE _ DO _&#34; 90) comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。">
+
+
+<meta itemprop="datePublished" content="2017-12-06T00:07:53&#43;09:00" />
+<meta itemprop="dateModified" content="2017-12-06T00:07:53&#43;09:00" />
+<meta itemprop="wordCount" content="505">
+
+
+
+<meta itemprop="keywords" content="AdC2017,Isabelle,計算機科学," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="IMPのoperational semantics その2"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 6日目の記事です。
+前回はaexp/bexpとそのevaluationを定めた。
+3. Commands さて次にcommandを定義する。
+これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
+section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&#34;SKIP&#34;) and CAssign (&#34;_ ::= _&#34; [50,50] 90) and CSeq (infixr &#34;;;&#34; 30) and CIf (&#34;IF _ THEN _ ELSE _&#34; 80) and CWhile (&#34;WHILE _ DO _&#34; 90) comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2017-12-06 12:07">2017-12-06</time>
+      <h1>IMPのoperational semantics その2</h1>
+    </header>
+    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 6日目の記事です。</strong></p>
+
+<hr />
+
+<p>前回はaexp/bexpとそのevaluationを定めた。</p>
+
+<h1 id="3-commands">3. Commands</h1>
+
+<p>さて次にcommandを定義する。</p>
+
+<p>これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  section {* Commands *}
+
+  subsection {* Syntax *}
+
+  datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com
+
+  notation
+    CSkip (&#34;SKIP&#34;) and
+    CAssign (&#34;_ ::= _&#34; [50,50] 90) and
+    CSeq (infixr &#34;;;&#34; 30) and
+    CIf (&#34;IF _ THEN _ ELSE _&#34; 80) and
+    CWhile (&#34;WHILE _ DO _&#34; 90)</code></pre></div>
+<p>comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。
+このように定義しておくと、例えば以下のような記述ができるようになる。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  WHILE BLeq (AId &#39;&#39;X&#39;&#39;) (ANum 0) DO
+    IF BTrue THEN
+      &#39;&#39;X&#39;&#39; ::= ANum 1 ;;
+      &#39;&#39;Y&#39;&#39; ::= ANum 10
+    ELSE
+      SKIP</code></pre></div>
+<h1 id="4-operational-semantics">4. Operational semantics</h1>
+
+<p>さていよいよcommandの評価を行えるようにする。</p>
+
+<p>commandにはWHILEが含まれていることからも分かる通り無限ループが書けるので、一般に評価は停止しない。
+このため、「commandを実行したら(有限ステップで停止し)rという結果になった」ということを表現するための関係を定義する。</p>
+
+<p>あるいは、これはevalという部分関数のグラフだと思っても良いが、domain上でのwell-definednessは後にeval_deterministicという形で示すまでは単なる関係である。</p>
+
+<h2 id="small-step-vs-big-step">small-step vs big-step</h2>
+
+<p>これは直接IMPとは関係のない話だけれどして念の為ここで説明しておく。</p>
+
+<p>operational semanticsとは「評価」や「簡約」と言った操作を定めるが、この定め方としてsmall-stepまたはbig-stepという手法が使われる。
+small-stepとは、与えられたtermの次のステップを具体的に与えるようなもので、big-stepとは与えられたtermのsubtermを評価した結果を用いて次のステップを与えるようなもの。
+(これもだいぶ怪しい説明な気がするがなんて言ったらいいのかヨクワカラナイ)</p>
+
+<p>small-stepは1ステップ分を定義してそれを順次繋いでいくという比較的直観に沿った与え方である。
+例えば <code>M</code> という項を評価すると <code>r</code> という結果になるような場合、 <code>M -&gt; M1 -&gt; M2 -&gt; ... -&gt; r</code> のようなステップを1つ1つ進んでいくような仕方で簡約が進むやり方(ここでの矢印1つ1つ)がsmall-stepである。</p>
+
+<p>対してbig-stepはrecursive functionの定義のように、 <code>eval(M)</code> の定義の中で <code>eval(M')</code> (M'はMのsubterm)なる結果を用いることができる。</p>
+
+<p>small-stepとbig-stepのどちらがよいというようなものではなく、大抵の場合は片方を定めたらもう一方も簡単に導出でき、しかも同値である(small-stepを繰り返したものとbig-stepは関係として一致する)ことが示せることが多い。
+(極稀に一方では定めにくい言語があるがそうそう遭遇するものではないと思う)</p>
+
+<p>というわけで今回も、IMPのoperational semanticsをsmall-stepとbig-stepの両方で定め、それが同値になることを後々に示すことになる。</p>
+
+<h2 id="コード">コード</h2>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  section {* Small-step operational semantics *}
+
+  subsection {* Definition *}
+
+  inductive csmall :: &#34;com ⇒ state ⇒ com ⇒ state ⇒ bool&#34; (&#34;&lt;_,_&gt; ⟶ &lt;_,_&gt;&#34; [10,10,10,10] 90) where
+    S_AssNum: &#34;&lt;x ::= ANum n , st&gt; ⟶ &lt;SKIP , st [x ↦ n]&gt;&#34;
+  | S_AssStep: &#34;&lt;x ::= a , st&gt; ⟶ &lt;x ::= ANum (aeval st a) , st&gt;&#34;
+  | S_SeqSkip: &#34;&lt;SKIP ;; c , st&gt; ⟶ &lt;c,st&gt;&#34;
+  | S_SeqStep: &#34;&lt;c1,st&gt; ⟶ &lt;c1&#39;,st&#39;&gt; ⟹ &lt;c1 ;; c2 , st&gt; ⟶ &lt;c1&#39; ;; c2 , st&#39;&gt;&#34;
+  | S_IfTrue: &#34;&lt;IF BTrue THEN c1 ELSE c2 , st&gt; ⟶ &lt;c1 , st&gt;&#34;
+  | S_IfFalse: &#34;&lt;IF BFalse THEN c1 ELSE c2 , st&gt; ⟶ &lt;c2 , st&gt;&#34;
+  | S_IfStep: &#34;&lt;IF b THEN c1 ELSE c2 , st&gt; ⟶ &lt;IF (bool_to_bexp (beval st b)) THEN c1 ELSE c2 , st&gt;&#34;
+  | S_WHILE: &#34;&lt;WHILE b DO c , st&gt; ⟶ &lt;IF b THEN c ;; WHILE b DO c ELSE SKIP , st&gt;&#34;
+
+  section {* Big-step operational semantics *}
+
+  subsection {* Definition *}
+
+  inductive cbig :: &#34;com ⇒ state ⇒ state ⇒ bool&#34; (&#34;&lt;_,_&gt; ⇓ _&#34; [10,10,10] 70) where
+    B_Skip: &#34;&lt;SKIP,st&gt; ⇓ st&#34;
+  | B_Ass: &#34;&lt;x ::= a , st&gt; ⇓ (st [x ↦ aeval st a])&#34;
+  | B_Seq: &#34;⟦ &lt;c1,st1&gt; ⇓ st2; &lt;c2,st2&gt; ⇓ st3 ⟧ ⟹ &lt;c1 ;; c2 , st1&gt; ⇓ st3&#34;
+  | B_IfTrue: &#34;⟦ beval st b = True; &lt;c1,st&gt; ⇓ st&#39; ⟧ ⟹ &lt;IF b THEN c1 ELSE c2 , st&gt; ⇓ st&#39;&#34;
+  | B_IfFalse: &#34;⟦ beval st b = False; &lt;c2,st&gt; ⇓ st&#39; ⟧ ⟹ &lt;IF b THEN c1 ELSE c2 , st&gt; ⇓ st&#39;&#34;
+  | B_WhileFalse: &#34;beval st b = False ⟹ &lt;WHILE b DO c , st&gt; ⇓ st&#34;
+  | B_WhileStep: &#34;⟦ beval st b = True; &lt;c,st&gt; ⇓ st&#39;; &lt;WHILE b DO c , st&#39;&gt; ⇓ st&#39;&#39; ⟧ ⟹ &lt;WHILE b DO c , st&gt; ⇓ st&#39;&#39;&#34;</code></pre></div>
+<p>定め方自体はごく標準的な仕方で取った。
+面倒なので逐一説明はしないけど(よく知らないって人には申し訳ないです)それぞれWHILEの評価をどうやっているかに注目しておくといいんじゃなかろうかと思う。</p>
+
+<p>small-stepの方では <code>WHILE b DO c -&gt; IF b THEN (c ;; WHILE b DO c ELSE SKIP)</code> とやっているのに対して、
+big-stepの方では <code>WHILE b DO c</code> の <code>b</code> をまず評価し、それがfalseなら何もしない、trueなら <code>c</code> の実行と <code>WHILE b DO c</code> の実行を順次帰納的に行うことにしている。</p>
+
+<p>big-stepな方では、 <code>&lt;c,st1&gt; ⇓ st2</code> と 「cをst1の下で評価したら停止してst2になる」ことが同値になる(関係の中に停止性が含まれている)のでこのような定義になっていることに注意しよう。</p>
+
+<h1 id="5-deterministic">5. Deterministic</h1>
+
+<p>さて実際の証明とは前後するが、ここで示したい定理のうちの1つを述べる。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma cbig_deterministic: &#34;⟦ &lt;c,st&gt; ⇓ st&#39;; &lt;c,st&gt; ⇓ st&#39;&#39; ⟧ ⟹ st&#39; = st&#39;&#39;&#34;</code></pre></div>
+<p>これは関係cbigが部分関数であること(値を返す入力に対してはwell-definedであること)を言っている。
+これを示すためにはいくつか補題が必要になるので以下ではそれを先に示していく。</p>
+
+<h1 id="まとめ">まとめ</h1>
+
+<p>というところで今回は終わりです。
+次回は今回の記事の最後に述べた定理を示します。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/adc2017">
+                <span>#</span>AdC2017</a>
+            
+              <a href="/tags/isabelle">
+                <span>#</span>Isabelle</a>
+            
+              <a href="/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%A6">
+                <span>#</span>計算機科学</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

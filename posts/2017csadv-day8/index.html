@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMPのoperational semantics その4 - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="IMPのoperational semantics その4" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 8日目の記事です。
+前回は、big-stepがdeterministicであることを示した。
+9. Small-step long reduction csmallを複数回適用した、ということを表す関係を &lt;_,_&gt; ⟶* &lt;_,_&gt; でかいて、次のように定める。
+subsubsection {* small-step long reduction *} inductive csmall_long (&#34;&lt;_,_&gt; ⟶* &lt;_,_&gt;&#34;) where SL_refl: &#34;&lt;c,st&gt; ⟶* &lt;c,st&gt;&#34; | SL_trans1: &#34;⟦ &lt;c,st&gt; ⟶ &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34; lemma SL_trans: &#34;⟦ &lt;c,st&gt; ⟶* &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34; apply (induction arbitrary: c&#39;&#39; st&#39;&#39; rule: csmall_long.induct) apply simp apply (blast intro: SL_trans1) done lemma SL_SeqStep: &#34;&lt;c1,st&gt; ⟶* &lt;c1&#39;,st&#39;&gt; ⟹ &lt;c1;;c2,st&gt; ⟶* &lt;c1&#39;;;c2,st&#39;&gt;&#34; apply (induction arbitrary: c2 rule: csmall_long." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day8/" />
+
+
+
+<meta property="article:published_time" content="2017-12-08T00:01:48&#43;09:00"/>
+
+<meta property="article:modified_time" content="2017-12-08T00:01:48&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="IMPのoperational semantics その4">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 8日目の記事です。
+前回は、big-stepがdeterministicであることを示した。
+9. Small-step long reduction csmallを複数回適用した、ということを表す関係を &lt;_,_&gt; ⟶* &lt;_,_&gt; でかいて、次のように定める。
+subsubsection {* small-step long reduction *} inductive csmall_long (&#34;&lt;_,_&gt; ⟶* &lt;_,_&gt;&#34;) where SL_refl: &#34;&lt;c,st&gt; ⟶* &lt;c,st&gt;&#34; | SL_trans1: &#34;⟦ &lt;c,st&gt; ⟶ &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34; lemma SL_trans: &#34;⟦ &lt;c,st&gt; ⟶* &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34; apply (induction arbitrary: c&#39;&#39; st&#39;&#39; rule: csmall_long.induct) apply simp apply (blast intro: SL_trans1) done lemma SL_SeqStep: &#34;&lt;c1,st&gt; ⟶* &lt;c1&#39;,st&#39;&gt; ⟹ &lt;c1;;c2,st&gt; ⟶* &lt;c1&#39;;;c2,st&#39;&gt;&#34; apply (induction arbitrary: c2 rule: csmall_long.">
+
+
+<meta itemprop="datePublished" content="2017-12-08T00:01:48&#43;09:00" />
+<meta itemprop="dateModified" content="2017-12-08T00:01:48&#43;09:00" />
+<meta itemprop="wordCount" content="543">
+
+
+
+<meta itemprop="keywords" content="AdC2017,Isabelle,計算機科学," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="IMPのoperational semantics その4"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 8日目の記事です。
+前回は、big-stepがdeterministicであることを示した。
+9. Small-step long reduction csmallを複数回適用した、ということを表す関係を &lt;_,_&gt; ⟶* &lt;_,_&gt; でかいて、次のように定める。
+subsubsection {* small-step long reduction *} inductive csmall_long (&#34;&lt;_,_&gt; ⟶* &lt;_,_&gt;&#34;) where SL_refl: &#34;&lt;c,st&gt; ⟶* &lt;c,st&gt;&#34; | SL_trans1: &#34;⟦ &lt;c,st&gt; ⟶ &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34; lemma SL_trans: &#34;⟦ &lt;c,st&gt; ⟶* &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34; apply (induction arbitrary: c&#39;&#39; st&#39;&#39; rule: csmall_long.induct) apply simp apply (blast intro: SL_trans1) done lemma SL_SeqStep: &#34;&lt;c1,st&gt; ⟶* &lt;c1&#39;,st&#39;&gt; ⟹ &lt;c1;;c2,st&gt; ⟶* &lt;c1&#39;;;c2,st&#39;&gt;&#34; apply (induction arbitrary: c2 rule: csmall_long."/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2017-12-08 12:01">2017-12-08</time>
+      <h1>IMPのoperational semantics その4</h1>
+    </header>
+    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 8日目の記事です。</strong></p>
+
+<hr />
+
+<p>前回は、big-stepがdeterministicであることを示した。</p>
+
+<h1 id="9-small-step-long-reduction">9. Small-step long reduction</h1>
+
+<p>csmallを複数回適用した、ということを表す関係を <code>&lt;_,_&gt; ⟶* &lt;_,_&gt;</code> でかいて、次のように定める。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  subsubsection {* small-step long reduction *}
+
+  inductive csmall_long (&#34;&lt;_,_&gt; ⟶* &lt;_,_&gt;&#34;) where
+    SL_refl: &#34;&lt;c,st&gt; ⟶* &lt;c,st&gt;&#34;
+  | SL_trans1: &#34;⟦ &lt;c,st&gt; ⟶ &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34;
+
+  lemma SL_trans: &#34;⟦ &lt;c,st&gt; ⟶* &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34;
+  apply (induction arbitrary: c&#39;&#39; st&#39;&#39; rule: csmall_long.induct)
+  apply simp
+  apply (blast intro: SL_trans1)
+  done
+
+  lemma SL_SeqStep: &#34;&lt;c1,st&gt; ⟶* &lt;c1&#39;,st&#39;&gt; ⟹ &lt;c1;;c2,st&gt; ⟶* &lt;c1&#39;;;c2,st&#39;&gt;&#34;
+  apply (induction arbitrary: c2 rule: csmall_long.induct)
+  apply (rule SL_refl)
+  using SL_trans1 S_SeqStep by blast</code></pre></div>
+<p>csmall_longは見ての通り、reflexitivityとtransitivityを使って定義しているが、これは次のように定めることと同値である。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">    inductive csmall_long (&#34;&lt;_,_&gt; ⟶* &lt;_,_&gt;&#34;) where
+      SL_refl: &#34;&lt;c,st&gt; ⟶* &lt;c,st&gt;&#34;
+    | SL_trans: &#34;⟦ &lt;c,st&gt; ⟶* &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34;</code></pre></div>
+<p>前者の定義ではtransitivityが1ステップとnステップの組み合わせで書かれているのに対し、後者ではnステップとnステップの組み合わせで書かれている。
+これらが同値であることも示せるが、上のような定義を採用したのは帰納法を適用する際に若干楽になるからである。</p>
+
+<p>代わりにnステップ同士のtransitivityは <code>SL_trans</code> として改めて示している。
+ <code>SL_SeqStep</code> はあとで必要になる補題である。</p>
+
+<h1 id="10-proof-of-small-step-big-step">10. Proof of Small-step & Big-step</h1>
+
+<p>さて目標となる定理を示そう。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma csmall_step: &#34;⟦ &lt;c,st&gt; ⟶ &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⇓ st&#39;&#39; ⟧ ⟹ &lt;c,st&gt; ⇓ st&#39;&#39;&#34;
+  apply (induction arbitrary: st&#39;&#39; rule: csmall.induct)
+    apply (metis B_Ass aeval.simps(1) coh_B_Skip)
+    using B_Ass coh_B_Ass apply fastforce
+    using B_Seq B_Skip apply blast
+    apply (meson B_Seq coh_B_Seq)
+    apply (simp add: B_IfTrue)
+    apply (simp add: B_IfFalse)
+    apply (metis B_IfFalse B_IfTrue beval.simps(1) beval.simps(2) bool_to_bexp.simps coh_B_IfFalse coh_B_IfTrue)
+    apply (metis B_WhileFalse B_WhileStep coh_B_IfFalse coh_B_IfTrue coh_B_Seq coh_B_Skip)
+    done
+
+  lemma csmall_steps: &#34;⟦ &lt;c,st&gt; ⟶* &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⇓ st&#39;&#39; ⟧ ⟹ &lt;c,st&gt; ⇓ st&#39;&#39;&#34;
+  apply (induction arbitrary: st&#39;&#39; rule: csmall_long.induct)
+  apply simp
+  apply (simp add: csmall_step)
+  done</code></pre></div>
+<p>初めに、small-stepしてからbig-stepしたものは全体としてbig-stepしたものになるという補題を示した。
+(ふわっとした説明しかできないけどなんて言ったらいいのかよくわからないので)</p>
+
+<p>csmall_stepのinduction以下は全部sledgehammerで進むので簡単。csmall_stepsも普通に帰納法するだけ。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  theorem &#34;&lt;c,st&gt; ⟶* &lt;SKIP,st&#39;&gt; ⟷ &lt;c,st&gt; ⇓ st&#39;&#34;
+  proof rule
+    assume hyp: &#34;&lt;c,st&gt; ⟶* &lt;SKIP,st&#39;&gt;&#34;
+    have &#34;&lt;SKIP,st&#39;&gt; ⇓ st&#39;&#34; by rule
+    then show &#34;&lt;c,st&gt; ⇓ st&#39;&#34;
+      by (rule csmall_steps [OF hyp])
+  next
+    show &#34;&lt;c,st&gt; ⇓ st&#39; ⟹ &lt;c,st&gt; ⟶* &lt;SKIP,st&#39;&gt;&#34;
+      apply (erule cbig.inducts)
+      apply (simp add: SL_refl)
+      apply (meson S_AssNum S_AssStep csmall_long.simps)
+      using SL_SeqStep SL_trans SL_trans1 S_SeqSkip apply blast
+      apply (metis SL_trans1 S_IfStep S_IfTrue bool_to_bexp.simps)
+      apply (metis S_IfFalse S_IfStep bool_to_bexp.simps csmall_long.simps)
+      apply (metis SL_refl SL_trans1 S_IfFalse S_IfStep S_WHILE bool_to_bexp.simps)
+      proof-
+        fix st b c st&#39; st&#39;&#39;
+        assume b: &#34;beval st b = True&#34;
+        and &#34;&lt;c,st&gt; ⇓ st&#39;&#34;
+        and h: &#34;&lt;c,st&gt; ⟶* &lt;SKIP,st&#39;&gt;&#34;
+        and &#34;&lt;WHILE b DO c,st&#39;&gt; ⇓ st&#39;&#39;&#34;
+        and j: &#34;&lt;WHILE b DO c,st&#39;&gt; ⟶* &lt;SKIP,st&#39;&#39;&gt;&#34;
+
+        have &#34;&lt;WHILE b DO c,st&gt; ⟶* &lt;IF b THEN c ;; WHILE b DO c ELSE SKIP,st&gt;&#34;
+          using SL_refl SL_trans1 S_WHILE by blast
+        moreover have &#34;&lt;IF b THEN c ;; WHILE b DO c ELSE SKIP,st&gt; ⟶* &lt;c ;; WHILE b DO c , st&gt;&#34;
+          using b by (metis S_IfStep S_IfTrue bool_to_bexp.simps csmall_long.simps)
+        moreover have &#34;&lt;c ;; WHILE b DO c , st&gt; ⟶* &lt;SKIP ;; WHILE b DO c , st&#39;&gt;&#34;
+          by (rule SL_SeqStep, rule h)
+        moreover have &#34;&lt;SKIP ;; WHILE b DO c , st&#39;&gt; ⟶* &lt;WHILE b DO c , st&#39;&gt;&#34;
+          by (rule, rule, rule)
+        moreover have &#34;&lt;WHILE b DO c , st&#39;&gt; ⟶* &lt;SKIP,st&#39;&#39;&gt;&#34;
+          by (rule j)
+        ultimately show &#34;&lt;WHILE b DO c,st&gt; ⟶* &lt;SKIP,st&#39;&#39;&gt;&#34;
+          using SL_trans by blast
+      qed
+  qed</code></pre></div>
+<p>順に見ていこう。</p>
+
+<p>まず <code>&lt;c,st&gt; ⟶* &lt;SKIP,st'&gt; ⟹ &lt;c,st&gt; ⇓ st'</code> は、 <code>&lt;SKIP,st'&gt; ⇓ st'</code> と先ほど示したcsmall_stepsにより示される。</p>
+
+<p><code>&lt;c,st&gt; ⇓ st' ⟹ &lt;c,st&gt; ⟶* &lt;SKIP,st'&gt;</code> の方は、 <code>&lt;c,st&gt; ⇓ st'</code> についての場合分けを行う。
+場合分けはWHILE_true以外は明らかで(当然ながらsledgehammer使った)、WHILE_trueのところは次のような式変形を示しているのが分かると思う:</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  &lt;WHILE b DO c,st&gt;
+  ⟶* &lt;IF b THEN c ;; WHILE b DO c ELSE SKIP,st&gt;
+  ⟶* &lt;c ;; WHILE b DO c,st&gt;
+  ⟶* &lt;SKIP ;; WHILE b DO c,st&#39;&gt;
+  ⟶* &lt;WHILE b DO c,st&#39;&gt;
+  ⟶* &lt;SKIP,st&#39;&#39;&gt;</code></pre></div>
+<h1 id="最後に-証明全体">最後に:証明全体</h1>
+
+<p>最後に証明全体を貼っておく。</p>
+
+<p><script src="https://gist.github.com/myuon/e0c10a5bb0c14a70ad0eca5460cb7231.js"></script></p>
+
+<h1 id="まとめ">まとめ</h1>
+
+<p>というわけで4回に分けてゆっくりめに説明してきたIMP編も終わりです。</p>
+
+<p>証明自体は割と教科書的な内容だったと思います。
+あんまり真面目に解説はしていないので、Isabelle入門したての人だとこれだけ読んでもわからん、となるかもしれませんが自分なりに手を動かしたり色々やってみるといいと思います。</p>
+
+<p>この4本の記事を読んでIsabelleがバリバリ使えるようになるわけではありませんが、まぁ補題をおくのって大事だなとか、sledgehammer使いまくりだなとかそういう雰囲気だけ感じ取ってもらえればいいかなくらいの気持ちです。</p>
+
+<p>明日の記事はまた少し別の話題になります。
+それではお疲れ様でした。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/adc2017">
+                <span>#</span>AdC2017</a>
+            
+              <a href="/tags/isabelle">
+                <span>#</span>Isabelle</a>
+            
+              <a href="/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%A6">
+                <span>#</span>計算機科学</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IsabelleについてのQ&amp;A - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="IsabelleについてのQ&amp;A" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 9日目の記事です。
+さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。
+というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。
+Syntax関係 矢印がいっぱいあるんだけど何  =&gt; : HOLのfunction type constructor ==&gt; : Pure logicのimplication --&gt; : HOLのimplication  Pure logicってなんですか (この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。 そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。
+なのでHOLの証明は内部的には全てPure logicの証明図に置き換えてcheckされます。 AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。
+依存型とかないんですか ないよ(無慈悲)
+知らないキーワード・コマンド・attributeが出てきた/便利なコマンドについて知りたい  isar-ref.pdfのAppendixにquick referenceあるので眺めるとよいかも？  証明関係 Sledgehammerと仲良くなれない これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。
+まずsledgehammerは優秀とはいえそれでも人間の「自明」とはかなり感覚が違います。 そもそも人間が自明だと思っていてもformalizeにはたくさん補題が必要だったりするので、出来る限りsledgehammerに与える命題は分かりやすく、すぐ示せそうなものだけにしたほうがいいです。
+あと、余分な仮定が多いと探索が失敗しやすいです。goalが複雑なときは示したい命題を補題として切り出したりしたほうがいいこともあります。
+それと、どうしても上手くいかないときは命題を見直しましょう。「簡単なはずなのにsledgehammerが答えを返さないぞ？」ってときはそもそも間違っている(goalが成り立たない)ことがあります。
+次に、探索に成功し証明が複数出た場合、可能ならば簡単で応答の早い証明を選んだほうがいいです。 気をつけるべきはmetisで、これは現実的な時間では終わらない場合があるので避けられるならmetisを含まないものにするか、またはmetisに与えられた補題で先に使えるものは使ってしまいましょう。
+例えば、
+by (metis lemmaA lemmaB lemmaC) の時に、lemmaAが先に適用されてそれ以後使わないことがはっきりしているなら
+apply (rule lemmaA) by (metis lemmaB lemmC) としたほうが応答が早くなります。あるいはapplyの後にもう一度sledehammerをかけてもいいでしょう。
+自動証明コマンドって使い分けるもの？ ある程度はね。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/isabelle-qanda/" />
+
+
+
+<meta property="article:published_time" content="2017-12-09T00:03:23&#43;09:00"/>
+
+<meta property="article:modified_time" content="2017-12-09T00:03:23&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="IsabelleについてのQ&amp;A">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 9日目の記事です。
+さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。
+というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。
+Syntax関係 矢印がいっぱいあるんだけど何  =&gt; : HOLのfunction type constructor ==&gt; : Pure logicのimplication --&gt; : HOLのimplication  Pure logicってなんですか (この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。 そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。
+なのでHOLの証明は内部的には全てPure logicの証明図に置き換えてcheckされます。 AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。
+依存型とかないんですか ないよ(無慈悲)
+知らないキーワード・コマンド・attributeが出てきた/便利なコマンドについて知りたい  isar-ref.pdfのAppendixにquick referenceあるので眺めるとよいかも？  証明関係 Sledgehammerと仲良くなれない これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。
+まずsledgehammerは優秀とはいえそれでも人間の「自明」とはかなり感覚が違います。 そもそも人間が自明だと思っていてもformalizeにはたくさん補題が必要だったりするので、出来る限りsledgehammerに与える命題は分かりやすく、すぐ示せそうなものだけにしたほうがいいです。
+あと、余分な仮定が多いと探索が失敗しやすいです。goalが複雑なときは示したい命題を補題として切り出したりしたほうがいいこともあります。
+それと、どうしても上手くいかないときは命題を見直しましょう。「簡単なはずなのにsledgehammerが答えを返さないぞ？」ってときはそもそも間違っている(goalが成り立たない)ことがあります。
+次に、探索に成功し証明が複数出た場合、可能ならば簡単で応答の早い証明を選んだほうがいいです。 気をつけるべきはmetisで、これは現実的な時間では終わらない場合があるので避けられるならmetisを含まないものにするか、またはmetisに与えられた補題で先に使えるものは使ってしまいましょう。
+例えば、
+by (metis lemmaA lemmaB lemmaC) の時に、lemmaAが先に適用されてそれ以後使わないことがはっきりしているなら
+apply (rule lemmaA) by (metis lemmaB lemmC) としたほうが応答が早くなります。あるいはapplyの後にもう一度sledehammerをかけてもいいでしょう。
+自動証明コマンドって使い分けるもの？ ある程度はね。">
+
+
+<meta itemprop="datePublished" content="2017-12-09T00:03:23&#43;09:00" />
+<meta itemprop="dateModified" content="2017-12-09T00:03:23&#43;09:00" />
+<meta itemprop="wordCount" content="112">
+
+
+
+<meta itemprop="keywords" content="AdC2017,Isabelle," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="IsabelleについてのQ&amp;A"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 9日目の記事です。
+さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。
+というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。
+Syntax関係 矢印がいっぱいあるんだけど何  =&gt; : HOLのfunction type constructor ==&gt; : Pure logicのimplication --&gt; : HOLのimplication  Pure logicってなんですか (この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。 そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。
+なのでHOLの証明は内部的には全てPure logicの証明図に置き換えてcheckされます。 AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。
+依存型とかないんですか ないよ(無慈悲)
+知らないキーワード・コマンド・attributeが出てきた/便利なコマンドについて知りたい  isar-ref.pdfのAppendixにquick referenceあるので眺めるとよいかも？  証明関係 Sledgehammerと仲良くなれない これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。
+まずsledgehammerは優秀とはいえそれでも人間の「自明」とはかなり感覚が違います。 そもそも人間が自明だと思っていてもformalizeにはたくさん補題が必要だったりするので、出来る限りsledgehammerに与える命題は分かりやすく、すぐ示せそうなものだけにしたほうがいいです。
+あと、余分な仮定が多いと探索が失敗しやすいです。goalが複雑なときは示したい命題を補題として切り出したりしたほうがいいこともあります。
+それと、どうしても上手くいかないときは命題を見直しましょう。「簡単なはずなのにsledgehammerが答えを返さないぞ？」ってときはそもそも間違っている(goalが成り立たない)ことがあります。
+次に、探索に成功し証明が複数出た場合、可能ならば簡単で応答の早い証明を選んだほうがいいです。 気をつけるべきはmetisで、これは現実的な時間では終わらない場合があるので避けられるならmetisを含まないものにするか、またはmetisに与えられた補題で先に使えるものは使ってしまいましょう。
+例えば、
+by (metis lemmaA lemmaB lemmaC) の時に、lemmaAが先に適用されてそれ以後使わないことがはっきりしているなら
+apply (rule lemmaA) by (metis lemmaB lemmC) としたほうが応答が早くなります。あるいはapplyの後にもう一度sledehammerをかけてもいいでしょう。
+自動証明コマンドって使い分けるもの？ ある程度はね。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2017-12-09 12:03">2017-12-09</time>
+      <h1>IsabelleについてのQ&amp;A</h1>
+    </header>
+    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 9日目の記事です。</strong></p>
+
+<hr />
+
+<p>さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。</p>
+
+<p>というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。</p>
+
+<h1 id="syntax関係">Syntax関係</h1>
+
+<h2 id="矢印がいっぱいあるんだけど何">矢印がいっぱいあるんだけど何</h2>
+
+<ul>
+<li><code>=&gt;</code> : HOLのfunction type constructor</li>
+<li><code>==&gt;</code> : Pure logicのimplication</li>
+<li><code>--&gt;</code> : HOLのimplication</li>
+</ul>
+
+<h2 id="pure-logicってなんですか">Pure logicってなんですか</h2>
+
+<p>(この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。
+そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。</p>
+
+<p>なのでHOLの証明は内部的には全てPure logicの証明図に置き換えてcheckされます。
+AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。</p>
+
+<h2 id="依存型とかないんですか">依存型とかないんですか</h2>
+
+<p>ないよ(無慈悲)</p>
+
+<h2 id="知らないキーワード-コマンド-attributeが出てきた-便利なコマンドについて知りたい">知らないキーワード・コマンド・attributeが出てきた/便利なコマンドについて知りたい</h2>
+
+<ul>
+<li><a href="http://isabelle.in.tum.de/doc/isar-ref.pdf" title="isar-ref.pdf">isar-ref.pdf</a>のAppendixにquick referenceあるので眺めるとよいかも？</li>
+</ul>
+
+<h1 id="証明関係">証明関係</h1>
+
+<h2 id="sledgehammerと仲良くなれない">Sledgehammerと仲良くなれない</h2>
+
+<p>これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。</p>
+
+<p>まずsledgehammerは優秀とはいえそれでも人間の「自明」とはかなり感覚が違います。
+そもそも人間が自明だと思っていてもformalizeにはたくさん補題が必要だったりするので、出来る限りsledgehammerに与える命題は分かりやすく、すぐ示せそうなものだけにしたほうがいいです。</p>
+
+<p>あと、余分な仮定が多いと探索が失敗しやすいです。goalが複雑なときは示したい命題を補題として切り出したりしたほうがいいこともあります。</p>
+
+<p>それと、どうしても上手くいかないときは命題を見直しましょう。「簡単なはずなのにsledgehammerが答えを返さないぞ？」ってときはそもそも間違っている(goalが成り立たない)ことがあります。</p>
+
+<p>次に、探索に成功し証明が複数出た場合、可能ならば簡単で応答の早い証明を選んだほうがいいです。
+気をつけるべきはmetisで、これは現実的な時間では終わらない場合があるので避けられるならmetisを含まないものにするか、またはmetisに与えられた補題で先に使えるものは使ってしまいましょう。</p>
+
+<p>例えば、</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  by (metis lemmaA lemmaB lemmaC)</code></pre></div>
+<p>の時に、lemmaAが先に適用されてそれ以後使わないことがはっきりしているなら</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  apply (rule lemmaA)
+  by (metis lemmaB lemmC)</code></pre></div>
+<p>としたほうが応答が早くなります。あるいはapplyの後にもう一度sledehammerをかけてもいいでしょう。</p>
+
+<h2 id="自動証明コマンドって使い分けるもの">自動証明コマンドって使い分けるもの？</h2>
+
+<p>ある程度はね。</p>
+
+<ul>
+<li>simp: 式変形のみ</li>
+<li>auto: 便利コマンドに見えるけれどこいつは(今注目していないものも含めて)全てのgoalに対して変形を行うので注意が必要, 代わりに失敗しても(完全にゴールが解消できなくても)ある程度変形した形を保ってくれるのでsimp_allの代わりに使える場合もある</li>
+<li>fastforce: autoみたいに使えて現在のgoalに対する変形しかしないので便利 代わりに証明完了or失敗(何もしない)で挙動が極端</li>
+<li>blast: 体感では汎用的な証明力が強い。代わりにauto/fastforceと違ってsimp add:できないので打つのがめんどくさい</li>
+<li>その他: 自動証明コマンドはいろいろあるけど、これ以外はsledgehammerが返した時に大人しく従うくらいで自分から使う必要は多分ない</li>
+</ul>
+
+<h2 id="一々仮定に名前付けるのめんどい">一々仮定に名前付けるのめんどい</h2>
+
+<p>lemmaやtheoremのassumesに現れる仮定や、Isarで名前を付けられる命題は項をスペースで区切って列挙が出来ます。
+具体的に、 <code>&quot;A&quot; &quot;B&quot;</code> みたいに横に並べることが出来て、これには一度に名前を付けられるので、 <code>x: &quot;A&quot; &quot;B&quot;</code> とするとx(1)でAを、x(2)でBを参照できます。</p>
+
+<h2 id="定理の検索がしたい">定理の検索がしたい</h2>
+
+<p>jEditならQueryパネルにダブルクォートで囲って項を渡すとその項を含む定理を検索できます。ここにはパターンを渡すのでワイルドカードとしてアンダーバーも使えます。
+ <code>name: hoge</code> とかやると定理の名前にhogeを含むものという意味にもなります。</p>
+
+<h2 id="jeditのマーカーつくやつ何">jEditのマーカーつくやつ何？</h2>
+
+<ul>
+<li>紫: コマンド評価中。これが数秒同じ所で止まっているならその証明は重いのでやめたほうがいいかもしれない。</li>
+<li>赤下線: エラー</li>
+<li>青下線: info的な情報を出してくれます。前の定理から即座に示せる場合はsolve_direct、反例が見つかる場合はquickcheckなどがたまに教えてくれます。</li>
+<li>オレンジ下線: 警告。パース関係の警告(この項は〜とも〜ともパースできるよみたいなやつ)は無視しないほうがいいです。</li>
+</ul>
+
+<h1 id="その他">その他</h1>
+
+<h2 id="jeditなどがないと-ソースコードが読めない">(jEditなどがないと)ソースコードが読めない</h2>
+
+<p>Isabelleはユニコード文字をタグみたいにして埋め込むのでソースコード自体は直接読むに耐えないのですが、
+例えばgithubとかに公開するとかブラウザが使えるならドキュメントを用意しておくのがおすすめです。</p>
+
+<p>詳しくはドキュメントを見てもらうといいんですが、プロジェクトのルートにROOTというファイルを置いて内容書いてコマンド走らせると公式のソースコード表示しているやつみたいな感じでHTMLが生成されます。
+ちなみにpdfにも吐けます。</p>
+
+<h1 id="まとめ">まとめ</h1>
+
+<p>こういうのっていざ書こうとしたら意外と思いつかないものですね。
+なんか思いついたら追加したりしようかなと思います。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/adc2017">
+                <span>#</span>AdC2017</a>
+            
+              <a href="/tags/isabelle">
+                <span>#</span>Isabelle</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

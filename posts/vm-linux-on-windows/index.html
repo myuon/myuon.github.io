@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desktop Linux VM環境 on Windows - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Desktop Linux VM環境 on Windows" />
+<meta property="og:description" content="はじめに 私はプログラミングはすべてLinux環境でやっている。環境構築、フォントレンダリング、まともな端末など理由を挙げればキリがない。 最近までDesktop Linuxを直接インストールしていたが(Windowsを持っていなかったが)、ゲームがしたいなどの理由によりWindows 10を買ってクリーンインストールしたのでLinux環境をVMに移行した。
+結論 Vmware Workstation Playerを使え
+Vmware Player vs VirtualBox vs Hyper-V 仕組みの上ではHyper-Vは他2つに比べてハードウェアに近く、よいパフォーマンスが得られることが期待される。 が、3つを試した上では圧倒的にVmware Player  VirtualBox  Hyper-Vという感じだった。
+環境
+ ホスト: Windows 10 ゲスト: Ubuntu 18.04 Gnome/Xfce ゲストの設定: メモリ4GBくらい 4コア使っていいよぐらいの設定 特に細かくいじったりはしてない  結果
+ Hyper-V: 入力遅延が大きすぎて使い物にならない、マウスもキーボードも数フレームは遅延してる。あと3つの中では明らかにこれだけ重かった(Gnomeのアニメーションの挙動とかを見ている限り)。Hyper-VのViewerがボロいのかと思ってRDP接続も試したけどVirtualBoxと比べても明らかに重くパフォーマンスが出てなかった。LISはUbuntu 16版のものを使用、BIOSでC-State切るといいよって言われてそれもやったけど効果ほぼなし。 VirtualBox: 比較的サクサク。Gnomeだとちょっと重いがXfceだと普通に快適。VMの起動と終了がちょっと重いかなくらい。 Vmware Workstation Player: 3つの中では最もサクサク。Gnomeのアニメーションもそれなりに反映されていた。Xfceにしたら本当に早い、実機インストールかと錯覚する快適さ。体感ではVMの終了がVirtualBoxより早い。  試すとわかるけど悩むまでもないという感じ。 ただしVmwareのみディスプレイサイズがホストOSのものに勝手に従ってくれなくてxrandrからaddmodeした。
+そもそもプログラミングするだけならDEいらないんじゃないですかという話もあるけど今はGUIアプリケーション開発してるからそうも行かないんだよな〜って人の話です。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/vm-linux-on-windows/" />
+
+
+
+<meta property="article:published_time" content="2018-05-20T08:11:42-07:00"/>
+
+<meta property="article:modified_time" content="2018-05-20T08:11:42-07:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Desktop Linux VM環境 on Windows">
+<meta itemprop="description" content="はじめに 私はプログラミングはすべてLinux環境でやっている。環境構築、フォントレンダリング、まともな端末など理由を挙げればキリがない。 最近までDesktop Linuxを直接インストールしていたが(Windowsを持っていなかったが)、ゲームがしたいなどの理由によりWindows 10を買ってクリーンインストールしたのでLinux環境をVMに移行した。
+結論 Vmware Workstation Playerを使え
+Vmware Player vs VirtualBox vs Hyper-V 仕組みの上ではHyper-Vは他2つに比べてハードウェアに近く、よいパフォーマンスが得られることが期待される。 が、3つを試した上では圧倒的にVmware Player  VirtualBox  Hyper-Vという感じだった。
+環境
+ ホスト: Windows 10 ゲスト: Ubuntu 18.04 Gnome/Xfce ゲストの設定: メモリ4GBくらい 4コア使っていいよぐらいの設定 特に細かくいじったりはしてない  結果
+ Hyper-V: 入力遅延が大きすぎて使い物にならない、マウスもキーボードも数フレームは遅延してる。あと3つの中では明らかにこれだけ重かった(Gnomeのアニメーションの挙動とかを見ている限り)。Hyper-VのViewerがボロいのかと思ってRDP接続も試したけどVirtualBoxと比べても明らかに重くパフォーマンスが出てなかった。LISはUbuntu 16版のものを使用、BIOSでC-State切るといいよって言われてそれもやったけど効果ほぼなし。 VirtualBox: 比較的サクサク。Gnomeだとちょっと重いがXfceだと普通に快適。VMの起動と終了がちょっと重いかなくらい。 Vmware Workstation Player: 3つの中では最もサクサク。Gnomeのアニメーションもそれなりに反映されていた。Xfceにしたら本当に早い、実機インストールかと錯覚する快適さ。体感ではVMの終了がVirtualBoxより早い。  試すとわかるけど悩むまでもないという感じ。 ただしVmwareのみディスプレイサイズがホストOSのものに勝手に従ってくれなくてxrandrからaddmodeした。
+そもそもプログラミングするだけならDEいらないんじゃないですかという話もあるけど今はGUIアプリケーション開発してるからそうも行かないんだよな〜って人の話です。">
+
+
+<meta itemprop="datePublished" content="2018-05-20T08:11:42-07:00" />
+<meta itemprop="dateModified" content="2018-05-20T08:11:42-07:00" />
+<meta itemprop="wordCount" content="45">
+
+
+
+<meta itemprop="keywords" content="Linux,環境構築," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Desktop Linux VM環境 on Windows"/>
+<meta name="twitter:description" content="はじめに 私はプログラミングはすべてLinux環境でやっている。環境構築、フォントレンダリング、まともな端末など理由を挙げればキリがない。 最近までDesktop Linuxを直接インストールしていたが(Windowsを持っていなかったが)、ゲームがしたいなどの理由によりWindows 10を買ってクリーンインストールしたのでLinux環境をVMに移行した。
+結論 Vmware Workstation Playerを使え
+Vmware Player vs VirtualBox vs Hyper-V 仕組みの上ではHyper-Vは他2つに比べてハードウェアに近く、よいパフォーマンスが得られることが期待される。 が、3つを試した上では圧倒的にVmware Player  VirtualBox  Hyper-Vという感じだった。
+環境
+ ホスト: Windows 10 ゲスト: Ubuntu 18.04 Gnome/Xfce ゲストの設定: メモリ4GBくらい 4コア使っていいよぐらいの設定 特に細かくいじったりはしてない  結果
+ Hyper-V: 入力遅延が大きすぎて使い物にならない、マウスもキーボードも数フレームは遅延してる。あと3つの中では明らかにこれだけ重かった(Gnomeのアニメーションの挙動とかを見ている限り)。Hyper-VのViewerがボロいのかと思ってRDP接続も試したけどVirtualBoxと比べても明らかに重くパフォーマンスが出てなかった。LISはUbuntu 16版のものを使用、BIOSでC-State切るといいよって言われてそれもやったけど効果ほぼなし。 VirtualBox: 比較的サクサク。Gnomeだとちょっと重いがXfceだと普通に快適。VMの起動と終了がちょっと重いかなくらい。 Vmware Workstation Player: 3つの中では最もサクサク。Gnomeのアニメーションもそれなりに反映されていた。Xfceにしたら本当に早い、実機インストールかと錯覚する快適さ。体感ではVMの終了がVirtualBoxより早い。  試すとわかるけど悩むまでもないという感じ。 ただしVmwareのみディスプレイサイズがホストOSのものに勝手に従ってくれなくてxrandrからaddmodeした。
+そもそもプログラミングするだけならDEいらないんじゃないですかという話もあるけど今はGUIアプリケーション開発してるからそうも行かないんだよな〜って人の話です。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2018-05-20 08:11">2018-05-20</time>
+      <h1>Desktop Linux VM環境 on Windows</h1>
+    </header>
+    <section><h1 id="はじめに">はじめに</h1>
+
+<p>私はプログラミングはすべてLinux環境でやっている。環境構築、フォントレンダリング、まともな端末など理由を挙げればキリがない。
+最近までDesktop Linuxを直接インストールしていたが(Windowsを持っていなかったが)、ゲームがしたいなどの理由によりWindows 10を買ってクリーンインストールしたのでLinux環境をVMに移行した。</p>
+
+<h2 id="結論">結論</h2>
+
+<p><a href="https://www.vmware.com/jp/products/workstation-player/workstation-player-evaluation.html" title="Vmware Workstation Player">Vmware Workstation Player</a>を使え</p>
+
+<h2 id="vmware-player-vs-virtualbox-vs-hyper-v">Vmware Player vs VirtualBox vs Hyper-V</h2>
+
+<p>仕組みの上ではHyper-Vは他2つに比べてハードウェアに近く、よいパフォーマンスが得られることが期待される。
+が、3つを試した上では圧倒的にVmware Player > VirtualBox >>>>> Hyper-Vという感じだった。</p>
+
+<p>環境</p>
+
+<ul>
+<li>ホスト: Windows 10</li>
+<li>ゲスト: Ubuntu 18.04 Gnome/Xfce</li>
+<li>ゲストの設定: メモリ4GBくらい 4コア使っていいよぐらいの設定 特に細かくいじったりはしてない</li>
+</ul>
+
+<p>結果</p>
+
+<ul>
+<li>Hyper-V: 入力遅延が大きすぎて使い物にならない、マウスもキーボードも数フレームは遅延してる。あと3つの中では明らかにこれだけ重かった(Gnomeのアニメーションの挙動とかを見ている限り)。Hyper-VのViewerがボロいのかと思ってRDP接続も試したけどVirtualBoxと比べても明らかに重くパフォーマンスが出てなかった。LISはUbuntu 16版のものを使用、BIOSでC-State切るといいよって言われてそれもやったけど効果ほぼなし。</li>
+<li>VirtualBox: 比較的サクサク。Gnomeだとちょっと重いがXfceだと普通に快適。VMの起動と終了がちょっと重いかなくらい。</li>
+<li>Vmware Workstation Player: 3つの中では最もサクサク。Gnomeのアニメーションもそれなりに反映されていた。Xfceにしたら本当に早い、実機インストールかと錯覚する快適さ。体感ではVMの終了がVirtualBoxより早い。</li>
+</ul>
+
+<p>試すとわかるけど悩むまでもないという感じ。
+ただしVmwareのみディスプレイサイズがホストOSのものに勝手に従ってくれなくてxrandrからaddmodeした。</p>
+
+<p>そもそもプログラミングするだけならDEいらないんじゃないですかという話もあるけど今はGUIアプリケーション開発してるからそうも行かないんだよな〜って人の話です。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/linux">
+                <span>#</span>Linux</a>
+            
+              <a href="/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89">
+                <span>#</span>環境構築</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

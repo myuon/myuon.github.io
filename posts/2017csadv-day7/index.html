@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMPのoperational semantics その3 - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="IMPのoperational semantics その3" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 7日目の記事です。
+前回はcommandとcommandの評価を定義した。
+6. Coherent lemmas SKIP subsection {* Coherent lemmas *} lemma coh_B_Skip: assumes &#34;&lt;SKIP,st&gt; ⇓ st&#39;&#34; shows &#34;st = st&#39;&#34; using cbig.cases [OF assms] by auto 始めの補題はSKIPについてで、 &lt;SKIP,st&gt; ⇓ st&#39; ならば st = st&#39; というものである。 直観的には明らかであろうし、証明も場合分けをするだけで済む。
+Ass lemma coh_B_Ass: assumes &#34;&lt;x ::= a , st&gt; ⇓ st&#39;&#34; shows &#34;st&#39; = st [x ↦ aeval st a]&#34; using cbig.cases [OF assms] by auto 次は変数への代入。これも簡単なので省略。
+Seq lemma coh_B_Seq: assumes &#34;&lt;c1 ;; c2 , st&gt; ⇓ st&#39;&#34; obtains st&#39;&#39; where &#34;&lt;c1 , st&gt; ⇓ st&#39;&#39;&#34; and &#34;&lt;c2 , st&#39;&#39;&gt; ⇓ st&#39;&#34; &lt;c1 ;; c2,st&gt; ⇓ st&#39; ならば、 c1 を実行すると評価が停止し、さらにその後 c2 を実行すると st&#39; の状態になって評価が停止するということが言えるはずである。 上では後々の便利さのために obtains ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day7/" />
+
+
+
+<meta property="article:published_time" content="2017-12-07T00:18:10&#43;09:00"/>
+
+<meta property="article:modified_time" content="2017-12-07T00:18:10&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="IMPのoperational semantics その3">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 7日目の記事です。
+前回はcommandとcommandの評価を定義した。
+6. Coherent lemmas SKIP subsection {* Coherent lemmas *} lemma coh_B_Skip: assumes &#34;&lt;SKIP,st&gt; ⇓ st&#39;&#34; shows &#34;st = st&#39;&#34; using cbig.cases [OF assms] by auto 始めの補題はSKIPについてで、 &lt;SKIP,st&gt; ⇓ st&#39; ならば st = st&#39; というものである。 直観的には明らかであろうし、証明も場合分けをするだけで済む。
+Ass lemma coh_B_Ass: assumes &#34;&lt;x ::= a , st&gt; ⇓ st&#39;&#34; shows &#34;st&#39; = st [x ↦ aeval st a]&#34; using cbig.cases [OF assms] by auto 次は変数への代入。これも簡単なので省略。
+Seq lemma coh_B_Seq: assumes &#34;&lt;c1 ;; c2 , st&gt; ⇓ st&#39;&#34; obtains st&#39;&#39; where &#34;&lt;c1 , st&gt; ⇓ st&#39;&#39;&#34; and &#34;&lt;c2 , st&#39;&#39;&gt; ⇓ st&#39;&#34; &lt;c1 ;; c2,st&gt; ⇓ st&#39; ならば、 c1 を実行すると評価が停止し、さらにその後 c2 を実行すると st&#39; の状態になって評価が停止するということが言えるはずである。 上では後々の便利さのために obtains .">
+
+
+<meta itemprop="datePublished" content="2017-12-07T00:18:10&#43;09:00" />
+<meta itemprop="dateModified" content="2017-12-07T00:18:10&#43;09:00" />
+<meta itemprop="wordCount" content="569">
+
+
+
+<meta itemprop="keywords" content="AdC2017,Isabelle,計算機科学," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="IMPのoperational semantics その3"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 7日目の記事です。
+前回はcommandとcommandの評価を定義した。
+6. Coherent lemmas SKIP subsection {* Coherent lemmas *} lemma coh_B_Skip: assumes &#34;&lt;SKIP,st&gt; ⇓ st&#39;&#34; shows &#34;st = st&#39;&#34; using cbig.cases [OF assms] by auto 始めの補題はSKIPについてで、 &lt;SKIP,st&gt; ⇓ st&#39; ならば st = st&#39; というものである。 直観的には明らかであろうし、証明も場合分けをするだけで済む。
+Ass lemma coh_B_Ass: assumes &#34;&lt;x ::= a , st&gt; ⇓ st&#39;&#34; shows &#34;st&#39; = st [x ↦ aeval st a]&#34; using cbig.cases [OF assms] by auto 次は変数への代入。これも簡単なので省略。
+Seq lemma coh_B_Seq: assumes &#34;&lt;c1 ;; c2 , st&gt; ⇓ st&#39;&#34; obtains st&#39;&#39; where &#34;&lt;c1 , st&gt; ⇓ st&#39;&#39;&#34; and &#34;&lt;c2 , st&#39;&#39;&gt; ⇓ st&#39;&#34; &lt;c1 ;; c2,st&gt; ⇓ st&#39; ならば、 c1 を実行すると評価が停止し、さらにその後 c2 を実行すると st&#39; の状態になって評価が停止するということが言えるはずである。 上では後々の便利さのために obtains ."/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2017-12-07 12:18">2017-12-07</time>
+      <h1>IMPのoperational semantics その3</h1>
+    </header>
+    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 7日目の記事です。</strong></p>
+
+<hr />
+
+<p>前回はcommandとcommandの評価を定義した。</p>
+
+<h1 id="6-coherent-lemmas">6. Coherent lemmas</h1>
+
+<h2 id="skip">SKIP</h2>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  subsection {* Coherent lemmas *}
+
+  lemma coh_B_Skip:
+    assumes &#34;&lt;SKIP,st&gt; ⇓ st&#39;&#34;
+    shows &#34;st = st&#39;&#34;
+  using cbig.cases [OF assms] by auto</code></pre></div>
+<p>始めの補題はSKIPについてで、 <code>&lt;SKIP,st&gt; ⇓ st'</code> ならば <code>st = st'</code> というものである。
+直観的には明らかであろうし、証明も場合分けをするだけで済む。</p>
+
+<h2 id="ass">Ass</h2>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma coh_B_Ass:
+    assumes &#34;&lt;x ::= a , st&gt; ⇓ st&#39;&#34;
+    shows &#34;st&#39; = st [x ↦ aeval st a]&#34;
+  using cbig.cases [OF assms] by auto</code></pre></div>
+<p>次は変数への代入。これも簡単なので省略。</p>
+
+<h2 id="seq">Seq</h2>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma coh_B_Seq:
+    assumes &#34;&lt;c1 ;; c2 , st&gt; ⇓ st&#39;&#34;
+    obtains st&#39;&#39; where &#34;&lt;c1 , st&gt; ⇓ st&#39;&#39;&#34; and &#34;&lt;c2 , st&#39;&#39;&gt; ⇓ st&#39;&#34;</code></pre></div>
+<p><code>&lt;c1 ;; c2,st&gt; ⇓ st'</code> ならば、 <code>c1</code> を実行すると評価が停止し、さらにその後 <code>c2</code> を実行すると <code>st'</code> の状態になって評価が停止するということが言えるはずである。
+上では後々の便利さのために <code>obtains ... where ...</code> で補題を宣言しているが、証明は存在量化を使った命題を示すという感じでやる。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">    proof-
+      have &#34;&lt;c1 ;; c2 , st&gt; ⇓ st&#39; ⟹ ∃st&#39;&#39;. (&lt;c1 , st&gt; ⇓ st&#39;&#39;) ∧ (&lt;c2 , st&#39;&#39;&gt; ⇓ st&#39;)&#34;
+	by (erule cbig.cases, auto)
+      then obtain st&#39;&#39; where &#34;&lt;c1 , st&gt; ⇓ st&#39;&#39;&#34; and &#34;&lt;c2 , st&#39;&#39;&gt; ⇓ st&#39;&#34;
+	by (simp add: assms, auto)
+      then show ?thesis
+	using that by blast
+    qed</code></pre></div>
+<p>証明の内容自体は場合分けくらいしかしてないのでよいと思う。</p>
+
+<h2 id="if">If</h2>
+
+<p><code>&lt;IF b THEN c1 ELSE c2 , st&gt; ⇓ st'</code> のときにst'がどうなるかは <code>b</code> が何になるかによって変わるのでここでは2つ補題をおく。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma coh_B_IfTrue:
+    assumes &#34;&lt;IF b THEN c1 ELSE c2 , st&gt; ⇓ st&#39;&#34;
+    and &#34;beval st b = True&#34;
+    shows &#34;&lt;c1 , st&gt; ⇓ st&#39;&#34;
+  proof-
+    have &#34;&lt;IF b THEN c1 ELSE c2 , st&gt; ⇓ st&#39; ⟹ &lt;c1,st&gt; ⇓ st&#39;&#34;
+      apply (cases rule: cbig.cases, auto)
+      using assms(2) apply auto
+      done
+    then show ?thesis by (simp add: assms(1))
+  qed
+
+  lemma coh_B_IfFalse:
+    assumes &#34;&lt;IF b THEN c1 ELSE c2 , st&gt; ⇓ st&#39;&#34;
+    and &#34;beval st b = False&#34;
+    shows &#34;&lt;c2 , st&gt; ⇓ st&#39;&#34;
+  proof-
+    have &#34;&lt;IF b THEN c1 ELSE c2 , st&gt; ⇓ st&#39; ⟹ &lt;c2,st&gt; ⇓ st&#39;&#34;
+      apply (cases rule: cbig.cases, auto)
+      using assms(2) apply auto
+      done
+    then show ?thesis by (simp add: assms(1))
+  qed</code></pre></div>
+<p>見たままではあるが、bがtrueになるときはc1が実行され、bがfalseになるときはc2が実行される。
+ところでbはboolではなくbexpだったので、場合分けは <code>beval st b</code> によって行うことに注意。</p>
+
+<h2 id="while">While</h2>
+
+<p>さて最後にWHILEである。
+WHILEもIFと同じく与えられた条件が成り立つかによって場合分けを行う。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma coh_B_WhileFalse:
+    assumes &#34;beval st b = False&#34;
+    and &#34;&lt;WHILE b DO c , st&gt; ⇓ st&#39;&#34;
+    shows &#34;st = st&#39;&#34;
+  proof-
+    have &#34;&lt;WHILE b DO c , st&gt; ⇓ st&#39; ⟹ st = st&#39;&#34;
+      apply (erule cbig.cases, auto)
+      apply (simp add: assms(1))
+      done
+    then show ?thesis by (simp add: assms(2))
+  qed
+
+  lemma coh_B_WhileStep:
+    assumes &#34;beval st b = True&#34;
+    and &#34;&lt;WHILE b DO c , st&gt; ⇓ st&#39;&#39;&#34;
+    obtains &#34;st&#39;&#34; where &#34;&lt;c,st&gt; ⇓ st&#39;&#34; and &#34;&lt;WHILE b DO c , st&#39;&gt; ⇓ st&#39;&#39;&#34;
+  proof-
+    have &#34;&lt;WHILE b DO c , st&gt; ⇓ st&#39;&#39; ⟹ ∃st&#39;. (&lt;c,st&gt; ⇓ st&#39;) ∧ (&lt;WHILE b DO c , st&#39;&gt; ⇓ st&#39;&#39;)&#34;
+      by (erule cbig.cases, auto simp add: assms(1))
+    then obtain &#34;st&#39;&#34; where &#34;&lt;c,st&gt; ⇓ st&#39;&#34; and &#34;&lt;WHILE b DO c , st&#39;&gt; ⇓ st&#39;&#39;&#34;
+      by (simp add: assms, auto)
+    then show ?thesis
+      using that by blast
+  qed</code></pre></div>
+<p>これも場合分けやるだけ。</p>
+
+<h1 id="7-proof-of-determinism">7. Proof of Determinism</h1>
+
+<p>いよいよ目標だったcbigのDeterminismを示そう。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  subsection {* Determinism *}
+
+  lemma cbig_deterministic: &#34;⟦ &lt;c,st&gt; ⇓ st&#39;; &lt;c,st&gt; ⇓ st&#39;&#39; ⟧ ⟹ st&#39; = st&#39;&#39;&#34;
+  proof-
+    have &#34;&lt;c,st&gt; ⇓ st&#39; ⟹ (∀st&#39;&#39;. (&lt;c,st&gt; ⇓ st&#39;&#39;) ⟶ st&#39; = st&#39;&#39;)&#34;
+      apply (induction rule: cbig.induct)
+        apply (simp add: coh_B_Skip)
+        apply (rule, rule) using coh_B_Ass apply auto[1]
+        apply (rule, rule, erule coh_B_Seq, simp)
+        using coh_B_IfTrue apply blast
+        using coh_B_IfFalse apply blast
+        apply (simp add: coh_B_WhileFalse)
+        by (metis coh_B_WhileStep)
+    then show &#34;⟦ &lt;c,st&gt; ⇓ st&#39;; &lt;c,st&gt; ⇓ st&#39;&#39; ⟧ ⟹ st&#39; = st&#39;&#39;&#34;
+      by simp
+  qed</code></pre></div>
+<p>といっても証明自体は上で示した補題を使うだけなので簡単。
+ちなみにこの証明は、inductionの行以外は全てsledgehammerで導出しているのでマウスでボタンをぽちぽちやっているだけで証明が終わる。</p>
+
+<p>さて、上のcoherent lemmaでは場合分けしか行わなかったが、実際にこの補題は必要なのだろうか？と疑問に思うかもしれない。
+やってみると分かるのだが、この証明を上のような補題なしで直接行うのはかなり困難である。caseによる場合分けが必要であることがわかっても、今示そうとしている命題はかなり複雑なので解の探索が上の補題に比べてずっと難しくなる。</p>
+
+<h1 id="8-small-step-big-step">8. Small-step & Big-step</h1>
+
+<p>補題をおくということは仮定を減らすことでもあり、本当に必要な仮定だけにしないと現実的な時間で探索が終わらないということはよくあるので、このように適切な補題をおくのは(証明が再利用できるだけでなく)大切なことである。</p>
+
+<p>次に目標となる定理は次である。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  theorem &#34;&lt;c,st&gt; ⟶* &lt;SKIP,st&#39;&gt; ⟷ &lt;c,st&gt; ⇓ st&#39;&#34;</code></pre></div>
+<p>これはsmall-stepとbig-stepの関係を表す定理である。
+(ここで、 <code>&lt;c,st&gt; ⟶* &lt;SKIP,st'&gt;</code> はcsmallを何回かしたやつ、みたいな意味で、まだ定義していないが下で定める。)</p>
+
+<p>以下でこの定理を示していく。</p>
+
+<h1 id="まとめ">まとめ</h1>
+
+<p>というところで今回はおしまい。</p>
+
+<p>次回はこの、small-stepとbig-stepを関係づける定理を示してこのIMP編も終わりになります。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/adc2017">
+                <span>#</span>AdC2017</a>
+            
+              <a href="/tags/isabelle">
+                <span>#</span>Isabelle</a>
+            
+              <a href="/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%A6">
+                <span>#</span>計算機科学</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

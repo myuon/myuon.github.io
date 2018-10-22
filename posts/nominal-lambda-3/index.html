@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nominal Isabelleとラムダ計算 その3 - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Nominal Isabelleとラムダ計算 その3" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 12日目の記事です。
+前回はCRの証明の途中までやったので続きです。 内容多めですが今回で頑張って終わらせます。
+confluenceへ (cont.) coherent lemmas parallel betaのcoherent lemmaを示す。 証明は基本的に場合分けやるだけなので省略するとして、まぁ常識的なことが成り立つよねという補題である。(説明の放棄)
+lemma elim_pb_var: &#34;Var x ⇒β N ⟹ N = Var x&#34; lemma elim_pb_abs: assumes &#34;lam [x]. M ⇒β N&#39;&#34; &#34;x ♯ N&#39;&#34; obtains N where &#34;M ⇒β N&#34; &#34;N&#39; = lam [x]. N&#34; lemma elim_pb_app: assumes &#34;M1 $ M2 ⇒β N&#34; obtains N1 N2 where &#34;N = N1 $ N2&#34; &#34;M1 ⇒β N1&#34; &#34;M2 ⇒β N2&#34; | x P P&#39; L where &#34;M1 = lam[x]." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/nominal-lambda-3/" />
+
+
+
+<meta property="article:published_time" content="2017-12-12T00:05:37&#43;09:00"/>
+
+<meta property="article:modified_time" content="2017-12-12T00:05:37&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Nominal Isabelleとラムダ計算 その3">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 12日目の記事です。
+前回はCRの証明の途中までやったので続きです。 内容多めですが今回で頑張って終わらせます。
+confluenceへ (cont.) coherent lemmas parallel betaのcoherent lemmaを示す。 証明は基本的に場合分けやるだけなので省略するとして、まぁ常識的なことが成り立つよねという補題である。(説明の放棄)
+lemma elim_pb_var: &#34;Var x ⇒β N ⟹ N = Var x&#34; lemma elim_pb_abs: assumes &#34;lam [x]. M ⇒β N&#39;&#34; &#34;x ♯ N&#39;&#34; obtains N where &#34;M ⇒β N&#34; &#34;N&#39; = lam [x]. N&#34; lemma elim_pb_app: assumes &#34;M1 $ M2 ⇒β N&#34; obtains N1 N2 where &#34;N = N1 $ N2&#34; &#34;M1 ⇒β N1&#34; &#34;M2 ⇒β N2&#34; | x P P&#39; L where &#34;M1 = lam[x].">
+
+
+<meta itemprop="datePublished" content="2017-12-12T00:05:37&#43;09:00" />
+<meta itemprop="dateModified" content="2017-12-12T00:05:37&#43;09:00" />
+<meta itemprop="wordCount" content="965">
+
+
+
+<meta itemprop="keywords" content="AdC2017,Isabelle,計算機科学,ラムダ計算," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Nominal Isabelleとラムダ計算 その3"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 12日目の記事です。
+前回はCRの証明の途中までやったので続きです。 内容多めですが今回で頑張って終わらせます。
+confluenceへ (cont.) coherent lemmas parallel betaのcoherent lemmaを示す。 証明は基本的に場合分けやるだけなので省略するとして、まぁ常識的なことが成り立つよねという補題である。(説明の放棄)
+lemma elim_pb_var: &#34;Var x ⇒β N ⟹ N = Var x&#34; lemma elim_pb_abs: assumes &#34;lam [x]. M ⇒β N&#39;&#34; &#34;x ♯ N&#39;&#34; obtains N where &#34;M ⇒β N&#34; &#34;N&#39; = lam [x]. N&#34; lemma elim_pb_app: assumes &#34;M1 $ M2 ⇒β N&#34; obtains N1 N2 where &#34;N = N1 $ N2&#34; &#34;M1 ⇒β N1&#34; &#34;M2 ⇒β N2&#34; | x P P&#39; L where &#34;M1 = lam[x]."/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2017-12-12 12:05">2017-12-12</time>
+      <h1>Nominal Isabelleとラムダ計算 その3</h1>
+    </header>
+    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 12日目の記事です。</strong></p>
+
+<hr />
+
+<p>前回はCRの証明の途中までやったので続きです。
+内容多めですが今回で頑張って終わらせます。</p>
+
+<h1 id="confluenceへ-cont">confluenceへ (cont.)</h1>
+
+<h2 id="coherent-lemmas">coherent lemmas</h2>
+
+<p>parallel betaのcoherent lemmaを示す。
+証明は基本的に場合分けやるだけなので省略するとして、まぁ常識的なことが成り立つよねという補題である。(説明の放棄)</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma elim_pb_var: &#34;Var x ⇒β N ⟹ N = Var x&#34;
+
+  lemma elim_pb_abs:
+    assumes &#34;lam [x]. M ⇒β N&#39;&#34; &#34;x ♯ N&#39;&#34;
+    obtains N where &#34;M ⇒β N&#34; &#34;N&#39; = lam [x]. N&#34;
+
+  lemma elim_pb_app:
+    assumes &#34;M1 $ M2 ⇒β N&#34;
+    obtains N1 N2 where &#34;N = N1 $ N2&#34; &#34;M1 ⇒β N1&#34; &#34;M2 ⇒β N2&#34;
+       | x P P&#39; L where &#34;M1 = lam[x]. P&#34; &#34;P ⇒β P&#39;&#34; &#34;N = P&#39;[x ::= L]&#34; &#34;M2 ⇒β L&#34; &#34;x ♯ (M2,L)&#34;
+
+  lemma elim_pb_app_nonabs:
+    assumes &#34;M1 $ M2 ⇒β N&#34; &#34;nonabs M1&#34;
+    obtains N1 N2 where &#34;N = N1 $ N2&#34; &#34;M1 ⇒β N1&#34; &#34;M2 ⇒β N2&#34;
+
+  lemma elim_pb_app_beta:
+    assumes &#34;(lam [x]. M1) $ M2 ⇒β N&#34; &#34;x ♯ (M2,N)&#34;
+    obtains N1 N2 where &#34;N = (lam [x]. N1) $ N2&#34; &#34;M1 ⇒β N1&#34; &#34;M2 ⇒β N2&#34;
+    | N1 N2 where &#34;N = N1[x ::= N2]&#34; &#34;M1 ⇒β N1&#34; &#34;M2 ⇒β N2&#34;</code></pre></div>
+<h2 id="par-to-star">par_to_star</h2>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma pb_subst: &#34;⟦ t1 ⇒β s1; t2 ⇒β s2 ⟧ ⟹ t1 [x ::= t2] ⇒β s1 [x ::= s2]&#34;
+  apply (nominal_induct avoiding: x t2 s2 rule: par_beta.strong_induct, auto)
+    apply (rule, rule, simp, simp)
+    apply (rule, simp)
+    apply (simp add: fresh_atm pb_beta subst_gfresh&#39; substitution)
+  done
+
+  lemma par_to_star: &#34;⟦ t ⟶* t1; t ⇒β t2 ⟧ ⟹ t2 ⇒β t1&#34;
+  apply (nominal_induct avoiding: t2 rule: bstar.strong_induct)
+    using elim_pb_var apply blast
+    apply (erule elim_pb_abs, simp, simp, rule, simp)
+    apply (erule elim_pb_app, simp, rule, simp, simp, simp)
+    apply (erule elim_pb_app_beta, simp, simp, rule, simp, simp, simp)
+    apply (simp, rule pb_subst, simp, simp)
+  done</code></pre></div>
+<p>pb_substは、parallel betaがsubstitutionに対しても成り立つよね、という補題である。</p>
+
+<p>そしてpar_to_starは示したかった性質その3にあたるものである。これはstar変換についての帰納法であるが、帰納法を行うと <code>t ⇒β t2 ⟹ t2 ⇒β t1</code> のtとt1に具体的な項が入ったものを含むsubgoalが一杯出現する。
+このときに示しておいたcoherent lemmaを使う。
+(IMPの時にも述べた気がするが、このようなcoherent lemmaをその場で示すのはgoalが不必要な具体化と複雑化している関係で困難なので補題を置いたほうがはるかに簡単だと思う)</p>
+
+<h2 id="star-existence">star_existence</h2>
+
+<p>次に、bstarが常に存在する(どんなラムダ項に対してもbstarの行き先が存在する)ことを言う。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma bstar_fresh:
+    fixes x :: var
+    assumes &#34;M ⟶* N&#34;
+    shows &#34;x ♯ M ⟹ x ♯ N&#34;
+
+  lemma elim_bs_abs:
+    assumes &#34;lam [x]. t ⟶* s&#34;
+    obtains t&#39; where &#34;t ⟶* t&#39;&#34; &#34;s = lam [x]. t&#39;&#34;
+
+  lemma lambda_nonabs_case:
+    fixes M :: lambda
+    shows &#34;(nonabs M ⟹ thesis) ⟹ (⋀x M&#39;. M = lam [x]. M&#39; ⟹ thesis) ⟹ thesis&#34;
+  by (nominal_induct M rule: lambda.strong_induct, auto)</code></pre></div>
+<p>bstar_freshはbstarがfreshnessを保つことを言う。これは簡約によって新たに変数が出現することはないということから分かる。
+elim_bs_absはcoherenceのbstar_abs版。
+lambda_non_abs_caseは、要はラムダ項Mに対して、 <code>nonabs M</code> であるか、x M'が存在して <code>M = lam [x]. M'</code> となるのいずれかが成り立つという補題である。</p>
+
+<p>補足しておくと、lemmaの宣言で <code>obtains t where P(t)</code> と書いたらこれは(HOLではなくIsabelle組み込みの方のPure logicの意味で)同値な変形によって <code>(⋀t. P(t) ==&gt; thesis) ==&gt; thesis</code> と変形される。
+これと同じようにして上のlambda_non_abs_caseを言いたかったが、nonabsのケースはobtainsに来るべきものがない(存在量化の形ではない)ので、このように最初から変形した形でステートメントを与えている。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma star_exist:
+    obtains t&#39; where &#34;t ⟶* t&#39;&#34;
+  proof-
+    have &#34;∃t&#39;. t ⟶* t&#39;&#34;
+      apply (nominal_induct t rule: lambda.strong_induct, auto)
+      apply (rule, rule)
+      defer
+      apply (rule, rule, simp)
+      proof-
+        fix M1 M2 N N&#39;
+        assume hyp: &#34;M1 ⟶* N&#34; &#34;M2 ⟶* N&#39;&#34;
+        show &#34;∃t&#39;. M1 $ M2 ⟶* t&#39;&#34;
+          apply (rule_tac lambda_nonabs_case [of M1])
+          apply (rule, rule, simp, rule hyp, rule hyp)
+          proof-
+            fix x M&#39;
+            assume M1: &#34;M1 = lam [x].M&#39;&#34;
+            then obtain N1 where N1: &#34;N = lam [x].N1&#34; &#34;M&#39; ⟶* N1&#34;
+              using elim_bs_abs hyp(1) by blast
+            have &#34;M1 $ M2 ⟶* N1 [x ::= N&#39;]&#34;
+              by (simp add: M1, rule bs_beta, simp add: N1, simp add: hyp)
+            thus ?thesis by blast
+          qed
+      qed
+    thus &#34;(⋀t&#39;. t ⟶* t&#39; ⟹ thesis) ⟹ thesis&#34; by blast
+  qed</code></pre></div>
+<p>さて目的のstar_existである。
+証明は帰納法による。applicationの場合に、上で示したlambda_nonabs_caseという場合分けを行う必要があるのでそれを使う。</p>
+
+<p>場合分けだけなので簡単だけど結構準備が大変。</p>
+
+<h2 id="confluence">confluence</h2>
+
+<h3 id="par-confluent">par_confluent</h3>
+
+<p>欲しい性質は全て言えたので、ようやくconfluenceの証明に移る。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma par_confluent:
+    assumes &#34;t ⇒β t1&#34; &#34;t ⇒β t2&#34;
+    obtains s where &#34;t1 ⇒β s&#34; &#34;t2 ⇒β s&#34;
+  proof-
+    obtain t&#39; where t&#39;: &#34;t ⟶* t&#39;&#34;
+      using star_exist by auto 
+    have &#34;t1 ⇒β t&#39;&#34; &#34;t2 ⇒β t&#39;&#34;
+      using par_to_star [OF t&#39;] assms by auto
+    thus &#34;(⋀s. t1 ⇒β s ⟹ t2 ⇒β s ⟹ thesis) ⟹ thesis&#34; by blast
+  qed</code></pre></div>
+<p>まずparallel betaの1stepがconfluentなこと。
+これは示したpar_to_starとstar_existにより分かる。</p>
+
+<h3 id="long-parallel-beta">long_parallel_beta</h3>
+
+<p>次にlong_parallel_betaというのを定める。
+まぁpar_betaのrefl-trans closure取るだけなので。</p>
+
+<p>そして、par_to_longbetaとone_to_parによりこれがlong_betaと同値なこともわかる。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  abbreviation long_par_beta (infixl &#34;⟹β&#34; 50) where
+    &#34;long_par_beta == par_beta⇧*⇧*&#34;
+
+  lemma long_pb_iff_long_b: &#34;t ⟹β s ⟷ t ⟶β s&#34;
+  apply rule
+  apply (induct rule: rtranclp_induct)
+    apply simp
+    apply (rule rtranclp_trans, simp, simp add: par_to_longbeta)
+  apply (induct rule: rtranclp_induct)
+    apply simp
+    apply (rule rtranclp_trans, simp, rule r_into_rtranclp, simp add: one_to_par)
+  done</code></pre></div>
+<h3 id="church-rosser">Church-Rosser</h3>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma CR:
+    assumes &#34;t ⟶β t1&#34; &#34;t ⟶β t2&#34;
+    obtains s where &#34;t1 ⟶β s&#34; &#34;t2 ⟶β s&#34;
+  proof-
+    have CR_one_long: &#34;⋀t t1 t2. ⟦ t ⟹β t2; t ⇒β t1 ⟧ ⟹ ∃s. t1 ⟹β s ∧ t2 ⇒β s&#34;
+      proof-
+        fix t t1 t2
+        show &#34;⟦ t ⟹β t2; t ⇒β t1 ⟧ ⟹ ∃s. t1 ⟹β s ∧ t2 ⇒β s&#34;
+          proof (induct arbitrary: t1 rule: rtranclp_induct)
+            fix t1 show &#34;t ⇒β t1 ⟹ ∃s. t1 ⟹β s ∧ t ⇒β s&#34;
+              by (rule par_confluent, rule pb_refl, simp, blast)
+          next
+            fix y z t1
+            assume t: &#34;t ⟹β y&#34; &#34;y ⇒β z&#34; and hyp: &#34;⋀t1. t ⇒β t1 ⟹ ∃s. t1 ⟹β s ∧ y ⇒β s&#34; and t2: &#34;t ⇒β t1&#34;
+            obtain s where s: &#34;t1 ⟹β s&#34; &#34;y ⇒β s&#34; using hyp t t2 by blast
+            obtain s&#39; where s&#39;: &#34;s ⇒β s&#39;&#34; &#34;z ⇒β s&#39;&#34; using par_confluent [OF t(2) s(2)] by blast
+            have &#34;t1 ⟹β s&#39;&#34; &#34;z ⇒β s&#39;&#34;
+              by (rule, rule s, rule s&#39;, rule s&#39;)
+            thus &#34;∃s. t1 ⟹β s ∧ z ⇒β s&#34;
+              by blast
+          qed
+      qed
+
+    have CR_long_long: &#34;⟦ t ⟹β t1; t ⟹β t2 ⟧ ⟹ ∃s. t1 ⟹β s ∧ t2 ⟹β s&#34;
+      apply (induct arbitrary: t2 rule: rtranclp_induct)
+        apply (rule, rule, simp, simp)
+        using CR_one_long apply (meson rtranclp.rtrancl_into_rtrancl)
+      done
+
+    have &#34;t ⟹β t1&#34; &#34;t ⟹β t2&#34;
+      using assms by (simp add: long_pb_iff_long_b, simp add: long_pb_iff_long_b)
+    hence &#34;∃s. t1 ⟹β s ∧ t2 ⟹β s&#34;
+      by (rule CR_long_long)
+    hence &#34;∃s. t1 ⟶β s ∧ t2 ⟶β s&#34;
+      by (simp add: long_pb_iff_long_b)
+    thus &#34;(⋀s. t1 ⟶β s ⟹ t2 ⟶β s ⟹ thesis) ⟹ thesis&#34;
+      by blast
+  qed</code></pre></div>
+<p>長いので順番に行こう。</p>
+
+<p>最初に、 <code>CR_one_long: &quot;⋀t t1 t2. ⟦ t ⟹β t2; t ⇒β t1 ⟧ ⟹ ∃s. t1 ⟹β s ∧ t2 ⇒β s&quot;</code> が成り立つ。これはlong_par_betaと1step par_betaでconfluentであることを言っている。
+confluentはよく菱形の図で表現されるが、これは片方が長くてもう片方が短い矢印が長方形を歪めたような形で合流するみたいな感じである(伝わるかなぁ？)。</p>
+
+<p>次に、 <code>CR_long_long: &quot;⟦ t ⟹β t1; t ⟹β t2 ⟧ ⟹ ∃s. t1 ⟹β s ∧ t2 ⟹β s&quot;</code> が成り立つ。これはlong_par_betaとlong_par_betaのconfluentで、大きな菱形の合流性である(伝わるかなぁ？その2)。</p>
+
+<p>結論としてはlong_par_beta同士も合流するよということが言えた。
+そしてこれとlong_par_betaがlong_betaと同値であったことを組み合わせれば、long_betaの合流性が言えるのも分かるだろう。</p>
+
+<p>というわけで以上により、Church-Rosserが成り立つ。</p>
+
+<h1 id="まとめ">まとめ</h1>
+
+<p>結構大変だったけれど一応CRが示せたのでよかった。
+説明があまりに雑すぎて伝わる気がしないし、Isabelleでの証明の説明をしつつラムダ計算の解説もしては流石にキツイということが分かった。</p>
+
+<p>とりあえず、あの面倒なChurch-RosserもNominal Isabelleでなら頑張れば示せるぜ！ということが伝わればいいかなと。
+実際この証明は手で示すのもこんな感じで結構大変だし、Isabelleだから煩雑になった部分は最初の補題いくつかくらいであとは手の証明と大体同じ流れでいけるので、Nominal Isabelleってすごいなって思ってもらえるかと思います。
+正直これを普通のIsabelleで示すとか考えただけで目眩がするので(strong_inductが使えなくて変数の取り直しを手動でしないといけない！)ラムダ計算やりたい各位はぜひぜひ使っていきましょう。</p>
+
+<p>次回はsimply-typedのtype soundnessを1日で(！)示します。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/adc2017">
+                <span>#</span>AdC2017</a>
+            
+              <a href="/tags/isabelle">
+                <span>#</span>Isabelle</a>
+            
+              <a href="/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%A6">
+                <span>#</span>計算機科学</a>
+            
+              <a href="/tags/%E3%83%A9%E3%83%A0%E3%83%80%E8%A8%88%E7%AE%97">
+                <span>#</span>ラムダ計算</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

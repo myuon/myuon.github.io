@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluxを再発明する - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Fluxを再発明する" />
+<meta property="og:description" content="Haskellの2D graphics libraryを作った 作った: refluxive
+与太話に興味がない人は解説まで飛んでください
+なにこれ 大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。
+なぜ 大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。
+---
+なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。 画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。
+グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。
+Flux JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。 といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。
+Haskellとは HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。 Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。
+テクいところ 最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。
+refluxive ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。
+あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。
+構成要素  Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない Model: Componentの内部状態 Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる Graphical: Viewの表現 UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる  例:ボタン とりあえず例をやろうということでボタン。
+https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs
+動作例は次のようになります
+ボタンのめんどくささよ pic.twitter.com/ImMyAwXJ7G
+&mdash; みょん (@myuon_myon) June 16, 2018 
+Component Componentはbuttonとappの2つ
+まずbuttonから。
+data ButtonState = None | Hover | Clicking deriving Eq instance Component UI &#34;button&#34; where type ModelParam &#34;button&#34; = Record [ &#34;label&#34; &gt;: T." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/refluxible-library/" />
+
+
+
+<meta property="article:published_time" content="2018-06-16T08:00:49-07:00"/>
+
+<meta property="article:modified_time" content="2018-06-16T08:00:49-07:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Fluxを再発明する">
+<meta itemprop="description" content="Haskellの2D graphics libraryを作った 作った: refluxive
+与太話に興味がない人は解説まで飛んでください
+なにこれ 大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。
+なぜ 大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。
+---
+なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。 画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。
+グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。
+Flux JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。 といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。
+Haskellとは HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。 Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。
+テクいところ 最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。
+refluxive ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。
+あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。
+構成要素  Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない Model: Componentの内部状態 Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる Graphical: Viewの表現 UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる  例:ボタン とりあえず例をやろうということでボタン。
+https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs
+動作例は次のようになります
+ボタンのめんどくささよ pic.twitter.com/ImMyAwXJ7G
+&mdash; みょん (@myuon_myon) June 16, 2018 
+Component Componentはbuttonとappの2つ
+まずbuttonから。
+data ButtonState = None | Hover | Clicking deriving Eq instance Component UI &#34;button&#34; where type ModelParam &#34;button&#34; = Record [ &#34;label&#34; &gt;: T.">
+
+
+<meta itemprop="datePublished" content="2018-06-16T08:00:49-07:00" />
+<meta itemprop="dateModified" content="2018-06-16T08:00:49-07:00" />
+<meta itemprop="wordCount" content="334">
+
+
+
+<meta itemprop="keywords" content="Haskell," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Fluxを再発明する"/>
+<meta name="twitter:description" content="Haskellの2D graphics libraryを作った 作った: refluxive
+与太話に興味がない人は解説まで飛んでください
+なにこれ 大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。
+なぜ 大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。
+---
+なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。 画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。
+グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。
+Flux JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。 といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。
+Haskellとは HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。 Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。
+テクいところ 最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。
+refluxive ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。
+あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。
+構成要素  Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない Model: Componentの内部状態 Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる Graphical: Viewの表現 UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる  例:ボタン とりあえず例をやろうということでボタン。
+https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs
+動作例は次のようになります
+ボタンのめんどくささよ pic.twitter.com/ImMyAwXJ7G
+&mdash; みょん (@myuon_myon) June 16, 2018 
+Component Componentはbuttonとappの2つ
+まずbuttonから。
+data ButtonState = None | Hover | Clicking deriving Eq instance Component UI &#34;button&#34; where type ModelParam &#34;button&#34; = Record [ &#34;label&#34; &gt;: T."/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2018-06-16 08:00">2018-06-16</time>
+      <h1>Fluxを再発明する</h1>
+    </header>
+    <section><h1 id="haskellの2d-graphics-libraryを作った">Haskellの2D graphics libraryを作った</h1>
+
+<p>作った: <a href="https://github.com/myuon/refluxive" title="refluxive">refluxive</a></p>
+
+<p>与太話に興味がない人は<a href="#refluxible" title="解説">解説</a>まで飛んでください</p>
+
+<h2 id="なにこれ">なにこれ</h2>
+
+<p>大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。</p>
+
+<h2 id="なぜ">なぜ</h2>
+
+<p>大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。
+候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。
+一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。</p>
+
+<p>---</p>
+
+<p>なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。
+画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。</p>
+
+<p>グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。</p>
+
+<h2 id="flux">Flux</h2>
+
+<p>JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。
+といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。</p>
+
+<h2 id="haskellとは">Haskellとは</h2>
+
+<p>HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。
+Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。</p>
+
+<h2 id="テクいところ">テクいところ</h2>
+
+<p>最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。
+performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。</p>
+
+<h1 id="refluxive">refluxive</h1>
+
+<p>ライブラリの中身を超簡単に解説します。
+「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。</p>
+
+<p>あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。</p>
+
+<h2 id="構成要素">構成要素</h2>
+
+<ul>
+<li>Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない</li>
+<li>Model: Componentの内部状態</li>
+<li>Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる</li>
+<li>ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる</li>
+<li>Graphical: Viewの表現</li>
+<li>UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる</li>
+</ul>
+
+<h2 id="例-ボタン">例:ボタン</h2>
+
+<p>とりあえず例をやろうということでボタン。</p>
+
+<p><a href="https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs" title="https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs">https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs</a></p>
+
+<p>動作例は次のようになります</p>
+
+<p><blockquote class="twitter-tweet" data-lang="en"><p lang="ja" dir="ltr">ボタンのめんどくささよ <a href="https://t.co/ImMyAwXJ7G">pic.twitter.com/ImMyAwXJ7G</a></p>&mdash; みょん (@myuon_myon) <a href="https://twitter.com/myuon_myon/status/1007983200868552704?ref_src=twsrc%5Etfw">June 16, 2018</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+
+<h3 id="component">Component</h3>
+
+<p>Componentはbuttonとappの2つ</p>
+
+<p>まずbuttonから。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">ButtonState</span> <span class="ow">=</span> <span class="kt">None</span> <span class="o">|</span> <span class="kt">Hover</span> <span class="o">|</span> <span class="kt">Clicking</span>
+    <span class="kr">deriving</span> <span class="kt">Eq</span>
+
+  <span class="kr">instance</span> <span class="kt">Component</span> <span class="kt">UI</span> <span class="s">&#34;button&#34;</span> <span class="kr">where</span>
+    <span class="kr">type</span> <span class="kt">ModelParam</span> <span class="s">&#34;button&#34;</span> <span class="ow">=</span> <span class="kt">Record</span>
+      <span class="p">[</span> <span class="s">&#34;label&#34;</span> <span class="o">&gt;:</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span>
+      <span class="p">,</span> <span class="s">&#34;clicked_label&#34;</span> <span class="o">&gt;:</span> <span class="p">(</span><span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span><span class="p">)</span>
+      <span class="p">,</span> <span class="s">&#34;size&#34;</span> <span class="o">&gt;:</span> <span class="kt">SDLP</span><span class="o">.</span><span class="kt">Pos</span>
+      <span class="p">]</span>
+
+    <span class="kr">data</span> <span class="kt">Model</span> <span class="s">&#34;button&#34;</span> <span class="ow">=</span> <span class="kt">ButtonModel</span>
+      <span class="p">{</span> <span class="nf">label</span> <span class="ow">::</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span>
+      <span class="p">,</span> <span class="nf">clickedLabel</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span>
+      <span class="p">,</span> <span class="nf">size</span> <span class="ow">::</span> <span class="kt">SDLP</span><span class="o">.</span><span class="kt">Pos</span>
+      <span class="p">,</span> <span class="nf">buttonState</span> <span class="ow">::</span> <span class="kt">ButtonState</span>
+      <span class="p">,</span> <span class="nf">clickCounter</span> <span class="ow">::</span> <span class="kt">Int</span>
+      <span class="p">}</span>
+
+  <span class="kr">data</span> <span class="kt">Signal</span> <span class="s">&#34;button&#34;</span> <span class="ow">=</span> <span class="kt">Click</span></code></pre></div>
+<p>ModelParamがコンストラクタの引数で、Modelが実際の内部状態の定義。Signalは今回はクリックだけ拾えればいいのでClickだけ。
+他にメソッドとしてモデルの初期化をするnewModel, インスタンス化した直後にイベントハンドラーとかを定義するためのinitComponent, viewを作るgetGraphicalとかがある。</p>
+
+<p>例えばイベントハンドラーの登録は次のようになっている。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="o">...</span>
+      <span class="nf">addWatchSignal</span> <span class="nf">self</span> <span class="o">$</span> <span class="nf">watch</span> <span class="nf">b</span> <span class="o">$</span> <span class="nf">\rs</span> <span class="ow">-&gt;</span> <span class="nf">\</span><span class="kr">case</span>
+        <span class="kt">BuiltInSignal</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">Event</span> <span class="kr">_</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">MouseButtonEvent</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">MouseButtonEventData</span> <span class="kr">_</span> <span class="kt">SDL</span><span class="o">.</span><span class="kt">Pressed</span> <span class="kr">_</span> <span class="kt">SDL</span><span class="o">.</span><span class="kt">ButtonLeft</span> <span class="kr">_</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">P</span> <span class="nf">v</span><span class="p">))))</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+          <span class="nf">model</span> <span class="ow">&lt;-</span> <span class="nf">get</span>
+          <span class="nf">when</span> <span class="p">(</span><span class="nf">inRange</span> <span class="p">(</span><span class="nf">fmap</span> <span class="nf">fromEnum</span> <span class="o">$</span> <span class="nf">coordinate</span> <span class="nf">rs</span><span class="p">,</span> <span class="nf">fmap</span> <span class="nf">fromEnum</span> <span class="o">$</span> <span class="nf">coordinate</span> <span class="nf">rs</span> <span class="o">+</span> <span class="nf">size</span> <span class="nf">model</span><span class="p">)</span> <span class="p">(</span><span class="nf">fmap</span> <span class="nf">fromEnum</span> <span class="nf">v</span><span class="p">))</span> <span class="o">$</span> <span class="kr">do</span>
+            <span class="nf">modify</span> <span class="o">$</span> <span class="nf">\model</span> <span class="ow">-&gt;</span> <span class="nf">model</span> <span class="p">{</span> <span class="nf">buttonState</span> <span class="ow">=</span> <span class="kt">Clicking</span> <span class="p">}</span>
+            <span class="nf">lift</span> <span class="o">$</span> <span class="nf">emit</span> <span class="nf">self</span> <span class="kt">Click</span>
+  <span class="o">...</span></code></pre></div>
+<p>MouseButtonのイベントが来て、カーソルがエリア内部だったら内部状態をClickingにして、Clickイベントを送出するという感じ。
+ちなみにこのコールバックの中ではそれが呼ばれた瞬間の内部状態と、その時のオブジェクトの画面上の位置などに依存できるようになっている。</p>
+
+<p>一応appの方も</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">instance</span> <span class="kt">Component</span> <span class="kt">UI</span> <span class="s">&#34;app&#34;</span> <span class="kr">where</span>
+    <span class="kr">type</span> <span class="kt">ModelParam</span> <span class="s">&#34;app&#34;</span> <span class="ow">=</span> <span class="nb">()</span>
+    <span class="kr">data</span> <span class="kt">Model</span> <span class="s">&#34;app&#34;</span> <span class="ow">=</span> <span class="kt">AppModel</span> <span class="p">{</span> <span class="nf">button</span> <span class="ow">::</span> <span class="kt">ComponentView</span> <span class="s">&#34;button&#34;</span> <span class="p">}</span>
+    <span class="kr">data</span> <span class="kt">Signal</span> <span class="s">&#34;app&#34;</span>
+
+    <span class="nf">newModel</span> <span class="nb">()</span> <span class="ow">=</span> <span class="kr">do</span>
+      <span class="nf">button</span> <span class="ow">&lt;-</span> <span class="nf">new</span> <span class="o">@</span><span class="s">&#34;button&#34;</span> <span class="o">$</span>
+        <span class="o">#</span><span class="nf">label</span> <span class="o">@=</span> <span class="s">&#34;Click me!&#34;</span>
+        <span class="o">&lt;:</span> <span class="o">#</span><span class="nf">clicked_label</span> <span class="o">@=</span> <span class="p">(</span><span class="nf">\n</span> <span class="ow">-&gt;</span> <span class="s">&#34;You clicked &#34;</span> <span class="p">`</span><span class="kt">T</span><span class="o">.</span><span class="nf">append</span><span class="p">`</span> <span class="kt">T</span><span class="o">.</span><span class="nf">pack</span> <span class="p">(</span><span class="nf">show</span> <span class="nf">n</span><span class="p">)</span> <span class="p">`</span><span class="kt">T</span><span class="o">.</span><span class="nf">append</span><span class="p">`</span> <span class="s">&#34; times&#34;</span><span class="p">)</span>
+        <span class="o">&lt;:</span> <span class="o">#</span><span class="nf">size</span> <span class="o">@=</span> <span class="kt">V2</span> <span class="mi">250</span> <span class="mi">40</span>
+        <span class="o">&lt;:</span> <span class="nf">nil</span>
+      <span class="nf">register</span> <span class="nf">button</span>
+
+      <span class="nf">return</span> <span class="o">$</span> <span class="kt">AppModel</span>
+        <span class="p">{</span> <span class="nf">button</span> <span class="ow">=</span> <span class="nf">button</span>
+        <span class="p">}</span>
+
+    <span class="nf">initComponent</span> <span class="nf">self</span> <span class="ow">=</span> <span class="kr">do</span>
+      <span class="nf">return</span> <span class="nb">()</span>
+
+    <span class="nf">getGraphical</span> <span class="nf">model</span> <span class="ow">=</span> <span class="kr">do</span>
+      <span class="nf">buttonView</span> <span class="ow">&lt;-</span> <span class="nf">view</span> <span class="o">$</span> <span class="nf">button</span> <span class="nf">model</span>
+
+      <span class="nf">return</span> <span class="o">$</span> <span class="nf">translate</span> <span class="p">(</span><span class="kt">V2</span> <span class="mi">50</span> <span class="mi">50</span><span class="p">)</span> <span class="o">$</span> <span class="nf">buttonView</span></code></pre></div>
+<p>appはアプリケーション本体の方で、中にはbutton componentを1つ抱えているがまぁ難しいことは特にしてない。</p>
+
+<h3 id="main">main</h3>
+
+<p>あとはmain関数。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">main</span> <span class="ow">=</span> <span class="nf">runUI</span> <span class="o">$</span> <span class="kr">do</span>
+    <span class="nf">setClearColor</span> <span class="p">(</span><span class="kt">V4</span> <span class="mi">255</span> <span class="mi">255</span> <span class="mi">255</span> <span class="mi">255</span><span class="p">)</span>
+
+    <span class="nf">app</span> <span class="ow">&lt;-</span> <span class="nf">new</span> <span class="o">@</span><span class="s">&#34;app&#34;</span> <span class="nb">()</span>
+    <span class="nf">register</span> <span class="nf">app</span>
+
+    <span class="nf">mainloop</span> <span class="p">[</span><span class="nf">asRoot</span> <span class="nf">app</span><span class="p">]</span></code></pre></div>
+<p>なんと分かりやすい。</p>
+
+<h2 id="ライブラリについて">ライブラリについて</h2>
+
+<p>100行程度書けば上のボタンが動くようになるならまぁいいんじゃないですかねという感じの評価です。
+イベントハンドラーがかったるいけどまぁそれ以外は割といい感じのプログラムになってると思います。ちょっと記述が冗長なところもあるがそのへんはTHでどうとでもなるのでさほど問題ではない(ほんまか？)。</p>
+
+<p>あとは今はComponentの継承というかプラグイン化というか、機能を付け足していくみたいなことができないと多分不便なのでそういうのもできるようにしていきたい。</p>
+
+<p>裏側ではそれなりに色々やってるけどユーザーには見せないようにちゃんと隠蔽しているのでフレームワークに乗っかるのは難しくないと信じている。どうせ中身もペラペラなので中読むのも簡単だけど。</p>
+
+<p>とりあえずUI部品を充実させること、ドキュメントの整備(これは本当に必要だと思う)、あと前に作ろうとしてたゲームをこれで書き直そうかなーというあれ。</p>
+
+<h1 id="終わりに-はじめに">終わりに(はじめに)</h1>
+
+<p>これは明らかにはじめにに書くべきことだったが今思い出したのでここに書く。
+前にHaskellでゲーム作ろうとして、こういうUIフレームワークが必要になってどうにか色々考えたりして自分で作ったりしたけど、純粋/非純粋の分割に潔癖になりすぎたり型の操作が重すぎてコード書きにくかったり色々問題が多かったので、今回再挑戦してみた。</p>
+
+<p>最近はIOに関してもそこまで恐れるものではないなという感じに考えが変わってきたりした。特にunsafePerformIOとかも使いどころを見つけてもっと気軽につかっていくべきだし、そうでなくともIOがかかってくること自体はHaskellでは普通なのでそこまで非純粋を敬遠する必要はないなと思ったりもしている。</p>
+
+<p>とりあえずゆっくり開発しつつしばらくは様子を見ます。
+誰か使ってissueとか投げてくれるとすごく嬉しいけどどうだろう、そもそもHaskellでグラフィカルなもの作る人がほとんどいないって問題が大きいんだよなー。</p>
+
+<p>あと、本当はもっとFluxの設計についてのあれこれとHaskellでの実装とを比較してあれこれみたいなことを書きたかったが色々書いてるうちに何を書こうとしていたのかを忘れてしまったのでまた次の機会に。</p>
+
+<p>以上</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/haskell">
+                <span>#</span>Haskell</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
