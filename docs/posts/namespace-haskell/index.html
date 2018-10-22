@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Namespace Haskell - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Namespace Haskell" />
+<meta property="og:description" content="Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。
+主な機能 open import Agdaにもある機能で、importをimport(モジュール読み込み)とopen(現在のコンテキストに名前を公開)に分割する.
+ import M とすると, M.func によってモジュールMの関数funcにアクセスできる open M とすると, それを指定したブロックでMの関数を修飾子なしでアクセスできる open import M とすると, import M; open M の意味になる(現在のHaskellのimport)  openをwhereブロック内で宣言することで、一部でしか使わないimportをあっちこっちで展開するのを防げる。
+public export 現在のHaskellではモジュール宣言時に module M(..) where でexportする関数を選べる。
+そして module M where は全て公開の意味になるが、これを全て非公開に変更し、モジュール内で export (..) のように宣言したもののみexportすることにする。
+associated function 要は「メソッド」機能なんだけどtypeclassの関数のことをメソッドって呼ぶことがあるような気がするので名前の衝突を避けるためにここではassociated functionとよぶ.
+次のような、データ型とそれに対する特別な関数定義を行うスコープを用意する。
+-- 例 data List a = Nil | Cons a (List a) impl (this :: List a) where { reverse :: List a reverse = ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/namespace-haskell/" />
+
+
+
+<meta property="article:published_time" content="2018-02-04T13:55:38&#43;09:00"/>
+
+<meta property="article:modified_time" content="2018-02-04T13:55:38&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Namespace Haskell">
+<meta itemprop="description" content="Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。
+主な機能 open import Agdaにもある機能で、importをimport(モジュール読み込み)とopen(現在のコンテキストに名前を公開)に分割する.
+ import M とすると, M.func によってモジュールMの関数funcにアクセスできる open M とすると, それを指定したブロックでMの関数を修飾子なしでアクセスできる open import M とすると, import M; open M の意味になる(現在のHaskellのimport)  openをwhereブロック内で宣言することで、一部でしか使わないimportをあっちこっちで展開するのを防げる。
+public export 現在のHaskellではモジュール宣言時に module M(..) where でexportする関数を選べる。
+そして module M where は全て公開の意味になるが、これを全て非公開に変更し、モジュール内で export (..) のように宣言したもののみexportすることにする。
+associated function 要は「メソッド」機能なんだけどtypeclassの関数のことをメソッドって呼ぶことがあるような気がするので名前の衝突を避けるためにここではassociated functionとよぶ.
+次のような、データ型とそれに対する特別な関数定義を行うスコープを用意する。
+-- 例 data List a = Nil | Cons a (List a) impl (this :: List a) where { reverse :: List a reverse = .">
+
+
+<meta itemprop="datePublished" content="2018-02-04T13:55:38&#43;09:00" />
+<meta itemprop="dateModified" content="2018-02-04T13:55:38&#43;09:00" />
+<meta itemprop="wordCount" content="135">
+
+
+
+<meta itemprop="keywords" content="Haskell," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Namespace Haskell"/>
+<meta name="twitter:description" content="Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。
+主な機能 open import Agdaにもある機能で、importをimport(モジュール読み込み)とopen(現在のコンテキストに名前を公開)に分割する.
+ import M とすると, M.func によってモジュールMの関数funcにアクセスできる open M とすると, それを指定したブロックでMの関数を修飾子なしでアクセスできる open import M とすると, import M; open M の意味になる(現在のHaskellのimport)  openをwhereブロック内で宣言することで、一部でしか使わないimportをあっちこっちで展開するのを防げる。
+public export 現在のHaskellではモジュール宣言時に module M(..) where でexportする関数を選べる。
+そして module M where は全て公開の意味になるが、これを全て非公開に変更し、モジュール内で export (..) のように宣言したもののみexportすることにする。
+associated function 要は「メソッド」機能なんだけどtypeclassの関数のことをメソッドって呼ぶことがあるような気がするので名前の衝突を避けるためにここではassociated functionとよぶ.
+次のような、データ型とそれに対する特別な関数定義を行うスコープを用意する。
+-- 例 data List a = Nil | Cons a (List a) impl (this :: List a) where { reverse :: List a reverse = ."/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2018-02-04 01:55">2018-02-04</time>
+      <h1>Namespace Haskell</h1>
+    </header>
+    <section><p>Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。</p>
+
+<h1 id="主な機能">主な機能</h1>
+
+<h2 id="open-import">open import</h2>
+
+<p>Agdaにもある機能で、importをimport(モジュール読み込み)とopen(現在のコンテキストに名前を公開)に分割する.</p>
+
+<ul>
+<li><code>import M</code> とすると, <code>M.func</code> によってモジュールMの関数funcにアクセスできる</li>
+<li><code>open M</code> とすると, それを指定したブロックでMの関数を修飾子なしでアクセスできる</li>
+<li><code>open import M</code> とすると, <code>import M; open M</code> の意味になる(現在のHaskellのimport)</li>
+</ul>
+
+<p>openをwhereブロック内で宣言することで、一部でしか使わないimportをあっちこっちで展開するのを防げる。</p>
+
+<h2 id="public-export">public export</h2>
+
+<p>現在のHaskellではモジュール宣言時に <code>module M(..) where</code> でexportする関数を選べる。</p>
+
+<p>そして <code>module M where</code> は全て公開の意味になるが、これを全て非公開に変更し、モジュール内で <code>export (..)</code> のように宣言したもののみexportすることにする。</p>
+
+<h2 id="associated-function">associated function</h2>
+
+<p>要は「メソッド」機能なんだけどtypeclassの関数のことをメソッドって呼ぶことがあるような気がするので名前の衝突を避けるためにここではassociated functionとよぶ.</p>
+
+<p>次のような、データ型とそれに対する特別な関数定義を行うスコープを用意する。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="c1">-- 例</span>
+  <span class="kr">data</span> <span class="kt">List</span> <span class="nf">a</span> <span class="ow">=</span> <span class="kt">Nil</span> <span class="o">|</span> <span class="kt">Cons</span> <span class="nf">a</span> <span class="p">(</span><span class="kt">List</span> <span class="nf">a</span><span class="p">)</span>
+
+  <span class="nf">impl</span> <span class="p">(</span><span class="nf">this</span> <span class="ow">::</span> <span class="kt">List</span> <span class="nf">a</span><span class="p">)</span> <span class="kr">where</span> <span class="p">{</span>
+    <span class="nf">reverse</span> <span class="ow">::</span> <span class="kt">List</span> <span class="nf">a</span>
+    <span class="nf">reverse</span> <span class="ow">=</span> <span class="o">...</span>
+
+    <span class="nf">fold</span> <span class="ow">::</span> <span class="kt">Monoid</span> <span class="nf">m</span> <span class="ow">=&gt;</span> <span class="p">(</span><span class="nf">a</span> <span class="ow">-&gt;</span> <span class="nf">m</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="nf">m</span>
+    <span class="nf">fold</span> <span class="ow">=</span> <span class="o">...</span>
+  <span class="p">}</span>
+
+  <span class="c1">-- 以下では</span>
+  <span class="c1">-- xs#reverse :: List a</span>
+  <span class="c1">-- xs#fold :: (a -&gt; m) -&gt; m</span>
+  <span class="c1">-- のようにしてメソッドを呼び出せる</span>
+  <span class="c1">-- 記号はどうでもよいがドットは関数合成と衝突するので難しそう</span></code></pre></div>
+<p>現在のHaskellとの互換も考えて、 <code>open List</code> とするとメソッドは普通の関数として振る舞う(<code>this</code> の部分は第一引数になる)、などとしておくと良いかもしれない。</p>
+
+<h2 id="namespace">namespace</h2>
+
+<p>最後に新たなnamespaceを導入する機能。正直これを入れるだけでもHaskellはめちゃくちゃ書きやすくなると思うし、逆に言うと今のHaskellは1ファイルに1モジュールのみなどの厳しすぎる制限のせいで無用な苦しみを生み出していると言う他ない。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">namespace</span> <span class="kt">Hoge</span> <span class="kr">where</span> <span class="p">{</span>
+    <span class="o">...</span>
+
+    <span class="nf">namespace</span> <span class="kt">Piyo</span> <span class="kr">where</span> <span class="p">{</span>
+        <span class="o">...</span>
+    <span class="p">}</span>
+  <span class="p">}</span></code></pre></div>
+<p>namespaceは入れ子にできて、各namespaceはopenするか <code>Hoge.Piyo....</code> みたいにしてアクセスする。</p>
+
+<p>要はモジュールのネストだけどHaskellとの互換を考えると新しい名前にした方がいいんではないかなと思ったりした。</p>
+
+<h1 id="お気持ち">お気持ち</h1>
+
+<p>という感じのものを早く導入して欲しいという気持ちがあるけど組み込むのは割と面倒そう。</p>
+
+<p>最初はnamespace haskell -> haskellトランスレーターを作ればよいのでは？と思っていたのだけど、openしてる部分を解釈する時に現在定義されている関数の一覧と見比べて名前解決をする必要があるのでそのへんどうするのかとか
+あとinstanceを複数のnamespaceに分割するとかやられると意外と面倒かもしれない。</p>
+
+<p>ていうかこれくらいのサポートないと(ずぼら人間だから)大規模なコードとか書く気が起きないんだよな〜名前衝突するしファイル分けまくるのも面倒だし〜〜〜</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/haskell">
+                <span>#</span>Haskell</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

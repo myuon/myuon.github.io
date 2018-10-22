@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Isabelle/HOLの基本 その1 - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Isabelle/HOLの基本 その1" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 2日目の記事です。
+さて今回よりIsabelle/HOL(HOLはライブラリの名前)の基本の解説をしていきます。 一応極基本的なことを最初に少し説明をしてから、あとは実践形式で実際に証明を書きながら細かい機能などの説明をしていく予定です。 説明に割くページ数とコンテンツの内容と時間的な問題で、定理証明とは何かなどは詳しく話しません。
+Isabelle資料 Isabelleのお勉強のための資料をまとめておきます。
+ prog-prove.pdf: 公式チュートリアルの一番基本のやつ。入門するならこれだけは 必ず読みましょう 。チュートリアルは他にもトピックごとに色々あるよ！ isar-ref: 主にIsarに関するReference Manualだけど慣れてきたら参照する機会が多いと思う。 caeruiroさんのIsabelle Tutorialシリーズ: 大変貴重な日本語の入門記事。Isabelle-2009を使っているらしいのでもしかしたら古い記述もあるかもしれない。 Concrete Semantics: Isabelleでプログラミング言語のセマンティクスとかやるテキスト。前半はIsabelle入門、後半はCSのテキストみたいな構成。 AFP: Archive of Formal Proofs; Isabelleで証明されたあれこれが投稿されてる証明集みたいなサイト Isabelleの入門の入門: 遥か昔に書いた記事; 何かの役には立つかもしれない  このシリーズの目的 prog-prove.pdfを読んでねでチュートリアルを済ませてしまっても良いのですが、まぁ読んでって言って読んでもらった試しがないので もう少し実際に証明を書きながら解説をすることで、英語が読みたくない人や雰囲気だけ知りたい人にも優しい解説シリーズになればいいかなと思っています。 ひとまずこのIsabelle/HOLの基本シリーズでは上のprog-prove.pdfに沿って話を進めていきます。
+内容全部やるなら単なる翻訳になってしまうので適度にぶっ飛ばしつつ要所要所を解説していく感じにします。 定理証明全くしたことないと厳しいこともあるかもぐらいでお願いします。
+はじめに. jEditについて 現在Isabelleが公式にサポートしているのはjEditのみです1。 jEditを起動し、エディター画面とアウトプットパネルが表示されていれば問題ありません。アウトプットパネルはなければ Plugins&gt;Isabelle から表示させます。
+よく使うパネルを一通り説明しておきます。
+ Documentation: Isabelleは豊富な公式ドキュメントが用意されています。 Sidekick: 現在開いているファイルのアウトライン的なものが表示されます。 State: なんやねんこれ Theories: 複数のファイルを開いている場合に、各ファイルのどの辺りまでcheckerが走っているかが一覧で表示されたものです。 Output: ここに情報が表示されます。証明は基本的にこのパネルを見ながら書きます。 Query: 既知の定理の検索などを行います。 Sledgehammer: 現在focusしている証明に対してsledgehammer(後述)を実行することができます。 Symbols: unicode symbolを入力するために使います。  1. Introduction HOLとはhigher-order-logicの略で、Isabelleの標準ライブラリの1つです。 Isabelleでは組み込みのロジックの上に適当な公理系を構成したものをライブラリとして提供しており、HOLやZFC(ZFCはFOLの上のライブラリ)などがあります。
+最初はHOLから入るのが良いでしょう。ZFC上で形式化とかしたい人はZFCとか使うのもいいと思います。 また、変数の名前の付け替えなどをいい感じにアレする2Nominalという考え方もあり、それを使ったNominal HOLなんかもサードパーティライブラリとして開発されています。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day2/" />
+
+
+
+<meta property="article:published_time" content="2017-12-02T00:00:44&#43;09:00"/>
+
+<meta property="article:modified_time" content="2017-12-02T00:00:44&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Isabelle/HOLの基本 その1">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 2日目の記事です。
+さて今回よりIsabelle/HOL(HOLはライブラリの名前)の基本の解説をしていきます。 一応極基本的なことを最初に少し説明をしてから、あとは実践形式で実際に証明を書きながら細かい機能などの説明をしていく予定です。 説明に割くページ数とコンテンツの内容と時間的な問題で、定理証明とは何かなどは詳しく話しません。
+Isabelle資料 Isabelleのお勉強のための資料をまとめておきます。
+ prog-prove.pdf: 公式チュートリアルの一番基本のやつ。入門するならこれだけは 必ず読みましょう 。チュートリアルは他にもトピックごとに色々あるよ！ isar-ref: 主にIsarに関するReference Manualだけど慣れてきたら参照する機会が多いと思う。 caeruiroさんのIsabelle Tutorialシリーズ: 大変貴重な日本語の入門記事。Isabelle-2009を使っているらしいのでもしかしたら古い記述もあるかもしれない。 Concrete Semantics: Isabelleでプログラミング言語のセマンティクスとかやるテキスト。前半はIsabelle入門、後半はCSのテキストみたいな構成。 AFP: Archive of Formal Proofs; Isabelleで証明されたあれこれが投稿されてる証明集みたいなサイト Isabelleの入門の入門: 遥か昔に書いた記事; 何かの役には立つかもしれない  このシリーズの目的 prog-prove.pdfを読んでねでチュートリアルを済ませてしまっても良いのですが、まぁ読んでって言って読んでもらった試しがないので もう少し実際に証明を書きながら解説をすることで、英語が読みたくない人や雰囲気だけ知りたい人にも優しい解説シリーズになればいいかなと思っています。 ひとまずこのIsabelle/HOLの基本シリーズでは上のprog-prove.pdfに沿って話を進めていきます。
+内容全部やるなら単なる翻訳になってしまうので適度にぶっ飛ばしつつ要所要所を解説していく感じにします。 定理証明全くしたことないと厳しいこともあるかもぐらいでお願いします。
+はじめに. jEditについて 現在Isabelleが公式にサポートしているのはjEditのみです1。 jEditを起動し、エディター画面とアウトプットパネルが表示されていれば問題ありません。アウトプットパネルはなければ Plugins&gt;Isabelle から表示させます。
+よく使うパネルを一通り説明しておきます。
+ Documentation: Isabelleは豊富な公式ドキュメントが用意されています。 Sidekick: 現在開いているファイルのアウトライン的なものが表示されます。 State: なんやねんこれ Theories: 複数のファイルを開いている場合に、各ファイルのどの辺りまでcheckerが走っているかが一覧で表示されたものです。 Output: ここに情報が表示されます。証明は基本的にこのパネルを見ながら書きます。 Query: 既知の定理の検索などを行います。 Sledgehammer: 現在focusしている証明に対してsledgehammer(後述)を実行することができます。 Symbols: unicode symbolを入力するために使います。  1. Introduction HOLとはhigher-order-logicの略で、Isabelleの標準ライブラリの1つです。 Isabelleでは組み込みのロジックの上に適当な公理系を構成したものをライブラリとして提供しており、HOLやZFC(ZFCはFOLの上のライブラリ)などがあります。
+最初はHOLから入るのが良いでしょう。ZFC上で形式化とかしたい人はZFCとか使うのもいいと思います。 また、変数の名前の付け替えなどをいい感じにアレする2Nominalという考え方もあり、それを使ったNominal HOLなんかもサードパーティライブラリとして開発されています。">
+
+
+<meta itemprop="datePublished" content="2017-12-02T00:00:44&#43;09:00" />
+<meta itemprop="dateModified" content="2017-12-02T00:00:44&#43;09:00" />
+<meta itemprop="wordCount" content="733">
+
+
+
+<meta itemprop="keywords" content="AdC2017,Isabelle," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Isabelle/HOLの基本 その1"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 2日目の記事です。
+さて今回よりIsabelle/HOL(HOLはライブラリの名前)の基本の解説をしていきます。 一応極基本的なことを最初に少し説明をしてから、あとは実践形式で実際に証明を書きながら細かい機能などの説明をしていく予定です。 説明に割くページ数とコンテンツの内容と時間的な問題で、定理証明とは何かなどは詳しく話しません。
+Isabelle資料 Isabelleのお勉強のための資料をまとめておきます。
+ prog-prove.pdf: 公式チュートリアルの一番基本のやつ。入門するならこれだけは 必ず読みましょう 。チュートリアルは他にもトピックごとに色々あるよ！ isar-ref: 主にIsarに関するReference Manualだけど慣れてきたら参照する機会が多いと思う。 caeruiroさんのIsabelle Tutorialシリーズ: 大変貴重な日本語の入門記事。Isabelle-2009を使っているらしいのでもしかしたら古い記述もあるかもしれない。 Concrete Semantics: Isabelleでプログラミング言語のセマンティクスとかやるテキスト。前半はIsabelle入門、後半はCSのテキストみたいな構成。 AFP: Archive of Formal Proofs; Isabelleで証明されたあれこれが投稿されてる証明集みたいなサイト Isabelleの入門の入門: 遥か昔に書いた記事; 何かの役には立つかもしれない  このシリーズの目的 prog-prove.pdfを読んでねでチュートリアルを済ませてしまっても良いのですが、まぁ読んでって言って読んでもらった試しがないので もう少し実際に証明を書きながら解説をすることで、英語が読みたくない人や雰囲気だけ知りたい人にも優しい解説シリーズになればいいかなと思っています。 ひとまずこのIsabelle/HOLの基本シリーズでは上のprog-prove.pdfに沿って話を進めていきます。
+内容全部やるなら単なる翻訳になってしまうので適度にぶっ飛ばしつつ要所要所を解説していく感じにします。 定理証明全くしたことないと厳しいこともあるかもぐらいでお願いします。
+はじめに. jEditについて 現在Isabelleが公式にサポートしているのはjEditのみです1。 jEditを起動し、エディター画面とアウトプットパネルが表示されていれば問題ありません。アウトプットパネルはなければ Plugins&gt;Isabelle から表示させます。
+よく使うパネルを一通り説明しておきます。
+ Documentation: Isabelleは豊富な公式ドキュメントが用意されています。 Sidekick: 現在開いているファイルのアウトライン的なものが表示されます。 State: なんやねんこれ Theories: 複数のファイルを開いている場合に、各ファイルのどの辺りまでcheckerが走っているかが一覧で表示されたものです。 Output: ここに情報が表示されます。証明は基本的にこのパネルを見ながら書きます。 Query: 既知の定理の検索などを行います。 Sledgehammer: 現在focusしている証明に対してsledgehammer(後述)を実行することができます。 Symbols: unicode symbolを入力するために使います。  1. Introduction HOLとはhigher-order-logicの略で、Isabelleの標準ライブラリの1つです。 Isabelleでは組み込みのロジックの上に適当な公理系を構成したものをライブラリとして提供しており、HOLやZFC(ZFCはFOLの上のライブラリ)などがあります。
+最初はHOLから入るのが良いでしょう。ZFC上で形式化とかしたい人はZFCとか使うのもいいと思います。 また、変数の名前の付け替えなどをいい感じにアレする2Nominalという考え方もあり、それを使ったNominal HOLなんかもサードパーティライブラリとして開発されています。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2017-12-02 12:00">2017-12-02</time>
+      <h1>Isabelle/HOLの基本 その1</h1>
+    </header>
+    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 2日目の記事です。</strong></p>
+
+<p>さて今回よりIsabelle/HOL(HOLはライブラリの名前)の基本の解説をしていきます。
+一応極基本的なことを最初に少し説明をしてから、あとは実践形式で実際に証明を書きながら細かい機能などの説明をしていく予定です。
+説明に割くページ数とコンテンツの内容と時間的な問題で、定理証明とは何かなどは詳しく話しません。</p>
+
+<h1 id="isabelle資料">Isabelle資料</h1>
+
+<p>Isabelleのお勉強のための資料をまとめておきます。</p>
+
+<ul>
+<li><a href="https://isabelle.in.tum.de/dist/Isabelle2017/doc/prog-prove.pdf" title="prog-prove.pdf">prog-prove.pdf</a>: 公式チュートリアルの一番基本のやつ。入門するならこれだけは <strong>必ず読みましょう</strong> 。チュートリアルは他にもトピックごとに色々あるよ！</li>
+<li><a href="https://isabelle.in.tum.de/dist/Isabelle2017/doc/isar-ref.pdf" title="isar-ref">isar-ref</a>: 主にIsarに関するReference Manualだけど慣れてきたら参照する機会が多いと思う。</li>
+<li><a href="http://d.hatena.ne.jp/caeruiro/20100314/1268569131" title="caeruiroさんのIsabelle Tutorialシリーズ">caeruiroさんのIsabelle Tutorialシリーズ</a>: 大変貴重な日本語の入門記事。Isabelle-2009を使っているらしいのでもしかしたら古い記述もあるかもしれない。</li>
+<li><a href="http://www.concrete-semantics.org/" title="Concrete Semantics">Concrete Semantics</a>: Isabelleでプログラミング言語のセマンティクスとかやるテキスト。前半はIsabelle入門、後半はCSのテキストみたいな構成。</li>
+<li><a href="https://www.isa-afp.org/" title="AFP">AFP</a>: Archive of Formal Proofs; Isabelleで証明されたあれこれが投稿されてる証明集みたいなサイト</li>
+<li><a href="https://qiita.com/myuon_myon/items/11bb5bfc2e274fdaea7c" title="Isabelleの入門の入門">Isabelleの入門の入門</a>: 遥か昔に書いた記事; 何かの役には立つかもしれない</li>
+</ul>
+
+<h1 id="このシリーズの目的">このシリーズの目的</h1>
+
+<p>prog-prove.pdfを読んでねでチュートリアルを済ませてしまっても良いのですが、まぁ読んでって言って読んでもらった試しがないので
+もう少し実際に証明を書きながら解説をすることで、英語が読みたくない人や雰囲気だけ知りたい人にも優しい解説シリーズになればいいかなと思っています。
+ひとまずこのIsabelle/HOLの基本シリーズでは上のprog-prove.pdfに沿って話を進めていきます。</p>
+
+<p>内容全部やるなら単なる翻訳になってしまうので適度にぶっ飛ばしつつ要所要所を解説していく感じにします。
+定理証明全くしたことないと厳しいこともあるかもぐらいでお願いします。</p>
+
+<h1 id="はじめに-jeditについて">はじめに. jEditについて</h1>
+
+<p>現在Isabelleが公式にサポートしているのはjEditのみです<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>。
+jEditを起動し、エディター画面とアウトプットパネルが表示されていれば問題ありません。アウトプットパネルはなければ <code>Plugins&gt;Isabelle</code> から表示させます。</p>
+
+<p>よく使うパネルを一通り説明しておきます。</p>
+
+<ul>
+<li>Documentation: Isabelleは豊富な公式ドキュメントが用意されています。</li>
+<li>Sidekick: 現在開いているファイルのアウトライン的なものが表示されます。</li>
+<li>State: なんやねんこれ</li>
+<li>Theories: 複数のファイルを開いている場合に、各ファイルのどの辺りまでcheckerが走っているかが一覧で表示されたものです。</li>
+<li>Output: ここに情報が表示されます。証明は基本的にこのパネルを見ながら書きます。</li>
+<li>Query: 既知の定理の検索などを行います。</li>
+<li>Sledgehammer: 現在focusしている証明に対してsledgehammer(後述)を実行することができます。</li>
+<li>Symbols: unicode symbolを入力するために使います。</li>
+</ul>
+
+<h1 id="1-introduction">1. Introduction</h1>
+
+<p>HOLとはhigher-order-logicの略で、Isabelleの標準ライブラリの1つです。
+Isabelleでは組み込みのロジックの上に適当な公理系を構成したものをライブラリとして提供しており、HOLやZFC(ZFCはFOLの上のライブラリ)などがあります。</p>
+
+<p>最初はHOLから入るのが良いでしょう。ZFC上で形式化とかしたい人はZFCとか使うのもいいと思います。
+また、変数の名前の付け替えなどをいい感じにアレする<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup>Nominalという考え方もあり、それを使ったNominal HOLなんかもサードパーティライブラリとして開発されています。</p>
+
+<h1 id="2-programming-and-proving">2. Programming and Proving</h1>
+
+<h2 id="2-1-basics">2.1 Basics</h2>
+
+<h3 id="型とか">型とか</h3>
+
+<p>HOLはsimply-typedなlanguageにlogicを組み込んだみたいなやつ</p>
+
+<ul>
+<li>base type: bool, natとか色々</li>
+<li>function type: <code>=&gt;</code> でかく。</li>
+<li>type variable: 型変数はシングルクオートを前につけて <code>'a</code> とか <code>'b</code> とかかく。MLとかの記法らしい。</li>
+</ul>
+
+<p>例えば <code>cons : 'a =&gt; 'a list =&gt; 'a list</code> とか。</p>
+
+<ul>
+<li>term: MLぽい感じでifとかletとかcaseとかある</li>
+<li>formula: formulaはbool型のtermで、TrueとFalseとandとかorとかの命題結合子たちからなる。implicationは <code>--&gt;</code></li>
+<li>equality: <code>= : 'a =&gt; 'a =&gt; bool</code> でかく組み込みのrelation symbol。</li>
+<li>quantifier: forall, existが使える</li>
+</ul>
+
+<ul>
+<li>judgement: <code>|- Fm : Typ</code> みたいな形のjudgementを扱う。型は適当に推論されるので省略できるときはする。</li>
+</ul>
+
+<p>最後に、HOLではなくてIsabelle側の特殊な論理記号としてuniversal quantifier <code>⋀</code> (大きい∧)と implication <code>==&gt;</code> があって、これはHOLのロジックとは別物でIsabelle組み込みのコマンドといい感じに組み合わさって動いたりするやつ。多分使ってたらわかる。</p>
+
+<h3 id="theoryの宣言">theoryの宣言</h3>
+
+<p>Isabelleのファイルは <code>.thy</code> という拡張子で保存し、1ファイルに1つのtheory(モジュール的なもの)を基本とする。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  theory Test
+  imports Main
+  begin
+
+  end</code></pre></div>
+<p><code>theory</code> の後にはファイル名と同じ名前を書く。
+ <code>imports Main</code> は <code>Main</code> というtheoryを読み込むことを表す。
+ <code>begin ... end</code> の間に証明を書く。</p>
+
+<h2 id="2-2-types-bool-nat-list">2.2 Types bool,nat,list</h2>
+
+<h3 id="datatype">datatype</h3>
+
+<p>bool, nat, listは</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  datatype bool = True | False
+  datatype nat = Zero | Suc nat
+  datatype &#39;a list = nil | cons &#39;a &#34;&#39;a list&#34;</code></pre></div>
+<p>で定義できる。(組み込みの型はZeroを0とかくなどのnotationの違いはある)
+ここで、1つの「Isabelleの項」はスペースを含む場合に必ずダブルクオーテーションで囲まないといけないことに注意。</p>
+
+<h3 id="function">function</h3>
+
+<p>例えばadd関数はパターンマッチを使って</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  fun add :: &#34;nat ⇒ nat ⇒ nat&#34; where
+    &#34;add 0 n = n&#34;
+    | &#34;add (Suc m) n = Suc (add m n)&#34;</code></pre></div>
+<p>とかやって定義できる。
+functionでもダブルクオーテーションに注意。</p>
+
+<p>パターンマッチを使うとexhaustive checkが働くのでパターンマッチが網羅的でないと警告が出る。</p>
+
+<p>項の即時評価には <code>value</code> というコマンドが使えて、</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  value &#34;add (Suc (Suc 0)) (Suc 0)&#34;
+  (* &#34;Suc (Suc (Suc 0))&#34; :: &#34;nat&#34; と表示される *)</code></pre></div>
+<p>とかやる。</p>
+
+<h3 id="写経">写経</h3>
+
+<p>pdfに載ってるtheory of listを写経したらこうなる:</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  theory MyList
+  imports Main
+  begin
+
+  datatype &#39;a list = Nil | Cons &#39;a &#34;&#39;a list&#34;
+
+  fun app :: &#34;&#39;a list ⇒ &#39;a list ⇒ &#39;a list&#34; where
+    &#34;app Nil ys = ys&#34;
+    | &#34;app (Cons x xs) ys = Cons x (app xs ys)&#34;
+
+  fun rev :: &#34;&#39;a list ⇒ &#39;a list&#34; where
+    &#34;rev Nil = Nil&#34;
+    | &#34;rev (Cons x xs) = app (rev xs) (Cons x Nil)&#34;
+
+  value &#34;rev (Cons True (Cons False Nil))&#34;
+  (* &#34;Cons False (Cons True Nil)&#34; :: &#34;bool list&#34; と表示される *)
+
+  (* コメント *)
+
+  end</code></pre></div>
+<h3 id="定理証明界のfizzbuzz">定理証明界のfizzbuzz</h3>
+
+<p>さて定理証明界のfizzbuzzこと<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup>リストが2回reverseすると元に戻るという定理を示そう。
+まずはステートメントを述べる。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  theorem rev_rev: &#34;rev (rev xs) = xs&#34;</code></pre></div>
+<p>theoremかlemmaに続けてformulaを書くと定理として認識される。(theorem, lemmaに違いはない)
+ <code>rev_rev:</code> と書いておくと名前がついて示したあとで使えるようになるけど省略しても良い。</p>
+
+<p>さてこれをxsについての帰納法で示したいので次のようにしよう。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  apply (induction xs)</code></pre></div>
+<p>するとアウトプットパネルに2つのゴールが表示されると思う。
+まぁよくわからないけど勝手に証明してくれ頼むってしたいときはautoコマンドを使う。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  apply auto</code></pre></div>
+<p>さてゴール1は自動で証明されてゴール2が残った。このゴールはいきなり示すのは難しいので、いくつか補題を置いてがんばることにする。</p>
+
+<h3 id="最初の補題">最初の補題</h3>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma rev_app [simp]: &#34;rev (app xs ys) = app (rev ys) (rev xs)&#34;</code></pre></div>
+<p>先程も言ったとおりlemmaはtheoremと同じ。
+ちなみに <code>[simp]</code> というのが(attributeという)くっついているけど、これを付けておくとsimpコマンドを使った時に自動的にこの定理も(使用可能ならば)使ってくれるようになるというもの。</p>
+
+<p>さてこの補題を示そう。xsについての帰納法が良さそうなのでそうする。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  apply (induction xs)</code></pre></div>
+<p>またゴールが2つ表示されるけれど、これはautoコマンドでIsabelle頼む〜ってやるとまたしても上手く行かない。
+さらに補題が必要そうなので補題をおく。</p>
+
+<h3 id="次の補題">次の補題</h3>
+
+<p>必要な補題をじゃんじゃんおいて示そう。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma app_Nil [simp]: &#34;app xs Nil = xs&#34;
+  apply (induction xs)
+  apply auto
+  done
+
+  lemma app_assoc [simp]: &#34;app (app xs ys) zs = app xs (app ys zs)&#34;
+  apply (induction xs)
+  apply auto
+  done</code></pre></div>
+<p>ご覧の通りIsabelleのautoコマンドが強力すぎて楽勝だなという気分になってくる。</p>
+
+<p>さて、この2つの補題を使うとさっきの <code>rev_app</code> が示せるようになる。
+ <code>[simp]</code> アトリビュートをつけた補題が自動的にautoコマンドで使われるのでさっきはダメだった証明が今度は上手く行くようになる。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma rev_app [simp]: &#34;rev (app xs ys) = app (rev ys) (rev xs)&#34;
+  apply (induction xs)
+  apply auto
+  done</code></pre></div>
+<p>さて一番最初の <code>rev_rev</code> も同じようにするだけ。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma &#34;rev (rev xs) = xs&#34;
+  apply (induction xs)
+  apply auto
+  done</code></pre></div>
+<h2 id="2-3-type-and-function-definitions">2.3 Type and Function Definitions</h2>
+
+<h3 id="type-synonym">type synonym</h3>
+
+<p>型のエイリアスには <code>type_synonym</code> を使う。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  type_synonym string = &#34;char list&#34;</code></pre></div>
+<h3 id="datatype-1">datatype</h3>
+
+<p>データ型の宣言には <code>datatype</code> を使うことはすでに見た。
+datatypeで宣言すると、そのデータに関する構造帰納法が自動生成される。上でも自作のlist型に対してinductionコマンドを使っていたが、そのときには生成された構造帰納法を使って式を変形していた。</p>
+
+<h3 id="definition">definition</h3>
+
+<p>定義をするにはdefinitionを使う。
+これはrecursiveでないfunctionの定義に使う。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  definition sq :: &#34;nat =&gt; nat&#34; where
+    &#34;sq n = n * n&#34;</code></pre></div>
+<p>funと違ってこちらはsimpなどを使っても勝手に展開されない。 <code>sq n</code> を <code>n * n</code> に変形したいときは自動生成された定理 <code>sq_def</code> を使う。</p>
+
+<h3 id="abbreviations">abbreviations</h3>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  abbreviation sq&#39; :: &#34;nat =&gt; nat&#34; where
+    &#34;sq&#39; n == n * n&#34;</code></pre></div>
+<p>abbreviationはdefinitionみたいなものだけど中が勝手に展開される。 <code>sq'_def</code> は自動生成されない(必要ないので)。
+abbreviationはdefinitionと違って <code>=</code> ではなく <code>==</code> (または <code>\&lt;equiv&gt;</code>) を使うことに注意。</p>
+
+<h2 id="2-4-induction-heuristics">2.4 Induction Heuristics</h2>
+
+<p>帰納法をするときにある変数を任意にとりたいことがある。
+例えば</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma &#34;P xs ys = Q xs ys&#34;</code></pre></div>
+<p>これを示す時に、 <code>apply (induction xs)</code> としてしまうと <code>forall xs ys. (P xs ys = Q xs ys)</code> をxsについての帰納法になるので、</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">   1. forall ys. P Nil ys = Q Nil ys
+   2. forall x xs ys. (P xs ys = Q xs ys) --&gt; (P (Cons x xs) ys = Q (Cons x xs) ys)</code></pre></div>
+<p>なるゴールに変形されてしまう。
+しかしこれを <code>forall xs. (forall ys. P xs ys = Q xs ys)</code> とysを事前に量化したものについて帰納法を適用して欲しいと思うことがある。その時はarbitraryを付けて</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  apply (induction xs arbitrary: ys)</code></pre></div>
+<p>とかくことができる。するとゴールが次の形になる。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  1. forall ys. P Nil ys = Q Nil ys
+  2. forall x xs. (forall ys. P xs ys = Q xs ys) --&gt; (forall ys. P (Cons x xs) ys = Q (Cons x xs) ys)</code></pre></div>
+<p>たまに使うテクなので覚えておくと良いと思う。</p>
+
+<h2 id="2-5-simplification">2.5 Simplification</h2>
+
+<p>simplificationはsimpコマンドによって行う。autoコマンドを使った時は自動で行われる。
+simplificationは <code>[simp]</code> アトリビュートをつけた定理を</p>
+
+<ul>
+<li><code>l = r</code> のときはlをrに書き換える</li>
+<li>可能な限り行う</li>
+</ul>
+
+<p>という感じでやる。</p>
+
+<h3 id="simpコマンド">simpコマンド</h3>
+
+<p>また、 <code>[simp]</code> はつけていないけれどsimpコマンドを行う時に使う定理を追加することができる。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  apply (simp add: thm1 thm2 .. thmn)
+
+  (* あるいはautoでも使える *)
+
+  apply (auto simp add: thm1 thm2)</code></pre></div>
+<p>後でも述べるが、autoコマンドはゴールが複数ある時に全てのゴールに対して変形を行う。
+simpを全てのゴールに対して行う <code>simp_all</code> コマンドもある。</p>
+
+<h3 id="case-splitting">case splitting</h3>
+
+<p>次のように、caseによる場合分けをする必要がある定理を示したいとする。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma &#34;P (case e of 0 =&gt; a | Suc n =&gt; b n) = ((e = 0 --&gt; P a) /\ (∀n. e = Suc n --&gt; P (b n)))&#34;</code></pre></div>
+<p>この時は <code>split</code> をつけて</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  apply (simp split: nat.split)</code></pre></div>
+<p>のようにできる。</p>
+
+<h1 id="まとめ的な">まとめ的な</h1>
+
+<p>2章では簡単に型や関数などの主にプログラミング言語的な側面を中心にみていき、さらに簡単な証明も書いてみました。
+3章ではよりIsabelleそのものに踏み込んだ内容になります。</p>
+
+<p>キリがいいので今日はここまでです。</p>
+
+<p>続きはまた明日。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1">ProofGeneralはかつてサポートされていたけど切られてしまった… <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+
+<li id="fn:2">シリーズ後半でこれにも触れます <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+
+<li id="fn:3">と私が勝手に呼んでるけど実際に入門に適したいい問題だと思う <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/adc2017">
+                <span>#</span>AdC2017</a>
+            
+              <a href="/tags/isabelle">
+                <span>#</span>Isabelle</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

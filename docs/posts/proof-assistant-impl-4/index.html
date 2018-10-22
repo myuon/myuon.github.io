@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proof Assistantを作る・実装編 その4 - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Proof Assistantを作る・実装編 その4" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+昨日に引き続いてClaireの宣言(Decl)について説明していきます。
+Declarations まずはtoplevelMの定義から。
+toplevelM :: (Monad m, MonadIO m) =&gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &lt;- lift get; utyp &lt;- liftIO $ try $ infer env fml; case utyp of Left err -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&gt; k Right typ -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &lt;- suspend (DeclAwait return) env &lt;- lift get case decl of ここに実装を書く Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-4/" />
+
+
+
+<meta property="article:published_time" content="2017-12-21T00:20:35&#43;09:00"/>
+
+<meta property="article:modified_time" content="2017-12-21T00:20:35&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Proof Assistantを作る・実装編 その4">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+昨日に引き続いてClaireの宣言(Decl)について説明していきます。
+Declarations まずはtoplevelMの定義から。
+toplevelM :: (Monad m, MonadIO m) =&gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &lt;- lift get; utyp &lt;- liftIO $ try $ infer env fml; case utyp of Left err -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&gt; k Right typ -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &lt;- suspend (DeclAwait return) env &lt;- lift get case decl of ここに実装を書く Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。">
+
+
+<meta itemprop="datePublished" content="2017-12-21T00:20:35&#43;09:00" />
+<meta itemprop="dateModified" content="2017-12-21T00:20:35&#43;09:00" />
+<meta itemprop="wordCount" content="831">
+
+
+
+<meta itemprop="keywords" content="AdC2017,定理証明,Haskell," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Proof Assistantを作る・実装編 その4"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+昨日に引き続いてClaireの宣言(Decl)について説明していきます。
+Declarations まずはtoplevelMの定義から。
+toplevelM :: (Monad m, MonadIO m) =&gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &lt;- lift get; utyp &lt;- liftIO $ try $ infer env fml; case utyp of Left err -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&gt; k Right typ -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &lt;- suspend (DeclAwait return) env &lt;- lift get case decl of ここに実装を書く Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2017-12-21 12:20">2017-12-21</time>
+      <h1>Proof Assistantを作る・実装編 その4</h1>
+    </header>
+    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 21日目の記事です。</strong></p>
+
+<hr />
+
+<p>Proof Assistant 「Claire」の実装について説明していきます。</p>
+
+<p>リポジトリはこちら: <a href="https://github.com/myuon/claire" title="myuon/claire">myuon/claire</a></p>
+
+<p>昨日に引き続いてClaireの宣言(Decl)について説明していきます。</p>
+
+<h1 id="declarations">Declarations</h1>
+
+<p>まずはtoplevelMの定義から。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">toplevelM</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Monad</span> <span class="nf">m</span><span class="p">,</span> <span class="kt">MonadIO</span> <span class="nf">m</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Coroutine</span> <span class="kt">DeclSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="kt">Env</span> <span class="nf">m</span><span class="p">)</span> <span class="nb">()</span>
+  <span class="nf">toplevelM</span> <span class="ow">=</span> <span class="nf">forever</span> <span class="o">$</span> <span class="kr">do</span>
+    <span class="kr">let</span> <span class="nf">typecheck</span> <span class="nf">fml</span> <span class="nf">u</span> <span class="nf">k</span> <span class="ow">=</span> <span class="kr">do</span> <span class="p">{</span>
+      <span class="nf">env</span> <span class="ow">&lt;-</span> <span class="nf">lift</span> <span class="nf">get</span><span class="p">;</span>
+      <span class="nf">utyp</span> <span class="ow">&lt;-</span> <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">try</span> <span class="o">$</span> <span class="nf">infer</span> <span class="nf">env</span> <span class="nf">fml</span><span class="p">;</span>
+      <span class="kr">case</span> <span class="nf">utyp</span> <span class="kr">of</span>
+        <span class="kt">Left</span> <span class="nf">err</span> <span class="ow">-&gt;</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;typecheck&#34;</span> <span class="p">(</span><span class="nf">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="nf">fml</span> <span class="nf">err</span><span class="p">)</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span>
+        <span class="kt">Right</span> <span class="nf">typ</span> <span class="o">|</span> <span class="nf">u</span> <span class="o">==</span> <span class="nf">typ</span> <span class="ow">-&gt;</span> <span class="nf">k</span>
+        <span class="kt">Right</span> <span class="nf">typ</span> <span class="ow">-&gt;</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;typecheck&#34;</span> <span class="p">(</span><span class="nf">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="nf">fml</span> <span class="p">(</span><span class="nf">toException</span> <span class="o">$</span> <span class="kt">UnificationFailed</span> <span class="nf">u</span> <span class="nf">typ</span><span class="p">))</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nf">decl</span> <span class="ow">&lt;-</span> <span class="nf">suspend</span> <span class="p">(</span><span class="kt">DeclAwait</span> <span class="nf">return</span><span class="p">)</span>
+    <span class="nf">env</span> <span class="ow">&lt;-</span> <span class="nf">lift</span> <span class="nf">get</span>
+    <span class="kr">case</span> <span class="nf">decl</span> <span class="kr">of</span>
+      <span class="err">ここに実装を書く</span></code></pre></div>
+<p>Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。
+とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。</p>
+
+<h2 id="thmd-thmindex-formula-proof">ThmD thmindex formula proof</h2>
+
+<p>定理と証明を宣言します。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kt">ThmD</span> <span class="nf">idx</span> <span class="nf">fml</span> <span class="p">(</span><span class="kt">Proof</span> <span class="nf">coms</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="nf">typecheck</span> <span class="nf">fml</span> <span class="kt">Prop</span> <span class="o">$</span> <span class="kr">do</span>
+    <span class="nf">lift</span> <span class="o">$</span> <span class="nf">modify</span> <span class="o">$</span> <span class="nf">\env</span> <span class="ow">-&gt;</span> <span class="nf">env</span> <span class="p">{</span> <span class="nf">proof</span> <span class="ow">=</span> <span class="kt">[]</span> <span class="p">}</span>
+    <span class="nf">runThmD</span> <span class="nf">idx</span> <span class="nf">fml</span> <span class="nf">coms</span>
+
+    <span class="kr">where</span>
+      <span class="nf">runThmD</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Monad</span> <span class="nf">m</span><span class="p">,</span> <span class="kt">MonadIO</span> <span class="nf">m</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">ThmIndex</span> <span class="ow">-&gt;</span> <span class="kt">Formula</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">Coroutine</span> <span class="kt">DeclSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="kt">Env</span> <span class="nf">m</span><span class="p">)</span> <span class="nb">()</span>
+      <span class="nf">runThmD</span> <span class="nf">idx</span> <span class="nf">fml</span> <span class="nf">coms</span> <span class="ow">=</span> <span class="kr">do</span>
+        <span class="nf">env</span> <span class="ow">&lt;-</span> <span class="nf">lift</span> <span class="nf">get</span>
+        <span class="nf">go</span> <span class="p">(</span><span class="nf">commandM</span> <span class="nf">env</span><span class="p">)</span> <span class="p">(</span><span class="nf">newGoal</span> <span class="nf">fml</span><span class="p">)</span> <span class="nf">coms</span>
+        <span class="nf">lift</span> <span class="o">$</span> <span class="nf">modify</span> <span class="o">$</span> <span class="nf">insertThm</span> <span class="nf">idx</span> <span class="nf">fml</span>
+
+        <span class="kr">where</span>
+          <span class="nf">go</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Monad</span> <span class="nf">m</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Coroutine</span> <span class="kt">ComSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="nf">m</span><span class="p">)</span> <span class="nb">()</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">Coroutine</span> <span class="kt">DeclSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="kt">Env</span> <span class="nf">m</span><span class="p">)</span> <span class="nb">()</span>
+          <span class="nf">go</span> <span class="nf">machine</span> <span class="nf">js</span> <span class="nf">coms</span> <span class="ow">=</span> <span class="kr">do</span>
+            <span class="nf">env</span> <span class="ow">&lt;-</span> <span class="nf">lift</span> <span class="nf">get</span>
+            <span class="p">(</span><span class="nf">result</span><span class="p">,</span><span class="nf">js&#39;</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="nf">lift</span> <span class="o">$</span> <span class="nf">lift</span> <span class="o">$</span> <span class="nf">runStateT</span> <span class="p">(</span><span class="nf">resume</span> <span class="nf">machine</span><span class="p">)</span> <span class="nf">js</span>
+
+            <span class="kr">case</span> <span class="nf">result</span> <span class="kr">of</span>
+              <span class="kt">Right</span> <span class="nb">()</span> <span class="ow">-&gt;</span> <span class="nf">return</span> <span class="nb">()</span>
+              <span class="kt">Left</span> <span class="p">(</span><span class="kt">ComAwait</span> <span class="nf">cont</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+                <span class="kr">case</span> <span class="nf">coms</span> <span class="kr">of</span>
+                  <span class="kt">[]</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+                    <span class="nf">com&#39;</span> <span class="ow">&lt;-</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">ProofNotFinished</span> <span class="nf">js&#39;</span> <span class="nf">return</span>
+                    <span class="nf">go</span> <span class="p">(</span><span class="nf">suspend</span> <span class="o">$</span> <span class="kt">ComAwait</span> <span class="nf">cont</span><span class="p">)</span> <span class="nf">js&#39;</span> <span class="p">[</span><span class="nf">com&#39;</span><span class="p">]</span>
+                  <span class="p">(</span><span class="nf">c</span><span class="kt">:</span><span class="nf">cs</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+                    <span class="nf">go</span> <span class="p">(</span><span class="nf">cont</span> <span class="nf">c</span><span class="p">)</span> <span class="nf">js&#39;</span> <span class="nf">cs</span>
+              <span class="kt">Left</span> <span class="p">(</span><span class="nf">z</span><span class="o">@</span><span class="p">(</span><span class="kt">CommandError</span> <span class="nf">idt</span> <span class="nf">err</span> <span class="nf">cont</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+                <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">RunCommandError</span> <span class="nf">idt</span> <span class="nf">err</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span>
+                <span class="nf">go</span> <span class="nf">cont</span> <span class="nf">js</span> <span class="nf">coms</span></code></pre></div>
+<p>ThmDは中でcommandMを走らせ、その結果によって挙動を決めます。</p>
+
+<p>commandMが問題なく終了した時(=与えられたProofが与えられた命題の証明を完成させた時)、示した論理式を環境に追加して終了します。
+commandMがコマンドを要求するComAwaitで終了したとき、toplevelM全体をProofNotFinishedという証明が完了していないことを表すsuspenderでsuspendします。
+commandMがエラーになった時toplevelM全体をRunCommandErrorで返します。</p>
+
+<p>syntaxは次のような感じです。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  theorem hoge: a ==&gt; a
+  proof
+    apply ImpR
+    apply I
+  qed</code></pre></div>
+<h2 id="axiomd-thmindex-formula">AxiomD thmindex formula</h2>
+
+<p>公理として指定された論理式を追加します。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">AxiomD</span> <span class="nf">idx</span> <span class="nf">fml</span> <span class="ow">-&gt;</span> <span class="nf">typecheck</span> <span class="nf">fml</span> <span class="kt">Prop</span> <span class="o">$</span> <span class="kr">do</span>
+        <span class="nf">lift</span> <span class="o">$</span> <span class="nf">modify</span> <span class="o">$</span> <span class="nf">insertThm</span> <span class="nf">idx</span> <span class="nf">fml</span></code></pre></div>
+<p>環境に定理として追加するだけ。</p>
+
+<h2 id="importd-path">ImportD path</h2>
+
+<p>他の証明ファイルをインポートします。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">ImportD</span> <span class="nf">path</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="nf">env</span> <span class="ow">&lt;-</span> <span class="nf">lift</span> <span class="nf">get</span>
+        <span class="nf">env&#39;</span> <span class="ow">&lt;-</span> <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">claire</span> <span class="nf">env</span> <span class="o">.</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="kt">Laire</span> <span class="nf">ds</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="nf">ds</span><span class="p">)</span> <span class="o">.</span> <span class="nf">pLaire</span> <span class="o">=&lt;&lt;</span> <span class="nf">readFile</span> <span class="nf">path</span>
+        <span class="nf">lift</span> <span class="o">$</span> <span class="nf">put</span> <span class="o">$</span> <span class="nf">env&#39;</span></code></pre></div>
+<p>あとで定義しますがclaireというClaireの証明ファイル(というかClaire型の値)そのものを解釈して動くproofchecker machineをあとで定義するのでそれを使います。
+そしてそれを実行後に環境を現在の環境に上書きします。</p>
+
+<h2 id="constd-identifier-type">ConstD identifier type</h2>
+
+<p>ある型のtermを追加します。
+これは型チェッカーの話をする時についでに説明しますが、ADTみたいなsyntaxが今のところないのでconstructorはこのdeclarationによって追加します。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">ConstD</span> <span class="nf">p</span> <span class="nf">typ</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="nf">lift</span> <span class="o">$</span> <span class="nf">modify</span> <span class="o">$</span> <span class="nf">\env</span> <span class="ow">-&gt;</span> <span class="nf">env</span> <span class="p">{</span> <span class="nf">types</span> <span class="ow">=</span> <span class="kt">M</span><span class="o">.</span><span class="nf">insert</span> <span class="nf">p</span> <span class="nf">typ</span> <span class="p">(</span><span class="nf">types</span> <span class="nf">env</span><span class="p">)</span> <span class="p">}</span></code></pre></div>
+<h2 id="print-proof">Print_Proof</h2>
+
+<p>直前の証明をprintします。
+これは証明を入力するたびにそれを証明に追加していくという方法で実装しています。詳細はまた後ほど。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">PrintProof</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="nf">env</span> <span class="ow">&lt;-</span> <span class="nf">lift</span> <span class="nf">get</span>
+        <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">putStrLn</span> <span class="o">$</span> <span class="nf">print_proof</span> <span class="nf">env</span></code></pre></div>
+<h2 id="hsfile-newdecl">HsFile, NewDecl</h2>
+
+<p>この辺はマクロ関係の機能なので今は保留。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">HsFile</span> <span class="nf">file</span> <span class="ow">-&gt;</span> <span class="o">...</span>
+      <span class="kt">NewDecl</span> <span class="nf">dec</span> <span class="nf">args</span> <span class="ow">-&gt;</span> <span class="o">...</span></code></pre></div>
+<h1 id="claire-proofchecker">Claire Proofchecker</h1>
+
+<p>色々説明していないこともありますがまぁそれはそれとして、Claireのproofcheckerを定義します。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">claire</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="kt">Env</span>
+  <span class="nf">claire</span> <span class="ow">=</span> <span class="nf">go</span> <span class="nf">toplevelM</span> <span class="kr">where</span>
+    <span class="nf">go</span> <span class="ow">::</span> <span class="kt">Coroutine</span> <span class="kt">DeclSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="kt">Env</span> <span class="kt">IO</span><span class="p">)</span> <span class="nb">()</span> <span class="ow">-&gt;</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="kt">Env</span>
+    <span class="nf">go</span> <span class="nf">machine</span> <span class="nf">env</span> <span class="nf">decls</span> <span class="ow">=</span> <span class="kr">do</span>
+      <span class="p">(</span><span class="nf">result</span><span class="p">,</span><span class="nf">env&#39;</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="nf">flip</span> <span class="nf">runStateT</span> <span class="nf">env</span> <span class="p">(</span><span class="nf">resume</span> <span class="nf">machine</span><span class="p">)</span>
+      <span class="kr">case</span> <span class="nf">result</span> <span class="kr">of</span>
+        <span class="kt">Left</span> <span class="p">(</span><span class="kt">DeclAwait</span> <span class="nf">cont</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">case</span> <span class="nf">decls</span> <span class="kr">of</span>
+          <span class="kt">[]</span> <span class="ow">-&gt;</span> <span class="nf">return</span> <span class="nf">env&#39;</span>
+          <span class="p">(</span><span class="nf">d</span><span class="kt">:</span><span class="nf">ds</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="nf">go</span> <span class="p">(</span><span class="nf">cont</span> <span class="nf">d</span><span class="p">)</span> <span class="nf">env&#39;</span> <span class="nf">ds</span>
+        <span class="kt">Left</span> <span class="nf">z</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+          <span class="nf">print</span> <span class="nf">z</span>
+          <span class="nf">return</span> <span class="nf">env&#39;</span></code></pre></div>
+<p>これは基本的には、受け取ったDeclのリストをtoplevelMに食わしながらループをぐるぐる回すだけですね。
+toplevelMは(foreverで定義されているのでresumeすると常にDeclAwaitが出現し続けるという)無限の深さの構造をもつので、戻り値は必ずLeftﾅﾝﾄｶの形になります。</p>
+
+<p>DeclAwaitになったらそのまま実行を続け、そうでなければエラーなので画面に出力してそこでproofcheckerを止めます。</p>
+
+<h1 id="main-hs">Main.hs</h1>
+
+<p>さて、今までの機能を使ってとにかく動くところまでやりたいので、Main.hsの実装を説明します。</p>
+
+<p><a href="https://github.com/myuon/claire/blob/master/app/Main.hs" title="app/Main.hs">app/Main.hs</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">main</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+  <span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">xs</span> <span class="ow">&lt;-</span> <span class="nf">getArgs</span>
+    <span class="kr">case</span> <span class="p">(</span><span class="nf">xs</span> <span class="o">/=</span> <span class="kt">[]</span><span class="p">)</span> <span class="kr">of</span>
+      <span class="kt">True</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="nf">env</span> <span class="ow">&lt;-</span> <span class="nf">claire</span> <span class="nf">defEnv</span> <span class="o">.</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="kt">Laire</span> <span class="nf">ds</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="nf">ds</span><span class="p">)</span> <span class="o">.</span> <span class="nf">pLaire</span> <span class="o">=&lt;&lt;</span> <span class="nf">readFile</span> <span class="p">(</span><span class="nf">head</span> <span class="nf">xs</span><span class="p">)</span>
+        <span class="nf">putStrLn</span> <span class="s">&#34;= Constants =&#34;</span>
+        <span class="nf">mapM_</span> <span class="nf">print</span> <span class="o">$</span> <span class="kt">M</span><span class="o">.</span><span class="nf">assocs</span> <span class="o">$</span> <span class="nf">types</span> <span class="nf">env</span>
+        <span class="nf">putStrLn</span> <span class="s">&#34;= Proved Theorems =&#34;</span>
+        <span class="nf">mapM_</span> <span class="nf">print</span> <span class="o">$</span> <span class="kt">M</span><span class="o">.</span><span class="nf">assocs</span> <span class="o">$</span> <span class="nf">thms</span> <span class="nf">env</span>
+      <span class="kt">False</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="nf">mapM_</span> <span class="nf">putStrLn</span> <span class="o">$</span>
+          <span class="p">[</span> <span class="s">&#34;=========================&#34;</span>
+          <span class="p">,</span> <span class="s">&#34;=== Welcome to Claire ===&#34;</span>
+          <span class="p">,</span> <span class="s">&#34;=========================&#34;</span>
+          <span class="p">,</span> <span class="s">&#34;&#34;</span>
+          <span class="p">]</span>
+        <span class="nf">clairepl</span> <span class="nf">defEnv</span></code></pre></div>
+<p>main関数は、ファイルを受け取ってproofcheckerを走らせるか、インタラクティブシェルを起動するかのいずれかです。
+proofcheckerは先程説明したclaireを実行するだけですね。</p>
+
+<p>インタラクティブシェルは次のような実装になっています。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">clairepl</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span>
+  <span class="nf">clairepl</span> <span class="nf">env</span> <span class="ow">=</span> <span class="nf">go</span> <span class="nf">env</span> <span class="nf">toplevelM</span> <span class="kr">where</span>
+    <span class="nf">go</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Coroutine</span> <span class="kt">DeclSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="kt">Env</span> <span class="kt">IO</span><span class="p">)</span> <span class="nb">()</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span>
+    <span class="nf">go</span> <span class="nf">env</span> <span class="nf">k</span> <span class="ow">=</span> <span class="kr">do</span>
+      <span class="p">(</span><span class="nf">result</span><span class="p">,</span><span class="nf">env&#39;</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="nf">flip</span> <span class="nf">runStateT</span> <span class="nf">env</span> <span class="o">$</span> <span class="nf">resume</span> <span class="nf">k</span>
+
+      <span class="kr">case</span> <span class="nf">result</span> <span class="kr">of</span>
+        <span class="kt">Right</span> <span class="nb">()</span> <span class="ow">-&gt;</span> <span class="nf">go</span> <span class="nf">env&#39;</span> <span class="nf">k</span>
+        <span class="kt">Left</span> <span class="p">(</span><span class="kt">DeclAwait</span> <span class="nf">k</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+          <span class="nf">t</span> <span class="ow">&lt;-</span> <span class="nf">safep</span> <span class="p">(</span><span class="nf">putStr</span> <span class="s">&#34;decl&gt;&#34;</span> <span class="o">&gt;&gt;</span> <span class="nf">hFlush</span> <span class="nf">stdout</span><span class="p">)</span> <span class="nf">pDecl</span>
+          <span class="nf">go</span> <span class="nf">env&#39;</span> <span class="p">(</span><span class="nf">k</span> <span class="nf">t</span><span class="p">)</span>
+        <span class="kt">Left</span> <span class="p">(</span><span class="kt">ProofNotFinished</span> <span class="nf">js</span> <span class="nf">cont</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+          <span class="nf">mapM_</span> <span class="nf">print</span> <span class="nf">js</span>
+          <span class="p">(</span><span class="nf">t</span><span class="p">,</span><span class="nf">raw</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="nf">safep</span> <span class="p">(</span><span class="nf">putStr</span> <span class="s">&#34;command&gt;&#34;</span> <span class="o">&gt;&gt;</span> <span class="nf">hFlush</span> <span class="nf">stdout</span><span class="p">)</span> <span class="p">(</span><span class="nf">\s</span> <span class="ow">-&gt;</span> <span class="kr">let</span> <span class="nf">s&#39;</span> <span class="ow">=</span> <span class="nf">pCommand</span> <span class="nf">s</span> <span class="kr">in</span> <span class="nf">s&#39;</span> <span class="p">`</span><span class="nf">seq</span><span class="p">`</span> <span class="p">(</span><span class="nf">s&#39;</span><span class="p">,</span><span class="nf">s</span><span class="p">))</span>
+          <span class="kr">let</span> <span class="nf">addProof</span> <span class="nf">env</span> <span class="nf">k</span> <span class="ow">=</span> <span class="nf">env</span> <span class="p">{</span> <span class="nf">proof</span> <span class="ow">=</span> <span class="nf">proof</span> <span class="nf">env</span> <span class="o">++</span> <span class="p">[</span><span class="nf">k</span><span class="p">]</span> <span class="p">}</span>
+          <span class="nf">go</span> <span class="p">(</span><span class="nf">addProof</span> <span class="nf">env&#39;</span> <span class="p">(</span><span class="nf">t</span><span class="p">,</span><span class="nf">raw</span><span class="p">))</span> <span class="p">(</span><span class="nf">cont</span> <span class="nf">t</span><span class="p">)</span>
+        <span class="kt">Left</span> <span class="p">(</span><span class="nf">z</span><span class="o">@</span><span class="p">(</span><span class="kt">RunCommandError</span> <span class="nf">idt</span> <span class="nf">err</span> <span class="nf">cont</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+          <span class="nf">print</span> <span class="nf">z</span>
+          <span class="kr">let</span> <span class="nf">unaddProof</span> <span class="nf">env</span> <span class="o">|</span> <span class="nf">length</span> <span class="p">(</span><span class="nf">proof</span> <span class="nf">env</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">=</span> <span class="nf">env</span> <span class="p">{</span> <span class="nf">proof</span> <span class="ow">=</span> <span class="nf">init</span> <span class="p">(</span><span class="nf">proof</span> <span class="nf">env</span><span class="p">)</span> <span class="p">}</span>
+              <span class="nf">unaddProof</span> <span class="nf">env</span> <span class="ow">=</span> <span class="nf">env</span>
+          <span class="nf">go</span> <span class="p">(</span><span class="nf">unaddProof</span> <span class="nf">env&#39;</span><span class="p">)</span> <span class="nf">cont</span>
+        <span class="kt">Left</span> <span class="p">(</span><span class="nf">z</span><span class="o">@</span><span class="p">(</span><span class="kt">DeclError</span> <span class="nf">idt</span> <span class="nf">err</span> <span class="nf">cont</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+          <span class="nf">print</span> <span class="nf">z</span>
+          <span class="nf">go</span> <span class="nf">env</span> <span class="nf">cont</span>
+
+    <span class="nf">safep</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="nb">()</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">String</span> <span class="ow">-&gt;</span> <span class="nf">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="nf">a</span>
+    <span class="nf">safep</span> <span class="nf">ma</span> <span class="nf">p</span> <span class="ow">=</span> <span class="nf">ma</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="nf">p</span> <span class="o">&lt;$!&gt;</span> <span class="nf">getLine</span><span class="p">)</span> <span class="p">`</span><span class="nf">catch</span><span class="p">`</span> <span class="p">(</span><span class="nf">\err</span> <span class="ow">-&gt;</span> <span class="nf">print</span> <span class="p">(</span><span class="nf">err</span> <span class="ow">::</span> <span class="kt">ErrorCall</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nf">safep</span> <span class="nf">ma</span> <span class="nf">p</span><span class="p">)</span></code></pre></div>
+<p>これはtoplevelMを使って実際にどのように実行するかを記述するものです。</p>
+
+<p>toplevelMを実行すると、DeclAwait, ProofNotFinished, RunCommandError, DeclErrorなどの様々な状態が返ってきます。
+DeclAwaitが返ってきたらDeclをユーザーに入力させ、ProofNotFinishedが返ってきたらCommandをユーザーに入力させる、みたいなことをしているのが上のコードです。
+コマンドの入力は証明の入力なので、上でも触れましたがPrint_Proofができるようにするために入力した証明を環境に追加しておきます。</p>
+
+<p>ところで、ユーザーの入力が例えばパース不可能な文字列である場合があるので、そのような場合にはエラーを出力しもう一度入力をさせるための関数がsafepです。</p>
+
+<p>toplevelMの結果エラーが返ってきたらエラー内容を画面に出力して、もう一度入力をさせます。</p>
+
+<p>注目してほしいこととして、証明チェックに関する実装は全てtoplevelMが請け負っていて、claireplもclaireも共通したコードで実装ができているということですね。
+Coroutineモナドを使ったことにより、証明の実装自体は共通化させ、実際にマシーンが停止状態に入った時にエラーを画面に表示するか、それともユーザーからの入力を受け付けるのか、というUI部分は後から実装を与えて挙動を変えているというのが大事なところです。</p>
+
+<h1 id="実行">実行</h1>
+
+<p>以上のような仕組みで、Claireのproofcheckerとインタラクティブシェルが動きます。</p>
+
+<p>例えば実行してみると、次のような操作で証明を記述することが出来ます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  =========================
+  === Welcome to Claire ===
+  =========================
+
+  decl&gt;theorem id: a ==&gt; a
+
+  [] |- [Pred &#34;a&#34; [] :==&gt;: Pred &#34;a&#34; []]
+
+  command&gt;apply ImpR
+
+  [Pred &#34;a&#34; []] |- [Pred &#34;a&#34; []]
+
+  command&gt;apply I
+
+  decl&gt;print_proof
+
+  = proof of the previous theorem =
+  proof
+    apply ImpR
+    apply I
+  qed</code></pre></div>
+<p>decl>, command> の部分がユーザーの入力です。</p>
+
+<h1 id="まとめ">まとめ</h1>
+
+<p>はてさて、だいぶ形になってきたように思います。
+一応今回でClaireの証明チェックに関するコアの部分の説明は終わりです。</p>
+
+<p>あと、型システムの説明と(と言っても特別なことはないので説明することもないですが)、マクロ機能の説明をしたらClaireの解説はおしまいになります。</p>
+
+<p>というわけでお疲れ様でした。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/adc2017">
+                <span>#</span>AdC2017</a>
+            
+              <a href="/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E">
+                <span>#</span>定理証明</a>
+            
+              <a href="/tags/haskell">
+                <span>#</span>Haskell</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

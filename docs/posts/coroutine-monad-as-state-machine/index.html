@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coroutineモナドとステートマシン - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Coroutineモナドとステートマシン" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 14日目の記事です。
+今回は小ネタです。
+monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。
+Coroutine-monad example: coroutine 名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。
+サンプルとしては次のような感じ:
+countup :: Coroutine (Yield Int) IO () countup = do lift $ print &#34;counting...&#34; yield 1 lift $ print &#34;counting...&#34; yield 2 return () printProduce :: Show x =&gt; Coroutine (Yield x) IO r -&gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&gt; lift (print x) &gt;&gt; cont) producer {- &gt; printProduce countup counting... 1 counting... 2 -} countup内ではyieldという関数が使われていて、 yield :: Monad m =&gt; x -&gt; Coroutine (Yield x) m () なので Coroutine (Yield x) m () ではx型の値をyieldして停止することができる。 pogoStickは Yield x r の挙動を指定して、それを使ってCoroutineを潰すことができる。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/coroutine-monad-as-state-machine/" />
+
+
+
+<meta property="article:published_time" content="2017-12-14T00:03:01&#43;09:00"/>
+
+<meta property="article:modified_time" content="2017-12-14T00:03:01&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Coroutineモナドとステートマシン">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 14日目の記事です。
+今回は小ネタです。
+monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。
+Coroutine-monad example: coroutine 名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。
+サンプルとしては次のような感じ:
+countup :: Coroutine (Yield Int) IO () countup = do lift $ print &#34;counting...&#34; yield 1 lift $ print &#34;counting...&#34; yield 2 return () printProduce :: Show x =&gt; Coroutine (Yield x) IO r -&gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&gt; lift (print x) &gt;&gt; cont) producer {- &gt; printProduce countup counting... 1 counting... 2 -} countup内ではyieldという関数が使われていて、 yield :: Monad m =&gt; x -&gt; Coroutine (Yield x) m () なので Coroutine (Yield x) m () ではx型の値をyieldして停止することができる。 pogoStickは Yield x r の挙動を指定して、それを使ってCoroutineを潰すことができる。">
+
+
+<meta itemprop="datePublished" content="2017-12-14T00:03:01&#43;09:00" />
+<meta itemprop="dateModified" content="2017-12-14T00:03:01&#43;09:00" />
+<meta itemprop="wordCount" content="607">
+
+
+
+<meta itemprop="keywords" content="AdC2017,Haskell," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Coroutineモナドとステートマシン"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 14日目の記事です。
+今回は小ネタです。
+monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。
+Coroutine-monad example: coroutine 名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。
+サンプルとしては次のような感じ:
+countup :: Coroutine (Yield Int) IO () countup = do lift $ print &#34;counting...&#34; yield 1 lift $ print &#34;counting...&#34; yield 2 return () printProduce :: Show x =&gt; Coroutine (Yield x) IO r -&gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&gt; lift (print x) &gt;&gt; cont) producer {- &gt; printProduce countup counting... 1 counting... 2 -} countup内ではyieldという関数が使われていて、 yield :: Monad m =&gt; x -&gt; Coroutine (Yield x) m () なので Coroutine (Yield x) m () ではx型の値をyieldして停止することができる。 pogoStickは Yield x r の挙動を指定して、それを使ってCoroutineを潰すことができる。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2017-12-14 12:03">2017-12-14</time>
+      <h1>Coroutineモナドとステートマシン</h1>
+    </header>
+    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 14日目の記事です。</strong></p>
+
+<hr />
+
+<p>今回は小ネタです。</p>
+
+<p><a href="https://www.stackage.org/lts-9.11/package/monad-coroutine-0.9.0.3" title="monad-coroutine">monad-coroutine</a>というライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。</p>
+
+<h1 id="coroutine-monad">Coroutine-monad</h1>
+
+<h2 id="example-coroutine">example: coroutine</h2>
+
+<p>名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。</p>
+
+<p>サンプルとしては次のような感じ:</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">countup</span> <span class="ow">::</span> <span class="kt">Coroutine</span> <span class="p">(</span><span class="kt">Yield</span> <span class="kt">Int</span><span class="p">)</span> <span class="kt">IO</span> <span class="nb">()</span>
+  <span class="nf">countup</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">lift</span> <span class="o">$</span> <span class="nf">print</span> <span class="s">&#34;counting...&#34;</span>
+    <span class="nf">yield</span> <span class="mi">1</span>
+    <span class="nf">lift</span> <span class="o">$</span> <span class="nf">print</span> <span class="s">&#34;counting...&#34;</span>
+    <span class="nf">yield</span> <span class="mi">2</span>
+    <span class="nf">return</span> <span class="nb">()</span>
+
+  <span class="nf">printProduce</span> <span class="ow">::</span> <span class="kt">Show</span> <span class="nf">x</span> <span class="ow">=&gt;</span> <span class="kt">Coroutine</span> <span class="p">(</span><span class="kt">Yield</span> <span class="nf">x</span><span class="p">)</span> <span class="kt">IO</span> <span class="nf">r</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="nf">r</span>
+  <span class="nf">printProduce</span> <span class="nf">producer</span> <span class="ow">=</span> <span class="nf">pogoStick</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="kt">Yield</span> <span class="nf">x</span> <span class="nf">cont</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="nf">lift</span> <span class="p">(</span><span class="nf">print</span> <span class="nf">x</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="nf">cont</span><span class="p">)</span> <span class="nf">producer</span>
+
+  <span class="cm">{-
+</span><span class="cm">  &gt; printProduce countup
+</span><span class="cm">  counting...
+</span><span class="cm">  1
+</span><span class="cm">  counting...
+</span><span class="cm">  2
+</span><span class="cm">  -}</span></code></pre></div>
+<p>countup内ではyieldという関数が使われていて、 <code>yield :: Monad m =&gt; x -&gt; Coroutine (Yield x) m ()</code> なので <code>Coroutine (Yield x) m ()</code> ではx型の値をyieldして停止することができる。
+pogoStickは <code>Yield x r</code> の挙動を指定して、それを使ってCoroutineを潰すことができる。</p>
+
+<h2 id="monadic-structure">monadic structure</h2>
+
+<p>さて上の例は正直つまらない例だが、これでもCoroutine monadの構造について触れるには十分だろう。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">newtype</span> <span class="kt">Coroutine</span> <span class="nf">s</span> <span class="nf">m</span> <span class="nf">r</span> <span class="ow">=</span> <span class="kt">Coroutine</span> <span class="p">{</span> <span class="nf">resume</span> <span class="ow">::</span> <span class="nf">m</span> <span class="p">(</span><span class="kt">Either</span> <span class="p">(</span><span class="nf">s</span> <span class="p">(</span><span class="kt">Coroutine</span> <span class="nf">s</span> <span class="nf">m</span> <span class="nf">r</span><span class="p">))</span> <span class="nf">r</span><span class="p">)</span> <span class="p">}</span></code></pre></div>
+<p>Coroutineは実行すると、 <code>s (Coroutine s m r)</code> か <code>r</code> のいずれかがモナド付きで返ってくる。
+先ほどのYieldの例がどうなってたのかを調べてみよう。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">suspend</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Monad</span> <span class="nf">m</span><span class="p">,</span> <span class="kt">Functor</span> <span class="nf">s</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="nf">s</span> <span class="p">(</span><span class="kt">Coroutine</span> <span class="nf">s</span> <span class="nf">m</span> <span class="nf">x</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">Coroutine</span> <span class="nf">s</span> <span class="nf">m</span> <span class="nf">x</span>
+  <span class="nf">suspend</span> <span class="nf">s</span> <span class="ow">=</span> <span class="kt">Coroutine</span> <span class="p">(</span><span class="nf">return</span> <span class="p">(</span><span class="kt">Left</span> <span class="nf">s</span><span class="p">))</span>
+
+  <span class="kr">data</span> <span class="kt">Yield</span> <span class="nf">x</span> <span class="nf">y</span>
+    <span class="ow">=</span> <span class="kt">Yield</span> <span class="nf">x</span> <span class="nf">y</span>
+    <span class="kr">deriving</span> <span class="kt">Functor</span>
+
+  <span class="nf">yield</span> <span class="ow">::</span> <span class="kt">Monad</span> <span class="nf">m</span> <span class="ow">=&gt;</span> <span class="nf">x</span> <span class="ow">-&gt;</span> <span class="kt">Coroutine</span> <span class="p">(</span><span class="kt">Yield</span> <span class="nf">x</span><span class="p">)</span> <span class="nf">m</span> <span class="nb">()</span>
+  <span class="nf">yield</span> <span class="nf">x</span> <span class="ow">=</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">Yield</span> <span class="nf">x</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
+<p>上の <code>Coroutine s m r</code> のsは <code>* -&gt; *</code> なので、引数を1つとる。なのでYieldは2引数の型である。</p>
+
+<p>yield関数はxを受け取り、 <code>suspend (Yield x (return ()))</code> すなわち <code>Coroutine (return (Left (Yield x (return ()))))</code> を返す。
+型が合っていることは分かるだろう。</p>
+
+<p>yieldの挙動をよりよく理解するためにいくつか例を見てみる。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="c1">-- さっきのやつ</span>
+  <span class="nf">countup</span> <span class="ow">::</span> <span class="kt">Coroutine</span> <span class="p">(</span><span class="kt">Yield</span> <span class="kt">Int</span><span class="p">)</span> <span class="kt">IO</span> <span class="nb">()</span>
+  <span class="nf">countup</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">lift</span> <span class="o">$</span> <span class="nf">print</span> <span class="s">&#34;counting...&#34;</span>
+    <span class="nf">yield</span> <span class="mi">1</span>
+    <span class="nf">lift</span> <span class="o">$</span> <span class="nf">print</span> <span class="s">&#34;counting...&#34;</span>
+    <span class="nf">yield</span> <span class="mi">2</span>
+    <span class="nf">return</span> <span class="nb">()</span>
+
+  <span class="o">&gt;</span> <span class="nf">resume</span> <span class="nf">countup</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="p">(</span><span class="kt">Either</span> <span class="p">(</span><span class="kt">Yield</span> <span class="kt">Int</span> <span class="p">(</span><span class="kt">Coroutine</span> <span class="p">(</span><span class="kt">Yield</span> <span class="kt">Int</span><span class="p">)</span> <span class="kt">IO</span> <span class="nb">()</span><span class="p">))</span> <span class="nb">()</span><span class="p">)</span>
+  <span class="c1">-- これは次と等しい</span>
+  <span class="o">==</span> <span class="kr">do</span>
+    <span class="nf">lift</span> <span class="o">$</span> <span class="nf">print</span> <span class="s">&#34;counting...&#34;</span>
+    <span class="nf">return</span> <span class="o">$</span> <span class="kt">Left</span> <span class="o">$</span> <span class="kt">Yield</span> <span class="mi">1</span> <span class="o">$</span> <span class="kr">do</span>
+      <span class="nf">lift</span> <span class="o">$</span> <span class="nf">print</span> <span class="s">&#34;counting...&#34;</span>
+      <span class="nf">yield</span> <span class="mi">2</span>
+      <span class="nf">return</span> <span class="nb">()</span>
+
+  <span class="o">&gt;</span> <span class="nf">resume</span> <span class="p">(</span><span class="nf">yield</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="p">(</span><span class="kt">Either</span> <span class="p">(</span><span class="kt">Yield</span> <span class="kt">Int</span> <span class="p">(</span><span class="kt">Coroutine</span> <span class="p">(</span><span class="kt">Yield</span> <span class="kt">Int</span><span class="p">)</span> <span class="kt">IO</span> <span class="nb">()</span><span class="p">))</span> <span class="nb">()</span><span class="p">)</span>
+  <span class="o">==</span> <span class="nf">return</span> <span class="o">$</span> <span class="kt">Left</span> <span class="o">$</span> <span class="kt">Yield</span> <span class="mi">1</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span>
+
+  <span class="o">&gt;</span> <span class="nf">resume</span> <span class="p">(</span><span class="nf">lift</span> <span class="o">$</span> <span class="nf">print</span> <span class="s">&#34;piyo&#34;</span><span class="p">)</span>
+  <span class="o">==</span> <span class="kr">do</span>
+    <span class="nf">lift</span> <span class="o">$</span> <span class="nf">print</span> <span class="s">&#34;piyo&#34;</span>
+    <span class="nf">return</span> <span class="o">$</span> <span class="kt">Right</span> <span class="nb">()</span>
+
+  <span class="o">&gt;</span> <span class="kt">Left</span> <span class="p">(</span><span class="kt">Yield</span> <span class="nf">n</span> <span class="nf">cont</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="nf">resume</span> <span class="nf">countup</span>
+  <span class="c1">-- このとき,次のように束縛されている</span>
+  <span class="nf">n</span> <span class="o">==</span> <span class="mi">1</span>
+  <span class="nf">cont</span> <span class="o">==</span> <span class="kr">do</span>
+    <span class="nf">lift</span> <span class="o">$</span> <span class="nf">print</span> <span class="s">&#34;counting...&#34;</span>
+    <span class="nf">yield</span> <span class="mi">2</span>
+    <span class="nf">return</span> <span class="nb">()</span></code></pre></div>
+<p>あくまで擬似的なコード(コードでもないけど)だが、雰囲気は伝わるだろうか。</p>
+
+<p>resumeは一番最初に出現するyieldの箇所まで一度に実行が走り、もしも(yieldがなく)最後まで実行し終えたらRightを返して終了する。もしもyieldを発見すれば、その値とプログラムの残り(継続みたいなもの)を組にしてLeftに入れて返してくる。</p>
+
+<p>実際にはsuspendが(つまり <code>Coroutine (return ...)</code> という形が)このような挙動を制御している。</p>
+
+<p>気になる人はmonadのinstanceの定義も見ておくとよいかもしれない。</p>
+
+<h1 id="ステートマシン">ステートマシン</h1>
+
+<h2 id="example-状態a-b-c">example: 状態A,B,C</h2>
+
+<p>さてタイトル詐欺にならぬようステートマシンの話をします。</p>
+
+<p>例えば次のようなプログラムを考える:</p>
+
+<ol>
+<li>プログラムは状態A,B,Cがある。</li>
+<li>Aの状態で入力n(整数)を受け取ると、2倍した値を出力して状態Bへと移行する。</li>
+<li>Bの状態で入力s(文字列)を受け取ると、反転した値を出力して状態Cへと移行する。</li>
+<li>Cの状態で1秒待機し、状態Aへと移行する。</li>
+</ol>
+
+<p>実際にこのようなプログラムを実行するには、入力を受け付けるために待機するみたいな機構が必要になるが、あまり細かいことは気にせずあくまで上の仕様は概念的なもので、それっぽいものができればよいことにする。</p>
+
+<p>多分これを簡単にやるなら(まぁステートマシンっていうぐらいだし)Stateモナドを使うのが素直な実装だろうか。
+(そうでもないかもしれない、わからん)</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">IState</span> <span class="ow">=</span> <span class="kt">A</span> <span class="o">|</span> <span class="kt">B</span> <span class="o">|</span> <span class="kt">C</span>
+  <span class="kr">data</span> <span class="kt">I</span> <span class="ow">=</span> <span class="kt">IA</span> <span class="kt">Int</span> <span class="o">|</span> <span class="kt">IB</span> <span class="kt">String</span> <span class="o">|</span> <span class="kt">IC</span> <span class="nb">()</span>
+
+  <span class="nf">machine</span> <span class="ow">::</span> <span class="kt">MonadIO</span> <span class="nf">m</span> <span class="ow">=&gt;</span> <span class="kt">Input</span> <span class="ow">-&gt;</span> <span class="kt">StateT</span> <span class="kt">IState</span> <span class="nf">m</span> <span class="nb">()</span>
+  <span class="nf">machine</span> <span class="p">(</span><span class="kt">IA</span> <span class="nf">n</span><span class="p">)</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">print</span> <span class="o">$</span> <span class="nf">n</span><span class="o">*</span><span class="mi">2</span>
+    <span class="nf">modify</span> <span class="o">$</span> <span class="nf">\</span><span class="kt">A</span> <span class="ow">-&gt;</span> <span class="kt">B</span>
+  <span class="nf">machine</span> <span class="p">(</span><span class="kt">IB</span> <span class="nf">s</span><span class="p">)</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">print</span> <span class="o">$</span> <span class="nf">reverse</span> <span class="nf">s</span>
+    <span class="nf">modify</span> <span class="o">$</span> <span class="nf">\</span><span class="kt">B</span> <span class="ow">-&gt;</span> <span class="kt">C</span>
+  <span class="nf">machine</span> <span class="p">(</span><span class="kt">IC</span> <span class="nb">()</span><span class="p">)</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">wait</span> <span class="p">(</span><span class="nf">sec</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="nf">modify</span> <span class="o">$</span> <span class="nf">\</span><span class="kt">C</span> <span class="ow">-&gt;</span> <span class="kt">A</span></code></pre></div>
+<h2 id="coroutineによるステートマシン">Coroutineによるステートマシン</h2>
+
+<p>上のやつをCoroutineモナドで書いてみよう。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">MachineF</span> <span class="nf">y</span>
+    <span class="ow">=</span> <span class="kt">AtoB</span> <span class="p">(</span><span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="nf">y</span><span class="p">)</span>
+    <span class="o">|</span> <span class="kt">BtoC</span> <span class="p">(</span><span class="kt">String</span> <span class="ow">-&gt;</span> <span class="nf">y</span><span class="p">)</span>
+
+  <span class="nf">machineA</span> <span class="ow">::</span> <span class="kt">MonadIO</span> <span class="nf">m</span> <span class="ow">=&gt;</span> <span class="kt">Coroutine</span> <span class="kt">MachineF</span> <span class="nf">m</span> <span class="nb">()</span>
+  <span class="nf">machineA</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">n</span> <span class="ow">&lt;-</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">AtoB</span> <span class="nf">return</span>
+    <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">print</span> <span class="o">$</span> <span class="nf">n</span><span class="o">*</span><span class="mi">2</span>
+    <span class="nf">machineB</span>
+
+  <span class="nf">machineB</span> <span class="ow">::</span> <span class="kt">MonadIO</span> <span class="nf">m</span> <span class="ow">=&gt;</span> <span class="kt">Coroutine</span> <span class="kt">MachineF</span> <span class="nf">m</span> <span class="nb">()</span>
+  <span class="nf">machineB</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">s</span> <span class="ow">&lt;-</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">BtoC</span> <span class="nf">return</span>
+    <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">print</span> <span class="o">$</span> <span class="nf">reverse</span> <span class="nf">s</span>
+    <span class="nf">machineC</span>
+
+  <span class="nf">machineC</span> <span class="ow">::</span> <span class="kt">MonadIO</span> <span class="nf">m</span> <span class="ow">=&gt;</span> <span class="kt">Coroutine</span> <span class="kt">MachineF</span> <span class="nf">m</span> <span class="nb">()</span>
+  <span class="nf">machineC</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">wait</span> <span class="p">(</span><span class="nf">sec</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="nf">machineA</span></code></pre></div>
+<p>変わったところとして、先の例ではInputとStateが分けられていたが、これがMachineFになって統合されたこと、各machine内部で <code>suspend $ AtoB return</code> のように書けるようになった。
+constructorが <code>A -&gt; y</code> の形は、コルーチンを再開する際にAを与える必要があるようなもので、これはAwaitとしてライブラリですでに定義されている。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Await</span> <span class="nf">x</span> <span class="nf">y</span> <span class="ow">=</span> <span class="kt">Await</span> <span class="p">(</span><span class="nf">x</span> <span class="ow">-&gt;</span> <span class="nf">y</span><span class="p">)</span>
+    <span class="kr">deriving</span> <span class="kt">Functor</span>
+
+  <span class="nf">await</span> <span class="ow">::</span> <span class="kt">MonadIO</span> <span class="nf">m</span> <span class="ow">=&gt;</span> <span class="kt">Coroutine</span> <span class="p">(</span><span class="kt">Await</span> <span class="nf">x</span><span class="p">)</span> <span class="nf">m</span> <span class="nf">x</span>
+  <span class="nf">await</span> <span class="ow">=</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">Await</span> <span class="nf">return</span></code></pre></div>
+<p>これはawait、つまり入力を待機するために使う。</p>
+
+<p>という目で見れば、上のMachineFでも <code>suspend $ AtoB return</code> や <code>suspend $ BtoC return</code> がawaitとして機能しているのがわかるだろう。</p>
+
+<p>上のmachineA,machineB,machineCは実行すると入力を待機する状態になるまで実行される。
+実際にこれを実行する場合は、例えばユーザーからの入力を受け取ってその結果を待機中のmachineに食わせるみたいな部分が必要になるだろう。</p>
+
+<p>一応コード例ぽいものも示しておく。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">runMachine</span> <span class="ow">::</span> <span class="kt">Coroutine</span> <span class="kt">MachineF</span> <span class="kt">IO</span> <span class="nb">()</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span>
+  <span class="nf">runMachine</span> <span class="nf">m</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">r</span> <span class="ow">&lt;-</span> <span class="nf">resume</span> <span class="nf">m</span>
+    <span class="kr">case</span> <span class="nf">r</span> <span class="kr">of</span>
+      <span class="kt">AtoB</span> <span class="nf">cont</span> <span class="ow">-&gt;</span> <span class="nf">runMachine</span> <span class="o">$</span> <span class="nf">cont</span> <span class="p">(</span><span class="kt">Intの値を生成する関数</span><span class="p">)</span>
+      <span class="kt">BtoC</span> <span class="nf">cont</span> <span class="ow">-&gt;</span> <span class="nf">runMachine</span> <span class="o">$</span> <span class="nf">cont</span> <span class="p">(</span><span class="kt">Stringの値を生成する関数</span><span class="p">)</span></code></pre></div>
+<p>これで最初に意図したような挙動になるはず。</p>
+
+<h1 id="まとめ">まとめ</h1>
+
+<p>オチなんてものはなくて、まぁmonad-coroutineはステートマシンぽい書き方をしたい時には割と便利ですよって言いたかっただけ。
+多分こういう場合はそれこそmachinesとかpipesとかを使いたくなるかもしれないけれど、ああいうライブラリに比べてこちらは(仕組みが複雑でない分)汎用性は高いと思う。</p>
+
+<p>いわゆるストリームライブラリ的なのは本当にストリームっぽい状況じゃないとちょっと使いにくいという気持ちがあるかもしれないのでそれより薄い仕組みで気軽に使えていいですよという宣伝でした。</p>
+
+<p>ちなみに上でも見たとおり、Coroutineモナドはsに自分自身を適用するという形をしているので、再帰的なデータ構造をかなり汎用的な形で表現しているので実はコルーチン以外にも結構色々な使い方を秘めていると思う。
+逆に言うとコルーチンという機能をまともに表現するためにはここまで強力な構造が必要になるということなのだろうか。私はイマイチよくわかっていないのだけれど、Coroutineの形と継続の表現力の強さは何かしら関係したりしてそ〜って書いてて思いました。</p>
+
+<p>おしまい</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/adc2017">
+                <span>#</span>AdC2017</a>
+            
+              <a href="/tags/haskell">
+                <span>#</span>Haskell</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

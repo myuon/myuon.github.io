@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一人CSアドベントカレンダー・最終回 - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="一人CSアドベントカレンダー・最終回" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 25日目の記事です。
+くぅ疲 くぅ〜疲れましたw これにて完結です！
+実は、一人アドベントカレンダーを一度くらいやってみたいなと思ったのが始まりでした
+本当は話のネタなかったのですが←
+ご厚意を無駄にするわけには行かないので自分の中の流行りのネタで挑んでみた所存ですw
+以下、各テーマ達のみんなへのメッセジをどぞ(ここだけ原作無視)
+ Isabelle基礎編(チュートリアル): 初心者に伝わる内容になってたらいいですね prog-prove読んでたら完全に知らないことが書いてあったりしたのでみなさん読みましょうね Isabelle実践編(IMP): IMPはネタとしては面白いんだけどbig-stepのdeterministicくらいだと内容的には面白みにかけるなという感想 Isabelle応用編(ラムダ計算): SNまで示せたらドヤ顔できたんだけどね(CRも割としんどいけど) Haskell小ネタ: 本当に小ネタだった Isabelle編が当初の予定より長引いたせいで日数的には全然必要なかった Proof Assistant理論編: まとまりのない文章になった感すごい(いつものことや) Proof Assistant実践編: 実装はまぁ別にそんな面白いものでもないなって解説書いてて思った  感想 さて完走した感想(爆笑)ですが、まぁ事前に準備しとくのは大事だねと思いました。 今回はIsabelleの途中までは記事かきためてましたが、結局最後は前日の23時から描き始めるみたいなのが普通だったので書き溜めは大事だなみたいな。
+それでも1日も落とさなかった(常に当日0時半までには投稿してた気がする)のはめっちゃ偉いと思います。
+あと今年のAdCにもいくつかお誘いを頂いていたんですがまぁこっちがあったのとこっちの記事はシリーズものばかりだったので登録は見送りました。
+来年は……ネタがあれば何か書きたいなと思います。一人アドベントカレンダーはしばらく大丈夫です。
+おわりに こんな記事読む人いるんかってずっと思いながら書いてましたがもし読んでくれる人がいたならありがとうございました。
+本当の本当に終わり1
+ ってなんで俺くんが！？のところをやろうとしたら精神が持たなかったって言ったら「くぅ疲をやる覚悟が足りない」って言われました。そのとおりだと思います。 [return]   " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/2017-csadv-finish/" />
+
+
+
+<meta property="article:published_time" content="2017-12-25T00:11:02&#43;09:00"/>
+
+<meta property="article:modified_time" content="2017-12-25T00:11:02&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="一人CSアドベントカレンダー・最終回">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 25日目の記事です。
+くぅ疲 くぅ〜疲れましたw これにて完結です！
+実は、一人アドベントカレンダーを一度くらいやってみたいなと思ったのが始まりでした
+本当は話のネタなかったのですが←
+ご厚意を無駄にするわけには行かないので自分の中の流行りのネタで挑んでみた所存ですw
+以下、各テーマ達のみんなへのメッセジをどぞ(ここだけ原作無視)
+ Isabelle基礎編(チュートリアル): 初心者に伝わる内容になってたらいいですね prog-prove読んでたら完全に知らないことが書いてあったりしたのでみなさん読みましょうね Isabelle実践編(IMP): IMPはネタとしては面白いんだけどbig-stepのdeterministicくらいだと内容的には面白みにかけるなという感想 Isabelle応用編(ラムダ計算): SNまで示せたらドヤ顔できたんだけどね(CRも割としんどいけど) Haskell小ネタ: 本当に小ネタだった Isabelle編が当初の予定より長引いたせいで日数的には全然必要なかった Proof Assistant理論編: まとまりのない文章になった感すごい(いつものことや) Proof Assistant実践編: 実装はまぁ別にそんな面白いものでもないなって解説書いてて思った  感想 さて完走した感想(爆笑)ですが、まぁ事前に準備しとくのは大事だねと思いました。 今回はIsabelleの途中までは記事かきためてましたが、結局最後は前日の23時から描き始めるみたいなのが普通だったので書き溜めは大事だなみたいな。
+それでも1日も落とさなかった(常に当日0時半までには投稿してた気がする)のはめっちゃ偉いと思います。
+あと今年のAdCにもいくつかお誘いを頂いていたんですがまぁこっちがあったのとこっちの記事はシリーズものばかりだったので登録は見送りました。
+来年は……ネタがあれば何か書きたいなと思います。一人アドベントカレンダーはしばらく大丈夫です。
+おわりに こんな記事読む人いるんかってずっと思いながら書いてましたがもし読んでくれる人がいたならありがとうございました。
+本当の本当に終わり1
+ ってなんで俺くんが！？のところをやろうとしたら精神が持たなかったって言ったら「くぅ疲をやる覚悟が足りない」って言われました。そのとおりだと思います。 [return]   ">
+
+
+<meta itemprop="datePublished" content="2017-12-25T00:11:02&#43;09:00" />
+<meta itemprop="dateModified" content="2017-12-25T00:11:02&#43;09:00" />
+<meta itemprop="wordCount" content="37">
+
+
+
+<meta itemprop="keywords" content="AdC2017," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="一人CSアドベントカレンダー・最終回"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 25日目の記事です。
+くぅ疲 くぅ〜疲れましたw これにて完結です！
+実は、一人アドベントカレンダーを一度くらいやってみたいなと思ったのが始まりでした
+本当は話のネタなかったのですが←
+ご厚意を無駄にするわけには行かないので自分の中の流行りのネタで挑んでみた所存ですw
+以下、各テーマ達のみんなへのメッセジをどぞ(ここだけ原作無視)
+ Isabelle基礎編(チュートリアル): 初心者に伝わる内容になってたらいいですね prog-prove読んでたら完全に知らないことが書いてあったりしたのでみなさん読みましょうね Isabelle実践編(IMP): IMPはネタとしては面白いんだけどbig-stepのdeterministicくらいだと内容的には面白みにかけるなという感想 Isabelle応用編(ラムダ計算): SNまで示せたらドヤ顔できたんだけどね(CRも割としんどいけど) Haskell小ネタ: 本当に小ネタだった Isabelle編が当初の予定より長引いたせいで日数的には全然必要なかった Proof Assistant理論編: まとまりのない文章になった感すごい(いつものことや) Proof Assistant実践編: 実装はまぁ別にそんな面白いものでもないなって解説書いてて思った  感想 さて完走した感想(爆笑)ですが、まぁ事前に準備しとくのは大事だねと思いました。 今回はIsabelleの途中までは記事かきためてましたが、結局最後は前日の23時から描き始めるみたいなのが普通だったので書き溜めは大事だなみたいな。
+それでも1日も落とさなかった(常に当日0時半までには投稿してた気がする)のはめっちゃ偉いと思います。
+あと今年のAdCにもいくつかお誘いを頂いていたんですがまぁこっちがあったのとこっちの記事はシリーズものばかりだったので登録は見送りました。
+来年は……ネタがあれば何か書きたいなと思います。一人アドベントカレンダーはしばらく大丈夫です。
+おわりに こんな記事読む人いるんかってずっと思いながら書いてましたがもし読んでくれる人がいたならありがとうございました。
+本当の本当に終わり1
+ ってなんで俺くんが！？のところをやろうとしたら精神が持たなかったって言ったら「くぅ疲をやる覚悟が足りない」って言われました。そのとおりだと思います。 [return]   "/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2017-12-25 12:11">2017-12-25</time>
+      <h1>一人CSアドベントカレンダー・最終回</h1>
+    </header>
+    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 25日目の記事です。</strong></p>
+
+<h1 id="くぅ疲">くぅ疲</h1>
+
+<p>くぅ〜疲れましたw これにて完結です！</p>
+
+<p>実は、一人アドベントカレンダーを一度くらいやってみたいなと思ったのが始まりでした</p>
+
+<p>本当は話のネタなかったのですが←</p>
+
+<p>ご厚意を無駄にするわけには行かないので自分の中の流行りのネタで挑んでみた所存ですw</p>
+
+<p>以下、各テーマ達のみんなへのメッセジをどぞ(ここだけ原作無視)</p>
+
+<ul>
+<li>Isabelle基礎編(チュートリアル): 初心者に伝わる内容になってたらいいですね prog-prove読んでたら完全に知らないことが書いてあったりしたのでみなさん読みましょうね</li>
+<li>Isabelle実践編(IMP): IMPはネタとしては面白いんだけどbig-stepのdeterministicくらいだと内容的には面白みにかけるなという感想</li>
+<li>Isabelle応用編(ラムダ計算): SNまで示せたらドヤ顔できたんだけどね(CRも割としんどいけど)</li>
+<li>Haskell小ネタ: 本当に小ネタだった Isabelle編が当初の予定より長引いたせいで日数的には全然必要なかった</li>
+<li>Proof Assistant理論編: まとまりのない文章になった感すごい(いつものことや)</li>
+<li>Proof Assistant実践編: 実装はまぁ別にそんな面白いものでもないなって解説書いてて思った</li>
+</ul>
+
+<h1 id="感想">感想</h1>
+
+<p>さて完走した感想(爆笑)ですが、まぁ事前に準備しとくのは大事だねと思いました。
+今回はIsabelleの途中までは記事かきためてましたが、結局最後は前日の23時から描き始めるみたいなのが普通だったので書き溜めは大事だなみたいな。</p>
+
+<p>それでも1日も落とさなかった(常に当日0時半までには投稿してた気がする)のはめっちゃ偉いと思います。</p>
+
+<p>あと今年のAdCにもいくつかお誘いを頂いていたんですがまぁこっちがあったのとこっちの記事はシリーズものばかりだったので登録は見送りました。</p>
+
+<p>来年は……ネタがあれば何か書きたいなと思います。一人アドベントカレンダーはしばらく大丈夫です。</p>
+
+<h1 id="おわりに">おわりに</h1>
+
+<p>こんな記事読む人いるんかってずっと思いながら書いてましたがもし読んでくれる人がいたならありがとうございました。</p>
+
+<p>本当の本当に終わり<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1">ってなんで俺くんが！？のところをやろうとしたら精神が持たなかったって言ったら「くぅ疲をやる覚悟が足りない」って言われました。そのとおりだと思います。 <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/adc2017">
+                <span>#</span>AdC2017</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

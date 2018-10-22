@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Adc2017 on The curse of λ</title>
+    <link>https://myuon.github.io/tags/adc2017/</link>
+    <description>Recent content in Adc2017 on The curse of λ</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Mon, 25 Dec 2017 00:11:02 +0900</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/adc2017/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>一人CSアドベントカレンダー・最終回</title>
+        <link>https://myuon.github.io/posts/2017-csadv-finish/</link>
+        <pubDate>Mon, 25 Dec 2017 00:11:02 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017-csadv-finish/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 25日目の記事です。
+くぅ疲 くぅ〜疲れましたw これにて完結です！
+実は、一人アドベントカレンダーを一度くらいやってみたいなと思ったのが始まりでした
+本当は話のネタなかったのですが←
+ご厚意を無駄にするわけには行かないので自分の中の流行りのネタで挑んでみた所存ですw
+以下、各テーマ達のみんなへのメッセジをどぞ(ここだけ原作無視)
+ Isabelle基礎編(チュートリアル): 初心者に伝わる内容になってたらいいですね prog-prove読んでたら完全に知らないことが書いてあったりしたのでみなさん読みましょうね Isabelle実践編(IMP): IMPはネタとしては面白いんだけどbig-stepのdeterministicくらいだと内容的には面白みにかけるなという感想 Isabelle応用編(ラムダ計算): SNまで示せたらドヤ顔できたんだけどね(CRも割としんどいけど) Haskell小ネタ: 本当に小ネタだった Isabelle編が当初の予定より長引いたせいで日数的には全然必要なかった Proof Assistant理論編: まとまりのない文章になった感すごい(いつものことや) Proof Assistant実践編: 実装はまぁ別にそんな面白いものでもないなって解説書いてて思った  感想 さて完走した感想(爆笑)ですが、まぁ事前に準備しとくのは大事だねと思いました。 今回はIsabelleの途中までは記事かきためてましたが、結局最後は前日の23時から描き始めるみたいなのが普通だったので書き溜めは大事だなみたいな。
+それでも1日も落とさなかった(常に当日0時半までには投稿してた気がする)のはめっちゃ偉いと思います。
+あと今年のAdCにもいくつかお誘いを頂いていたんですがまぁこっちがあったのとこっちの記事はシリーズものばかりだったので登録は見送りました。
+来年は……ネタがあれば何か書きたいなと思います。一人アドベントカレンダーはしばらく大丈夫です。
+おわりに こんな記事読む人いるんかってずっと思いながら書いてましたがもし読んでくれる人がいたならありがとうございました。
+本当の本当に終わり1
+ ってなんで俺くんが！？のところをやろうとしたら精神が持たなかったって言ったら「くぅ疲をやる覚悟が足りない」って言われました。そのとおりだと思います。 [return]   </description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・発展編 その7</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-7/</link>
+        <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-7/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
+Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
+実装すべき機能など prover さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
+Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
+unifier 一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。
+各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。
+あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&amp;gt; P(a) かつ thm: ?X /\ ?Y ==&amp;gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。
+HOLの実装 大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。
+ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
+それに関連するrefl, substなどのコマンドを定義しておくと便利です。
+マクロ記述言語 前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。
+Isabelleとの関連 ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。
+prop? bool? Isabelleではprop型というのはあまり見ない(存在しますが、チュートリアルを少しやったくらいでは見ないかもしれません)と思います。
+IsabelleのpropはClaireのprop型と同じく、メタロジックの基本型です。 しかし一方でHOLにはbool型というのが組み込みの型であり、これが要は「項の型」になります。
+前回も説明したと思いますが、型はFormulaとTermと2つにつき、Formulaにはprop型、Termには他の適当な型がつくことになっています。 bool型というのはTermの方につく型なのですね。
+さらにHOLではboolをpropに持ち上げるcoercionが定義されていてこれが効いているので、 lemma: True とか書けますが、これは本来は T :: bool =&amp;gt; prop みたいなのがあって T(True) と解釈されています。 ので、Isabelleを書いていると基本の型はboolでしょ、みたいな気持ちになると思いますがメタロジックの論理式の型はpropで、boolはあくまで項につく型だったのです。</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・マクロ編 その6</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-6/</link>
+        <pubDate>Sat, 23 Dec 2017 00:04:55 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-6/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+今回はClaireのマクロ機能について説明します。
+マクロ記述言語 Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。
+Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。
+Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。
+マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。
+マクロの実装 マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。
+マクロ定義モジュール 定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。
+module Commands where import Claire macro :: Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command] macro = ... export_command :: [(String, Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command])] export_command = [ (&amp;#34;name&amp;#34;, macro) ] declmacro :: [Argument] -&amp;gt; [Decl] declmacro = ... export_decl :: [(String, [Argument] -&amp;gt; [Decl])] export_decl = [ (&amp;#34;name&amp;#34;, declmacro) ] これを使いたいときは、ClaireのファイルにHs_fileを記述します。</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・実装編 その5</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-5/</link>
+        <pubDate>Fri, 22 Dec 2017 00:02:50 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-5/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
+Environment proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。 説明していませんでしたが一応紹介しておきます。
+Claire.Env
+data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&amp;gt; [Decl]) } 上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。
+また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。
+具体的には、
+theorem id: a ==&amp;gt; a proof ... qed -- この証明の直後、Envのthmsには (&amp;#34;id&amp;#34;, Pred &amp;#34;?</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・実装編 その4</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-4/</link>
+        <pubDate>Thu, 21 Dec 2017 00:20:35 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-4/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+昨日に引き続いてClaireの宣言(Decl)について説明していきます。
+Declarations まずはtoplevelMの定義から。
+toplevelM :: (Monad m, MonadIO m) =&amp;gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &amp;lt;- lift get; utyp &amp;lt;- liftIO $ try $ infer env fml; case utyp of Left err -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&amp;gt; k Right typ -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &amp;lt;- suspend (DeclAwait return) env &amp;lt;- lift get case decl of ここに実装を書く Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・実装編 その3</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-3/</link>
+        <pubDate>Wed, 20 Dec 2017 00:12:26 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-3/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+Proofchecker state machine さてClaireのproofcheckerを作っていきます。
+前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。
+proof state 初めに仕様を固めます。
+ (state:toplevel) Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する (state:command) Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る  注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。
+Coroutine monad さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。
+Claire.Checker
+Command Machine Suspender 簡単な方から行きます。
+data ComSuspender y = ComAwait (Command -&amp;gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&amp;gt; Env -&amp;gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = .</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・実装編 その2</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-2/</link>
+        <pubDate>Tue, 19 Dec 2017 00:00:24 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-2/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+LK proofchecker ルールの適用 LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
+例として次のルールを考えます。
+Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。
+LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
+Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
+data Rule = I | Cut Formula -- CutはFormulaを引数に取る ... チェッカー Claire.Checker
+newGoal :: Formula -&amp;gt; [Judgement] newGoal fml = [Judgement [] (return fml)] judge :: [Rule] -&amp;gt; [Judgement] -&amp;gt; Either (Rule, [Judgement]) [Judgement] judge rs js = foldl (\m r -&amp;gt; m &amp;gt;&amp;gt;= go r) (Right js) rs where go I (Judgement assms props : js) | length assms == 1 &amp;amp;&amp;amp; assms == props = Right js go (Cut fml) (Judgement assms props : js) = Right $ Judgement assms (fml:props) : Judgement (fml:assms) props : js go AndL1 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fa:assms) props : js go AndL2 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fb:assms) props : js go AndR (Judgement assms ((fa :/\: fb):props) : js) = Right $ Judgement assms (fa:props) : Judgement assms (fb:props) : js go OrL (Judgement ((fa :\/: fb):assms) props : js) = Right $ Judgement (fa:assms) props : Judgement (fb:assms) props : js go OrR1 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fa:props) : js go OrR2 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fb:props) : js go ImpL (Judgement ((fa :==&amp;gt;: fb):assms) props : js) = Right $ Judgement assms (fa:props) : Judgement (fb:assms) props : js go ImpR (Judgement assms ((fa :==&amp;gt;: fb):props) : js) = Right $ Judgement (fa:assms) (fb:props) : js go BottomL (Judgement (Bottom:assms) props : js) = Right js go TopR (Judgement assms (Top:props) : js) = Right js go (ForallL t) (Judgement (Forall x fml:assms) props : js) = Right $ Judgement (substTerm x t fml:assms) props : js go (ForallR y) (Judgement assms (Forall x fml:props) : js) = Right $ Judgement assms (substTerm x (Var y) fml:props) : js go (ExistL y) (Judgement (Exist x fml:assms) props : js) = Right $ Judgement (substTerm x (Var y) fml:assms) props : js go (ExistR t) (Judgement assms (Exist x fml:props) : js) = Right $ Judgement assms (substTerm x t fml:props) : js go WL (Judgement (_:assms) props : js) = Right $ Judgement assms props : js go WR (Judgement assms (_:props) : js) = Right $ Judgement assms props : js go CL (Judgement (fml:assms) props : js) = Right $ Judgement (fml:fml:assms) props : js go CR (Judgement assms (fml:props) : js) = Right $ Judgement assms (fml:fml:props) : js go (PL k) (Judgement assms props : js) | k &amp;lt; length assms = Right $ Judgement (assms !</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・実装編 その1</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-1/</link>
+        <pubDate>Mon, 18 Dec 2017 00:01:47 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-1/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+Syntax: FOL, LK, Claire 初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
+FOL Claire.Syntax.FOL
+data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&amp;gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show) それぞれfirst-order logicの項と論理式の定義です。
+項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。
+さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&amp;lt;==&amp;gt;: fml2 = (fml1 :==&amp;gt;: fml2) :/\: (fml2 :==&amp;gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 ~::~ をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・理論編 その2</title>
+        <link>https://myuon.github.io/posts/proof-assistant-theory-2/</link>
+        <pubDate>Sun, 17 Dec 2017 00:17:12 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-theory-2/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 17日目の記事です。
+昨日に引き続き、Proof Assistantを作る話をしていきます。
+今日は実際にこの後作っていくProof Assistant固有の話をしていきます。
+Claire言語とその設計 唐突ですがこれから作るProof Assistantを「Claire1」と呼ぶことにします。
+リポジトリ: myuon/claire
+Claireは実際には複数の言語の組み合わせでできています:
+ FOL: Pure logicとしてはfirst-order logicを採用します。 LK: Proof SystemとしてはLK(Sequent Calculus)を採用します Claire: Proof Assistant Claireの証明記述用の言語の名前です コマンド記述言語(コマンド定義マクロ): コマンド記述言語はコマンド名からLKの規則の列を生成するものです。今回はHaskellで記述できるようにします。 HOLライブラリ: Isabelleと同じく、HOLをライブラリとして実装することが出来ます。することができるというだけでかなり大変なのでしませんが。  LKについて Proof Systemとして、Sequent Calculus LKを採用します。定義はwikipediaのページでも見るといいんじゃないでしょうか。
+The system LK - Wikipedia
+今回LKを採用した理由として、natural deductionに比べると推論規則を適用した時のゴールの変形の選択肢が少ない(規則を適用する時に必要な情報が少ない)ことがあります。 というか、natural deductionは命題変数の数を減らすelimination ruleを多く含みますがelimination ruleはゴールに対して適用する、つまり下から上に読むと新たな変数を導入することになるので曖昧さが出やすいです。
+それに比べるとSequent Calculusは(仮定とゴールを上手く用意することで)ruleが基本的にintro ruleばかりなので曖昧さが出にくいので、コマンドを適用して証明を書くのには便利かなと思って採用しました。
+あとLK触れたことないのでちょっと触ってみたかった的なアレもあります(こっちの理由のほうが大きいかもしれない)。
+LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。
+ judgementは Pn,P(n-1)..P1 |- Q1,Q2..Qm の形(PやQはfirst-order logicの論理式)。左側を仮定、右側を命題(propositions)という。 仮定は「全てがなりたつ」 命題は「いずれかが成り立つ」の意味になる 仮定は右から、命題は左から順番に読んでいく(まぁこれは記法の問題なのでどちらでもよいが) 論理結合子に対する規則は、それが左辺に現れる場合と右辺に現れる場合とあることに注意。例えばAndの規則はAndL1, AndL2, AndRの3つ。 LKは古典的(背理法が使える)である。(注:命題の数を常に1つだけに制限すると直観主義になる) (例) AndLの規則により B |- Qs ==&amp;gt; And(A,B) |- Qs がわかる。これは、「Bの下でQ1.</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・理論編 その1</title>
+        <link>https://myuon.github.io/posts/proof-assistant-theory-1/</link>
+        <pubDate>Sat, 16 Dec 2017 00:04:42 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-theory-1/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 16日目の記事です。
+さてCSアドベントカレンダーも後半戦ということで、Proof Assistantを作ります。
+Proof Assistantを作ったことがある人は少ないと思うのでまずどういう風に言語を設計していくかという話をしてから、今回実際に作る言語の説明に入ります。
+Proof Assistantとは Proof Assistantは大体次のいずれかの方式をとるものが多いです。
+ 適当なロジックの適当な公理系の証明を解釈するもの: 数学がやっている証明の形式化をそのままやるやり方です。IsabelleやHOLなど。 Curry-Howard対応を用いるもの: 要は型付きラムダ計算を直接実装するやり方です。CoqやAgdaなど。  どっちでも構いませんがどっちを選ぶかによって実装は割と変わってきます。今回はIsabelleと同じく前者の方法をとります。
+ところで、Proof Assistant(言語)には大きく分けると次の2種類の言語を持ちます。
+ 命題記述言語: これは命題を記述する言語というだけでなく、Proof Assistantに組み込まれているロジックそのものを表現するために必要な言語でもあります。 証明記述言語: 証明を記述するためには専用の言語が必要な場合があります。ラムダ計算を直接実装する場合はラムダ項そのものでも別に構いません(Agdaみたいな)が、証明を記述するためにメタ言語を載せている言語も(Coqとか)あります。あるいはproverを実装するならこの言語から呼び出せるようにします。  Isabelleの場合は、前者がPure logicと呼ばれるロジックで、後者はIsarが該当します。
+証明の記述について 証明の記述にはいくつかのやり方があります。ラムダ計算を実装する場合はラムダ項を直接書くようにするのが楽ですが、公理系を実装する場合は真面目に作る必要があります。
+雰囲気としては、次のような操作で記述できるとよさそうです。 (インタラクティブに書けるならこんな感じという気持ちですが、普通にファイルに記述してチェッカーを走らせる場合も裏ではこういう感じになっています)
+ Proof Assistantを起動する 証明したい命題を入力 (例: a -&amp;gt; a) 現在のゴールが a -&amp;gt; a になる 証明を記述する (例: \x. x や apply Identity のように入力する) 証明が完了する  証明を書くにはゴールをユーザーに表示し続ける仕組みはあったほうがよくて、ただまぁそれを真面目にやろうとするとエディタ・プラグインの開発が必要になるのでインタラクティブシェルみたいなものを作るのがとりあえず無難かなという気がします。
+メタロジックについて proof assistantに備わっている命題記述言語はIsabelleでいうところのPure logicと言いましたが、これは組み込みのロジックなだけでユーザーが証明を書くのにこの言語しか選択肢がないわけではありません。ロジックとは記号からなる項とその上の規則がいくつかあれば実装可能なので、組み込みのロジックを用いて新たに(ライブラリとして)別のロジックを実装することが出来ます。 このようにして組み込みのロジックで新たに別のロジックを実装するのは、ちょうどIsabelleもPure logicの上でHOLやFOLをライブラリとして提供しているのと同じです。このようにする利点として、組み込みのロジックはcheckerやproverにとって都合の良いロジックを選び、ユーザーに記述させるロジックはより読み書きしやすいものを選ぶ、みたいなことが出来ます。
+ここでライブラリで定義されているロジックに対して組み込みのロジックをメタロジックと呼ぶことにします。
+当然ながらメタロジックが弱すぎると欲しいロジックが定義できなかったりするのでそのへんは注意が必要です。まともに数学をしたいならfirst-order logicくらいは欲しくなるという気がします(がもっと弱くしてもいいのかもしれません、ロジック詳しくないのでよくわかりません)。
+証明記述マクロ 公理系を用いた証明は、公理・推論規則をゴールに適用していくことで記述するわけです。しかしそれだけでは通常不便なので色々便利なコマンドを作ったりproverを作ったりすることになると思います。
+ところでこういう証明用のコマンドを実装するためにマクロとかそういうものが欲しくなると思います。 ここではコマンドは推論規則の列を、つまり証明を生成するマクロとして登録しておくことにします。例えばCoqではLtacという専用のマクロ記述言語(と呼んでいいのかな？普通に証明生成言語と呼ぶべきかもしれません)がありますが、IsabelleではSMLで内部実装のAPIを呼び出してこういう感じのことをしています。</description>
+      </item>
+    
+      <item>
+        <title>Haskellプロジェクトを始めるにあたって</title>
+        <link>https://myuon.github.io/posts/haskell-project-setup/</link>
+        <pubDate>Fri, 15 Dec 2017 00:04:21 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/haskell-project-setup/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 15日目の記事です。
+Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)
+今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。 どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。
+ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。
+開発環境構築 このセクションは初回のみです。
+Haskellのインストール stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。
+linux系なら公式ドキュメントを見ながら次のようにするといいと思います。
+$ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall  $ stack setup # GHC(コンパイラ)を入れる stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。
+エディタ  emacsの人: intero spacemacsの人: haskell layer IntelliJ IDEAの人: intellij-haskell  を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。
+プロジェクトセットアップ stack new [2017/12/16追記]
+どうやらstackのデフォルトテンプレートであるnew-templateがいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に stack new [プロジェクトの名前] とすれば同じものが得られます1。
+[/追記]
+さてHaskellでプロジェクトを始めます。
+$ stack new [プロジェクトの名前] simple-hpack simple-hpackというのはテンプレートの名前です。ここではhpackというツールを使っています(私が普段から使っているので)。
+(以下昔話なので読まなくてもいいです) さて少しだけ説明をすると、stackという便利ツールが登場する前はみんなcabalというビルドツールを使っていました。cabalはcabalファイルの情報を読み込んでビルドをするのですが、cabalファイルはちょっと面倒な部分があったのでこれをもっと簡単に書けるようにするためにhpackというツールが最近登場しました。 hpackはpackage.yamlをcabalファイルに変換するツールですが、今はstackが公式にhpackをサポートしたので、プロジェクトでpackage.yamlに必要な情報を書くとそれがhpackによってcabalファイルに変換されてcabalによるビルドが走るというところまで全てstackが面倒を見てくれます。
+正直好みですが個人的にはhpackの方が楽なのでこれを使うためにここではsimple-hpackのテンプレートを指定しています。
+また、以下の説明は全てhpackのpackage.yaml前提です。cabalファイルはまた少し違うので対応表で各自調べてください。
+configuration stack newが終わると必要なファイル群と stack.</description>
+      </item>
+    
+      <item>
+        <title>Coroutineモナドとステートマシン</title>
+        <link>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</link>
+        <pubDate>Thu, 14 Dec 2017 00:03:01 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。
+今回は小ネタです。
+monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。
+Coroutine-monad example: coroutine 名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。
+サンプルとしては次のような感じ:
+countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {- &amp;gt; printProduce countup counting... 1 counting... 2 -} countup内ではyieldという関数が使われていて、 yield :: Monad m =&amp;gt; x -&amp;gt; Coroutine (Yield x) m () なので Coroutine (Yield x) m () ではx型の値をyieldして停止することができる。 pogoStickは Yield x r の挙動を指定して、それを使ってCoroutineを潰すことができる。</description>
+      </item>
+    
+      <item>
+        <title>Nominal Isabelleとラムダ計算 その4</title>
+        <link>https://myuon.github.io/posts/nominal-lambda-4/</link>
+        <pubDate>Wed, 13 Dec 2017 00:04:03 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/nominal-lambda-4/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 13日目の記事です。
+さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。 流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。
+まぁCRに比べればずっと簡単なのでいけるでしょ(適当)
+今回解説するコードは以下にあります:
+myuon:typed/theory/Simply.thy
+Simply-typed nominal_datatype simply = TVar string | TArr simply simply (infixr &amp;#34;→&amp;#34; 90) simply-typedな型はtype variableとfunction typeからなる。 typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。
+valid context さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。
+inductive valid :: &amp;#34;(name × simply) list ⇒ bool&amp;#34; where valid_nil: &amp;#34;valid []&amp;#34; | valid_cons: &amp;#34;⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)&amp;#34; equivariance valid lemma elim_valid_cons: &amp;#34;valid ((x,T)#Γ) ⟹ valid Γ ∧ x ♯ Γ&amp;#34; by (cases rule: valid.</description>
+      </item>
+    
+      <item>
+        <title>Nominal Isabelleとラムダ計算 その3</title>
+        <link>https://myuon.github.io/posts/nominal-lambda-3/</link>
+        <pubDate>Tue, 12 Dec 2017 00:05:37 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/nominal-lambda-3/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 12日目の記事です。
+前回はCRの証明の途中までやったので続きです。 内容多めですが今回で頑張って終わらせます。
+confluenceへ (cont.) coherent lemmas parallel betaのcoherent lemmaを示す。 証明は基本的に場合分けやるだけなので省略するとして、まぁ常識的なことが成り立つよねという補題である。(説明の放棄)
+lemma elim_pb_var: &amp;#34;Var x ⇒β N ⟹ N = Var x&amp;#34; lemma elim_pb_abs: assumes &amp;#34;lam [x]. M ⇒β N&amp;#39;&amp;#34; &amp;#34;x ♯ N&amp;#39;&amp;#34; obtains N where &amp;#34;M ⇒β N&amp;#34; &amp;#34;N&amp;#39; = lam [x]. N&amp;#34; lemma elim_pb_app: assumes &amp;#34;M1 $ M2 ⇒β N&amp;#34; obtains N1 N2 where &amp;#34;N = N1 $ N2&amp;#34; &amp;#34;M1 ⇒β N1&amp;#34; &amp;#34;M2 ⇒β N2&amp;#34; | x P P&amp;#39; L where &amp;#34;M1 = lam[x].</description>
+      </item>
+    
+      <item>
+        <title>Nominal Isabelleとラムダ計算 その2</title>
+        <link>https://myuon.github.io/posts/nominal-lambda-2/</link>
+        <pubDate>Mon, 11 Dec 2017 00:13:11 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/nominal-lambda-2/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 11日目の記事です。
+前回はNominal Isabelleの説明と証明を少しだけしました。 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。
+equivarianceとnominal_inductive 補題 さて2つの補題を示しておく。
+lemma subst_eqvt[eqvt]: fixes π :: &amp;#34;var prm&amp;#34; shows &amp;#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&amp;#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &amp;#34;x ♯ t&amp;#34; shows &amp;#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&amp;#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda.strong_induct) apply (auto simp add: swap_simps fresh_atm abs_fresh) done subst_eqvtに [eqvt] というattributeがついていることに注目して欲しい。 これはprm(変数の置換)の作用に関する等式につけるattributeで、実際にsubst_eqvtは π∙M = .</description>
+      </item>
+    
+      <item>
+        <title>Nominal Isabelleとラムダ計算 その1</title>
+        <link>https://myuon.github.io/posts/nominal-lambda-1/</link>
+        <pubDate>Sun, 10 Dec 2017 00:13:17 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/nominal-lambda-1/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 10日目の記事です。
+前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。 今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。
+定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。
+今回解説するコードは以下に置いてあります。
+myuon/CR.thy
+前置き ラムダ計算 この記事をわざわざ読む人はラムダ計算についてはある程度知っている人が多いと思うのですが、簡単に説明をしておきます。
+ラムダ計算は計算のモデルとなるべく作られた言語で、「関数を作る・作った関数を呼び出す(関数を適用すること)」の2つの操作を基本とします。 ここでの「計算」とは数を与えたら数を返す、のような、電卓で行われるような最も我々がイメージしやすい計算のことです。ラムダ計算ではこの「計算」を、項を別の項に変換するような操作によって実現します。 これは単に 1+2 という項があったらそれを 3 へと変換する、あるいは f(x)=x+2 という項があるときに、 f(10) を 12 へと変換する、そういう操作を計算と呼びますというだけなので難しいことはありません。
+さてラムダ計算の項(何がラムダ計算の項かはまだちゃんと説明していないけど)は通常変数の付け替えを同一視します。具体的には f(x)=x と f(y)=y を区別しないのですが、この同値をα同値と呼びます。
+ラムダ計算の定理証明で最も厄介なのはこのα同値性の扱いで、というか定理証明による形式化ではそもそも「同一視」とか「同値関係で割る」みたいな操作を扱うのがめちゃくちゃ苦手です。 これは主に、一般に同一視されているかが計算によって判定可能でないこと1と、同一視された項同士の計算はしばしば(人間は気にしないけど)それらの項の変形の構成に依存するからだと個人的には思っています。
+はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。
+Nominal Isabelle Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。 binderは [x]. M のような形をしていて、この束縛変数 x の変数名の付け替えを区別しないような項である。
+Nominal Isabelleではこの変数の付け替え、「例えば変数 x を y に付け替える」という操作を「置換 (x,y) を作用させる」という操作とみなす、というところからスタートする。 より厳密には次のようなことである: 無限の変数からなる集合 V が与えられている時、 List (V×V) の元を置換と呼ぶ。このとき置換の作用を ∙ でかくことにし、 ((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M のようにして定める。</description>
+      </item>
+    
+      <item>
+        <title>IsabelleについてのQ&amp;A</title>
+        <link>https://myuon.github.io/posts/isabelle-qanda/</link>
+        <pubDate>Sat, 09 Dec 2017 00:03:23 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/isabelle-qanda/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 9日目の記事です。
+さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。
+というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。
+Syntax関係 矢印がいっぱいあるんだけど何  =&amp;gt; : HOLのfunction type constructor ==&amp;gt; : Pure logicのimplication --&amp;gt; : HOLのimplication  Pure logicってなんですか (この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。 そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。
+なのでHOLの証明は内部的には全てPure logicの証明図に置き換えてcheckされます。 AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。
+依存型とかないんですか ないよ(無慈悲)
+知らないキーワード・コマンド・attributeが出てきた/便利なコマンドについて知りたい  isar-ref.pdfのAppendixにquick referenceあるので眺めるとよいかも？  証明関係 Sledgehammerと仲良くなれない これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。
+まずsledgehammerは優秀とはいえそれでも人間の「自明」とはかなり感覚が違います。 そもそも人間が自明だと思っていてもformalizeにはたくさん補題が必要だったりするので、出来る限りsledgehammerに与える命題は分かりやすく、すぐ示せそうなものだけにしたほうがいいです。
+あと、余分な仮定が多いと探索が失敗しやすいです。goalが複雑なときは示したい命題を補題として切り出したりしたほうがいいこともあります。
+それと、どうしても上手くいかないときは命題を見直しましょう。「簡単なはずなのにsledgehammerが答えを返さないぞ？」ってときはそもそも間違っている(goalが成り立たない)ことがあります。
+次に、探索に成功し証明が複数出た場合、可能ならば簡単で応答の早い証明を選んだほうがいいです。 気をつけるべきはmetisで、これは現実的な時間では終わらない場合があるので避けられるならmetisを含まないものにするか、またはmetisに与えられた補題で先に使えるものは使ってしまいましょう。
+例えば、
+by (metis lemmaA lemmaB lemmaC) の時に、lemmaAが先に適用されてそれ以後使わないことがはっきりしているなら
+apply (rule lemmaA) by (metis lemmaB lemmC) としたほうが応答が早くなります。あるいはapplyの後にもう一度sledehammerをかけてもいいでしょう。
+自動証明コマンドって使い分けるもの？ ある程度はね。</description>
+      </item>
+    
+      <item>
+        <title>IMPのoperational semantics その4</title>
+        <link>https://myuon.github.io/posts/2017csadv-day8/</link>
+        <pubDate>Fri, 08 Dec 2017 00:01:48 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day8/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 8日目の記事です。
+前回は、big-stepがdeterministicであることを示した。
+9. Small-step long reduction csmallを複数回適用した、ということを表す関係を &amp;lt;_,_&amp;gt; ⟶* &amp;lt;_,_&amp;gt; でかいて、次のように定める。
+subsubsection {* small-step long reduction *} inductive csmall_long (&amp;#34;&amp;lt;_,_&amp;gt; ⟶* &amp;lt;_,_&amp;gt;&amp;#34;) where SL_refl: &amp;#34;&amp;lt;c,st&amp;gt; ⟶* &amp;lt;c,st&amp;gt;&amp;#34; | SL_trans1: &amp;#34;⟦ &amp;lt;c,st&amp;gt; ⟶ &amp;lt;c&amp;#39;,st&amp;#39;&amp;gt;; &amp;lt;c&amp;#39;,st&amp;#39;&amp;gt; ⟶* &amp;lt;c&amp;#39;&amp;#39;,st&amp;#39;&amp;#39;&amp;gt; ⟧ ⟹ &amp;lt;c,st&amp;gt; ⟶* &amp;lt;c&amp;#39;&amp;#39;,st&amp;#39;&amp;#39;&amp;gt;&amp;#34; lemma SL_trans: &amp;#34;⟦ &amp;lt;c,st&amp;gt; ⟶* &amp;lt;c&amp;#39;,st&amp;#39;&amp;gt;; &amp;lt;c&amp;#39;,st&amp;#39;&amp;gt; ⟶* &amp;lt;c&amp;#39;&amp;#39;,st&amp;#39;&amp;#39;&amp;gt; ⟧ ⟹ &amp;lt;c,st&amp;gt; ⟶* &amp;lt;c&amp;#39;&amp;#39;,st&amp;#39;&amp;#39;&amp;gt;&amp;#34; apply (induction arbitrary: c&amp;#39;&amp;#39; st&amp;#39;&amp;#39; rule: csmall_long.induct) apply simp apply (blast intro: SL_trans1) done lemma SL_SeqStep: &amp;#34;&amp;lt;c1,st&amp;gt; ⟶* &amp;lt;c1&amp;#39;,st&amp;#39;&amp;gt; ⟹ &amp;lt;c1;;c2,st&amp;gt; ⟶* &amp;lt;c1&amp;#39;;;c2,st&amp;#39;&amp;gt;&amp;#34; apply (induction arbitrary: c2 rule: csmall_long.</description>
+      </item>
+    
+      <item>
+        <title>IMPのoperational semantics その3</title>
+        <link>https://myuon.github.io/posts/2017csadv-day7/</link>
+        <pubDate>Thu, 07 Dec 2017 00:18:10 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day7/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 7日目の記事です。
+前回はcommandとcommandの評価を定義した。
+6. Coherent lemmas SKIP subsection {* Coherent lemmas *} lemma coh_B_Skip: assumes &amp;#34;&amp;lt;SKIP,st&amp;gt; ⇓ st&amp;#39;&amp;#34; shows &amp;#34;st = st&amp;#39;&amp;#34; using cbig.cases [OF assms] by auto 始めの補題はSKIPについてで、 &amp;lt;SKIP,st&amp;gt; ⇓ st&#39; ならば st = st&#39; というものである。 直観的には明らかであろうし、証明も場合分けをするだけで済む。
+Ass lemma coh_B_Ass: assumes &amp;#34;&amp;lt;x ::= a , st&amp;gt; ⇓ st&amp;#39;&amp;#34; shows &amp;#34;st&amp;#39; = st [x ↦ aeval st a]&amp;#34; using cbig.cases [OF assms] by auto 次は変数への代入。これも簡単なので省略。
+Seq lemma coh_B_Seq: assumes &amp;#34;&amp;lt;c1 ;; c2 , st&amp;gt; ⇓ st&amp;#39;&amp;#34; obtains st&amp;#39;&amp;#39; where &amp;#34;&amp;lt;c1 , st&amp;gt; ⇓ st&amp;#39;&amp;#39;&amp;#34; and &amp;#34;&amp;lt;c2 , st&amp;#39;&amp;#39;&amp;gt; ⇓ st&amp;#39;&amp;#34; &amp;lt;c1 ;; c2,st&amp;gt; ⇓ st&#39; ならば、 c1 を実行すると評価が停止し、さらにその後 c2 を実行すると st&#39; の状態になって評価が停止するということが言えるはずである。 上では後々の便利さのために obtains .</description>
+      </item>
+    
+      <item>
+        <title>IMPのoperational semantics その2</title>
+        <link>https://myuon.github.io/posts/2017csadv-day6/</link>
+        <pubDate>Wed, 06 Dec 2017 00:07:53 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day6/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 6日目の記事です。
+前回はaexp/bexpとそのevaluationを定めた。
+3. Commands さて次にcommandを定義する。
+これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
+section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&amp;#34;SKIP&amp;#34;) and CAssign (&amp;#34;_ ::= _&amp;#34; [50,50] 90) and CSeq (infixr &amp;#34;;;&amp;#34; 30) and CIf (&amp;#34;IF _ THEN _ ELSE _&amp;#34; 80) and CWhile (&amp;#34;WHILE _ DO _&amp;#34; 90) comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。</description>
+      </item>
+    
+      <item>
+        <title>IMPのoperational semantics その1</title>
+        <link>https://myuon.github.io/posts/2017csadv-day5/</link>
+        <pubDate>Tue, 05 Dec 2017 00:02:29 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day5/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 5日目の記事です。
+今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。 そしてこの記事は一人computer scienceアドベントカレンダーなのでCSらしい話題を、ということで、 IMPのoperational semanticsの話でもしようと思います。
+IMPについて IMPとはimperative languageの頭文字を取ったもので、natとboolを基本型にもつ簡単な手続き型言語です。 CSの教科書とかでよく見かけるやつです。 IMPの定義をし、そのevaluationを定めます。
+ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。 このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。
+0. States IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。
+section {* States *} type_synonym id = string type_synonym state = &amp;#34;id ⇒ nat&amp;#34; definition empty :: &amp;#34;state&amp;#34; where &amp;#34;empty _ = 0&amp;#34; no_syntax &amp;#34;_maplet&amp;#34; :: &amp;#34;[&amp;#39;a, &amp;#39;a] ⇒ maplet&amp;#34; (&amp;#34;_ /↦/ _&amp;#34;) fun update :: &amp;#34;state ⇒ id ⇒ nat ⇒ state&amp;#34; (&amp;#34;_[_ ↦ _]&amp;#34; [80,80,80] 80) where &amp;#34;update st x n y = (if x = y then n else st y)&amp;#34; sectionコマンドは証明には影響を与えないが、Sidekickにsectionとして表示されたりLaTeXに出力すると実際に節として扱われたりするもの。chapter, subsectio, subsubsectionなどもある。</description>
+      </item>
+    
+      <item>
+        <title>Isabelle/HOLの基本 その3</title>
+        <link>https://myuon.github.io/posts/2017csadv-day4/</link>
+        <pubDate>Mon, 04 Dec 2017 00:39:09 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day4/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 4日目の記事です。
+テキスト代わりのチュートリアル: prog-prove.pdf
+前回はHOLと自動証明についてやりました。 今回やる4章では、Isarという新しい言語(？)について見ていきます。
+4. Isar: A Language for Structured Proofs IsabelleはIsarという、structured proofを記述するための言語を別に提供している。 これはapplyを繋げて証明をするのとは違い、構造化された証明をキーワードを組み合わせて記述する、より自然言語による証明に近い記述を可能にする言語である。
+Isarのsyntaxのコアは次のようになっている(実際はもっと膨大):
+proof = &amp;#39;by&amp;#39; method | &amp;#39;proof&amp;#39; [method] step* &amp;#39;qed&amp;#39; step = &amp;#39;fix&amp;#39; variables | &amp;#39;assume&amp;#39; proposition | [&amp;#39;from&amp;#39; fact+] (&amp;#39;have&amp;#39; | &amp;#39;show&amp;#39;) proposition proof proposition = [name :] &amp;#34;formula&amp;#34; 4.1 Isar by Example 初めにIsarによる証明を見せるので眺めてみよう。
+lemma &amp;#34;¬ surj (f :: &amp;#39;a ⇒ &amp;#39;a set)&amp;#34; proof - assume srjf: &amp;#34;surj f&amp;#34; from srjf have fa: &amp;#34;∀A.</description>
+      </item>
+    
+      <item>
+        <title>Isabelle/HOLの基本 その2</title>
+        <link>https://myuon.github.io/posts/2017csadv-day3/</link>
+        <pubDate>Sun, 03 Dec 2017 00:01:48 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day3/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 3日目の記事です。
+テキスト代わりのチュートリアル: prog-prove.pdf
+前回は導入と型・関数・証明について学びました。 今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。
+3. Logic and Proof Beyond Equality 3.1 Formulas HOLのformulaの定義は次:
+form ::= True | False | term = term | ¬ form | form ∧ form | form ∨ form | form --&amp;gt; form | ∀x. form | ∃x. form termはラムダ式とifとかcaseとかletとかそのへん
+3.2 Sets &#39;a のsetを &#39;a set とかく。次のようなnotationが定義されている。
+ {} , {e1,e2,e3} e ∈ A , A ⊆ B A ∪ B , A ∩ B , A − B, − A {x | P}  HOLのsetはかなり便利なので積極的に使っていこう。</description>
+      </item>
+    
+      <item>
+        <title>Isabelle/HOLの基本 その1</title>
+        <link>https://myuon.github.io/posts/2017csadv-day2/</link>
+        <pubDate>Sat, 02 Dec 2017 00:00:44 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day2/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 2日目の記事です。
+さて今回よりIsabelle/HOL(HOLはライブラリの名前)の基本の解説をしていきます。 一応極基本的なことを最初に少し説明をしてから、あとは実践形式で実際に証明を書きながら細かい機能などの説明をしていく予定です。 説明に割くページ数とコンテンツの内容と時間的な問題で、定理証明とは何かなどは詳しく話しません。
+Isabelle資料 Isabelleのお勉強のための資料をまとめておきます。
+ prog-prove.pdf: 公式チュートリアルの一番基本のやつ。入門するならこれだけは 必ず読みましょう 。チュートリアルは他にもトピックごとに色々あるよ！ isar-ref: 主にIsarに関するReference Manualだけど慣れてきたら参照する機会が多いと思う。 caeruiroさんのIsabelle Tutorialシリーズ: 大変貴重な日本語の入門記事。Isabelle-2009を使っているらしいのでもしかしたら古い記述もあるかもしれない。 Concrete Semantics: Isabelleでプログラミング言語のセマンティクスとかやるテキスト。前半はIsabelle入門、後半はCSのテキストみたいな構成。 AFP: Archive of Formal Proofs; Isabelleで証明されたあれこれが投稿されてる証明集みたいなサイト Isabelleの入門の入門: 遥か昔に書いた記事; 何かの役には立つかもしれない  このシリーズの目的 prog-prove.pdfを読んでねでチュートリアルを済ませてしまっても良いのですが、まぁ読んでって言って読んでもらった試しがないので もう少し実際に証明を書きながら解説をすることで、英語が読みたくない人や雰囲気だけ知りたい人にも優しい解説シリーズになればいいかなと思っています。 ひとまずこのIsabelle/HOLの基本シリーズでは上のprog-prove.pdfに沿って話を進めていきます。
+内容全部やるなら単なる翻訳になってしまうので適度にぶっ飛ばしつつ要所要所を解説していく感じにします。 定理証明全くしたことないと厳しいこともあるかもぐらいでお願いします。
+はじめに. jEditについて 現在Isabelleが公式にサポートしているのはjEditのみです1。 jEditを起動し、エディター画面とアウトプットパネルが表示されていれば問題ありません。アウトプットパネルはなければ Plugins&amp;gt;Isabelle から表示させます。
+よく使うパネルを一通り説明しておきます。
+ Documentation: Isabelleは豊富な公式ドキュメントが用意されています。 Sidekick: 現在開いているファイルのアウトライン的なものが表示されます。 State: なんやねんこれ Theories: 複数のファイルを開いている場合に、各ファイルのどの辺りまでcheckerが走っているかが一覧で表示されたものです。 Output: ここに情報が表示されます。証明は基本的にこのパネルを見ながら書きます。 Query: 既知の定理の検索などを行います。 Sledgehammer: 現在focusしている証明に対してsledgehammer(後述)を実行することができます。 Symbols: unicode symbolを入力するために使います。  1. Introduction HOLとはhigher-order-logicの略で、Isabelleの標準ライブラリの1つです。 Isabelleでは組み込みのロジックの上に適当な公理系を構成したものをライブラリとして提供しており、HOLやZFC(ZFCはFOLの上のライブラリ)などがあります。
+最初はHOLから入るのが良いでしょう。ZFC上で形式化とかしたい人はZFCとか使うのもいいと思います。 また、変数の名前の付け替えなどをいい感じにアレする2Nominalという考え方もあり、それを使ったNominal HOLなんかもサードパーティライブラリとして開発されています。</description>
+      </item>
+    
+      <item>
+        <title>一人CSアドベントカレンダー開催のお知らせ</title>
+        <link>https://myuon.github.io/posts/2017csadv-day1/</link>
+        <pubDate>Fri, 01 Dec 2017 00:06:00 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day1/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 1日目の記事です。
+概要的なもの 「一人アドベントカレンダーって面白そうだな、やってみたい」みたいなノリで登録したんですが、 25日毎日記事を同じテーマで投稿し続けるのどう考えてもめっちゃ大変なのでやはりここは自分が一番得意な分野で行くしかないかなとなりCS関係ということになりました。
+上のQiitaのページでも書いてますが、キーワードとして&#34;ラムダ計算・定理証明・Haskell・ML・圏論 とかなんかそのへん&#34;を挙げていますので そのへんのお話になります。今のところは無難に定理証明を中心にテーマをいくつか選んでおいたので多分そのへんの話です。
+スケジュール 最終的にはQiitaのカレンダー見ればわかることなんでいいんですが一応今後どういう感じで進めていくのかのスケジュール的なものをまとめておきます。
+Isabelle編 Isabelle/HOL入門(3-4日くらい) 最初にIsabelle(ここではHOL系しか扱わない)に入門します。って言ってもチュートリアルの解説をするだけです。 ある程度知ってる人が読む意味はないんですが、Isabelle全く知らん人向けに日本語で読める資料ってあんまりなさそうなので、チュートリアルを適当にやるだけでも実は意味があるんでは的な発想でとりあえずこれをやることにしました。
+真面目に入門したくて英語にそこまで抵抗ない人は公式のprog-prove.pdf読みに行く方が早いです。
+Isabelleでの定理証明・基礎編(3-4日くらい) ここでは実際にIsabelle/HOLを使った証明を紹介・解説していきます。今の所IMPの意味論ちょろっとやるみたいな感じです。 Isabelleの解説がメインなので内容は薄いですがIsabelleってこうやって使うんだよ〜証明ってこうやって書くんだよ〜って雰囲気が伝わればいいかなと思っています。 (そういうのが伝わる日本語資料もあんまりない気がしたので)
+Isabelleでの定理証明・実践編(2-3日+2日？くらい) せっかくなので個人的にこの前お世話になったりしたNominal Isabelle使ってtyped lambda calculusの簡単な証明とかやってみようかなという内容です。 あとかつてIsabelleで圏論(Yoneda lemma示すくらいまで)もやったことあるのでその解説もやってもいいかもしれないということで2日分くらいは余裕を持たせてあります。
+この辺は後で変更あるかも知れないのでそのへんはあしからず。
+Haskell編 ライブラリ紹介(1日1ライブラリ, 日数未定) Haskellで最近使ったり使ってなかったりするライブラリの紹介とか解説とかをします。 ここ以外のコンテンツで25日分埋まらなかった場合に備えて空けてある枠なので日数は未定です。 Haskell編の最初にまとめてやるかも不明ですが一応ってことで。
+定理証明支援系を作ろう・理論編(2-3日くらい) ここからがメインコンテンツで、Haskellを使ってproof assistantを作ります。 (最初に断っておくとproverは作りません。あくまでcheckerとそのassistする部分がメインです。)
+多分色々前提になる知識を解説したり、proof assistantを作るには何が必要かとかの説明がいると思うのでそのへんを初めに少し解説します。
+定理証明支援系を作ろう・実践編(5-7日くらい) proof assistantを実際に作っていきます。
+最初はステップアップで徐々に拡張して行く感じで作ろうと思っていたんですが、特に参考にできるものもなく始めてだったので自分で手を動かして作ってみた所そうそう前に進めるはずもなく backwardな変更が出過ぎてステップアップするのつらすぎたので普通に現在のproof assistantのコードの解説になります。
+checkerのコア機能の解説→assist機能関係の解説→プラグイン・拡張部分の解説 の順になります。
+定理証明支援系を作ろう・拡張編(1日) 上で作ったものは当然ですがまともに証明を書こうとすると色々足りないので、今後ちゃんとしたassistantにするにはどういう感じの拡張が欲しいかな〜とかそういう話を、 「開発が間に合わなかったものは全部読者への演習問題にしたらええねん」的な思想により丸投げされるコーナーです。
+まとめ 最終日は多分まとめと振り返りに使います。
+これでだいたい25日分になるはず。
+意気込み的な 開催にあたり内容よりも25日にわたってずっとブログを書き続けるのがつらそう という感情しかないんですが まぁせっかくなので楽しんでいこうと思います。
+あと無理はよくないのでしんどくなったら細切れにしていこうというのも気をつけていきたい。
+というわけで、読んでくれる人は25日の間どうぞお付き合いください。よろしくお願いします。</description>
+      </item>
+    
+  </channel>
+</rss>

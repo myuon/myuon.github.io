@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>定理証明 on The curse of λ</title>
+    <link>https://myuon.github.io/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E/</link>
+    <description>Recent content in 定理証明 on The curse of λ</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Sun, 24 Dec 2017 00:04:51 +0900</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>Proof Assistantを作る・発展編 その7</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-7/</link>
+        <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-7/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
+Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
+実装すべき機能など prover さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
+Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
+unifier 一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。
+各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。
+あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&amp;gt; P(a) かつ thm: ?X /\ ?Y ==&amp;gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。
+HOLの実装 大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。
+ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
+それに関連するrefl, substなどのコマンドを定義しておくと便利です。
+マクロ記述言語 前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。
+Isabelleとの関連 ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。
+prop? bool? Isabelleではprop型というのはあまり見ない(存在しますが、チュートリアルを少しやったくらいでは見ないかもしれません)と思います。
+IsabelleのpropはClaireのprop型と同じく、メタロジックの基本型です。 しかし一方でHOLにはbool型というのが組み込みの型であり、これが要は「項の型」になります。
+前回も説明したと思いますが、型はFormulaとTermと2つにつき、Formulaにはprop型、Termには他の適当な型がつくことになっています。 bool型というのはTermの方につく型なのですね。
+さらにHOLではboolをpropに持ち上げるcoercionが定義されていてこれが効いているので、 lemma: True とか書けますが、これは本来は T :: bool =&amp;gt; prop みたいなのがあって T(True) と解釈されています。 ので、Isabelleを書いていると基本の型はboolでしょ、みたいな気持ちになると思いますがメタロジックの論理式の型はpropで、boolはあくまで項につく型だったのです。</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・マクロ編 その6</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-6/</link>
+        <pubDate>Sat, 23 Dec 2017 00:04:55 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-6/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+今回はClaireのマクロ機能について説明します。
+マクロ記述言語 Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。
+Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。
+Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。
+マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。
+マクロの実装 マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。
+マクロ定義モジュール 定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。
+module Commands where import Claire macro :: Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command] macro = ... export_command :: [(String, Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command])] export_command = [ (&amp;#34;name&amp;#34;, macro) ] declmacro :: [Argument] -&amp;gt; [Decl] declmacro = ... export_decl :: [(String, [Argument] -&amp;gt; [Decl])] export_decl = [ (&amp;#34;name&amp;#34;, declmacro) ] これを使いたいときは、ClaireのファイルにHs_fileを記述します。</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・実装編 その5</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-5/</link>
+        <pubDate>Fri, 22 Dec 2017 00:02:50 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-5/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
+Environment proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。 説明していませんでしたが一応紹介しておきます。
+Claire.Env
+data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&amp;gt; [Decl]) } 上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。
+また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。
+具体的には、
+theorem id: a ==&amp;gt; a proof ... qed -- この証明の直後、Envのthmsには (&amp;#34;id&amp;#34;, Pred &amp;#34;?</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・実装編 その4</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-4/</link>
+        <pubDate>Thu, 21 Dec 2017 00:20:35 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-4/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+昨日に引き続いてClaireの宣言(Decl)について説明していきます。
+Declarations まずはtoplevelMの定義から。
+toplevelM :: (Monad m, MonadIO m) =&amp;gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &amp;lt;- lift get; utyp &amp;lt;- liftIO $ try $ infer env fml; case utyp of Left err -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&amp;gt; k Right typ -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &amp;lt;- suspend (DeclAwait return) env &amp;lt;- lift get case decl of ここに実装を書く Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・実装編 その3</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-3/</link>
+        <pubDate>Wed, 20 Dec 2017 00:12:26 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-3/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+Proofchecker state machine さてClaireのproofcheckerを作っていきます。
+前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。
+proof state 初めに仕様を固めます。
+ (state:toplevel) Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する (state:command) Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る  注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。
+Coroutine monad さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。
+Claire.Checker
+Command Machine Suspender 簡単な方から行きます。
+data ComSuspender y = ComAwait (Command -&amp;gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&amp;gt; Env -&amp;gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = .</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・実装編 その2</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-2/</link>
+        <pubDate>Tue, 19 Dec 2017 00:00:24 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-2/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+LK proofchecker ルールの適用 LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
+例として次のルールを考えます。
+Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。
+LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
+Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
+data Rule = I | Cut Formula -- CutはFormulaを引数に取る ... チェッカー Claire.Checker
+newGoal :: Formula -&amp;gt; [Judgement] newGoal fml = [Judgement [] (return fml)] judge :: [Rule] -&amp;gt; [Judgement] -&amp;gt; Either (Rule, [Judgement]) [Judgement] judge rs js = foldl (\m r -&amp;gt; m &amp;gt;&amp;gt;= go r) (Right js) rs where go I (Judgement assms props : js) | length assms == 1 &amp;amp;&amp;amp; assms == props = Right js go (Cut fml) (Judgement assms props : js) = Right $ Judgement assms (fml:props) : Judgement (fml:assms) props : js go AndL1 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fa:assms) props : js go AndL2 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fb:assms) props : js go AndR (Judgement assms ((fa :/\: fb):props) : js) = Right $ Judgement assms (fa:props) : Judgement assms (fb:props) : js go OrL (Judgement ((fa :\/: fb):assms) props : js) = Right $ Judgement (fa:assms) props : Judgement (fb:assms) props : js go OrR1 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fa:props) : js go OrR2 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fb:props) : js go ImpL (Judgement ((fa :==&amp;gt;: fb):assms) props : js) = Right $ Judgement assms (fa:props) : Judgement (fb:assms) props : js go ImpR (Judgement assms ((fa :==&amp;gt;: fb):props) : js) = Right $ Judgement (fa:assms) (fb:props) : js go BottomL (Judgement (Bottom:assms) props : js) = Right js go TopR (Judgement assms (Top:props) : js) = Right js go (ForallL t) (Judgement (Forall x fml:assms) props : js) = Right $ Judgement (substTerm x t fml:assms) props : js go (ForallR y) (Judgement assms (Forall x fml:props) : js) = Right $ Judgement assms (substTerm x (Var y) fml:props) : js go (ExistL y) (Judgement (Exist x fml:assms) props : js) = Right $ Judgement (substTerm x (Var y) fml:assms) props : js go (ExistR t) (Judgement assms (Exist x fml:props) : js) = Right $ Judgement assms (substTerm x t fml:props) : js go WL (Judgement (_:assms) props : js) = Right $ Judgement assms props : js go WR (Judgement assms (_:props) : js) = Right $ Judgement assms props : js go CL (Judgement (fml:assms) props : js) = Right $ Judgement (fml:fml:assms) props : js go CR (Judgement assms (fml:props) : js) = Right $ Judgement assms (fml:fml:props) : js go (PL k) (Judgement assms props : js) | k &amp;lt; length assms = Right $ Judgement (assms !</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・実装編 その1</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-1/</link>
+        <pubDate>Mon, 18 Dec 2017 00:01:47 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-1/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+Syntax: FOL, LK, Claire 初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
+FOL Claire.Syntax.FOL
+data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&amp;gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show) それぞれfirst-order logicの項と論理式の定義です。
+項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。
+さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&amp;lt;==&amp;gt;: fml2 = (fml1 :==&amp;gt;: fml2) :/\: (fml2 :==&amp;gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 ~::~ をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・理論編 その2</title>
+        <link>https://myuon.github.io/posts/proof-assistant-theory-2/</link>
+        <pubDate>Sun, 17 Dec 2017 00:17:12 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-theory-2/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 17日目の記事です。
+昨日に引き続き、Proof Assistantを作る話をしていきます。
+今日は実際にこの後作っていくProof Assistant固有の話をしていきます。
+Claire言語とその設計 唐突ですがこれから作るProof Assistantを「Claire1」と呼ぶことにします。
+リポジトリ: myuon/claire
+Claireは実際には複数の言語の組み合わせでできています:
+ FOL: Pure logicとしてはfirst-order logicを採用します。 LK: Proof SystemとしてはLK(Sequent Calculus)を採用します Claire: Proof Assistant Claireの証明記述用の言語の名前です コマンド記述言語(コマンド定義マクロ): コマンド記述言語はコマンド名からLKの規則の列を生成するものです。今回はHaskellで記述できるようにします。 HOLライブラリ: Isabelleと同じく、HOLをライブラリとして実装することが出来ます。することができるというだけでかなり大変なのでしませんが。  LKについて Proof Systemとして、Sequent Calculus LKを採用します。定義はwikipediaのページでも見るといいんじゃないでしょうか。
+The system LK - Wikipedia
+今回LKを採用した理由として、natural deductionに比べると推論規則を適用した時のゴールの変形の選択肢が少ない(規則を適用する時に必要な情報が少ない)ことがあります。 というか、natural deductionは命題変数の数を減らすelimination ruleを多く含みますがelimination ruleはゴールに対して適用する、つまり下から上に読むと新たな変数を導入することになるので曖昧さが出やすいです。
+それに比べるとSequent Calculusは(仮定とゴールを上手く用意することで)ruleが基本的にintro ruleばかりなので曖昧さが出にくいので、コマンドを適用して証明を書くのには便利かなと思って採用しました。
+あとLK触れたことないのでちょっと触ってみたかった的なアレもあります(こっちの理由のほうが大きいかもしれない)。
+LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。
+ judgementは Pn,P(n-1)..P1 |- Q1,Q2..Qm の形(PやQはfirst-order logicの論理式)。左側を仮定、右側を命題(propositions)という。 仮定は「全てがなりたつ」 命題は「いずれかが成り立つ」の意味になる 仮定は右から、命題は左から順番に読んでいく(まぁこれは記法の問題なのでどちらでもよいが) 論理結合子に対する規則は、それが左辺に現れる場合と右辺に現れる場合とあることに注意。例えばAndの規則はAndL1, AndL2, AndRの3つ。 LKは古典的(背理法が使える)である。(注:命題の数を常に1つだけに制限すると直観主義になる) (例) AndLの規則により B |- Qs ==&amp;gt; And(A,B) |- Qs がわかる。これは、「Bの下でQ1.</description>
+      </item>
+    
+      <item>
+        <title>Proof Assistantを作る・理論編 その1</title>
+        <link>https://myuon.github.io/posts/proof-assistant-theory-1/</link>
+        <pubDate>Sat, 16 Dec 2017 00:04:42 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-theory-1/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 16日目の記事です。
+さてCSアドベントカレンダーも後半戦ということで、Proof Assistantを作ります。
+Proof Assistantを作ったことがある人は少ないと思うのでまずどういう風に言語を設計していくかという話をしてから、今回実際に作る言語の説明に入ります。
+Proof Assistantとは Proof Assistantは大体次のいずれかの方式をとるものが多いです。
+ 適当なロジックの適当な公理系の証明を解釈するもの: 数学がやっている証明の形式化をそのままやるやり方です。IsabelleやHOLなど。 Curry-Howard対応を用いるもの: 要は型付きラムダ計算を直接実装するやり方です。CoqやAgdaなど。  どっちでも構いませんがどっちを選ぶかによって実装は割と変わってきます。今回はIsabelleと同じく前者の方法をとります。
+ところで、Proof Assistant(言語)には大きく分けると次の2種類の言語を持ちます。
+ 命題記述言語: これは命題を記述する言語というだけでなく、Proof Assistantに組み込まれているロジックそのものを表現するために必要な言語でもあります。 証明記述言語: 証明を記述するためには専用の言語が必要な場合があります。ラムダ計算を直接実装する場合はラムダ項そのものでも別に構いません(Agdaみたいな)が、証明を記述するためにメタ言語を載せている言語も(Coqとか)あります。あるいはproverを実装するならこの言語から呼び出せるようにします。  Isabelleの場合は、前者がPure logicと呼ばれるロジックで、後者はIsarが該当します。
+証明の記述について 証明の記述にはいくつかのやり方があります。ラムダ計算を実装する場合はラムダ項を直接書くようにするのが楽ですが、公理系を実装する場合は真面目に作る必要があります。
+雰囲気としては、次のような操作で記述できるとよさそうです。 (インタラクティブに書けるならこんな感じという気持ちですが、普通にファイルに記述してチェッカーを走らせる場合も裏ではこういう感じになっています)
+ Proof Assistantを起動する 証明したい命題を入力 (例: a -&amp;gt; a) 現在のゴールが a -&amp;gt; a になる 証明を記述する (例: \x. x や apply Identity のように入力する) 証明が完了する  証明を書くにはゴールをユーザーに表示し続ける仕組みはあったほうがよくて、ただまぁそれを真面目にやろうとするとエディタ・プラグインの開発が必要になるのでインタラクティブシェルみたいなものを作るのがとりあえず無難かなという気がします。
+メタロジックについて proof assistantに備わっている命題記述言語はIsabelleでいうところのPure logicと言いましたが、これは組み込みのロジックなだけでユーザーが証明を書くのにこの言語しか選択肢がないわけではありません。ロジックとは記号からなる項とその上の規則がいくつかあれば実装可能なので、組み込みのロジックを用いて新たに(ライブラリとして)別のロジックを実装することが出来ます。 このようにして組み込みのロジックで新たに別のロジックを実装するのは、ちょうどIsabelleもPure logicの上でHOLやFOLをライブラリとして提供しているのと同じです。このようにする利点として、組み込みのロジックはcheckerやproverにとって都合の良いロジックを選び、ユーザーに記述させるロジックはより読み書きしやすいものを選ぶ、みたいなことが出来ます。
+ここでライブラリで定義されているロジックに対して組み込みのロジックをメタロジックと呼ぶことにします。
+当然ながらメタロジックが弱すぎると欲しいロジックが定義できなかったりするのでそのへんは注意が必要です。まともに数学をしたいならfirst-order logicくらいは欲しくなるという気がします(がもっと弱くしてもいいのかもしれません、ロジック詳しくないのでよくわかりません)。
+証明記述マクロ 公理系を用いた証明は、公理・推論規則をゴールに適用していくことで記述するわけです。しかしそれだけでは通常不便なので色々便利なコマンドを作ったりproverを作ったりすることになると思います。
+ところでこういう証明用のコマンドを実装するためにマクロとかそういうものが欲しくなると思います。 ここではコマンドは推論規則の列を、つまり証明を生成するマクロとして登録しておくことにします。例えばCoqではLtacという専用のマクロ記述言語(と呼んでいいのかな？普通に証明生成言語と呼ぶべきかもしれません)がありますが、IsabelleではSMLで内部実装のAPIを呼び出してこういう感じのことをしています。</description>
+      </item>
+    
+  </channel>
+</rss>

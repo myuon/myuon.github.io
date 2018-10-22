@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proof Assistantを作る・発展編 その7 - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Proof Assistantを作る・発展編 その7" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
+Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
+実装すべき機能など prover さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
+Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
+unifier 一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。
+各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。
+あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&gt; P(a) かつ thm: ?X /\ ?Y ==&gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。
+HOLの実装 大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。
+ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
+それに関連するrefl, substなどのコマンドを定義しておくと便利です。
+マクロ記述言語 前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。
+Isabelleとの関連 ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。
+prop? bool? Isabelleではprop型というのはあまり見ない(存在しますが、チュートリアルを少しやったくらいでは見ないかもしれません)と思います。
+IsabelleのpropはClaireのprop型と同じく、メタロジックの基本型です。 しかし一方でHOLにはbool型というのが組み込みの型であり、これが要は「項の型」になります。
+前回も説明したと思いますが、型はFormulaとTermと2つにつき、Formulaにはprop型、Termには他の適当な型がつくことになっています。 bool型というのはTermの方につく型なのですね。
+さらにHOLではboolをpropに持ち上げるcoercionが定義されていてこれが効いているので、 lemma: True とか書けますが、これは本来は T :: bool =&gt; prop みたいなのがあって T(True) と解釈されています。 ので、Isabelleを書いていると基本の型はboolでしょ、みたいな気持ちになると思いますがメタロジックの論理式の型はpropで、boolはあくまで項につく型だったのです。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-7/" />
+
+
+
+<meta property="article:published_time" content="2017-12-24T00:04:51&#43;09:00"/>
+
+<meta property="article:modified_time" content="2017-12-24T00:04:51&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Proof Assistantを作る・発展編 その7">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
+Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
+実装すべき機能など prover さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
+Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
+unifier 一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。
+各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。
+あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&gt; P(a) かつ thm: ?X /\ ?Y ==&gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。
+HOLの実装 大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。
+ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
+それに関連するrefl, substなどのコマンドを定義しておくと便利です。
+マクロ記述言語 前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。
+Isabelleとの関連 ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。
+prop? bool? Isabelleではprop型というのはあまり見ない(存在しますが、チュートリアルを少しやったくらいでは見ないかもしれません)と思います。
+IsabelleのpropはClaireのprop型と同じく、メタロジックの基本型です。 しかし一方でHOLにはbool型というのが組み込みの型であり、これが要は「項の型」になります。
+前回も説明したと思いますが、型はFormulaとTermと2つにつき、Formulaにはprop型、Termには他の適当な型がつくことになっています。 bool型というのはTermの方につく型なのですね。
+さらにHOLではboolをpropに持ち上げるcoercionが定義されていてこれが効いているので、 lemma: True とか書けますが、これは本来は T :: bool =&gt; prop みたいなのがあって T(True) と解釈されています。 ので、Isabelleを書いていると基本の型はboolでしょ、みたいな気持ちになると思いますがメタロジックの論理式の型はpropで、boolはあくまで項につく型だったのです。">
+
+
+<meta itemprop="datePublished" content="2017-12-24T00:04:51&#43;09:00" />
+<meta itemprop="dateModified" content="2017-12-24T00:04:51&#43;09:00" />
+<meta itemprop="wordCount" content="116">
+
+
+
+<meta itemprop="keywords" content="AdC2017,定理証明,Haskell," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Proof Assistantを作る・発展編 その7"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
+Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
+実装すべき機能など prover さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
+Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
+unifier 一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。
+各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。
+あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&gt; P(a) かつ thm: ?X /\ ?Y ==&gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。
+HOLの実装 大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。
+ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
+それに関連するrefl, substなどのコマンドを定義しておくと便利です。
+マクロ記述言語 前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。
+Isabelleとの関連 ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。
+prop? bool? Isabelleではprop型というのはあまり見ない(存在しますが、チュートリアルを少しやったくらいでは見ないかもしれません)と思います。
+IsabelleのpropはClaireのprop型と同じく、メタロジックの基本型です。 しかし一方でHOLにはbool型というのが組み込みの型であり、これが要は「項の型」になります。
+前回も説明したと思いますが、型はFormulaとTermと2つにつき、Formulaにはprop型、Termには他の適当な型がつくことになっています。 bool型というのはTermの方につく型なのですね。
+さらにHOLではboolをpropに持ち上げるcoercionが定義されていてこれが効いているので、 lemma: True とか書けますが、これは本来は T :: bool =&gt; prop みたいなのがあって T(True) と解釈されています。 ので、Isabelleを書いていると基本の型はboolでしょ、みたいな気持ちになると思いますがメタロジックの論理式の型はpropで、boolはあくまで項につく型だったのです。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2017-12-24 12:04">2017-12-24</time>
+      <h1>Proof Assistantを作る・発展編 その7</h1>
+    </header>
+    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 24日目の記事です。</strong></p>
+
+<hr />
+
+<p>Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。</p>
+
+<h1 id="実装すべき機能など">実装すべき機能など</h1>
+
+<h2 id="prover">prover</h2>
+
+<p>さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。</p>
+
+<p>Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。</p>
+
+<h2 id="unifier">unifier</h2>
+
+<p>一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。
+この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。</p>
+
+<p>各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。</p>
+
+<p>あくまで一例ですが、 <code>goal: |- P(a) /\ P(b) ==&gt; P(a)</code> かつ <code>thm: ?X /\ ?Y ==&gt; ?Z</code> のとき、
+このゴールを解消する <code>exact thm</code> を <code>use thm; unify; assumption</code> みたいに定義できるとよさそうです。</p>
+
+<h2 id="holの実装">HOLの実装</h2>
+
+<p>大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。</p>
+
+<p>ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。</p>
+
+<p>それに関連するrefl, substなどのコマンドを定義しておくと便利です。</p>
+
+<h2 id="マクロ記述言語">マクロ記述言語</h2>
+
+<p>前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。</p>
+
+<h1 id="isabelleとの関連">Isabelleとの関連</h1>
+
+<p>ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。</p>
+
+<h2 id="prop-bool">prop? bool?</h2>
+
+<p>Isabelleではprop型というのはあまり見ない(存在しますが、チュートリアルを少しやったくらいでは見ないかもしれません)と思います。</p>
+
+<p>IsabelleのpropはClaireのprop型と同じく、メタロジックの基本型です。
+しかし一方でHOLにはbool型というのが組み込みの型であり、これが要は「項の型」になります。</p>
+
+<p>前回も説明したと思いますが、型はFormulaとTermと2つにつき、Formulaにはprop型、Termには他の適当な型がつくことになっています。
+bool型というのはTermの方につく型なのですね。</p>
+
+<p>さらにHOLではboolをpropに持ち上げるcoercionが定義されていてこれが効いているので、 <code>lemma: True</code> とか書けますが、これは本来は <code>T :: bool =&gt; prop</code> みたいなのがあって <code>T(True)</code> と解釈されています。
+ので、Isabelleを書いていると基本の型はboolでしょ、みたいな気持ちになると思いますがメタロジックの論理式の型はpropで、boolはあくまで項につく型だったのです。</p>
+
+<h2 id="メタロジックの結合子">メタロジックの結合子</h2>
+
+<p>IsabelleのメタロジックはPure logicと呼ばれるものです。</p>
+
+<p>Claireではメタロジックの結合子としてForall, Exist, ==>などが提供されています。
+Pure logicでは結合子として⋀(forall), ==>などが提供されています。</p>
+
+<p>それに対して、Isabelle/HOLでは∀,∃,-->などが提供されています。
+これらは定義されているのがPure logicか、それともHOLかという違いがあり、定義も微妙に違います。
+さらにコマンドやproverはPure logicをベースにして作られていることが多いので、sledgehammerを使いたい場合はPure logicに合わせるほうがいいです。</p>
+
+<h2 id="newdecl">NewDecl</h2>
+
+<p>Isabelleにはdefintion, fun, inductiveなどの色々な宣言をよく使います。
+が、これらのほとんどは組み込みではなく後から定義された宣言です。</p>
+
+<p>Claireでもこれに倣ってNewDeclという仕組みで(マクロで)あとから宣言を追加できるようにしました。</p>
+
+<p>例えば <code>definition name where &quot;name == body&quot;</code> は、 <code>name</code> の存在を宣言した後、 <code>name_def: name = body</code> をaxiomとして追加します。</p>
+
+<p>ほかのものもそうですが、実際に宣言を行う場合はIsabelleのconstやconstdef、Claireのconstantなど「存在の宣言(主に型チェックなどに使う)」と「公理の追加」の2つで大体事足ります。
+マクロで定義されるdeclは大体「適切な公理を追加する」のを自動化するために使います。</p>
+
+<p>これは、勝手な公理を追加することを許すと危険なのでaxiomはあまりユーザーに見せないほうがよいということもあります。</p>
+
+<h1 id="まとめ">まとめ</h1>
+
+<p>Claireのお話は以上です。</p>
+
+<p>Isabelleを見ながらClaireを実装してたらIsabelleのことに詳しくなれました。</p>
+
+<p>というわけでまぁこのシリーズ7(+2)回もあって長いんですがよかったらみなさんも自分なりにProof Assistantを作ってみてください。</p>
+
+<p>というわけでここまでお疲れ様でした。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/adc2017">
+                <span>#</span>AdC2017</a>
+            
+              <a href="/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E">
+                <span>#</span>定理証明</a>
+            
+              <a href="/tags/haskell">
+                <span>#</span>Haskell</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

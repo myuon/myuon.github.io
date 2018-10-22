@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proof Assistantを作る・実装編 その1 - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Proof Assistantを作る・実装編 その1" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+Syntax: FOL, LK, Claire 初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
+FOL Claire.Syntax.FOL
+data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show) それぞれfirst-order logicの項と論理式の定義です。
+項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。
+さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&lt;==&gt;: fml2 = (fml1 :==&gt;: fml2) :/\: (fml2 :==&gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 ~::~ をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-1/" />
+
+
+
+<meta property="article:published_time" content="2017-12-18T00:01:47&#43;09:00"/>
+
+<meta property="article:modified_time" content="2017-12-18T00:01:47&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Proof Assistantを作る・実装編 その1">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+Syntax: FOL, LK, Claire 初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
+FOL Claire.Syntax.FOL
+data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show) それぞれfirst-order logicの項と論理式の定義です。
+項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。
+さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&lt;==&gt;: fml2 = (fml1 :==&gt;: fml2) :/\: (fml2 :==&gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 ~::~ をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。">
+
+
+<meta itemprop="datePublished" content="2017-12-18T00:01:47&#43;09:00" />
+<meta itemprop="dateModified" content="2017-12-18T00:01:47&#43;09:00" />
+<meta itemprop="wordCount" content="542">
+
+
+
+<meta itemprop="keywords" content="AdC2017,定理証明,Haskell," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Proof Assistantを作る・実装編 その1"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
+Proof Assistant 「Claire」の実装について説明していきます。
+リポジトリはこちら: myuon/claire
+Syntax: FOL, LK, Claire 初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
+FOL Claire.Syntax.FOL
+data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show) それぞれfirst-order logicの項と論理式の定義です。
+項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。
+さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&lt;==&gt;: fml2 = (fml1 :==&gt;: fml2) :/\: (fml2 :==&gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 ~::~ をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2017-12-18 12:01">2017-12-18</time>
+      <h1>Proof Assistantを作る・実装編 その1</h1>
+    </header>
+    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 18日目の記事です。</strong></p>
+
+<hr />
+
+<p>Proof Assistant 「Claire」の実装について説明していきます。</p>
+
+<p>リポジトリはこちら: <a href="https://github.com/myuon/claire" title="myuon/claire">myuon/claire</a></p>
+
+<h1 id="syntax-fol-lk-claire">Syntax: FOL, LK, Claire</h1>
+
+<p>初めにSyntaxの定義をしてからパーサーを用意します。
+これがないと何も出来ないので。</p>
+
+<h2 id="fol">FOL</h2>
+
+<p><a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/FOL.hs" title="Claire.Syntax.FOL">Claire.Syntax.FOL</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Term</span>
+    <span class="ow">=</span> <span class="kt">Var</span> <span class="kt">Ident</span>
+    <span class="o">|</span> <span class="kt">Abs</span> <span class="p">[</span><span class="kt">Ident</span><span class="p">]</span> <span class="kt">Term</span>
+    <span class="o">|</span> <span class="kt">App</span> <span class="kt">Term</span> <span class="p">[</span><span class="kt">Term</span><span class="p">]</span>
+    <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">)</span>
+
+  <span class="kr">data</span> <span class="kt">Formula</span>
+    <span class="ow">=</span> <span class="kt">Pred</span> <span class="kt">Ident</span> <span class="p">[</span><span class="kt">Term</span><span class="p">]</span>
+    <span class="o">|</span> <span class="kt">Top</span>
+    <span class="o">|</span> <span class="kt">Bottom</span>
+    <span class="o">|</span> <span class="kt">Formula</span> <span class="kt">:/\:</span> <span class="kt">Formula</span>
+    <span class="o">|</span> <span class="kt">Formula</span> <span class="kt">:\/:</span> <span class="kt">Formula</span>
+    <span class="o">|</span> <span class="kt">Formula</span> <span class="kt">:==&gt;:</span> <span class="kt">Formula</span>
+    <span class="o">|</span> <span class="kt">Forall</span> <span class="kt">Ident</span> <span class="kt">Formula</span>
+    <span class="o">|</span> <span class="kt">Exist</span> <span class="kt">Ident</span> <span class="kt">Formula</span>
+    <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">)</span></code></pre></div>
+<p>それぞれfirst-order logicの項と論理式の定義です。</p>
+
+<p>項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。
+論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。</p>
+
+<p>さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。
+例えばiffの記号を <code>fml1 :&lt;==&gt;: fml2 = (fml1 :==&gt;: fml2) :/\: (fml2 :==&gt;: fml1)</code> と定義したいところですがそれは上の定義だと出来ません。
+~:<==>:~ をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。</p>
+
+<p>そもそもこのFormulaはProof Assistantのメタロジックを表すもので、Proof Assistantにおいてメタロジックが正しい(おかしなことがおこらない)ことは絶対に必要なことですがこのことはProof Assistantによって直接検証することは出来ません。
+Proof Assistantはメタロジックを用いて現在考えているロジックの上で証明を書く道具なので、メタロジックとしてのFormulaを変えるような操作はしてはいけません。</p>
+
+<p>これがわざわざIsabelleやこのClaireでも標準ライブラリでロジックを再定義する理由で、このメタロジックとロジックの区別は今後も大変重要になるので覚えておいてください。</p>
+
+<h2 id="lk">LK</h2>
+
+<p><a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/LK.hs" title="Claire.Syntax.LK">Claire.Syntax.LK</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Rule</span>
+    <span class="ow">=</span> <span class="kt">I</span> <span class="o">|</span> <span class="kt">Cut</span> <span class="kt">Formula</span>
+    <span class="o">|</span> <span class="kt">AndL1</span> <span class="o">|</span> <span class="kt">AndL2</span> <span class="o">|</span> <span class="kt">AndR</span>
+    <span class="o">|</span> <span class="kt">OrL</span> <span class="o">|</span> <span class="kt">OrR1</span> <span class="o">|</span> <span class="kt">OrR2</span>
+    <span class="o">|</span> <span class="kt">ImpL</span> <span class="o">|</span> <span class="kt">ImpR</span>
+    <span class="o">|</span> <span class="kt">BottomL</span> <span class="o">|</span> <span class="kt">TopR</span>
+    <span class="o">|</span> <span class="kt">ForallL</span> <span class="kt">Term</span> <span class="o">|</span> <span class="kt">ForallR</span> <span class="kt">Ident</span>
+    <span class="o">|</span> <span class="kt">ExistL</span> <span class="kt">Ident</span> <span class="o">|</span> <span class="kt">ExistR</span> <span class="kt">Term</span>
+    <span class="o">|</span> <span class="kt">WL</span> <span class="o">|</span> <span class="kt">WR</span>
+    <span class="o">|</span> <span class="kt">CL</span> <span class="o">|</span> <span class="kt">CR</span>
+    <span class="o">|</span> <span class="kt">PL</span> <span class="kt">Int</span> <span class="o">|</span> <span class="kt">PR</span> <span class="kt">Int</span>
+    <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">)</span>
+
+  <span class="kr">data</span> <span class="kt">Judgement</span> <span class="ow">=</span> <span class="kt">Judgement</span> <span class="p">[</span><span class="kt">Formula</span><span class="p">]</span> <span class="p">[</span><span class="kt">Formula</span><span class="p">]</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">)</span></code></pre></div>
+<p>LKの推論規則とJudgementを定めます。
+Judgementは仮定と命題をそれぞれ表し、 <code>Qm..Q1 |- P1..Pn</code> を <code>Judgement [Q1..Qm] [P1..Pn]</code> で表すので順番に気をつけてください。</p>
+
+<h2 id="claire">Claire</h2>
+
+<p><a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/Claire.hs" title="Claire.Syntax.Claire">Claire.Syntax.Claire</a></p>
+
+<p>ClaireはProof Assistantの名前ですが証明記述言語の名前でもあります(分かりにくいですね; 例を挙げると前者がCoqで後者がGallinaみたいなものかな？)。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Claire</span> <span class="ow">=</span> <span class="kt">Claire</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span>
+
+  <span class="kr">data</span> <span class="kt">Decl</span>
+    <span class="ow">=</span> <span class="kt">ThmD</span> <span class="kt">ThmIndex</span> <span class="kt">Formula</span> <span class="kt">Proof</span>
+    <span class="o">|</span> <span class="kt">AxiomD</span> <span class="kt">ThmIndex</span> <span class="kt">Formula</span>
+    <span class="o">|</span> <span class="kt">ImportD</span> <span class="kt">String</span>
+    <span class="o">|</span> <span class="kt">PrintProof</span>
+    <span class="o">|</span> <span class="kt">ConstD</span> <span class="kt">Ident</span> <span class="kt">Type</span>
+    <span class="o">|</span> <span class="kt">HsFile</span> <span class="kt">String</span>
+    <span class="o">|</span> <span class="kt">NewDecl</span> <span class="kt">Ident</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span>
+
+  <span class="kr">data</span> <span class="kt">Proof</span>
+    <span class="ow">=</span> <span class="kt">Proof</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
+
+  <span class="kr">type</span> <span class="kt">Pairs</span> <span class="ow">=</span> <span class="p">[(</span><span class="kt">Ident</span><span class="p">,</span><span class="kt">Predicate</span><span class="p">)]</span>
+
+  <span class="kr">data</span> <span class="kt">Command</span>
+    <span class="ow">=</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">Rule</span><span class="p">]</span>
+    <span class="o">|</span> <span class="kt">Use</span> <span class="kt">ThmIndex</span> <span class="kt">Pairs</span>
+    <span class="o">|</span> <span class="kt">Inst</span> <span class="kt">Ident</span> <span class="kt">Predicate</span>
+    <span class="o">|</span> <span class="kt">NoApply</span> <span class="kt">Rule</span>
+    <span class="o">|</span> <span class="kt">NewCommand</span> <span class="kt">Ident</span> <span class="kt">Argument</span>
+
+  <span class="kr">data</span> <span class="kt">Argument</span>
+    <span class="ow">=</span> <span class="kt">ArgEmpty</span>
+    <span class="o">|</span> <span class="kt">ArgPreds</span> <span class="p">[</span><span class="kt">Predicate</span><span class="p">]</span>
+    <span class="o">|</span> <span class="kt">ArgTerms</span> <span class="p">[</span><span class="kt">Term</span><span class="p">]</span>
+    <span class="o">|</span> <span class="kt">ArgTyped</span> <span class="kt">Ident</span> <span class="kt">Type</span>
+    <span class="o">|</span> <span class="kt">ArgIdents</span> <span class="p">[(</span><span class="kt">Ident</span><span class="p">,</span><span class="kt">Pairs</span><span class="p">)]</span></code></pre></div>
+<p>見てもらうと分かる通り、Claire型がまずあり、これがDeclarationのリストからなります<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>。
+これはClaireのファイルがDeclarationを並べたものからなる、という意味でこう定義しています。</p>
+
+<p>Declは色々コンストラクターがありますが例えば <code>ThmD ThmIndex Formula Proof</code> に注目しましょう。
+ThmIndexが定理の名前、Formulaが証明したい論理式、Proofが証明です。Proofの定義を見ればProofはCommandの列からなるのが分かりますね。</p>
+
+<p>まぁ細かく見ていくと時間かかりそうなので、syntaxの説明は後で必要になったらするとして今は先に進みましょう。</p>
+
+<h1 id="alex-happy">Alex/Happy</h1>
+
+<p>さてASTを定義したのでパーサーを書きます。
+ここでは字句解析器を生成する<a href="https://www.haskell.org/alex/" title="alex">alex</a>と構文解析器を生成する<a href="https://www.haskell.org/happy/" title="happy">happy</a>を使います。いわゆるlex/yaccに似た感じのツールのようです(触ったことないからしらんけど)。</p>
+
+<h2 id="cabal-build-integration">cabal-build integration</h2>
+
+<p>alex/happyはコマンドラインツールで、.x, .yファイルをHaskellモジュールに変換しますが、stackから使いたい場合はpackage.yamlに次のように書くといいです:</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="w">  </span>extra-source-files<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>src/Claire/Parser/Lexer.x<span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>src/Claire/Parser/Parser.y<span class="w">
+</span><span class="w">
+</span><span class="w">  </span>build-tools<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>alex<span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>happy<span class="w">
+</span><span class="w">
+</span><span class="w">  </span>other-modules<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>Claire.Parser.Lexer<span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>Claire.Parser.Parser</code></pre></div>
+<p>これでビルドするときにalex, happyが走ります。</p>
+
+<h2 id="alex">alex</h2>
+
+<p>alex/happyの使い方をここで一からやる気はないのですが、一応コードの読み方だけ説明しておきます。</p>
+
+<p><a href="https://github.com/myuon/claire/blob/master/src/Claire/Parser/Lexer.x" title="src/Claire/Parser/Lexer.x">src/Claire/Parser/Lexer.x</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="p">{</span>
+  <span class="kr">module</span> <span class="nn">Claire.Parser.Lexer</span> <span class="kr">where</span>
+
+  <span class="p">}</span>
+
+  <span class="o">%</span><span class="nf">wrapper</span> <span class="s">&#34;basic&#34;</span>
+
+  <span class="o">$</span><span class="nf">digit</span> <span class="ow">=</span> <span class="p">[</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>
+  <span class="o">$</span><span class="nf">alpha</span> <span class="ow">=</span> <span class="p">[</span><span class="nf">a</span><span class="o">-</span><span class="nf">zA</span><span class="o">-</span><span class="kt">Z</span><span class="p">]</span>
+
+  <span class="nf">tokens</span> <span class="kt">:-</span>
+    <span class="o">$</span><span class="nf">white</span><span class="o">+</span>   <span class="p">;</span>
+    <span class="s">&#34;#&#34;</span><span class="o">.*</span>     <span class="p">;</span>
+    <span class="kt">Forall</span>    <span class="p">{</span> <span class="nf">\s</span> <span class="ow">-&gt;</span> <span class="kt">TokenForall</span> <span class="p">}</span>
+    <span class="kt">Exist</span>     <span class="p">{</span> <span class="nf">\s</span> <span class="ow">-&gt;</span> <span class="kt">TokenExist</span> <span class="p">}</span>
+    <span class="o">...</span>
+    <span class="o">$</span><span class="nf">alpha</span> <span class="p">[</span><span class="o">$</span><span class="nf">alpha</span> <span class="o">$</span><span class="nf">digit</span> <span class="nf">\</span><span class="kr">_</span> <span class="nf">\</span><span class="sc">&#39;</span><span class="err">]*      { TokenIdent }
+</span><span class="err">
+</span><span class="err">  {
+</span><span class="err">  data Token
+</span><span class="err">    = TokenForall
+</span><span class="err">    | TokenExist
+</span><span class="err">    ...
+</span><span class="err">    | TokenIdent String
+</span><span class="err">  }</span></code></pre></div>
+<p><code>{}</code> で囲まれた部分はそのままHaskellのコードとして埋め込まれます。
+lexerの方はTokenを定義して、文字列をどのようなトークンの列に変換するかを定義します。 <code>tokens :-</code> の下に、「どんな文字列を」「どんなトークン(Token型)」に変換するかを指定します。</p>
+
+<p>文字列の方は正規表現が使えます。トークン変換部分は文字列を受け取ってTokenを返す関数を書きます。</p>
+
+<p>上の定義だと、</p>
+
+<ul>
+<li>連続する空白は無視する</li>
+<li>#から始まる行は無視する</li>
+<li>Forallという文字列はTokenForallに変換</li>
+<li>Existという文字列はTokenExistに変換</li>
+<li><code>$alpha [$alpha $digit \_ \']*</code> の文字列はそれを引数に渡してTokenIdentを返す</li>
+</ul>
+
+<p>みたいな感じですね。</p>
+
+<h2 id="happy">happy</h2>
+
+<p>alexによって文字列はトークンの列に変換されるので今度はそれをASTの形に変換するのがhappyです。</p>
+
+<p><a href="https://github.com/myuon/claire/blob/master/src/Claire/Parser/Parser.y" title="src/Claire/Parser/Parser.y">src/Claire/Parser/Parser.y</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="p">{</span>
+  <span class="kr">module</span> <span class="nn">Claire.Parser.Parser</span> <span class="kr">where</span>
+
+  <span class="kr">import</span> <span class="nn">Claire.Syntax</span>
+  <span class="kr">import</span> <span class="nn">Claire.Parser.Lexer</span>
+  <span class="p">}</span>
+
+  <span class="o">%</span><span class="nf">name</span> <span class="nf">claireparser</span>
+  <span class="o">%</span><span class="nf">name</span> <span class="nf">declparser</span> <span class="kt">Decl</span>
+  <span class="o">%</span><span class="nf">name</span> <span class="nf">comparser</span> <span class="kt">Command</span>
+  <span class="o">%</span><span class="nf">name</span> <span class="nf">folparser</span> <span class="kt">Formula</span>
+  <span class="o">%</span><span class="nf">name</span> <span class="nf">termparser</span> <span class="kt">Term</span>
+
+  <span class="o">%</span><span class="nf">tokentype</span> <span class="p">{</span> <span class="kt">Token</span> <span class="p">}</span>
+
+  <span class="o">%</span><span class="nf">token</span>
+    <span class="nf">forall</span>    <span class="p">{</span> <span class="kt">TokenForall</span> <span class="p">}</span>
+    <span class="nf">exist</span>     <span class="p">{</span> <span class="kt">TokenExist</span> <span class="p">}</span>
+    <span class="o">...</span>
+
+  <span class="o">%</span><span class="nf">right</span> <span class="sc">&#39;</span><span class="err">==</span><span class="sc">&gt;&#39;</span>
+  <span class="o">%</span><span class="nf">left</span> <span class="nf">and</span> <span class="nf">or</span>
+  <span class="o">%</span><span class="nf">nonassoc</span> <span class="sc">&#39;~&#39;</span>
+
+  <span class="o">%</span><span class="nf">right</span> <span class="sc">&#39;</span><span class="err">=</span><span class="sc">&gt;&#39;</span>
+
+  <span class="o">%%</span>
+
+  <span class="kt">Laire</span> <span class="ow">::</span> <span class="p">{</span> <span class="kt">Laire</span> <span class="p">}</span>
+    <span class="kt">:</span> <span class="kt">Decls</span>  <span class="p">{</span> <span class="kt">Laire</span> <span class="o">$</span><span class="mi">1</span> <span class="p">}</span>
+
+  <span class="kt">Decls</span> <span class="ow">::</span> <span class="p">{</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span> <span class="p">}</span>
+    <span class="kt">:</span> <span class="cm">{- empty -}</span>  <span class="p">{</span> <span class="kt">[]</span> <span class="p">}</span>
+    <span class="o">|</span> <span class="kt">Decl</span> <span class="kt">Decls</span>   <span class="p">{</span> <span class="o">$</span><span class="mi">1</span> <span class="kt">:</span> <span class="o">$</span><span class="mi">2</span> <span class="p">}</span>
+
+  <span class="kt">Decl</span> <span class="ow">::</span> <span class="p">{</span> <span class="kt">Decl</span> <span class="p">}</span>
+    <span class="kt">:</span> <span class="nf">theorem</span> <span class="nf">ident</span> <span class="sc">&#39;:&#39;</span> <span class="kt">Formula</span> <span class="kt">Proof</span>  <span class="p">{</span> <span class="kt">ThmD</span> <span class="o">$</span><span class="mi">2</span> <span class="o">$</span><span class="mi">4</span> <span class="o">$</span><span class="mi">5</span> <span class="p">}</span>
+  <span class="o">...</span>
+
+  <span class="p">{</span>
+  <span class="nf">happyError</span> <span class="nf">s</span> <span class="ow">=</span> <span class="ne">error</span> <span class="o">$</span> <span class="nf">show</span> <span class="nf">s</span>
+  <span class="p">}</span></code></pre></div>
+<p><code>%%</code> より下の行がパーサーの定義です。書き方は大体BNFみたいな感じですね。
+パーサーの定義の中で使えるtokenは事前に <code>%%token</code> のところで定義しておくと便利です。</p>
+
+<p>本当はこの辺の定義を逐一見ていくべきかもしれませんが、一度にやると大変なので後で項目ごとに説明することにします。</p>
+
+<h2 id="実行">実行</h2>
+
+<p>定義ができたら、パーサーを実行することが出来ます。</p>
+
+<p>alexはalexScanTokens、happyは <code>%name</code> で指定したパーサーを関数として生成するのでそれを使って試してみます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="o">&gt;</span> <span class="nf">folparser</span> <span class="o">$</span> <span class="nf">alexScanTokens</span> <span class="o">$</span> <span class="s">&#34;p ==&gt; (q /</span><span class="se">\\</span><span class="s"> q&#39; ==&gt; r)&#34;</span>
+  <span class="kt">Pred</span> <span class="s">&#34;p&#34;</span> <span class="kt">[]</span> <span class="kt">:==&gt;:</span> <span class="p">((</span><span class="kt">Pred</span> <span class="s">&#34;q&#34;</span> <span class="kt">[]</span> <span class="kt">:/\:</span> <span class="kt">Pred</span> <span class="s">&#34;q&#39;&#34;</span> <span class="kt">[]</span><span class="p">)</span> <span class="kt">:==&gt;:</span> <span class="kt">Pred</span> <span class="s">&#34;r&#34;</span> <span class="kt">[]</span><span class="p">)</span>
+
+  <span class="o">&gt;</span> <span class="nf">folparser</span> <span class="o">$</span> <span class="nf">alexScanTokens</span> <span class="o">$</span> <span class="s">&#34;P(a,b,c)&#34;</span>
+  <span class="kt">Pred</span> <span class="s">&#34;P&#34;</span> <span class="p">[</span><span class="kt">Var</span> <span class="s">&#34;a&#34;</span><span class="p">,</span> <span class="kt">Var</span> <span class="s">&#34;b&#34;</span><span class="p">,</span> <span class="kt">Var</span> <span class="s">&#34;c&#34;</span><span class="p">]</span>
+
+  <span class="o">&gt;</span> <span class="nf">declparser</span> <span class="o">$</span> <span class="nf">alexScanTokens</span>
+    <span class="o">$</span> <span class="s">&#34;theorem id: a ==&gt; a </span><span class="se">\
+</span><span class="se">    \</span><span class="s"> proof </span><span class="se">\
+</span><span class="se">    \</span><span class="s">   apply (ImpR, I) </span><span class="se">\
+</span><span class="se">    \</span><span class="s"> qed&#34;</span>
+  <span class="kt">ThmD</span> <span class="s">&#34;id&#34;</span> <span class="p">(</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span> <span class="kt">:==&gt;:</span> <span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span><span class="p">)</span> <span class="p">(</span><span class="kt">Proof</span> <span class="p">[</span><span class="kt">Apply</span> <span class="p">[</span><span class="kt">ImpR</span><span class="p">,</span> <span class="kt">I</span><span class="p">]])</span></code></pre></div>
+<p>みたいな感じになれば成功です。</p>
+
+<h1 id="まとめ">まとめ</h1>
+
+<p>今回はClaireのsyntaxとパーサーをalex/happyで書く話を簡単にしました。
+といいつつsyntaxの説明を一切していないのでこれもそのうちしないとだめですね。</p>
+
+<p>明日はLKのcheckerを書きます。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1">ソースコードの方直ってないかもしれないけど気にしないでください。もともと証明記述言語の方はlaireという名前にして区別しようかと思ったけど途中でめんどくさくなってやめた跡です。 <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/adc2017">
+                <span>#</span>AdC2017</a>
+            
+              <a href="/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E">
+                <span>#</span>定理証明</a>
+            
+              <a href="/tags/haskell">
+                <span>#</span>Haskell</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
