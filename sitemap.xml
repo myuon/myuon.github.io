@@ -3,6 +3,13 @@
   
     
       <url>
+        <loc>https://myuon.github.io/posts/blog-simplicity/</loc>
+        <lastmod>2018-10-23T22:53:56+09:00</lastmod>
+      </url>
+    
+  
+    
+      <url>
         <loc>https://myuon.github.io/posts/isabelle-vscode-2018/</loc>
         <lastmod>2018-07-28T11:46:33+09:00</lastmod>
       </url>
@@ -366,7 +373,7 @@
     
       <url>
         <loc>https://myuon.github.io/posts/</loc>
-        <lastmod>2018-07-28T11:46:33+09:00</lastmod>
+        <lastmod>2018-10-23T22:53:56+09:00</lastmod>
         <priority>0</priority>
       </url>
     
@@ -389,7 +396,7 @@
     
       <url>
         <loc>https://myuon.github.io/</loc>
-        <lastmod>2018-07-28T11:46:33+09:00</lastmod>
+        <lastmod>2018-10-23T22:53:56+09:00</lastmod>
       </url>
     
   
@@ -397,6 +404,14 @@
       <url>
         <loc>https://myuon.github.io/tags/web%E3%82%B5%E3%82%A4%E3%83%88/</loc>
         <lastmod>2017-11-10T02:37:31+09:00</lastmod>
+        <priority>0</priority>
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://myuon.github.io/tags/%E3%83%96%E3%83%AD%E3%82%B0/</loc>
+        <lastmod>2018-10-23T22:53:56+09:00</lastmod>
         <priority>0</priority>
       </url>
     
