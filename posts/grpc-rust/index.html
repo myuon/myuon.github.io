@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RustとNode.js間通信にgRPCを使う - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="RustとNode.js間通信にgRPCを使う" />
+<meta property="og:description" content="gRPCしたくなった。具体的にはRustで作ってるデスクトップアプリケーションで、GUIをElectronで書きたいのでNode.jsと通信が発生するのでそれに使えないかなと思って調査した。
+gRPC(protocol buffers)とは gRPCはgoogleが作ったRPC(remote procedure call)のフレームワークで、簡単に言うとサーバー/クライアント間の通信が言語を問わずできるよ！みたいなやつ。 RPC自体は見た目は普通の関数呼び出しみたいな感じで書けて、裏ではHTTP/2の通信に乗ってやりとりが行われるようになっている。実際にはRPCを定義してからそれを呼び出すためにはサーバーやクライアントで言語ごとにインターフェイスの定義とかをしなければいけないが、それを自動で生成してくれるのがgRPCコンパイラという感じ。
+gRPCを使うには、protocol buffersというプロトコル定義言語(?)を.protoファイルに書いてgRPCコンパイラで言語ごとにコンパイルを行う。2018/10/28現在では公式にサポートされてる言語がC&#43;&#43;, Java, Python, Go, Rusy, C#, Node.js, Android Java, Obj-C, PHP, Dartなどなど多岐にわたる。Rustは非公式だけどプラグインがあるので使える。
+gRPC/protocol buffersの個人的なポイントをまとめてみる。
+長所:
+ サポートされてる言語が多い ツール自体はしっかりしてるのであまりその辺で変にハマることはなさそう streaming通信なんかもサポートされてる protocol buffers自体が後方互換性を命を懸けて守るという強い意志のもとに設計されてる まぁこれはそのせいで面倒なこともあるので短所でもあるけど、多くの人にとっては長所になりうるかと思う protoファイルからドキュメント生成するやつもある(proto-gen-doc) protocol buffers自体は普通にプログラミング言語による型定義みたいな感じで普通に書きやすい(少なくともswaggerみたいな地獄のyaml UXとかに比べたら断然楽)  短所:
+ 公式ドキュメントが死ぬほど分かりにくい(Googleだからしょうがない説もあるが) ツールのインストール方法などが死ぬほど分かりにくい 現状ブラウザによるネイティブサポートがない(grpc-gatewayを使うといいらしいよ) 生成するコードにユーザー側の自由度がほぼないし自力でプラグインを書くのは多分大変(のでユースケースによっては全く使えないと思う)  最近はマイクロサービス間通信とかで採用されてる事例が多いみたい。実際にブラウザとの通信で使ってる人はそこまで多くない印象だった。
+RustでgRPC Rustでサーバー側の処理を書く。
+まず、上にも書いたようにprotoをRustコードに変換するgRPCコンパイラのRustプラグインが必要になる。これにはprotobuf-codegenとgrpcio-compilerを使うといいよってあった。
+# インストール $ cargo install protobuf-codegen grpcio-compiler # コンパイル $ protoc --rust_out=. --grpc_out=. --plugin=protoc-gen-grpc=`which grpc_rust_plugin` example.proto これによって生成されたRustモジュールを読み込んで使うことになるけど、それにはgrpc-rsを使った(grpc-rustというのもあるけどこっちは触ってない)。
+サーバー側のプログラムはこんな感じで書くと良い。
+コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。
+Node.jsでgRPC Node.jsでクライアント側の処理を書く。
+Node.jsでは、gRPCのコンパイラがやってる処理を動的にやるライブラリとかもあるようで、その場合にはprotoファイルを直接食わせて書けるので事前にコンパイルとかが不要になる(@grpc/proto-loaderを使うか、gRPCは不要でprotocol buffersだけならprotobufjsあたり)。が、まぁコード生成する方がいいと思うのでそうする。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/grpc-rust/" />
+
+
+
+<meta property="article:published_time" content="2018-10-28T16:03:12&#43;09:00"/>
+
+<meta property="article:modified_time" content="2018-10-28T16:03:12&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="RustとNode.js間通信にgRPCを使う">
+<meta itemprop="description" content="gRPCしたくなった。具体的にはRustで作ってるデスクトップアプリケーションで、GUIをElectronで書きたいのでNode.jsと通信が発生するのでそれに使えないかなと思って調査した。
+gRPC(protocol buffers)とは gRPCはgoogleが作ったRPC(remote procedure call)のフレームワークで、簡単に言うとサーバー/クライアント間の通信が言語を問わずできるよ！みたいなやつ。 RPC自体は見た目は普通の関数呼び出しみたいな感じで書けて、裏ではHTTP/2の通信に乗ってやりとりが行われるようになっている。実際にはRPCを定義してからそれを呼び出すためにはサーバーやクライアントで言語ごとにインターフェイスの定義とかをしなければいけないが、それを自動で生成してくれるのがgRPCコンパイラという感じ。
+gRPCを使うには、protocol buffersというプロトコル定義言語(?)を.protoファイルに書いてgRPCコンパイラで言語ごとにコンパイルを行う。2018/10/28現在では公式にサポートされてる言語がC&#43;&#43;, Java, Python, Go, Rusy, C#, Node.js, Android Java, Obj-C, PHP, Dartなどなど多岐にわたる。Rustは非公式だけどプラグインがあるので使える。
+gRPC/protocol buffersの個人的なポイントをまとめてみる。
+長所:
+ サポートされてる言語が多い ツール自体はしっかりしてるのであまりその辺で変にハマることはなさそう streaming通信なんかもサポートされてる protocol buffers自体が後方互換性を命を懸けて守るという強い意志のもとに設計されてる まぁこれはそのせいで面倒なこともあるので短所でもあるけど、多くの人にとっては長所になりうるかと思う protoファイルからドキュメント生成するやつもある(proto-gen-doc) protocol buffers自体は普通にプログラミング言語による型定義みたいな感じで普通に書きやすい(少なくともswaggerみたいな地獄のyaml UXとかに比べたら断然楽)  短所:
+ 公式ドキュメントが死ぬほど分かりにくい(Googleだからしょうがない説もあるが) ツールのインストール方法などが死ぬほど分かりにくい 現状ブラウザによるネイティブサポートがない(grpc-gatewayを使うといいらしいよ) 生成するコードにユーザー側の自由度がほぼないし自力でプラグインを書くのは多分大変(のでユースケースによっては全く使えないと思う)  最近はマイクロサービス間通信とかで採用されてる事例が多いみたい。実際にブラウザとの通信で使ってる人はそこまで多くない印象だった。
+RustでgRPC Rustでサーバー側の処理を書く。
+まず、上にも書いたようにprotoをRustコードに変換するgRPCコンパイラのRustプラグインが必要になる。これにはprotobuf-codegenとgrpcio-compilerを使うといいよってあった。
+# インストール $ cargo install protobuf-codegen grpcio-compiler # コンパイル $ protoc --rust_out=. --grpc_out=. --plugin=protoc-gen-grpc=`which grpc_rust_plugin` example.proto これによって生成されたRustモジュールを読み込んで使うことになるけど、それにはgrpc-rsを使った(grpc-rustというのもあるけどこっちは触ってない)。
+サーバー側のプログラムはこんな感じで書くと良い。
+コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。
+Node.jsでgRPC Node.jsでクライアント側の処理を書く。
+Node.jsでは、gRPCのコンパイラがやってる処理を動的にやるライブラリとかもあるようで、その場合にはprotoファイルを直接食わせて書けるので事前にコンパイルとかが不要になる(@grpc/proto-loaderを使うか、gRPCは不要でprotocol buffersだけならprotobufjsあたり)。が、まぁコード生成する方がいいと思うのでそうする。">
+
+
+<meta itemprop="datePublished" content="2018-10-28T16:03:12&#43;09:00" />
+<meta itemprop="dateModified" content="2018-10-28T16:03:12&#43;09:00" />
+<meta itemprop="wordCount" content="101">
+
+
+
+<meta itemprop="keywords" content="Rust,JavaScript," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="RustとNode.js間通信にgRPCを使う"/>
+<meta name="twitter:description" content="gRPCしたくなった。具体的にはRustで作ってるデスクトップアプリケーションで、GUIをElectronで書きたいのでNode.jsと通信が発生するのでそれに使えないかなと思って調査した。
+gRPC(protocol buffers)とは gRPCはgoogleが作ったRPC(remote procedure call)のフレームワークで、簡単に言うとサーバー/クライアント間の通信が言語を問わずできるよ！みたいなやつ。 RPC自体は見た目は普通の関数呼び出しみたいな感じで書けて、裏ではHTTP/2の通信に乗ってやりとりが行われるようになっている。実際にはRPCを定義してからそれを呼び出すためにはサーバーやクライアントで言語ごとにインターフェイスの定義とかをしなければいけないが、それを自動で生成してくれるのがgRPCコンパイラという感じ。
+gRPCを使うには、protocol buffersというプロトコル定義言語(?)を.protoファイルに書いてgRPCコンパイラで言語ごとにコンパイルを行う。2018/10/28現在では公式にサポートされてる言語がC&#43;&#43;, Java, Python, Go, Rusy, C#, Node.js, Android Java, Obj-C, PHP, Dartなどなど多岐にわたる。Rustは非公式だけどプラグインがあるので使える。
+gRPC/protocol buffersの個人的なポイントをまとめてみる。
+長所:
+ サポートされてる言語が多い ツール自体はしっかりしてるのであまりその辺で変にハマることはなさそう streaming通信なんかもサポートされてる protocol buffers自体が後方互換性を命を懸けて守るという強い意志のもとに設計されてる まぁこれはそのせいで面倒なこともあるので短所でもあるけど、多くの人にとっては長所になりうるかと思う protoファイルからドキュメント生成するやつもある(proto-gen-doc) protocol buffers自体は普通にプログラミング言語による型定義みたいな感じで普通に書きやすい(少なくともswaggerみたいな地獄のyaml UXとかに比べたら断然楽)  短所:
+ 公式ドキュメントが死ぬほど分かりにくい(Googleだからしょうがない説もあるが) ツールのインストール方法などが死ぬほど分かりにくい 現状ブラウザによるネイティブサポートがない(grpc-gatewayを使うといいらしいよ) 生成するコードにユーザー側の自由度がほぼないし自力でプラグインを書くのは多分大変(のでユースケースによっては全く使えないと思う)  最近はマイクロサービス間通信とかで採用されてる事例が多いみたい。実際にブラウザとの通信で使ってる人はそこまで多くない印象だった。
+RustでgRPC Rustでサーバー側の処理を書く。
+まず、上にも書いたようにprotoをRustコードに変換するgRPCコンパイラのRustプラグインが必要になる。これにはprotobuf-codegenとgrpcio-compilerを使うといいよってあった。
+# インストール $ cargo install protobuf-codegen grpcio-compiler # コンパイル $ protoc --rust_out=. --grpc_out=. --plugin=protoc-gen-grpc=`which grpc_rust_plugin` example.proto これによって生成されたRustモジュールを読み込んで使うことになるけど、それにはgrpc-rsを使った(grpc-rustというのもあるけどこっちは触ってない)。
+サーバー側のプログラムはこんな感じで書くと良い。
+コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。
+Node.jsでgRPC Node.jsでクライアント側の処理を書く。
+Node.jsでは、gRPCのコンパイラがやってる処理を動的にやるライブラリとかもあるようで、その場合にはprotoファイルを直接食わせて書けるので事前にコンパイルとかが不要になる(@grpc/proto-loaderを使うか、gRPCは不要でprotocol buffersだけならprotobufjsあたり)。が、まぁコード生成する方がいいと思うのでそうする。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2018-10-28 04:03">2018-10-28</time>
+      <h1>RustとNode.js間通信にgRPCを使う</h1>
+    </header>
+    <section>
+
+<p>gRPCしたくなった。具体的にはRustで作ってるデスクトップアプリケーションで、GUIをElectronで書きたいのでNode.jsと通信が発生するのでそれに使えないかなと思って調査した。</p>
+
+<h2 id="grpc-protocol-buffers-とは">gRPC(protocol buffers)とは</h2>
+
+<p><a href="https://grpc.io">gRPC</a>はgoogleが作ったRPC(remote procedure call)のフレームワークで、簡単に言うとサーバー/クライアント間の通信が言語を問わずできるよ！みたいなやつ。
+RPC自体は見た目は普通の関数呼び出しみたいな感じで書けて、裏ではHTTP/2の通信に乗ってやりとりが行われるようになっている。実際にはRPCを定義してからそれを呼び出すためにはサーバーやクライアントで言語ごとにインターフェイスの定義とかをしなければいけないが、それを自動で生成してくれるのがgRPCコンパイラという感じ。</p>
+
+<p>gRPCを使うには、<a href="https://developers.google.com/protocol-buffers/docs/proto3">protocol buffers</a>というプロトコル定義言語(?)を<code>.proto</code>ファイルに書いてgRPCコンパイラで言語ごとにコンパイルを行う。2018/10/28現在では公式にサポートされてる言語がC++, Java, Python, Go, Rusy, C#, Node.js, Android Java, Obj-C, PHP, Dartなどなど多岐にわたる。Rustは非公式だけどプラグインがあるので使える。</p>
+
+<p>gRPC/protocol buffersの個人的なポイントをまとめてみる。</p>
+
+<p>長所:</p>
+
+<ul>
+<li>サポートされてる言語が多い</li>
+<li>ツール自体はしっかりしてるのであまりその辺で変にハマることはなさそう</li>
+<li>streaming通信なんかもサポートされてる</li>
+<li>protocol buffers自体が後方互換性を命を懸けて守るという強い意志のもとに設計されてる まぁこれはそのせいで面倒なこともあるので短所でもあるけど、多くの人にとっては長所になりうるかと思う</li>
+<li>protoファイルからドキュメント生成するやつもある(<a href="https://github.com/pseudomuto/protoc-gen-doc">proto-gen-doc</a>)</li>
+<li>protocol buffers自体は普通にプログラミング言語による型定義みたいな感じで普通に書きやすい(少なくともswaggerみたいな地獄のyaml UXとかに比べたら断然楽)</li>
+</ul>
+
+<p>短所:</p>
+
+<ul>
+<li>公式ドキュメントが死ぬほど分かりにくい(Googleだからしょうがない説もあるが)</li>
+<li>ツールのインストール方法などが死ぬほど分かりにくい</li>
+<li>現状ブラウザによるネイティブサポートがない(grpc-gatewayを使うといいらしいよ)</li>
+<li>生成するコードにユーザー側の自由度がほぼないし自力でプラグインを書くのは多分大変(のでユースケースによっては全く使えないと思う)</li>
+</ul>
+
+<p>最近はマイクロサービス間通信とかで採用されてる事例が多いみたい。実際にブラウザとの通信で使ってる人はそこまで多くない印象だった。</p>
+
+<h2 id="rustでgrpc">RustでgRPC</h2>
+
+<p>Rustでサーバー側の処理を書く。</p>
+
+<p>まず、上にも書いたようにprotoをRustコードに変換するgRPCコンパイラのRustプラグインが必要になる。これには<code>protobuf-codegen</code>と<code>grpcio-compiler</code>を使うといいよってあった。</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># インストール
+</span><span class="c1"></span>$ cargo install protobuf-codegen grpcio-compiler
+
+<span class="c1"># コンパイル
+</span><span class="c1"></span>$ protoc --rust_out<span class="o">=</span>. --grpc_out<span class="o">=</span>. --plugin<span class="o">=</span>protoc-gen-grpc<span class="o">=</span><span class="sb">`</span>which grpc_rust_plugin<span class="sb">`</span> example.proto</code></pre></div>
+<p>これによって生成されたRustモジュールを読み込んで使うことになるけど、それには<a href="https://github.com/pingcap/grpc-rs">grpc-rs</a>を使った(<a href="https://github.com/stepancheg/grpc-rust">grpc-rust</a>というのもあるけどこっちは触ってない)。</p>
+
+<p>サーバー側のプログラムは<a href="https://github.com/pingcap/grpc-rs/blob/master/examples/hello_world/server.rs">こんな感じ</a>で書くと良い。</p>
+
+<p>コンパイルすると、protocol buffersのmessageが定義された<code>example.rs</code>と、RPC関連が定義された<code>example_grpc.rs</code>が生成される。</p>
+
+<h2 id="node-jsでgrpc">Node.jsでgRPC</h2>
+
+<p>Node.jsでクライアント側の処理を書く。</p>
+
+<p>Node.jsでは、gRPCのコンパイラがやってる処理を動的にやるライブラリとかもあるようで、その場合にはprotoファイルを直接食わせて書けるので事前にコンパイルとかが不要になる(<code>@grpc/proto-loader</code>を使うか、gRPCは不要でprotocol buffersだけなら<code>protobufjs</code>あたり)。が、まぁコード生成する方がいいと思うのでそうする。</p>
+
+<p>Node.js用のgRPCコンパイラプラグインはgrpc-toolsを使う(この情報がどこにもはっきり書いてなくてマジでキレそうだった。grpcのexamplesのREADMEを見てたらこっそり書いてあってQuickStartにちゃんと書け以外の感情を失った)。</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># インストール
+</span><span class="c1"></span>$ npm i -g grpc-tools
+
+<span class="c1"># コンパイル
+</span><span class="c1"></span>$ protoc --js_out<span class="o">=</span><span class="nv">import_style</span><span class="o">=</span>commonjs,binary:. --grpc_out<span class="o">=</span>. --plugin<span class="o">=</span>protoc-gen-grpc<span class="o">=</span><span class="sb">`</span>which grpc_tools_node_protoc_plugin<span class="sb">`</span> example.proto</code></pre></div>
+<p>コンパイルすると、protocol buffersのmessageが定義された<code>example_pb.js</code>と、RPC関連が定義された<code>example_grpc_pb.rs</code>が生成される。</p>
+
+<h2 id="通信">通信</h2>
+
+<p>通信自体はRust側でサーバーを上げてNode.jsからクライアントを叩くだけ。シリアライズとデシリアライズはprotocol buffersが勝手にやってくれるので簡単。</p>
+
+<h2 id="結末">結末</h2>
+
+<p>最初にも書いた通り今書いてるアプリケーションでgRPCを使う予定だった。しかし、grpcio-compilerで生成されるRustのコードはサーバー側の処理が欲しい形になってなかったので使えないことが分かったりした。</p>
+
+<p>(具体的には、サーバーにコールバックをどんどん登録していく形になってて、コールバックは当然 <code>Sync + 'static</code> などを要求される。しかし今作ってるアプリケーションは動画編集ソフトで、そこでは動画ファイルストリームに関する処理はスレッドセーフではなく <code>Sync</code> になってないのでこれを用いた部分をコールバックに登録できない。どうしようもねえなこれ(肩をすくめる))</p>
+
+<p>gRPCを捨ててprotocol buffersだけ使おうかとも(RPCしたい部分はZMQとか使うとよさそう)思ったけど、protocol buffers自体はserde対応しておらず、自力でserializer/deserializerを書かされそうになって闇っぽかったのでこれもナシになった。</p>
+
+<p>というわけでおとなしくserdeとZMQで通信してSDKは心のこもったハンドメイドになりそう。悲しいね。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/rust">
+                <span>#</span>Rust</a>
+            
+              <a href="/tags/javascript">
+                <span>#</span>JavaScript</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
