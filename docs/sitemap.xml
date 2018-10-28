@@ -3,6 +3,13 @@
   
     
       <url>
+        <loc>https://myuon.github.io/posts/grpc-rust/</loc>
+        <lastmod>2018-10-28T16:03:12+09:00</lastmod>
+      </url>
+    
+  
+    
+      <url>
         <loc>https://myuon.github.io/posts/blog-simplicity/</loc>
         <lastmod>2018-10-23T22:53:56+09:00</lastmod>
       </url>
@@ -364,6 +371,14 @@
   
     
       <url>
+        <loc>https://myuon.github.io/tags/javascript/</loc>
+        <lastmod>2018-10-28T16:03:12+09:00</lastmod>
+        <priority>0</priority>
+      </url>
+    
+  
+    
+      <url>
         <loc>https://myuon.github.io/tags/linux/</loc>
         <lastmod>2018-05-20T08:11:42-07:00</lastmod>
         <priority>0</priority>
@@ -373,7 +388,7 @@
     
       <url>
         <loc>https://myuon.github.io/posts/</loc>
-        <lastmod>2018-10-23T22:53:56+09:00</lastmod>
+        <lastmod>2018-10-28T16:03:12+09:00</lastmod>
         <priority>0</priority>
       </url>
     
@@ -381,7 +396,7 @@
     
       <url>
         <loc>https://myuon.github.io/tags/rust/</loc>
-        <lastmod>2018-03-04T19:21:20+09:00</lastmod>
+        <lastmod>2018-10-28T16:03:12+09:00</lastmod>
         <priority>0</priority>
       </url>
     
@@ -396,7 +411,7 @@
     
       <url>
         <loc>https://myuon.github.io/</loc>
-        <lastmod>2018-10-23T22:53:56+09:00</lastmod>
+        <lastmod>2018-10-28T16:03:12+09:00</lastmod>
       </url>
     
   
