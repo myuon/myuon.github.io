@@ -22,14 +22,12 @@ gRPCを使うには、protocol buffersというプロトコル定義言語(?)を
 gRPC/protocol buffersの個人的なポイントをまとめてみる。
 長所:
  サポートされてる言語が多い ツール自体はしっかりしてるのであまりその辺で変にハマることはなさそう streaming通信なんかもサポートされてる protocol buffers自体が後方互換性を命を懸けて守るという強い意志のもとに設計されてる まぁこれはそのせいで面倒なこともあるので短所でもあるけど、多くの人にとっては長所になりうるかと思う protoファイルからドキュメント生成するやつもある(proto-gen-doc) protocol buffers自体は普通にプログラミング言語による型定義みたいな感じで普通に書きやすい(少なくともswaggerみたいな地獄のyaml UXとかに比べたら断然楽)  短所:
- 公式ドキュメントが死ぬほど分かりにくい(Googleだからしょうがない説もあるが) ツールのインストール方法などが死ぬほど分かりにくい 現状ブラウザによるネイティブサポートがない(grpc-gatewayを使うといいらしいよ) 生成するコードにユーザー側の自由度がほぼないし自力でプラグインを書くのは多分大変(のでユースケースによっては全く使えないと思う)  最近はマイクロサービス間通信とかで採用されてる事例が多いみたい。実際にブラウザとの通信で使ってる人はそこまで多くない印象だった。
+ 公式ドキュメントが死ぬほど分かりにくい(Googleだからしょうがない説もあるが) ツールのインストール方法などが死ぬほど分かりにくい 現状ブラウザによるネイティブサポートがない(grpc-gatewayを使うといいらしいよ) [追記] (grpc-webというので対応されたらしい) [/追記] 生成するコードにユーザー側の自由度がほぼないし自力でプラグインを書くのは多分大変(のでユースケースによっては全く使えないと思う)  最近はマイクロサービス間通信とかで採用されてる事例が多いみたい。実際にブラウザとの通信で使ってる人はそこまで多くない印象だった。
 RustでgRPC Rustでサーバー側の処理を書く。
 まず、上にも書いたようにprotoをRustコードに変換するgRPCコンパイラのRustプラグインが必要になる。これにはprotobuf-codegenとgrpcio-compilerを使うといいよってあった。
 # インストール $ cargo install protobuf-codegen grpcio-compiler # コンパイル $ protoc --rust_out=. --grpc_out=. --plugin=protoc-gen-grpc=`which grpc_rust_plugin` example.proto これによって生成されたRustモジュールを読み込んで使うことになるけど、それにはgrpc-rsを使った(grpc-rustというのもあるけどこっちは触ってない)。
 サーバー側のプログラムはこんな感じで書くと良い。
-コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。
-Node.jsでgRPC Node.jsでクライアント側の処理を書く。
-Node.jsでは、gRPCのコンパイラがやってる処理を動的にやるライブラリとかもあるようで、その場合にはprotoファイルを直接食わせて書けるので事前にコンパイルとかが不要になる(@grpc/proto-loaderを使うか、gRPCは不要でprotocol buffersだけならprotobufjsあたり)。が、まぁコード生成する方がいいと思うのでそうする。</description>
+コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。</description>
       </item>
     
       <item>
