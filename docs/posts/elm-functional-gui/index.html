@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elm: Concurrent FRP for Functional GUIsを読んで - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Elm: Concurrent FRP for Functional GUIsを読んで" />
+<meta property="og:description" content="これ
+https://elm-lang.org/assets/papers/concurrent-frp.pdf
+はじめに 某所でFRPをeffect systemとみなせないか、という大変示唆的な質問をいただいて、気になったのでFRPについて調べてた流れで教えてもらったElmの作者が書いた論文。 自分はFRPについては「なんかEventとBehaviorがあってArrowになったりMonadになったりするやつ」くらいの感覚しかなかったので論文読んでみることにした。
+ところでmarkdownで数式や図を記述するのは大変つらいので記事は適当に日本語で書きます。詳しく知りたい人は論文の方を読んでください。
+あと、ElmはFRP捨てたって言ってた気がするので多分今のElmはもう論文にあるような仕組みで動いてないような気がしないでもない。
+2章 背景  FRPにはClassical, Real-time (とEvent-driven), Arrowizedの3種類ある Classical:  Behavior a = Time -&gt; a: これが時間の経過とともに変わる値を表現する Event a = [(Time, a)]: これがBehaviorのスナップショットを取ったもの 基本はBehaviorをベースに計算を行うけど、実際のプログラムでは無限に細かい時間で計算はできないので30fpsとか決まったタイミングで再計算するかどうかを考えることになる。そういう離散化のためにEventがあるよみたいな感じ  Real-time:  Event a = Behavior (Maybe a) EventもBehaviorで書いちゃえばいいんちゃうん Event, Behaviorをまとめて Signal a = Time -&gt; a と呼ぶことに 論文で説明されてるElm Coreもこれにinspireされてるっぽい  Arrowized:  SF a b = Signal a -&gt; Signal b signal functionというものをベースにしてこれをArrowにする 論文読んだ限りだと理論が難しくなりそうなのでFRPにおける特にArrowの優位性はよくわからなかった 書きやすいってくらいなのか  Message-Passing Concurrency  Concurrent MLの説明 実装はこれで書いたり書かなかったりする(あとの章でtranslationが与えられる)  既存のFRP GUI frameworks  メモリリークする(Haskellなので)(って何度も書いてあってウケるって思った)   3章 Core Language  Dicreteなsignalを扱う 文法: e ::= () | n \in Z | \x." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/elm-functional-gui/" />
+
+
+
+<meta property="article:published_time" content="2018-11-04T12:32:56&#43;09:00"/>
+
+<meta property="article:modified_time" content="2018-11-04T12:32:56&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Elm: Concurrent FRP for Functional GUIsを読んで">
+<meta itemprop="description" content="これ
+https://elm-lang.org/assets/papers/concurrent-frp.pdf
+はじめに 某所でFRPをeffect systemとみなせないか、という大変示唆的な質問をいただいて、気になったのでFRPについて調べてた流れで教えてもらったElmの作者が書いた論文。 自分はFRPについては「なんかEventとBehaviorがあってArrowになったりMonadになったりするやつ」くらいの感覚しかなかったので論文読んでみることにした。
+ところでmarkdownで数式や図を記述するのは大変つらいので記事は適当に日本語で書きます。詳しく知りたい人は論文の方を読んでください。
+あと、ElmはFRP捨てたって言ってた気がするので多分今のElmはもう論文にあるような仕組みで動いてないような気がしないでもない。
+2章 背景  FRPにはClassical, Real-time (とEvent-driven), Arrowizedの3種類ある Classical:  Behavior a = Time -&gt; a: これが時間の経過とともに変わる値を表現する Event a = [(Time, a)]: これがBehaviorのスナップショットを取ったもの 基本はBehaviorをベースに計算を行うけど、実際のプログラムでは無限に細かい時間で計算はできないので30fpsとか決まったタイミングで再計算するかどうかを考えることになる。そういう離散化のためにEventがあるよみたいな感じ  Real-time:  Event a = Behavior (Maybe a) EventもBehaviorで書いちゃえばいいんちゃうん Event, Behaviorをまとめて Signal a = Time -&gt; a と呼ぶことに 論文で説明されてるElm Coreもこれにinspireされてるっぽい  Arrowized:  SF a b = Signal a -&gt; Signal b signal functionというものをベースにしてこれをArrowにする 論文読んだ限りだと理論が難しくなりそうなのでFRPにおける特にArrowの優位性はよくわからなかった 書きやすいってくらいなのか  Message-Passing Concurrency  Concurrent MLの説明 実装はこれで書いたり書かなかったりする(あとの章でtranslationが与えられる)  既存のFRP GUI frameworks  メモリリークする(Haskellなので)(って何度も書いてあってウケるって思った)   3章 Core Language  Dicreteなsignalを扱う 文法: e ::= () | n \in Z | \x.">
+
+
+<meta itemprop="datePublished" content="2018-11-04T12:32:56&#43;09:00" />
+<meta itemprop="dateModified" content="2018-11-04T12:32:56&#43;09:00" />
+<meta itemprop="wordCount" content="401">
+
+
+
+<meta itemprop="keywords" content="FRP,ラムダ計算," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Elm: Concurrent FRP for Functional GUIsを読んで"/>
+<meta name="twitter:description" content="これ
+https://elm-lang.org/assets/papers/concurrent-frp.pdf
+はじめに 某所でFRPをeffect systemとみなせないか、という大変示唆的な質問をいただいて、気になったのでFRPについて調べてた流れで教えてもらったElmの作者が書いた論文。 自分はFRPについては「なんかEventとBehaviorがあってArrowになったりMonadになったりするやつ」くらいの感覚しかなかったので論文読んでみることにした。
+ところでmarkdownで数式や図を記述するのは大変つらいので記事は適当に日本語で書きます。詳しく知りたい人は論文の方を読んでください。
+あと、ElmはFRP捨てたって言ってた気がするので多分今のElmはもう論文にあるような仕組みで動いてないような気がしないでもない。
+2章 背景  FRPにはClassical, Real-time (とEvent-driven), Arrowizedの3種類ある Classical:  Behavior a = Time -&gt; a: これが時間の経過とともに変わる値を表現する Event a = [(Time, a)]: これがBehaviorのスナップショットを取ったもの 基本はBehaviorをベースに計算を行うけど、実際のプログラムでは無限に細かい時間で計算はできないので30fpsとか決まったタイミングで再計算するかどうかを考えることになる。そういう離散化のためにEventがあるよみたいな感じ  Real-time:  Event a = Behavior (Maybe a) EventもBehaviorで書いちゃえばいいんちゃうん Event, Behaviorをまとめて Signal a = Time -&gt; a と呼ぶことに 論文で説明されてるElm Coreもこれにinspireされてるっぽい  Arrowized:  SF a b = Signal a -&gt; Signal b signal functionというものをベースにしてこれをArrowにする 論文読んだ限りだと理論が難しくなりそうなのでFRPにおける特にArrowの優位性はよくわからなかった 書きやすいってくらいなのか  Message-Passing Concurrency  Concurrent MLの説明 実装はこれで書いたり書かなかったりする(あとの章でtranslationが与えられる)  既存のFRP GUI frameworks  メモリリークする(Haskellなので)(って何度も書いてあってウケるって思った)   3章 Core Language  Dicreteなsignalを扱う 文法: e ::= () | n \in Z | \x."/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2018-11-04 12:32">2018-11-04</time>
+      <h1>Elm: Concurrent FRP for Functional GUIsを読んで</h1>
+    </header>
+    <section>
+
+<p>これ</p>
+
+<p><a href="https://elm-lang.org/assets/papers/concurrent-frp.pdf">https://elm-lang.org/assets/papers/concurrent-frp.pdf</a></p>
+
+<h2 id="はじめに">はじめに</h2>
+
+<p>某所でFRPをeffect systemとみなせないか、という大変示唆的な質問をいただいて、気になったのでFRPについて調べてた流れで教えてもらったElmの作者が書いた論文。
+自分はFRPについては「なんかEventとBehaviorがあってArrowになったりMonadになったりするやつ」くらいの感覚しかなかったので論文読んでみることにした。</p>
+
+<p>ところでmarkdownで数式や図を記述するのは大変つらいので記事は適当に日本語で書きます。詳しく知りたい人は論文の方を読んでください。</p>
+
+<p>あと、ElmはFRP捨てたって言ってた気がするので多分今のElmはもう論文にあるような仕組みで動いてないような気がしないでもない。</p>
+
+<h2 id="2章-背景">2章 背景</h2>
+
+<ul>
+<li>FRPにはClassical, Real-time (とEvent-driven), Arrowizedの3種類ある</li>
+<li>Classical:
+
+<ul>
+<li><code>Behavior a = Time -&gt; a</code>: これが時間の経過とともに変わる値を表現する</li>
+<li><code>Event a = [(Time, a)]</code>: これがBehaviorのスナップショットを取ったもの</li>
+<li>基本はBehaviorをベースに計算を行うけど、実際のプログラムでは無限に細かい時間で計算はできないので30fpsとか決まったタイミングで再計算するかどうかを考えることになる。そういう離散化のためにEventがあるよみたいな感じ</li>
+</ul></li>
+<li>Real-time:
+
+<ul>
+<li><code>Event a = Behavior (Maybe a)</code></li>
+<li>EventもBehaviorで書いちゃえばいいんちゃうん</li>
+<li>Event, Behaviorをまとめて <code>Signal a = Time -&gt; a</code> と呼ぶことに</li>
+<li>論文で説明されてるElm Coreもこれにinspireされてるっぽい</li>
+</ul></li>
+<li>Arrowized:
+
+<ul>
+<li><code>SF a b = Signal a -&gt; Signal b</code></li>
+<li>signal functionというものをベースにしてこれをArrowにする</li>
+<li>論文読んだ限りだと理論が難しくなりそうなのでFRPにおける特にArrowの優位性はよくわからなかった 書きやすいってくらいなのか</li>
+</ul></li>
+<li>Message-Passing Concurrency
+
+<ul>
+<li>Concurrent MLの説明</li>
+<li>実装はこれで書いたり書かなかったりする(あとの章でtranslationが与えられる)</li>
+</ul></li>
+<li>既存のFRP GUI frameworks
+
+<ul>
+<li>メモリリークする(Haskellなので)(って何度も書いてあってウケるって思った)</li>
+</ul></li>
+</ul>
+
+<h2 id="3章-core-language">3章 Core Language</h2>
+
+<ul>
+<li>Dicreteなsignalを扱う</li>
+<li>文法: <code>e ::= () | n \in Z | \x. e | e1 e2 | x | let x = e1 in e2 | i \in Input | lift e e1 .. en | foldp e1 e2 e3 | async e</code>
+
+<ul>
+<li>primitiveとしてlift, foldp, asyncが追加されてる</li>
+<li>liftは持ち上げ(Functorのn変数版)</li>
+<li>foldpはsignalの畳み込み(過去から現在に向かって発生したEventを順に畳み込んで現在の値を計算するみたいな感じ)</li>
+<li>asyncは与えられた項がasyncに(他のプログラムと同期せず)実行していいよってことをコンパイラに伝えるためのprimitive</li>
+</ul></li>
+<li>例
+
+<ul>
+<li><code>cosWave lift cos (Time.every 0.2)</code> 0.2秒ごとにcos waveの値を計算</li>
+<li><code>fitUpTo w = lift (min w) Window.width</code> Windowの幅とwの小さい方を返す(Windowがリサイズされると再計算される)</li>
+<li><code>foldp (\k word. word ++ [k]) &quot;&quot; Keys.lastPressed</code> 今までに入力されたキーのなす文字列を返す</li>
+</ul></li>
+<li>Type System: typeは2種類, primitive typeとsignal typeがある
+
+<ul>
+<li><code>t ::= unit | number | t -&gt; t'</code> (primitive type)</li>
+<li><code>s ::= t signal | t -&gt; s | s -&gt; s'</code> (signal type)</li>
+<li><code>r ::= t | s</code></li>
+<li><code>t signal</code>は時間とともに移り変わる<code>t</code>、くらいの意味</li>
+</ul></li>
+<li>Typing Rules
+
+<ul>
+<li><code>i \in Input ==&gt; i : t |- i : (t signal)</code></li>
+<li><code>lift : (t1 -&gt; .. -&gt; tn -&gt; t) -&gt; t1 signal -&gt; .. -&gt; tn signal -&gt; t signal</code></li>
+<li><code>foldp : (t -&gt; t' -&gt; t') -&gt; t' -&gt; t signal -&gt; t' signal</code></li>
+<li><code>async : t signal -&gt; t signal</code></li>
+</ul></li>
+<li>Embedding Arrowized FPR in Elm
+
+<ul>
+<li>ElmのsignalはApplicativeにはなるけどMonadにはならない(joinが与えられてないし; これは単純にここではCoreをそう作ったというだけで実際には頑張れば入れられるような気がしないでもない)</li>
+<li>Arrowized FRPでSF Arrowを利用するものがあるらしく、それで言うとCoreのSignalはSFを使って書ける <code>Signal a = SF World a</code></li>
+<li>のでElm CoreもArrowみたいなもんや(って書いてあったけど、だとしたらセクションの名前のembedの方向逆じゃないのって思う)</li>
+</ul></li>
+</ul>
+
+<p>(Semanticsの説明は箇条書きだとやりにくいので普通の文体に戻す)</p>
+
+<p>Coreはcall-by-valueでsemanticsを与える</p>
+
+<p>Coreのvalueはtypeと同じく2-sortで、base valueとreactive valueに分かれる</p>
+
+<ul>
+<li><code>v ::= () | n | \x. e</code> (base value)</li>
+<li><code>s ::= x | let x = s1 in s2 | i | lift v s1 .. sn | foldp v1 v2 s | async s</code> (reactive value)</li>
+</ul>
+
+<p>signalの値はコピーをしてはいけない。signalをコピーすると入力が変化ときに必要以上に再計算が走ってしまう可能性があるため: 例えば <code>let x = sf i in [f x, g x]</code> を <code>[f (sf i), g (sf i)]</code> に簡約すると、iが変化したときのsの計算が前者は1回で済むけど後者は2回走るので。</p>
+
+<p>Small-step operational semanticsは(pritimiveなやつ以外は)次の通り</p>
+
+<ul>
+<li>APP <code>(\x.e1) e2 -&gt; let x = e2 in e1</code></li>
+<li>REDUCE <code>let x = v in e -&gt; e[v/x]</code></li>
+<li>DROP <code>let x = s in e -&gt; e</code> (<code>x \notin fv(e)</code>)</li>
+<li>EXPAND <code>(let x = s in e1) e2 -&gt; let x = s in (e1 e2)</code> (<code>x \notin fv(e2)</code>)</li>
+</ul>
+
+<p>また、primitiveは左から右に順に計算を行う。</p>
+
+<h2 id="4章-concurrency">4章 Concurrency</h2>
+
+<ul>
+<li>Concurrentにどうやって計算をするかということと、global delay(入力の変化の伝播に時間がかかること)をどうやって避けるかって話が書いてある</li>
+<li>結局asyncにできるところはやりましょという感じ</li>
+<li>asyncをつけると、通常のInputと同じく非同期に処理されるようになる</li>
+<li>asyncを付けていいかどうかはユーザー判断(たぶん)なので適当な書き方をするとsemanticsが壊れる気もする; concurrency自体はCoreでは一切何もケアしてないし</li>
+<li>Translation to CML: CMLでのCoreの実装が書いてあるがこれだけ見せられても困るとしか言いようがない(そもそもCMLの説明全然してないじゃん) やーここのsemanticsはちゃんと与えてほしかったが作者は実装したい人だろうしまぁしょうがないか</li>
+<li>translationはよくわかってないのでequationとかも含めまた機会があればちゃんと考えたい</li>
+</ul>
+
+<h2 id="5章以降">5章以降</h2>
+
+<ul>
+<li>GUIフレームワークどうやって作るかとかそういう話</li>
+<li>まぁ割愛</li>
+</ul>
+
+<h2 id="論文を読んで">論文を読んで</h2>
+
+<p>FRPについての概説が2章でまとめられていたのはよかった。semanticsは分かったような分からんような(やっぱequational theoryとか作って構造を明示してくれないと分かった気がしないよな)という感じ。</p>
+
+<p>ここでのElmのsignalはapplicativeだけどclassical frpでmonadicなやつとかもあるっぽい。その辺見てたらどうもmonadicといいつつ普通にparametricっぽさあるやつとか出てきてeffect systemでは？という感じになったりした(その論文ではalgebraicというかfree effectだった)ので、monadicな方もまた論文を読んだら記事を書こうと思います。</p>
+
+<p>おわり</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/frp">
+                <span>#</span>FRP</a>
+            
+              <a href="/tags/%E3%83%A9%E3%83%A0%E3%83%80%E8%A8%88%E7%AE%97">
+                <span>#</span>ラムダ計算</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
