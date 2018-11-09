@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>はじめようReason ML - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="はじめようReason ML" />
+<meta property="og:description" content="はじめに Reason MLを最近始めました。よき。
+Reason MLとは Reason MLとはOCamlにインスパイアされたAltJSの一種。見た目は型の付いたJSみたいな感じだけど実際はJSのsyntaxに寄せたML。
+BuckleScriptというコンパイラ(この名前もどうなんという感じだけど)を使ってJSに変える。BuckleScriptはReason MLとOCamlをJSに変換するコンパイラであり、Reason MLとOCamlのいずれのsyntaxも混ぜて使うことができるっぽい。便利～。
+実際に使うときはBuckleScriptの方のドキュメントもちゃんと読んでおく必要がある(似たような見た目のページだけど内容は違う)。BuckleScriptにはコンパイラ拡張みたいなものが載っておりそれを上手く使うことで生成されるJSを制御したりJS側の関数を読み込んだりするのでこの辺も割と必須。
+ https://reasonml.github.io/en/ Reason MLの言語リファレンス https://bucklescript.github.io/en/ BuckleScriptリファレンス https://bucklescript.github.io/bucklescript/api/index.html BuckleScript標準ライブラリ(Reason MLも同じものがportされてる)  よさ  まともな型が付く(OCamlの型システム、世界で一番分かりやすいみたいなところがある) 生成されるJSがまとも ドキュメントが割とそろってる JSとのブリッジが簡単(基本的に何もしなくてもできる; JS直接埋め込むのもできる) JS風syntax(これは完全な好みだけどブレース・セミコロンsyntaxが結局一番書きやすいみたいなところあるよ) まぁライブラリも意外とある bs-jsonも普通に使いやすいよ JSの標準ライブラリの関数とか型はすべてportされてるのでちゃんと使える  ハマりポイント  BuckleScript拡張最初はよくわからなかった(ドキュメントを100回くらい読むと分かる) 特殊な演算子とかが意外と多くてsyntaxを覚えるのは結構しんどい(Haskellとかだとライブラリ定義の演算子が多いから定義見ればいいけど組み込みの演算子が多いのがつらい) 関数はデフォルトではカリー化されて (a,b) =&gt; ... は a =&gt; b =&gt; ... 相当のJSが生成されるので(これは回避可能)知らないとたまに思った通り動かない ReactはReasonReactというのがあるらしいけどVue.jsはどうしたらいいのかよくわからない(調べてもVue2のやつしか出てこない)  レポート Node.jsで書いていたサーバーサイドをReason MLで書き直したりVue.jsのビジネスロジック部分だけを切り離してReason MLで書き直したりして安寧を得ています。
+Rustに引き続き9ヵ月ぶりくらいに良い言語に巡り合えました。ていうか私はML系の言語大体「良い」って言う傾向にあるしまぁML好きなんだなと自分でも思います。
+あとはVue.jsでスムーズに使えるようになったらフロントもバックも全部Reason MLでできるのになーって言ってる。 create-vue-app あたりのエコシステムが正式にサポートしてくんないかな～って感じですね。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/start-reasonml/" />
+
+
+
+<meta property="article:published_time" content="2018-11-10T00:24:20&#43;09:00"/>
+
+<meta property="article:modified_time" content="2018-11-10T00:24:20&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="はじめようReason ML">
+<meta itemprop="description" content="はじめに Reason MLを最近始めました。よき。
+Reason MLとは Reason MLとはOCamlにインスパイアされたAltJSの一種。見た目は型の付いたJSみたいな感じだけど実際はJSのsyntaxに寄せたML。
+BuckleScriptというコンパイラ(この名前もどうなんという感じだけど)を使ってJSに変える。BuckleScriptはReason MLとOCamlをJSに変換するコンパイラであり、Reason MLとOCamlのいずれのsyntaxも混ぜて使うことができるっぽい。便利～。
+実際に使うときはBuckleScriptの方のドキュメントもちゃんと読んでおく必要がある(似たような見た目のページだけど内容は違う)。BuckleScriptにはコンパイラ拡張みたいなものが載っておりそれを上手く使うことで生成されるJSを制御したりJS側の関数を読み込んだりするのでこの辺も割と必須。
+ https://reasonml.github.io/en/ Reason MLの言語リファレンス https://bucklescript.github.io/en/ BuckleScriptリファレンス https://bucklescript.github.io/bucklescript/api/index.html BuckleScript標準ライブラリ(Reason MLも同じものがportされてる)  よさ  まともな型が付く(OCamlの型システム、世界で一番分かりやすいみたいなところがある) 生成されるJSがまとも ドキュメントが割とそろってる JSとのブリッジが簡単(基本的に何もしなくてもできる; JS直接埋め込むのもできる) JS風syntax(これは完全な好みだけどブレース・セミコロンsyntaxが結局一番書きやすいみたいなところあるよ) まぁライブラリも意外とある bs-jsonも普通に使いやすいよ JSの標準ライブラリの関数とか型はすべてportされてるのでちゃんと使える  ハマりポイント  BuckleScript拡張最初はよくわからなかった(ドキュメントを100回くらい読むと分かる) 特殊な演算子とかが意外と多くてsyntaxを覚えるのは結構しんどい(Haskellとかだとライブラリ定義の演算子が多いから定義見ればいいけど組み込みの演算子が多いのがつらい) 関数はデフォルトではカリー化されて (a,b) =&gt; ... は a =&gt; b =&gt; ... 相当のJSが生成されるので(これは回避可能)知らないとたまに思った通り動かない ReactはReasonReactというのがあるらしいけどVue.jsはどうしたらいいのかよくわからない(調べてもVue2のやつしか出てこない)  レポート Node.jsで書いていたサーバーサイドをReason MLで書き直したりVue.jsのビジネスロジック部分だけを切り離してReason MLで書き直したりして安寧を得ています。
+Rustに引き続き9ヵ月ぶりくらいに良い言語に巡り合えました。ていうか私はML系の言語大体「良い」って言う傾向にあるしまぁML好きなんだなと自分でも思います。
+あとはVue.jsでスムーズに使えるようになったらフロントもバックも全部Reason MLでできるのになーって言ってる。 create-vue-app あたりのエコシステムが正式にサポートしてくんないかな～って感じですね。">
+
+
+<meta itemprop="datePublished" content="2018-11-10T00:24:20&#43;09:00" />
+<meta itemprop="dateModified" content="2018-11-10T00:24:20&#43;09:00" />
+<meta itemprop="wordCount" content="53">
+
+
+
+<meta itemprop="keywords" content="ML," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="はじめようReason ML"/>
+<meta name="twitter:description" content="はじめに Reason MLを最近始めました。よき。
+Reason MLとは Reason MLとはOCamlにインスパイアされたAltJSの一種。見た目は型の付いたJSみたいな感じだけど実際はJSのsyntaxに寄せたML。
+BuckleScriptというコンパイラ(この名前もどうなんという感じだけど)を使ってJSに変える。BuckleScriptはReason MLとOCamlをJSに変換するコンパイラであり、Reason MLとOCamlのいずれのsyntaxも混ぜて使うことができるっぽい。便利～。
+実際に使うときはBuckleScriptの方のドキュメントもちゃんと読んでおく必要がある(似たような見た目のページだけど内容は違う)。BuckleScriptにはコンパイラ拡張みたいなものが載っておりそれを上手く使うことで生成されるJSを制御したりJS側の関数を読み込んだりするのでこの辺も割と必須。
+ https://reasonml.github.io/en/ Reason MLの言語リファレンス https://bucklescript.github.io/en/ BuckleScriptリファレンス https://bucklescript.github.io/bucklescript/api/index.html BuckleScript標準ライブラリ(Reason MLも同じものがportされてる)  よさ  まともな型が付く(OCamlの型システム、世界で一番分かりやすいみたいなところがある) 生成されるJSがまとも ドキュメントが割とそろってる JSとのブリッジが簡単(基本的に何もしなくてもできる; JS直接埋め込むのもできる) JS風syntax(これは完全な好みだけどブレース・セミコロンsyntaxが結局一番書きやすいみたいなところあるよ) まぁライブラリも意外とある bs-jsonも普通に使いやすいよ JSの標準ライブラリの関数とか型はすべてportされてるのでちゃんと使える  ハマりポイント  BuckleScript拡張最初はよくわからなかった(ドキュメントを100回くらい読むと分かる) 特殊な演算子とかが意外と多くてsyntaxを覚えるのは結構しんどい(Haskellとかだとライブラリ定義の演算子が多いから定義見ればいいけど組み込みの演算子が多いのがつらい) 関数はデフォルトではカリー化されて (a,b) =&gt; ... は a =&gt; b =&gt; ... 相当のJSが生成されるので(これは回避可能)知らないとたまに思った通り動かない ReactはReasonReactというのがあるらしいけどVue.jsはどうしたらいいのかよくわからない(調べてもVue2のやつしか出てこない)  レポート Node.jsで書いていたサーバーサイドをReason MLで書き直したりVue.jsのビジネスロジック部分だけを切り離してReason MLで書き直したりして安寧を得ています。
+Rustに引き続き9ヵ月ぶりくらいに良い言語に巡り合えました。ていうか私はML系の言語大体「良い」って言う傾向にあるしまぁML好きなんだなと自分でも思います。
+あとはVue.jsでスムーズに使えるようになったらフロントもバックも全部Reason MLでできるのになーって言ってる。 create-vue-app あたりのエコシステムが正式にサポートしてくんないかな～って感じですね。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2018-11-10 12:24">2018-11-10</time>
+      <h1>はじめようReason ML</h1>
+    </header>
+    <section>
+
+<h1 id="はじめに">はじめに</h1>
+
+<p>Reason MLを最近始めました。よき。</p>
+
+<h2 id="reason-mlとは">Reason MLとは</h2>
+
+<p>Reason MLとはOCamlにインスパイアされたAltJSの一種。見た目は型の付いたJSみたいな感じだけど実際はJSのsyntaxに寄せたML。</p>
+
+<p>BuckleScriptというコンパイラ(この名前もどうなんという感じだけど)を使ってJSに変える。BuckleScriptはReason MLとOCamlをJSに変換するコンパイラであり、Reason MLとOCamlのいずれのsyntaxも混ぜて使うことができるっぽい。便利～。</p>
+
+<p>実際に使うときはBuckleScriptの方のドキュメントもちゃんと読んでおく必要がある(似たような見た目のページだけど内容は違う)。BuckleScriptにはコンパイラ拡張みたいなものが載っておりそれを上手く使うことで生成されるJSを制御したりJS側の関数を読み込んだりするのでこの辺も割と必須。</p>
+
+<ul>
+<li><a href="https://reasonml.github.io/en/">https://reasonml.github.io/en/</a> Reason MLの言語リファレンス</li>
+<li><a href="https://bucklescript.github.io/en/">https://bucklescript.github.io/en/</a> BuckleScriptリファレンス</li>
+<li><a href="https://bucklescript.github.io/bucklescript/api/index.html">https://bucklescript.github.io/bucklescript/api/index.html</a> BuckleScript標準ライブラリ(Reason MLも同じものがportされてる)</li>
+</ul>
+
+<h2 id="よさ">よさ</h2>
+
+<ul>
+<li>まともな型が付く(OCamlの型システム、世界で一番分かりやすいみたいなところがある)</li>
+<li>生成されるJSがまとも</li>
+<li>ドキュメントが割とそろってる</li>
+<li>JSとのブリッジが簡単(基本的に何もしなくてもできる; JS直接埋め込むのもできる)</li>
+<li>JS風syntax(これは完全な好みだけどブレース・セミコロンsyntaxが結局一番書きやすいみたいなところあるよ)</li>
+<li>まぁライブラリも意外とある</li>
+<li>bs-jsonも普通に使いやすいよ</li>
+<li>JSの標準ライブラリの関数とか型はすべてportされてるのでちゃんと使える</li>
+</ul>
+
+<h2 id="ハマりポイント">ハマりポイント</h2>
+
+<ul>
+<li>BuckleScript拡張最初はよくわからなかった(ドキュメントを100回くらい読むと分かる)</li>
+<li>特殊な演算子とかが意外と多くてsyntaxを覚えるのは結構しんどい(Haskellとかだとライブラリ定義の演算子が多いから定義見ればいいけど組み込みの演算子が多いのがつらい)</li>
+<li>関数はデフォルトではカリー化されて <code>(a,b) =&gt; ...</code> は <code>a =&gt; b =&gt; ...</code> 相当のJSが生成されるので(これは回避可能)知らないとたまに思った通り動かない</li>
+<li>ReactはReasonReactというのがあるらしいけどVue.jsはどうしたらいいのかよくわからない(調べてもVue2のやつしか出てこない)</li>
+</ul>
+
+<h2 id="レポート">レポート</h2>
+
+<p>Node.jsで書いていたサーバーサイドをReason MLで書き直したりVue.jsのビジネスロジック部分だけを切り離してReason MLで書き直したりして安寧を得ています。</p>
+
+<p>Rustに引き続き9ヵ月ぶりくらいに良い言語に巡り合えました。ていうか私はML系の言語大体「良い」って言う傾向にあるしまぁML好きなんだなと自分でも思います。</p>
+
+<p>あとはVue.jsでスムーズに使えるようになったらフロントもバックも全部Reason MLでできるのになーって言ってる。 <code>create-vue-app</code> あたりのエコシステムが正式にサポートしてくんないかな～って感じですね。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/ml">
+                <span>#</span>ML</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
