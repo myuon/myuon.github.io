@@ -3,6 +3,13 @@
   
     
       <url>
+        <loc>https://myuon.github.io/posts/start-reasonml/</loc>
+        <lastmod>2018-11-10T00:24:20+09:00</lastmod>
+      </url>
+    
+  
+    
+      <url>
         <loc>https://myuon.github.io/posts/elm-functional-gui/</loc>
         <lastmod>2018-11-04T12:32:56+09:00</lastmod>
       </url>
@@ -402,8 +409,16 @@
   
     
       <url>
+        <loc>https://myuon.github.io/tags/ml/</loc>
+        <lastmod>2018-11-10T00:24:20+09:00</lastmod>
+        <priority>0</priority>
+      </url>
+    
+  
+    
+      <url>
         <loc>https://myuon.github.io/posts/</loc>
-        <lastmod>2018-11-04T12:32:56+09:00</lastmod>
+        <lastmod>2018-11-10T00:24:20+09:00</lastmod>
         <priority>0</priority>
       </url>
     
@@ -426,7 +441,7 @@
     
       <url>
         <loc>https://myuon.github.io/</loc>
-        <lastmod>2018-11-04T12:32:56+09:00</lastmod>
+        <lastmod>2018-11-10T00:24:20+09:00</lastmod>
       </url>
     
   
