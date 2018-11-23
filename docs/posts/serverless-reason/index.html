@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lambda FunctionをReasonで書く - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.40.1" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Lambda FunctionをReasonで書く" />
+<meta property="og:description" content="Reason ML、やっていこうな 世はまさに大サーバーレス時代なのでLambda Functionやっていきというお気持ち。
+AWS Lambdaで現時点(2018年11月)で対応されている言語はNode.js, Python, Go, C#(dotnet), Javaの5つ。このうち後ろ2つはコールドスタートが激遅なので使い物にならない。で前3つのうちではドキュメントの多いNode.jsが安定ですが、Node.jsをランタイムに採用するとしてしかしJSは書きたくない、そういうときにReason MLはいい感じな選択肢なのでは？というのがこの記事の趣旨です。
+serverless-reason serverless frameworkというサーバーレスアプリをやるのにとても便利なツールがあって、それのReasonで動くテンプレートを作っておいたので好きに使ってくださいという感じ。
+ 
+以下このプロジェクトの中身の解説をする。
+echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに定義されている。
+/* Sorry I&#39;m a lazy person! */ type event = { . &#34;pathParameters&#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&gt; Js.Promise.t(unit); type response = { . &#34;statusCode&#34;: int, &#34;body&#34;: string, }; let handler : (event, context, callback) =&gt; Js.Promise.t(response) = (event, _, _) =&gt; { Js." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/serverless-reason/" />
+
+
+
+<meta property="article:published_time" content="2018-11-23T21:00:48&#43;09:00"/>
+
+<meta property="article:modified_time" content="2018-11-23T21:00:48&#43;09:00"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Lambda FunctionをReasonで書く">
+<meta itemprop="description" content="Reason ML、やっていこうな 世はまさに大サーバーレス時代なのでLambda Functionやっていきというお気持ち。
+AWS Lambdaで現時点(2018年11月)で対応されている言語はNode.js, Python, Go, C#(dotnet), Javaの5つ。このうち後ろ2つはコールドスタートが激遅なので使い物にならない。で前3つのうちではドキュメントの多いNode.jsが安定ですが、Node.jsをランタイムに採用するとしてしかしJSは書きたくない、そういうときにReason MLはいい感じな選択肢なのでは？というのがこの記事の趣旨です。
+serverless-reason serverless frameworkというサーバーレスアプリをやるのにとても便利なツールがあって、それのReasonで動くテンプレートを作っておいたので好きに使ってくださいという感じ。
+ 
+以下このプロジェクトの中身の解説をする。
+echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに定義されている。
+/* Sorry I&#39;m a lazy person! */ type event = { . &#34;pathParameters&#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&gt; Js.Promise.t(unit); type response = { . &#34;statusCode&#34;: int, &#34;body&#34;: string, }; let handler : (event, context, callback) =&gt; Js.Promise.t(response) = (event, _, _) =&gt; { Js.">
+
+
+<meta itemprop="datePublished" content="2018-11-23T21:00:48&#43;09:00" />
+<meta itemprop="dateModified" content="2018-11-23T21:00:48&#43;09:00" />
+<meta itemprop="wordCount" content="117">
+
+
+
+<meta itemprop="keywords" content="AWS,Reason," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Lambda FunctionをReasonで書く"/>
+<meta name="twitter:description" content="Reason ML、やっていこうな 世はまさに大サーバーレス時代なのでLambda Functionやっていきというお気持ち。
+AWS Lambdaで現時点(2018年11月)で対応されている言語はNode.js, Python, Go, C#(dotnet), Javaの5つ。このうち後ろ2つはコールドスタートが激遅なので使い物にならない。で前3つのうちではドキュメントの多いNode.jsが安定ですが、Node.jsをランタイムに採用するとしてしかしJSは書きたくない、そういうときにReason MLはいい感じな選択肢なのでは？というのがこの記事の趣旨です。
+serverless-reason serverless frameworkというサーバーレスアプリをやるのにとても便利なツールがあって、それのReasonで動くテンプレートを作っておいたので好きに使ってくださいという感じ。
+ 
+以下このプロジェクトの中身の解説をする。
+echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに定義されている。
+/* Sorry I&#39;m a lazy person! */ type event = { . &#34;pathParameters&#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&gt; Js.Promise.t(unit); type response = { . &#34;statusCode&#34;: int, &#34;body&#34;: string, }; let handler : (event, context, callback) =&gt; Js.Promise.t(response) = (event, _, _) =&gt; { Js."/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2018-11-23 09:00">2018-11-23</time>
+      <h1>Lambda FunctionをReasonで書く</h1>
+    </header>
+    <section>
+
+<h1 id="reason-ml-やっていこうな">Reason ML、やっていこうな</h1>
+
+<p>世はまさに大サーバーレス時代なのでLambda Functionやっていきというお気持ち。</p>
+
+<p>AWS Lambdaで現時点(2018年11月)で対応されている言語はNode.js, Python, Go, C#(dotnet), Javaの5つ。このうち後ろ2つはコールドスタートが激遅なので使い物にならない。で前3つのうちではドキュメントの多いNode.jsが安定ですが、Node.jsをランタイムに採用するとしてしかしJSは書きたくない、そういうときにReason MLはいい感じな選択肢なのでは？というのがこの記事の趣旨です。</p>
+
+<h2 id="serverless-reason">serverless-reason</h2>
+
+<p>serverless frameworkというサーバーレスアプリをやるのにとても便利なツールがあって、それのReasonで動くテンプレートを作っておいたので好きに使ってくださいという感じ。</p>
+
+<p><div class="github-card" data-github="myuon/serverless-reason" data-width="400" data-height="" data-theme="default"></div>
+<script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script></p>
+
+<p>以下このプロジェクトの中身の解説をする。</p>
+
+<h2 id="echo-re">echo.re</h2>
+
+<p>Lambda Functionとしてechoというものが<code>src/functions/echo.re</code>に定義されている。</p>
+<div class="highlight"><pre class="chroma"><code class="language-ml" data-lang="ml"><span class="o">/*</span> <span class="nc">Sorry</span> <span class="nc">I&#39;m</span> <span class="n">a</span> <span class="k">lazy</span> <span class="n">person</span><span class="o">!</span> <span class="o">*/</span>
+<span class="k">type</span> <span class="n">event</span> <span class="o">=</span> <span class="o">{</span>
+  <span class="o">.</span>
+  <span class="s2">&#34;pathParameters&#34;</span><span class="o">:</span> <span class="nn">Js</span><span class="p">.</span><span class="nn">Dict</span><span class="p">.</span><span class="n">t</span><span class="o">(</span><span class="kt">string</span><span class="o">),</span>
+<span class="o">};</span>
+
+<span class="k">type</span> <span class="n">context</span> <span class="o">=</span> <span class="kt">unit</span><span class="o">;</span>
+<span class="k">type</span> <span class="n">callback</span> <span class="o">=</span> <span class="o">(.</span> <span class="nn">Js</span><span class="p">.</span><span class="n">null</span><span class="o">(</span><span class="kt">string</span><span class="o">),</span> <span class="nn">Js</span><span class="p">.</span><span class="nn">Json</span><span class="p">.</span><span class="n">t</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="nn">Js</span><span class="p">.</span><span class="nn">Promise</span><span class="p">.</span><span class="n">t</span><span class="o">(</span><span class="kt">unit</span><span class="o">);</span>
+
+<span class="k">type</span> <span class="n">response</span> <span class="o">=</span> <span class="o">{</span>
+  <span class="o">.</span>
+  <span class="s2">&#34;statusCode&#34;</span><span class="o">:</span> <span class="kt">int</span><span class="o">,</span>
+  <span class="s2">&#34;body&#34;</span><span class="o">:</span> <span class="kt">string</span><span class="o">,</span>
+<span class="o">};</span>
+
+<span class="k">let</span> <span class="n">handler</span> <span class="o">:</span> <span class="o">(</span><span class="n">event</span><span class="o">,</span> <span class="n">context</span><span class="o">,</span> <span class="n">callback</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="nn">Js</span><span class="p">.</span><span class="nn">Promise</span><span class="p">.</span><span class="n">t</span><span class="o">(</span><span class="n">response</span><span class="o">)</span> <span class="o">=</span> <span class="o">(</span><span class="n">event</span><span class="o">,</span> <span class="o">_,</span> <span class="o">_)</span> <span class="o">=&gt;</span> <span class="o">{</span>
+  <span class="nn">Js</span><span class="p">.</span><span class="n">log</span><span class="o">(</span><span class="s2">&#34;hello&#34;</span><span class="o">);</span>
+
+  <span class="o">{</span>
+    <span class="s2">&#34;statusCode&#34;</span><span class="o">:</span> <span class="n">200</span><span class="o">,</span>
+    <span class="s2">&#34;body&#34;</span><span class="o">:</span> <span class="n">event</span><span class="o">##</span><span class="n">pathParameters</span> <span class="o">|&gt;</span> <span class="nn">Js</span><span class="p">.</span><span class="nn">Dict</span><span class="p">.</span><span class="n">unsafeGet</span><span class="o">(_,</span> <span class="s2">&#34;value&#34;</span><span class="o">),</span>
+  <span class="o">}</span>
+  <span class="o">|&gt;</span> <span class="nn">Js</span><span class="p">.</span><span class="nn">Promise</span><span class="p">.</span><span class="n">resolve</span><span class="o">;</span>
+<span class="o">};</span></code></pre></div>
+<p>普通のLambda Functionを雑にラップしただけです。eventの型としてpathParametersしか乗せてないしcontextはunitで潰してしまっているので<strong>この型定義は真似しないでください</strong>(じゃあ乗せるなという話ではあるが)。</p>
+
+<p>ここではcallbackは使わずPromiseにしているが、callbackを使いたい場合には必ずGuaranteed Uncurryingする(型定義を<code>(. a,b) =&gt; ..</code>の形にし、呼ぶときは<code>callback(. x,y)</code>の形で呼ぶ)ことを忘れないように。そうでないとうまく動かない。</p>
+
+<p>callbackとかは微妙に使いにくいのでPromiseで書いて途中で例外による大域脱出をtry-catchで捉えられるようにするみたいなやり方がReasonでラムダ書くときはなんやかんや一番書きやすそうと思った。ていうかasync/awaitを早く使わせてくれ。</p>
+
+<p>ちなみにaws lambdaの型定義である<a href="https://github.com/ahrefs/bs-aws-lambda">ahrefs/bs-aws-lambda</a>というのもあるが、私はどうも馴染まなかった。型が強いのはいいんだけど逐一コンストラクタをかぶせたりパターンマッチするのめんどくなって普通にjsonで書いた方が分かりやすいのでは？と思ったので上でもそうしてる。</p>
+
+<h2 id="serverless-webpack">serverless-webpack</h2>
+
+<p>serverless-webpackで一緒にバンドルする設定だが、BuckleScriptのランタイムはwebpackにかけないようにしてる(毎回やってると時間かかりそうだし…)。<code>serverless package</code>すると、<code>node_modules/bs-platform</code>以下のコンパイルされたjsだけzipに入るようになってる。</p>
+
+<p>私はyarn使ってるのでその設定になってるけど気に入らん場合は適当に変えてください。</p>
+
+<h2 id="その他">その他</h2>
+
+<ul>
+<li>bsbが<code>.bs.js</code>ではなく<code>.js</code>を吐くようにしてるのはそうでないとhandlerの設定ができないため</li>
+<li><code>bs-json</code>という、Reasonのレコード型のjson用のserializer/deserializerを書くためのライブラリがあるがこれはコンパイル後のファイルがnpm packageに含まれてないので自力でビルドしないとうまくパッケージングができない。Lambdaで使うときにはbs-jsonは使わない方が無難かも</li>
+<li>上のコードを実行して、ホットスタートで大体実行時間<code>0.5ms</code>、消費メモリ<code>45MB</code>だった</li>
+<li>ちなみにパッケージのサイズ(<code>bs-platform</code>のランタイムも含め)は1MBくらい</li>
+<li>Reasonで書いたラムダは実行時エラーとして<code>{ &quot;errorMessage&quot;: &quot;RequestId: ... Process exited before completing request&quot; }</code>みたいなのを返してくることがある。JSの実行時エラーはこの形で出ることがあるみたいで、その場合はちゃんとログを見た方がいい</li>
+</ul>
+
+<h1 id="おわりに">おわりに</h1>
+
+<p>DynamoDBとReason/LambdaとAPI Gatewayでちょっくら簡単なアプリケーションを書いてみたんだけどデプロイでハマったり色々したのでminimalなプロジェクトテンプレートはさすがに欲しいと思って作りました。</p>
+
+<p>それはそうとX-Rayが便利なのでできれば使いたいのだけれど、xray-sdkがでかすぎて入れる気にならんのどうにかならんもんか。ていうかaws-sdkはAWS側で用意してくれているんだからxrayを貼ったsdkも用意してくれてもよさそうなもんだけど。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/aws">
+                <span>#</span>AWS</a>
+            
+              <a href="/tags/reason">
+                <span>#</span>Reason</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-33072399-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
