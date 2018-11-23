@@ -1,7 +1,7 @@
 ---
 title: はじめようReason ML
 date: 2018-11-10T00:24:20+09:00
-tags: [ "ML" ]
+tags: [ "ML", "Reason" ]
 ---
 
 # はじめに
