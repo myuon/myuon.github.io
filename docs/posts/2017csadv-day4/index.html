@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -30,23 +30,8 @@ Isarのsyntaxのコアは次のようになっている(実際はもっと膨大
 proof = &#39;by&#39; method | &#39;proof&#39; [method] step* &#39;qed&#39; step = &#39;fix&#39; variables | &#39;assume&#39; proposition | [&#39;from&#39; fact&#43;] (&#39;have&#39; | &#39;show&#39;) proposition proof proposition = [name :] &#34;formula&#34; 4.1 Isar by Example 初めにIsarによる証明を見せるので眺めてみよう。
 lemma &#34;¬ surj (f :: &#39;a ⇒ &#39;a set)&#34; proof - assume srjf: &#34;surj f&#34; from srjf have fa: &#34;∀A." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day4/" />
-
-
-
-<meta property="article:published_time" content="2017-12-04T00:39:09&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day4/" /><meta property="article:published_time" content="2017-12-04T00:39:09&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-04T00:39:09&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -295,7 +280,7 @@ moreover/ultimatelyというキーワードを使うと、それまでに示さ�
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -329,12 +314,16 @@ moreover/ultimatelyというキーワードを使うと、それまでに示さ�
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

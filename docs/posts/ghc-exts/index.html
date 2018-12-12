@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -26,23 +26,8 @@
  10. GHC Language Features User&#39;s Guideの該当セクション 7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い  上から順に見ていって後から関連するものとかを再編します。
 GHC拡張一覧  AllowAmbiguousTypes 型変数が全て決定していないものを通すようにする (個人的)非推奨1 Arrows arrow notationを使えるようにする FRPする人なんかは使う ApplicativeDo do-notationがApplicativeに対しても使えるようになる 個人的には嫌い BangPatterns 関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする BinaryLiterals バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない CApiFFI FFI関連; 使ったことない ConstrainedClassMethods 型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ) ConstraintKinds Constraintというカインドが使えるようになる CPP Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる DataKinds データ型の宣言をカインドの宣言へ昇格する DefaultSignatures 型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる DeriveAnyClass defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう DeriveDataTypeable deriving Data ってかける DeriveFunctor deriving Functor ってかける DeriveFoldable deriving Foldable ってかける DeriveGeneric deriving Generic ってかける DeriveLift deriving Lift ってかける LiftはTHのこれで、値をsyntactic expressionに変換できるようにするやつ DeriveTraversable deriving Traversable ってかける DerivingStrategies derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ DisambiguateRecordFields \k -&gt; k {hoge = x} におけるkのような、推論可能だが曖昧なレコード名を許す EmptyCase case x of {} ってかける Void型を扱う時なんかに使える EmptyDataDecls data Empty のようなコンストラクタを持たない型の宣言を許す ExistentialQuantification exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい ExplicitForall 型宣言のimplicitな全称量化をexplicitにかけるようにする id : forall a." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/ghc-exts/" />
-
-
-
-<meta property="article:published_time" content="2018-01-13T00:38:01&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/ghc-exts/" /><meta property="article:published_time" content="2018-01-13T00:38:01&#43;09:00"/>
 <meta property="article:modified_time" content="2018-01-13T00:38:01&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -361,7 +346,7 @@ GHC拡張一覧  AllowAmbiguousTypes 型変数が全て決定していないも�
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -395,12 +380,16 @@ GHC拡張一覧  AllowAmbiguousTypes 型変数が全て決定していないも�
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

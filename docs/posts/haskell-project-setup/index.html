@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -29,7 +29,7 @@ Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellは�
 開発環境構築 このセクションは初回のみです。
 Haskellのインストール stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。
 linux系なら公式ドキュメントを見ながら次のようにするといいと思います。
-$ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall  $ stack setup # GHC(コンパイラ)を入れる stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。
+$ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall $ stack setup # GHC(コンパイラ)を入れる stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。
 エディタ  emacsの人: intero spacemacsの人: haskell layer IntelliJ IDEAの人: intellij-haskell  を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。
 プロジェクトセットアップ stack new [2017/12/16追記]
 どうやらstackのデフォルトテンプレートであるnew-templateがいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に stack new [プロジェクトの名前] とすれば同じものが得られます1。
@@ -39,25 +39,10 @@ $ stack new [プロジェクトの名前] simple-hpack simple-hpackというの�
 (以下昔話なので読まなくてもいいです) さて少しだけ説明をすると、stackという便利ツールが登場する前はみんなcabalというビルドツールを使っていました。cabalはcabalファイルの情報を読み込んでビルドをするのですが、cabalファイルはちょっと面倒な部分があったのでこれをもっと簡単に書けるようにするためにhpackというツールが最近登場しました。 hpackはpackage.yamlをcabalファイルに変換するツールですが、今はstackが公式にhpackをサポートしたので、プロジェクトでpackage.yamlに必要な情報を書くとそれがhpackによってcabalファイルに変換されてcabalによるビルドが走るというところまで全てstackが面倒を見てくれます。
 正直好みですが個人的にはhpackの方が楽なのでこれを使うためにここではsimple-hpackのテンプレートを指定しています。
 また、以下の説明は全てhpackのpackage.yaml前提です。cabalファイルはまた少し違うので対応表で各自調べてください。
-configuration stack newが終わると必要なファイル群と stack." />
+configuration stack newが終わると必要なファイル群と stack.yaml と package." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/haskell-project-setup/" />
-
-
-
-<meta property="article:published_time" content="2017-12-15T00:04:21&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/haskell-project-setup/" /><meta property="article:published_time" content="2017-12-15T00:04:21&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-15T00:04:21&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -69,7 +54,7 @@ Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellは�
 開発環境構築 このセクションは初回のみです。
 Haskellのインストール stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。
 linux系なら公式ドキュメントを見ながら次のようにするといいと思います。
-$ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall  $ stack setup # GHC(コンパイラ)を入れる stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。
+$ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall $ stack setup # GHC(コンパイラ)を入れる stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。
 エディタ  emacsの人: intero spacemacsの人: haskell layer IntelliJ IDEAの人: intellij-haskell  を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。
 プロジェクトセットアップ stack new [2017/12/16追記]
 どうやらstackのデフォルトテンプレートであるnew-templateがいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に stack new [プロジェクトの名前] とすれば同じものが得られます1。
@@ -79,7 +64,7 @@ $ stack new [プロジェクトの名前] simple-hpack simple-hpackというの�
 (以下昔話なので読まなくてもいいです) さて少しだけ説明をすると、stackという便利ツールが登場する前はみんなcabalというビルドツールを使っていました。cabalはcabalファイルの情報を読み込んでビルドをするのですが、cabalファイルはちょっと面倒な部分があったのでこれをもっと簡単に書けるようにするためにhpackというツールが最近登場しました。 hpackはpackage.yamlをcabalファイルに変換するツールですが、今はstackが公式にhpackをサポートしたので、プロジェクトでpackage.yamlに必要な情報を書くとそれがhpackによってcabalファイルに変換されてcabalによるビルドが走るというところまで全てstackが面倒を見てくれます。
 正直好みですが個人的にはhpackの方が楽なのでこれを使うためにここではsimple-hpackのテンプレートを指定しています。
 また、以下の説明は全てhpackのpackage.yaml前提です。cabalファイルはまた少し違うので対応表で各自調べてください。
-configuration stack newが終わると必要なファイル群と stack.">
+configuration stack newが終わると必要なファイル群と stack.yaml と package.">
 
 
 <meta itemprop="datePublished" content="2017-12-15T00:04:21&#43;09:00" />
@@ -99,7 +84,7 @@ Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellは�
 開発環境構築 このセクションは初回のみです。
 Haskellのインストール stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。
 linux系なら公式ドキュメントを見ながら次のようにするといいと思います。
-$ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall  $ stack setup # GHC(コンパイラ)を入れる stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。
+$ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall $ stack setup # GHC(コンパイラ)を入れる stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。
 エディタ  emacsの人: intero spacemacsの人: haskell layer IntelliJ IDEAの人: intellij-haskell  を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。
 プロジェクトセットアップ stack new [2017/12/16追記]
 どうやらstackのデフォルトテンプレートであるnew-templateがいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に stack new [プロジェクトの名前] とすれば同じものが得られます1。
@@ -109,7 +94,7 @@ $ stack new [プロジェクトの名前] simple-hpack simple-hpackというの�
 (以下昔話なので読まなくてもいいです) さて少しだけ説明をすると、stackという便利ツールが登場する前はみんなcabalというビルドツールを使っていました。cabalはcabalファイルの情報を読み込んでビルドをするのですが、cabalファイルはちょっと面倒な部分があったのでこれをもっと簡単に書けるようにするためにhpackというツールが最近登場しました。 hpackはpackage.yamlをcabalファイルに変換するツールですが、今はstackが公式にhpackをサポートしたので、プロジェクトでpackage.yamlに必要な情報を書くとそれがhpackによってcabalファイルに変換されてcabalによるビルドが走るというところまで全てstackが面倒を見てくれます。
 正直好みですが個人的にはhpackの方が楽なのでこれを使うためにここではsimple-hpackのテンプレートを指定しています。
 また、以下の説明は全てhpackのpackage.yaml前提です。cabalファイルはまた少し違うので対応表で各自調べてください。
-configuration stack newが終わると必要なファイル群と stack."/>
+configuration stack newが終わると必要なファイル群と stack.yaml と package."/>
 
 
   </head>
@@ -159,10 +144,10 @@ configuration stack newが終わると必要なファイル群と stack."/>
 
 <p>linux系なら<a href="https://docs.haskellstack.org/en/stable/README/" title="公式ドキュメント">公式ドキュメント</a>を見ながら次のようにするといいと思います。</p>
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">  $ curl -sSL https://get.haskellstack.org/ <span class="p">|</span> sh
-  <span class="c1"># stackのinstall
-</span><span class="c1"></span>
+  <span class="c1"># stackのinstall</span>
+
   $ stack setup
-  # GHC<span class="o">(</span>コンパイラ<span class="o">)</span>を入れる</code></pre></div>
+  <span class="c1"># GHC(コンパイラ)を入れる</span></code></pre></div>
 <p>stackを入れてから <code>stack setup</code> でコンパイラが入るのでのんびり待ちます。
  <code>~/.local/bin/</code> にパスを通しておきます。</p>
 
@@ -209,11 +194,11 @@ hpackはpackage.yamlをcabalファイルに変換するツールですが、今�
 <p>そして私はこのタイミングでgit関連のあれこれをします。
 gitignore生成には<a href="https://github.com/simonwhitaker/gibo" title="gibo">gibo</a>を、git強化に<a href="https://github.com/nvie/gitflow" title="git-flow">git-flow</a>を使っています。</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">  $ gibo Haskell &gt; .gitignore
-  <span class="c1"># .gitignore を作る
-</span><span class="c1"></span>
+  <span class="c1"># .gitignore を作る</span>
+
   $ <span class="nb">echo</span> <span class="s2">&#34;*.cabal&#34;</span> &gt;&gt; .gitignore
-  <span class="c1"># hpackを使っているならcabalは不要
-</span><span class="c1"></span>
+  <span class="c1"># hpackを使っているならcabalは不要</span>
+
   $ git init <span class="o">&amp;&amp;</span> git add . <span class="o">&amp;&amp;</span> git commit -m <span class="s1">&#39;initial commit&#39;</span>
 
   $ git flow init</code></pre></div>
@@ -343,7 +328,7 @@ hackageにパッケージがある場合はstack.yamlのextra-depsに <strong>�
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -377,12 +362,16 @@ hackageにパッケージがある場合はstack.yamlのextra-depsに <strong>�
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

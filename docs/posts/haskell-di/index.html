@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -38,23 +38,8 @@ Loggerの例 例えばLoggerを作る例を考える。
 設計 class Logger a where writeLog :: a -&gt; String -&gt; IO () ロガーは文字列を受け取って何かするというインターフェイスを実装した型のことであろう。ここでの a に、具体的なLogger型が挿入される。
 data SomeLogger = forall a." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/haskell-di/" />
-
-
-
-<meta property="article:published_time" content="2018-07-06T05:51:00-07:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/haskell-di/" /><meta property="article:published_time" content="2018-07-06T05:51:00-07:00"/>
 <meta property="article:modified_time" content="2018-07-06T05:51:00-07:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -253,7 +238,7 @@ Haskellには型システムという仕組みがあるのでこれがインタ�
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -287,12 +272,16 @@ Haskellには型システムという仕組みがあるのでこれがインタ�
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

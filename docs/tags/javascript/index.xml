@@ -6,20 +6,17 @@
     <description>Recent content in Javascript on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
     <lastBuildDate>Sun, 28 Oct 2018 16:03:12 +0900</lastBuildDate>
     
-	<atom:link href="https://myuon.github.io/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
+      <atom:link href="https://myuon.github.io/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
     
     
-    <item>
-      <title>RustとNode.js間通信にgRPCを使う</title>
-      <link>https://myuon.github.io/posts/grpc-rust/</link>
-      <pubDate>Sun, 28 Oct 2018 16:03:12 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/grpc-rust/</guid>
-      <description>gRPCしたくなった。具体的にはRustで作ってるデスクトップアプリケーションで、GUIをElectronで書きたいのでNode.jsと通信が発生するのでそれに使えないかなと思って調査した。
+      <item>
+        <title>RustとNode.js間通信にgRPCを使う</title>
+        <link>https://myuon.github.io/posts/grpc-rust/</link>
+        <pubDate>Sun, 28 Oct 2018 16:03:12 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/grpc-rust/</guid>
+        <description>gRPCしたくなった。具体的にはRustで作ってるデスクトップアプリケーションで、GUIをElectronで書きたいのでNode.jsと通信が発生するのでそれに使えないかなと思って調査した。
 gRPC(protocol buffers)とは gRPCはgoogleが作ったRPC(remote procedure call)のフレームワークで、簡単に言うとサーバー/クライアント間の通信が言語を問わずできるよ！みたいなやつ。 RPC自体は見た目は普通の関数呼び出しみたいな感じで書けて、裏ではHTTP/2の通信に乗ってやりとりが行われるようになっている。実際にはRPCを定義してからそれを呼び出すためにはサーバーやクライアントで言語ごとにインターフェイスの定義とかをしなければいけないが、それを自動で生成してくれるのがgRPCコンパイラという感じ。
 gRPCを使うには、protocol buffersというプロトコル定義言語(?)を.protoファイルに書いてgRPCコンパイラで言語ごとにコンパイルを行う。2018/10/28現在では公式にサポートされてる言語がC++, Java, Python, Go, Rusy, C#, Node.js, Android Java, Obj-C, PHP, Dartなどなど多岐にわたる。Rustは非公式だけどプラグインがあるので使える。
 gRPC/protocol buffersの個人的なポイントをまとめてみる。
@@ -31,7 +28,7 @@ RustでgRPC Rustでサーバー側の処理を書く。
 # インストール $ cargo install protobuf-codegen grpcio-compiler # コンパイル $ protoc --rust_out=. --grpc_out=. --plugin=protoc-gen-grpc=`which grpc_rust_plugin` example.proto これによって生成されたRustモジュールを読み込んで使うことになるけど、それにはgrpc-rsを使った(grpc-rustというのもあるけどこっちは触ってない)。
 サーバー側のプログラムはこんな感じで書くと良い。
 コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

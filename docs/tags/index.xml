@@ -6,201 +6,178 @@
     <description>Recent content in Tags on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
     <lastBuildDate>Mon, 25 Dec 2017 00:11:02 +0900</lastBuildDate>
     
-	<atom:link href="https://myuon.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+      <atom:link href="https://myuon.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
-    <item>
-      <title>Adc2017</title>
-      <link>https://myuon.github.io/tags/adc2017/</link>
-      <pubDate>Mon, 25 Dec 2017 00:11:02 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/adc2017/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Adc2017</title>
+        <link>https://myuon.github.io/tags/adc2017/</link>
+        <pubDate>Mon, 25 Dec 2017 00:11:02 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/adc2017/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>Aws</title>
-      <link>https://myuon.github.io/tags/aws/</link>
-      <pubDate>Fri, 23 Nov 2018 21:00:48 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/aws/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Aws</title>
+        <link>https://myuon.github.io/tags/aws/</link>
+        <pubDate>Fri, 23 Nov 2018 21:00:48 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/aws/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>Frp</title>
-      <link>https://myuon.github.io/tags/frp/</link>
-      <pubDate>Sun, 04 Nov 2018 12:32:56 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/frp/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Frp</title>
+        <link>https://myuon.github.io/tags/frp/</link>
+        <pubDate>Sun, 04 Nov 2018 12:32:56 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/frp/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>Gstreamer</title>
-      <link>https://myuon.github.io/tags/gstreamer/</link>
-      <pubDate>Sun, 04 Mar 2018 19:21:20 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/gstreamer/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Gstreamer</title>
+        <link>https://myuon.github.io/tags/gstreamer/</link>
+        <pubDate>Sun, 04 Mar 2018 19:21:20 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/gstreamer/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>Gtk</title>
-      <link>https://myuon.github.io/tags/gtk/</link>
-      <pubDate>Sun, 04 Mar 2018 19:21:20 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/gtk/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Gtk</title>
+        <link>https://myuon.github.io/tags/gtk/</link>
+        <pubDate>Sun, 04 Mar 2018 19:21:20 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/gtk/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>Haskell</title>
-      <link>https://myuon.github.io/tags/haskell/</link>
-      <pubDate>Fri, 06 Jul 2018 05:51:00 -0700</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/haskell/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Haskell</title>
+        <link>https://myuon.github.io/tags/haskell/</link>
+        <pubDate>Fri, 06 Jul 2018 05:51:00 -0700</pubDate>
+        <guid>https://myuon.github.io/tags/haskell/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>Isabelle</title>
-      <link>https://myuon.github.io/tags/isabelle/</link>
-      <pubDate>Wed, 13 Dec 2017 00:04:03 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/isabelle/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Isabelle</title>
+        <link>https://myuon.github.io/tags/isabelle/</link>
+        <pubDate>Wed, 13 Dec 2017 00:04:03 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/isabelle/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>Javascript</title>
-      <link>https://myuon.github.io/tags/javascript/</link>
-      <pubDate>Sun, 28 Oct 2018 16:03:12 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/javascript/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Javascript</title>
+        <link>https://myuon.github.io/tags/javascript/</link>
+        <pubDate>Sun, 28 Oct 2018 16:03:12 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/javascript/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>Linux</title>
-      <link>https://myuon.github.io/tags/linux/</link>
-      <pubDate>Sun, 20 May 2018 08:11:42 -0700</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/linux/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Linux</title>
+        <link>https://myuon.github.io/tags/linux/</link>
+        <pubDate>Sun, 20 May 2018 08:11:42 -0700</pubDate>
+        <guid>https://myuon.github.io/tags/linux/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>Ml</title>
-      <link>https://myuon.github.io/tags/ml/</link>
-      <pubDate>Sat, 10 Nov 2018 00:24:20 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/ml/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Ml</title>
+        <link>https://myuon.github.io/tags/ml/</link>
+        <pubDate>Sat, 10 Nov 2018 00:24:20 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/ml/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>Reason</title>
-      <link>https://myuon.github.io/tags/reason/</link>
-      <pubDate>Fri, 23 Nov 2018 21:00:48 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/reason/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Reason</title>
+        <link>https://myuon.github.io/tags/reason/</link>
+        <pubDate>Fri, 23 Nov 2018 21:00:48 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/reason/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>Rust</title>
-      <link>https://myuon.github.io/tags/rust/</link>
-      <pubDate>Sun, 28 Oct 2018 16:03:12 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/rust/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Rust</title>
+        <link>https://myuon.github.io/tags/rust/</link>
+        <pubDate>Sun, 28 Oct 2018 16:03:12 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/rust/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>Webサイト</title>
-      <link>https://myuon.github.io/tags/web%E3%82%B5%E3%82%A4%E3%83%88/</link>
-      <pubDate>Fri, 10 Nov 2017 02:37:31 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/web%E3%82%B5%E3%82%A4%E3%83%88/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>Webサイト</title>
+        <link>https://myuon.github.io/tags/web%E3%82%B5%E3%82%A4%E3%83%88/</link>
+        <pubDate>Fri, 10 Nov 2017 02:37:31 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/web%E3%82%B5%E3%82%A4%E3%83%88/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>ブログ</title>
-      <link>https://myuon.github.io/tags/%E3%83%96%E3%83%AD%E3%82%B0/</link>
-      <pubDate>Tue, 23 Oct 2018 22:53:56 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/%E3%83%96%E3%83%AD%E3%82%B0/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>ブログ</title>
+        <link>https://myuon.github.io/tags/%E3%83%96%E3%83%AD%E3%82%B0/</link>
+        <pubDate>Tue, 23 Oct 2018 22:53:56 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/%E3%83%96%E3%83%AD%E3%82%B0/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>ポエム</title>
-      <link>https://myuon.github.io/tags/%E3%83%9D%E3%82%A8%E3%83%A0/</link>
-      <pubDate>Sat, 02 Jun 2018 08:27:31 -0700</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/%E3%83%9D%E3%82%A8%E3%83%A0/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>ポエム</title>
+        <link>https://myuon.github.io/tags/%E3%83%9D%E3%82%A8%E3%83%A0/</link>
+        <pubDate>Sat, 02 Jun 2018 08:27:31 -0700</pubDate>
+        <guid>https://myuon.github.io/tags/%E3%83%9D%E3%82%A8%E3%83%A0/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>ラムダ計算</title>
-      <link>https://myuon.github.io/tags/%E3%83%A9%E3%83%A0%E3%83%80%E8%A8%88%E7%AE%97/</link>
-      <pubDate>Sun, 04 Nov 2018 12:32:56 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/%E3%83%A9%E3%83%A0%E3%83%80%E8%A8%88%E7%AE%97/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>ラムダ計算</title>
+        <link>https://myuon.github.io/tags/%E3%83%A9%E3%83%A0%E3%83%80%E8%A8%88%E7%AE%97/</link>
+        <pubDate>Sun, 04 Nov 2018 12:32:56 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/%E3%83%A9%E3%83%A0%E3%83%80%E8%A8%88%E7%AE%97/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>定理証明</title>
-      <link>https://myuon.github.io/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E/</link>
-      <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>定理証明</title>
+        <link>https://myuon.github.io/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E/</link>
+        <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>日記</title>
-      <link>https://myuon.github.io/tags/%E6%97%A5%E8%A8%98/</link>
-      <pubDate>Sun, 14 Jan 2018 23:14:19 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/%E6%97%A5%E8%A8%98/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>日記</title>
+        <link>https://myuon.github.io/tags/%E6%97%A5%E8%A8%98/</link>
+        <pubDate>Sun, 14 Jan 2018 23:14:19 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/%E6%97%A5%E8%A8%98/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>環境構築</title>
-      <link>https://myuon.github.io/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/</link>
-      <pubDate>Sun, 20 May 2018 08:11:42 -0700</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>環境構築</title>
+        <link>https://myuon.github.io/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/</link>
+        <pubDate>Sun, 20 May 2018 08:11:42 -0700</pubDate>
+        <guid>https://myuon.github.io/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>計算機科学</title>
-      <link>https://myuon.github.io/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%A6/</link>
-      <pubDate>Wed, 13 Dec 2017 00:04:03 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%A6/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>計算機科学</title>
+        <link>https://myuon.github.io/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%A6/</link>
+        <pubDate>Wed, 13 Dec 2017 00:04:03 +0900</pubDate>
+        <guid>https://myuon.github.io/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%A6/</guid>
+        <description></description>
+      </item>
     
-    <item>
-      <title>静的解析</title>
-      <link>https://myuon.github.io/tags/%E9%9D%99%E7%9A%84%E8%A7%A3%E6%9E%90/</link>
-      <pubDate>Wed, 11 Jul 2018 05:49:39 -0700</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/tags/%E9%9D%99%E7%9A%84%E8%A7%A3%E6%9E%90/</guid>
-      <description></description>
-    </item>
+      <item>
+        <title>静的解析</title>
+        <link>https://myuon.github.io/tags/%E9%9D%99%E7%9A%84%E8%A7%A3%E6%9E%90/</link>
+        <pubDate>Wed, 11 Jul 2018 05:49:39 -0700</pubDate>
+        <guid>https://myuon.github.io/tags/%E9%9D%99%E7%9A%84%E8%A7%A3%E6%9E%90/</guid>
+        <description></description>
+      </item>
     
   </channel>
 </rss>

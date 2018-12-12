@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,23 +31,8 @@ Simply-typed nominal_datatype simply = TVar string | TArr simply simply (infixr 
 valid context さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。
 inductive valid :: &#34;(name × simply) list ⇒ bool&#34; where valid_nil: &#34;valid []&#34; | valid_cons: &#34;⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)&#34; equivariance valid lemma elim_valid_cons: &#34;valid ((x,T)#Γ) ⟹ valid Γ ∧ x ♯ Γ&#34; by (cases rule: valid." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/nominal-lambda-4/" />
-
-
-
-<meta property="article:published_time" content="2017-12-13T00:04:03&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/nominal-lambda-4/" /><meta property="article:published_time" content="2017-12-13T00:04:03&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-13T00:04:03&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -351,7 +336,7 @@ Strong Normalizationも実は示そうと今やっているところなのだけ
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -385,12 +370,16 @@ Strong Normalizationも実は示そうと今やっているところなのだけ
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>
