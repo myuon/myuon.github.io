@@ -6,10 +6,9 @@
     <description>Recent content in Categories on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
     
-	<atom:link href="https://myuon.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    
+      <atom:link href="https://myuon.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firebaseを始めてみた - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.52" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Firebaseを始めてみた" />
+<meta property="og:description" content="Firebaseがすごい話 今までAWSのサービス(サーバーレス中心・LambdaとかDynamoDBとかAPI Gatewayとか)は結構触ってたけどGCP系はノータッチだったので一時期超流行ってた(少し前になんかやたらブログ記事とかが量産されていた時期があったように思うんだけどあれは何だったんだ…)firebaseをこの際触ってみることにした。
+Cloud Firestoreとかいう無敵のDB Cloud Firestoreというまだベータ版だけどFirebaseもイチオシっぽいDBがある。こいつは特にDynamoDBを知ってるとそれに比べても無敵だなと思う。個人的すごいポイント:
+ Collection/Documentという分かりやすさ(Partition KeyだのSort Keyだのといった面倒さがない) やたら複雑なベストプラクティスとかもない インデックスが自動でいっぱい貼られる！GSIの制限とかもない！ read/write/deleteの完全リクエスト回数課金という分かりやすさ(あっちもon-demand capacity来ましたが) コンソールから触るのも簡単・分かりやすい rulesによる超細かい権限管理(これはmBaaSだからできないとまぁ困るけど) DynamoDB Stream的な機能もくっついてる Paginationとかにも対応してる emulatorも来た(DynamoDBもdynamodb-localあるよ！)   Firebaseの便利さ Firebaseは認証・FaaS・DB・ストレージあたりが全部オールインワンで全部そろっておりエコシステムがとても強くてよい。どこぞのAmplifyも見習ってほしい(re:Invent2018を見る限り力入れてる感はあった)。クライアントサイドだけですべてを完結させるぞという強さがありやーすごいって感じだった。
+GCPもそうだけどGoogleのサービスは分かりやすさと欲しいものが大体そろってる感じが強いと思う。よく考えられてるしサービスの質が本当に高いなと思ったりあれこれ。
+Firebaseをやめたいって話 とべた褒めなんですがしばらく書いてFirebaseやめるかーってなった。
+ 早く東京リージョンに来てくれ (これが一番大きい; Firestoreとかレイテンシが400-500msとかで正直使い物にならない。ページ表示に1秒もかかるサービスを使うほど暇なユーザーもそういないよ！) 地味に高い、というかAWSが安すぎるのでそれに比べるとちょっとお高く感じるのはある。DynamoDBとかおかしいんじゃないかというくらい安いのでまぁね。 あとAppSync使いたかった これは完全な趣味だけど、AppSyncずっと使いたいと思ってたのでせっかくだしこの機会にと思って 正直mBaaSがとてつもなく向いてるようなユースケースではなかったというところが大きい までもFirebaseの勉強になったので良いとしましょう  メインの理由としてはパフォーマンスとコストが大きかった(と言ってもFirebaseは無料枠もあるのでコストはそこまで大きな差はないと思う)。GCPはいい感じのやつを用意しときました！みたいなサービスが多くて、AWSは本当に特定の用途のためだけのサービスを作っといたから設計は自分で考えろやみたいな投げ方してくるのが多いイメージ。AWSの方がめんどいけどちゃんと組むとカリカリにチューニングされたプログラムのごとく本当に安く早くで組めるというイメージはありますね。めんどいけど。
+個人でちょこっと使う分にはFirebaseとても良いと思うので、またなんかあったら使いたい。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/get-started-with-firebase/" /><meta property="article:published_time" content="2018-12-13T00:05:37&#43;09:00"/>
+<meta property="article:modified_time" content="2018-12-13T00:05:37&#43;09:00"/>
+
+
+
+<meta itemprop="name" content="Firebaseを始めてみた">
+<meta itemprop="description" content="Firebaseがすごい話 今までAWSのサービス(サーバーレス中心・LambdaとかDynamoDBとかAPI Gatewayとか)は結構触ってたけどGCP系はノータッチだったので一時期超流行ってた(少し前になんかやたらブログ記事とかが量産されていた時期があったように思うんだけどあれは何だったんだ…)firebaseをこの際触ってみることにした。
+Cloud Firestoreとかいう無敵のDB Cloud Firestoreというまだベータ版だけどFirebaseもイチオシっぽいDBがある。こいつは特にDynamoDBを知ってるとそれに比べても無敵だなと思う。個人的すごいポイント:
+ Collection/Documentという分かりやすさ(Partition KeyだのSort Keyだのといった面倒さがない) やたら複雑なベストプラクティスとかもない インデックスが自動でいっぱい貼られる！GSIの制限とかもない！ read/write/deleteの完全リクエスト回数課金という分かりやすさ(あっちもon-demand capacity来ましたが) コンソールから触るのも簡単・分かりやすい rulesによる超細かい権限管理(これはmBaaSだからできないとまぁ困るけど) DynamoDB Stream的な機能もくっついてる Paginationとかにも対応してる emulatorも来た(DynamoDBもdynamodb-localあるよ！)   Firebaseの便利さ Firebaseは認証・FaaS・DB・ストレージあたりが全部オールインワンで全部そろっておりエコシステムがとても強くてよい。どこぞのAmplifyも見習ってほしい(re:Invent2018を見る限り力入れてる感はあった)。クライアントサイドだけですべてを完結させるぞという強さがありやーすごいって感じだった。
+GCPもそうだけどGoogleのサービスは分かりやすさと欲しいものが大体そろってる感じが強いと思う。よく考えられてるしサービスの質が本当に高いなと思ったりあれこれ。
+Firebaseをやめたいって話 とべた褒めなんですがしばらく書いてFirebaseやめるかーってなった。
+ 早く東京リージョンに来てくれ (これが一番大きい; Firestoreとかレイテンシが400-500msとかで正直使い物にならない。ページ表示に1秒もかかるサービスを使うほど暇なユーザーもそういないよ！) 地味に高い、というかAWSが安すぎるのでそれに比べるとちょっとお高く感じるのはある。DynamoDBとかおかしいんじゃないかというくらい安いのでまぁね。 あとAppSync使いたかった これは完全な趣味だけど、AppSyncずっと使いたいと思ってたのでせっかくだしこの機会にと思って 正直mBaaSがとてつもなく向いてるようなユースケースではなかったというところが大きい までもFirebaseの勉強になったので良いとしましょう  メインの理由としてはパフォーマンスとコストが大きかった(と言ってもFirebaseは無料枠もあるのでコストはそこまで大きな差はないと思う)。GCPはいい感じのやつを用意しときました！みたいなサービスが多くて、AWSは本当に特定の用途のためだけのサービスを作っといたから設計は自分で考えろやみたいな投げ方してくるのが多いイメージ。AWSの方がめんどいけどちゃんと組むとカリカリにチューニングされたプログラムのごとく本当に安く早くで組めるというイメージはありますね。めんどいけど。
+個人でちょこっと使う分にはFirebaseとても良いと思うので、またなんかあったら使いたい。">
+
+
+<meta itemprop="datePublished" content="2018-12-13T00:05:37&#43;09:00" />
+<meta itemprop="dateModified" content="2018-12-13T00:05:37&#43;09:00" />
+<meta itemprop="wordCount" content="35">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Firebaseを始めてみた"/>
+<meta name="twitter:description" content="Firebaseがすごい話 今までAWSのサービス(サーバーレス中心・LambdaとかDynamoDBとかAPI Gatewayとか)は結構触ってたけどGCP系はノータッチだったので一時期超流行ってた(少し前になんかやたらブログ記事とかが量産されていた時期があったように思うんだけどあれは何だったんだ…)firebaseをこの際触ってみることにした。
+Cloud Firestoreとかいう無敵のDB Cloud Firestoreというまだベータ版だけどFirebaseもイチオシっぽいDBがある。こいつは特にDynamoDBを知ってるとそれに比べても無敵だなと思う。個人的すごいポイント:
+ Collection/Documentという分かりやすさ(Partition KeyだのSort Keyだのといった面倒さがない) やたら複雑なベストプラクティスとかもない インデックスが自動でいっぱい貼られる！GSIの制限とかもない！ read/write/deleteの完全リクエスト回数課金という分かりやすさ(あっちもon-demand capacity来ましたが) コンソールから触るのも簡単・分かりやすい rulesによる超細かい権限管理(これはmBaaSだからできないとまぁ困るけど) DynamoDB Stream的な機能もくっついてる Paginationとかにも対応してる emulatorも来た(DynamoDBもdynamodb-localあるよ！)   Firebaseの便利さ Firebaseは認証・FaaS・DB・ストレージあたりが全部オールインワンで全部そろっておりエコシステムがとても強くてよい。どこぞのAmplifyも見習ってほしい(re:Invent2018を見る限り力入れてる感はあった)。クライアントサイドだけですべてを完結させるぞという強さがありやーすごいって感じだった。
+GCPもそうだけどGoogleのサービスは分かりやすさと欲しいものが大体そろってる感じが強いと思う。よく考えられてるしサービスの質が本当に高いなと思ったりあれこれ。
+Firebaseをやめたいって話 とべた褒めなんですがしばらく書いてFirebaseやめるかーってなった。
+ 早く東京リージョンに来てくれ (これが一番大きい; Firestoreとかレイテンシが400-500msとかで正直使い物にならない。ページ表示に1秒もかかるサービスを使うほど暇なユーザーもそういないよ！) 地味に高い、というかAWSが安すぎるのでそれに比べるとちょっとお高く感じるのはある。DynamoDBとかおかしいんじゃないかというくらい安いのでまぁね。 あとAppSync使いたかった これは完全な趣味だけど、AppSyncずっと使いたいと思ってたのでせっかくだしこの機会にと思って 正直mBaaSがとてつもなく向いてるようなユースケースではなかったというところが大きい までもFirebaseの勉強になったので良いとしましょう  メインの理由としてはパフォーマンスとコストが大きかった(と言ってもFirebaseは無料枠もあるのでコストはそこまで大きな差はないと思う)。GCPはいい感じのやつを用意しときました！みたいなサービスが多くて、AWSは本当に特定の用途のためだけのサービスを作っといたから設計は自分で考えろやみたいな投げ方してくるのが多いイメージ。AWSの方がめんどいけどちゃんと組むとカリカリにチューニングされたプログラムのごとく本当に安く早くで組めるというイメージはありますね。めんどいけど。
+個人でちょこっと使う分にはFirebaseとても良いと思うので、またなんかあったら使いたい。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2018-12-13 12:05">2018-12-13</time>
+      <h1>Firebaseを始めてみた</h1>
+    </header>
+    <section>
+
+<h2 id="firebaseがすごい話">Firebaseがすごい話</h2>
+
+<p>今までAWSのサービス(サーバーレス中心・LambdaとかDynamoDBとかAPI Gatewayとか)は結構触ってたけどGCP系はノータッチだったので一時期超流行ってた(少し前になんかやたらブログ記事とかが量産されていた時期があったように思うんだけどあれは何だったんだ…)firebaseをこの際触ってみることにした。</p>
+
+<h3 id="cloud-firestoreとかいう無敵のdb">Cloud Firestoreとかいう無敵のDB</h3>
+
+<p>Cloud Firestoreというまだベータ版だけどFirebaseもイチオシっぽいDBがある。こいつは特にDynamoDBを知ってるとそれに比べても無敵だなと思う。個人的すごいポイント:</p>
+
+<ul>
+<li>Collection/Documentという分かりやすさ(Partition KeyだのSort Keyだのといった面倒さがない)</li>
+<li>やたら複雑なベストプラクティスとかもない</li>
+<li>インデックスが自動でいっぱい貼られる！GSIの制限とかもない！</li>
+<li>read/write/deleteの完全リクエスト回数課金という分かりやすさ(あっちもon-demand capacity来ましたが)</li>
+<li>コンソールから触るのも簡単・分かりやすい</li>
+<li>rulesによる超細かい権限管理(これはmBaaSだからできないとまぁ困るけど)</li>
+<li>DynamoDB Stream的な機能もくっついてる</li>
+<li>Paginationとかにも対応してる</li>
+<li>emulatorも来た(DynamoDBもdynamodb-localあるよ！)
+<br /></li>
+</ul>
+
+<h3 id="firebaseの便利さ">Firebaseの便利さ</h3>
+
+<p>Firebaseは認証・FaaS・DB・ストレージあたりが全部オールインワンで全部そろっておりエコシステムがとても強くてよい。どこぞのAmplifyも見習ってほしい(re:Invent2018を見る限り力入れてる感はあった)。クライアントサイドだけですべてを完結させるぞという強さがありやーすごいって感じだった。</p>
+
+<p>GCPもそうだけどGoogleのサービスは分かりやすさと欲しいものが大体そろってる感じが強いと思う。よく考えられてるしサービスの質が本当に高いなと思ったりあれこれ。</p>
+
+<h2 id="firebaseをやめたいって話">Firebaseをやめたいって話</h2>
+
+<p>とべた褒めなんですがしばらく書いてFirebaseやめるかーってなった。</p>
+
+<ul>
+<li><strong>早く東京リージョンに来てくれ</strong> (これが一番大きい; Firestoreとかレイテンシが400-500msとかで正直使い物にならない。ページ表示に1秒もかかるサービスを使うほど暇なユーザーもそういないよ！)</li>
+<li>地味に高い、というかAWSが安すぎるのでそれに比べるとちょっとお高く感じるのはある。DynamoDBとかおかしいんじゃないかというくらい安いのでまぁね。</li>
+<li>あとAppSync使いたかった これは完全な趣味だけど、AppSyncずっと使いたいと思ってたのでせっかくだしこの機会にと思って</li>
+<li>正直mBaaSがとてつもなく向いてるようなユースケースではなかったというところが大きい までもFirebaseの勉強になったので良いとしましょう</li>
+</ul>
+
+<p>メインの理由としてはパフォーマンスとコストが大きかった(と言ってもFirebaseは無料枠もあるのでコストはそこまで大きな差はないと思う)。GCPはいい感じのやつを用意しときました！みたいなサービスが多くて、AWSは本当に特定の用途のためだけのサービスを作っといたから設計は自分で考えろやみたいな投げ方してくるのが多いイメージ。AWSの方がめんどいけどちゃんと組むとカリカリにチューニングされたプログラムのごとく本当に安く早くで組めるというイメージはありますね。めんどいけど。</p>
+
+<p>個人でちょこっと使う分にはFirebaseとても良いと思うので、またなんかあったら使いたい。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

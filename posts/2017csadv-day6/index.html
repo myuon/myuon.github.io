@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -28,23 +28,8 @@
 これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
 section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&#34;SKIP&#34;) and CAssign (&#34;_ ::= _&#34; [50,50] 90) and CSeq (infixr &#34;;;&#34; 30) and CIf (&#34;IF _ THEN _ ELSE _&#34; 80) and CWhile (&#34;WHILE _ DO _&#34; 90) comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day6/" />
-
-
-
-<meta property="article:published_time" content="2017-12-06T00:07:53&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day6/" /><meta property="article:published_time" content="2017-12-06T00:07:53&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-06T00:07:53&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -225,7 +210,7 @@ big-stepの方では <code>WHILE b DO c</code> の <code>b</code> をまず評�
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -259,12 +244,16 @@ big-stepの方では <code>WHILE b DO c</code> の <code>b</code> をまず評�
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -37,23 +37,8 @@ data & codata HaskellのListがListかつColistであるというのは有名な
 enrichmentの隠蔽 関係ないのだけどHask categoryで圏論やろうとするとenrichmentが色々効いてきて困る、みたいな話をよく聞くし自分もそう思うのだけれど、実はenrichmentは結構避けられる(隠蔽できる)のかもと書いていてちょっと思った。
 例えばFunctorのfmap methodは fmap: (Functor F) =&gt; (A -&gt; B) -&gt; FA -&gt; FB という形で書かれる。 これはHaskからHask(の適当なsubcategory)へのfunctorのfmapの型になっているが、圏論的には実際は次のような形をしているはずである: fmap: Hask(A,B) -&gt; Hask(FA,FB) ." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/versus-hask-category/" />
-
-
-
-<meta property="article:published_time" content="2018-01-05T22:52:56&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/versus-hask-category/" /><meta property="article:published_time" content="2018-01-05T22:52:56&#43;09:00"/>
 <meta property="article:modified_time" content="2018-01-05T22:52:56&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -215,7 +200,7 @@ GHCのStrict拡張を入れてライブラリもStrict付けて全てビルド�
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -249,12 +234,16 @@ GHCのStrict拡張を入れてライブラリもStrict付けて全てビルド�
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -27,23 +27,8 @@
 9. Small-step long reduction csmallを複数回適用した、ということを表す関係を &lt;_,_&gt; ⟶* &lt;_,_&gt; でかいて、次のように定める。
 subsubsection {* small-step long reduction *} inductive csmall_long (&#34;&lt;_,_&gt; ⟶* &lt;_,_&gt;&#34;) where SL_refl: &#34;&lt;c,st&gt; ⟶* &lt;c,st&gt;&#34; | SL_trans1: &#34;⟦ &lt;c,st&gt; ⟶ &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34; lemma SL_trans: &#34;⟦ &lt;c,st&gt; ⟶* &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34; apply (induction arbitrary: c&#39;&#39; st&#39;&#39; rule: csmall_long.induct) apply simp apply (blast intro: SL_trans1) done lemma SL_SeqStep: &#34;&lt;c1,st&gt; ⟶* &lt;c1&#39;,st&#39;&gt; ⟹ &lt;c1;;c2,st&gt; ⟶* &lt;c1&#39;;;c2,st&#39;&gt;&#34; apply (induction arbitrary: c2 rule: csmall_long." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day8/" />
-
-
-
-<meta property="article:published_time" content="2017-12-08T00:01:48&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day8/" /><meta property="article:published_time" content="2017-12-08T00:01:48&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-08T00:01:48&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -243,7 +228,7 @@ subsubsection {* small-step long reduction *} inductive csmall_long (&#34;&lt;_,
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -277,12 +262,16 @@ subsubsection {* small-step long reduction *} inductive csmall_long (&#34;&lt;_,
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

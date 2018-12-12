@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -36,23 +36,8 @@ The system LK - Wikipedia
 LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。
  judgementは Pn,P(n-1)..P1 |- Q1,Q2..Qm の形(PやQはfirst-order logicの論理式)。左側を仮定、右側を命題(propositions)という。 仮定は「全てがなりたつ」 命題は「いずれかが成り立つ」の意味になる 仮定は右から、命題は左から順番に読んでいく(まぁこれは記法の問題なのでどちらでもよいが) 論理結合子に対する規則は、それが左辺に現れる場合と右辺に現れる場合とあることに注意。例えばAndの規則はAndL1, AndL2, AndRの3つ。 LKは古典的(背理法が使える)である。(注:命題の数を常に1つだけに制限すると直観主義になる) (例) AndLの規則により B |- Qs ==&gt; And(A,B) |- Qs がわかる。これは、「Bの下でQ1." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-theory-2/" />
-
-
-
-<meta property="article:published_time" content="2017-12-17T00:17:12&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-theory-2/" /><meta property="article:published_time" content="2017-12-17T00:17:12&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-17T00:17:12&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -232,7 +217,7 @@ LKについてそこまで説明をするつもりはありませんが、次の
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -266,12 +251,16 @@ LKについてそこまで説明をするつもりはありませんが、次の
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

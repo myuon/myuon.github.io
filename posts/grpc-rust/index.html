@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -35,23 +35,8 @@ RustでgRPC Rustでサーバー側の処理を書く。
 サーバー側のプログラムはこんな感じで書くと良い。
 コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/grpc-rust/" />
-
-
-
-<meta property="article:published_time" content="2018-10-28T16:03:12&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/grpc-rust/" /><meta property="article:published_time" content="2018-10-28T16:03:12&#43;09:00"/>
 <meta property="article:modified_time" content="2018-10-28T16:03:12&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -160,11 +145,11 @@ RPC自体は見た目は普通の関数呼び出しみたいな感じで書け�
 <p>Rustでサーバー側の処理を書く。</p>
 
 <p>まず、上にも書いたようにprotoをRustコードに変換するgRPCコンパイラのRustプラグインが必要になる。これには<code>protobuf-codegen</code>と<code>grpcio-compiler</code>を使うといいよってあった。</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># インストール
-</span><span class="c1"></span>$ cargo install protobuf-codegen grpcio-compiler
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># インストール</span>
+$ cargo install protobuf-codegen grpcio-compiler
 
-<span class="c1"># コンパイル
-</span><span class="c1"></span>$ protoc --rust_out<span class="o">=</span>. --grpc_out<span class="o">=</span>. --plugin<span class="o">=</span>protoc-gen-grpc<span class="o">=</span><span class="sb">`</span>which grpc_rust_plugin<span class="sb">`</span> example.proto</code></pre></div>
+<span class="c1"># コンパイル</span>
+$ protoc --rust_out<span class="o">=</span>. --grpc_out<span class="o">=</span>. --plugin<span class="o">=</span>protoc-gen-grpc<span class="o">=</span><span class="sb">`</span>which grpc_rust_plugin<span class="sb">`</span> example.proto</code></pre></div>
 <p>これによって生成されたRustモジュールを読み込んで使うことになるけど、それには<a href="https://github.com/pingcap/grpc-rs">grpc-rs</a>を使った(<a href="https://github.com/stepancheg/grpc-rust">grpc-rust</a>というのもあるけどこっちは触ってない)。</p>
 
 <p>サーバー側のプログラムは<a href="https://github.com/pingcap/grpc-rs/blob/master/examples/hello_world/server.rs">こんな感じ</a>で書くと良い。</p>
@@ -178,11 +163,11 @@ RPC自体は見た目は普通の関数呼び出しみたいな感じで書け�
 <p>Node.jsでは、gRPCのコンパイラがやってる処理を動的にやるライブラリとかもあるようで、その場合にはprotoファイルを直接食わせて書けるので事前にコンパイルとかが不要になる(<code>@grpc/proto-loader</code>を使うか、gRPCは不要でprotocol buffersだけなら<code>protobufjs</code>あたり)。が、まぁコード生成する方がいいと思うのでそうする。</p>
 
 <p>Node.js用のgRPCコンパイラプラグインはgrpc-toolsを使う(この情報がどこにもはっきり書いてなくてマジでキレそうだった。grpcのexamplesのREADMEを見てたらこっそり書いてあってQuickStartにちゃんと書け以外の感情を失った)。</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># インストール
-</span><span class="c1"></span>$ npm i -g grpc-tools
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># インストール</span>
+$ npm i -g grpc-tools
 
-<span class="c1"># コンパイル
-</span><span class="c1"></span>$ protoc --js_out<span class="o">=</span><span class="nv">import_style</span><span class="o">=</span>commonjs,binary:. --grpc_out<span class="o">=</span>. --plugin<span class="o">=</span>protoc-gen-grpc<span class="o">=</span><span class="sb">`</span>which grpc_tools_node_protoc_plugin<span class="sb">`</span> example.proto</code></pre></div>
+<span class="c1"># コンパイル</span>
+$ protoc --js_out<span class="o">=</span><span class="nv">import_style</span><span class="o">=</span>commonjs,binary:. --grpc_out<span class="o">=</span>. --plugin<span class="o">=</span>protoc-gen-grpc<span class="o">=</span><span class="sb">`</span>which grpc_tools_node_protoc_plugin<span class="sb">`</span> example.proto</code></pre></div>
 <p>コンパイルすると、protocol buffersのmessageが定義された<code>example_pb.js</code>と、RPC関連が定義された<code>example_grpc_pb.rs</code>が生成される。</p>
 
 <h2 id="通信">通信</h2>
@@ -217,7 +202,7 @@ RPC自体は見た目は普通の関数呼び出しみたいな感じで書け�
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -251,12 +236,16 @@ RPC自体は見た目は普通の関数呼び出しみたいな感じで書け�
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

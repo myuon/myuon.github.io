@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -38,23 +38,8 @@
 実際にはシステムレベルでの保証というのがある。ファイルに読み書きされると当然型による保証は失われてしまうが、「そのファイルがこのプログラム以外で読み書きされないことを仮定してよいのなら」ソートされたデータを書き込んだファイルは再び読み込むとソートされているとしてよいはずである。 というわけでプログラムの型レベルでは保証できなくとも、 システム全体がまともに動いているなら ちゃんと制約を満たしてくれているはず、というのがある。
 システムレベルでの「保証」とは人間の頭の中にしかなく、通常いくつかの仮定が必要であるので型システムではうまく取り扱うことができず、例えば unsafeCoerce : a -&gt; b のような関数の出番ということになる。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/how-far-can-static-analysis-go/" />
-
-
-
-<meta property="article:published_time" content="2018-07-11T05:49:39-07:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/how-far-can-static-analysis-go/" /><meta property="article:published_time" content="2018-07-11T05:49:39-07:00"/>
 <meta property="article:modified_time" content="2018-07-11T05:49:39-07:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -257,7 +242,7 @@ quick_sortを実装するために支払ったコストは本当にここの嬉�
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -291,12 +276,16 @@ quick_sortを実装するために支払ったコストは本当にここの嬉�
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

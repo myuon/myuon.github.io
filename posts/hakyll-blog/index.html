@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -30,23 +30,8 @@
 - root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site.hs Hakyllの設定ファイル orgの変換 Hakyllは内部で文書変換にpandocを使っていて、pandocはorgに対応しているらしいので何も設定しなくても変換はできる (デフォルトの状態では posts 以下の文書ファイルが変換される)
 ただし、次の2つをやりたかったのであれこれ設定をかいた" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/hakyll-blog/" />
-
-
-
-<meta property="article:published_time" content="2017-08-16T22:39:48&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/hakyll-blog/" /><meta property="article:published_time" content="2017-08-16T22:39:48&#43;09:00"/>
 <meta property="article:modified_time" content="2017-08-16T22:39:48&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -137,11 +122,11 @@
 <div class="highlight"><pre class="chroma"><code class="language-txt" data-lang="txt">- root
   - _site    できたHTMLファイルが置かれる
   - _cache
-  - css      できたCSSファイルが置かれる<span class="ss">(</span>圧縮済<span class="ss">)</span>
-  - images   画像ファイルが<span class="ss">(</span>ry
+  - css      できたCSSファイルが置かれる(圧縮済)
+  - images   画像ファイルが(ry
 
   - posts    ここにorg or markdownで書いた記事を入れる
-  - site<span class="p">.</span>hs  Hakyllの設定ファイル</code></pre></div>
+  - site.hs  Hakyllの設定ファイル</code></pre></div>
 <h2 id="orgの変換">orgの変換</h2>
 
 <p>Hakyllは内部で文書変換にpandocを使っていて、pandocはorgに対応しているらしいので何も設定しなくても変換はできる
@@ -227,7 +212,7 @@ markdownではmarkdown optionsに <code>hard_line_break</code> というのが�
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -261,12 +246,16 @@ markdownではmarkdown optionsに <code>hard_line_break</code> というのが�
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -29,23 +29,8 @@ https://elm-lang.org/assets/papers/concurrent-frp.pdf
 あと、ElmはFRP捨てたって言ってた気がするので多分今のElmはもう論文にあるような仕組みで動いてないような気がしないでもない。
 2章 背景  FRPにはClassical, Real-time (とEvent-driven), Arrowizedの3種類ある Classical:  Behavior a = Time -&gt; a: これが時間の経過とともに変わる値を表現する Event a = [(Time, a)]: これがBehaviorのスナップショットを取ったもの 基本はBehaviorをベースに計算を行うけど、実際のプログラムでは無限に細かい時間で計算はできないので30fpsとか決まったタイミングで再計算するかどうかを考えることになる。そういう離散化のためにEventがあるよみたいな感じ  Real-time:  Event a = Behavior (Maybe a) EventもBehaviorで書いちゃえばいいんちゃうん Event, Behaviorをまとめて Signal a = Time -&gt; a と呼ぶことに 論文で説明されてるElm Coreもこれにinspireされてるっぽい  Arrowized:  SF a b = Signal a -&gt; Signal b signal functionというものをベースにしてこれをArrowにする 論文読んだ限りだと理論が難しくなりそうなのでFRPにおける特にArrowの優位性はよくわからなかった 書きやすいってくらいなのか  Message-Passing Concurrency  Concurrent MLの説明 実装はこれで書いたり書かなかったりする(あとの章でtranslationが与えられる)  既存のFRP GUI frameworks  メモリリークする(Haskellなので)(って何度も書いてあってウケるって思った)   3章 Core Language  Dicreteなsignalを扱う 文法: e ::= () | n \in Z | \x." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/elm-functional-gui/" />
-
-
-
-<meta property="article:published_time" content="2018-11-04T12:32:56&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/elm-functional-gui/" /><meta property="article:published_time" content="2018-11-04T12:32:56&#43;09:00"/>
 <meta property="article:modified_time" content="2018-11-04T12:32:56&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -268,7 +253,7 @@ https://elm-lang.org/assets/papers/concurrent-frp.pdf
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -302,12 +287,16 @@ https://elm-lang.org/assets/papers/concurrent-frp.pdf
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

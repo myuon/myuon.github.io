@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -35,23 +35,8 @@ myuon/CR.thy
 Nominal Isabelle Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。 binderは [x]. M のような形をしていて、この束縛変数 x の変数名の付け替えを区別しないような項である。
 Nominal Isabelleではこの変数の付け替え、「例えば変数 x を y に付け替える」という操作を「置換 (x,y) を作用させる」という操作とみなす、というところからスタートする。 より厳密には次のようなことである: 無限の変数からなる集合 V が与えられている時、 List (V×V) の元を置換と呼ぶ。このとき置換の作用を ∙ でかくことにし、 ((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M のようにして定める。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/nominal-lambda-1/" />
-
-
-
-<meta property="article:published_time" content="2017-12-10T00:13:17&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/nominal-lambda-1/" /><meta property="article:published_time" content="2017-12-10T00:13:17&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-10T00:13:17&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -324,7 +309,7 @@ primrecとほぼ同じだが、nominal_primrecは定義に出現している項�
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -358,12 +343,16 @@ primrecとほぼ同じだが、nominal_primrecは定義に出現している項�
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>

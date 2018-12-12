@@ -6,27 +6,24 @@
     <description>Recent content in 環境構築 on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
     <lastBuildDate>Sun, 20 May 2018 08:11:42 -0700</lastBuildDate>
     
-	<atom:link href="https://myuon.github.io/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/index.xml" rel="self" type="application/rss+xml" />
+      <atom:link href="https://myuon.github.io/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/index.xml" rel="self" type="application/rss+xml" />
     
     
-    <item>
-      <title>Desktop Linux VM環境 on Windows</title>
-      <link>https://myuon.github.io/posts/vm-linux-on-windows/</link>
-      <pubDate>Sun, 20 May 2018 08:11:42 -0700</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/vm-linux-on-windows/</guid>
-      <description>はじめに 私はプログラミングはすべてLinux環境でやっている。環境構築、フォントレンダリング、まともな端末など理由を挙げればキリがない。 最近までDesktop Linuxを直接インストールしていたが(Windowsを持っていなかったが)、ゲームがしたいなどの理由によりWindows 10を買ってクリーンインストールしたのでLinux環境をVMに移行した。
+      <item>
+        <title>Desktop Linux VM環境 on Windows</title>
+        <link>https://myuon.github.io/posts/vm-linux-on-windows/</link>
+        <pubDate>Sun, 20 May 2018 08:11:42 -0700</pubDate>
+        <guid>https://myuon.github.io/posts/vm-linux-on-windows/</guid>
+        <description>はじめに 私はプログラミングはすべてLinux環境でやっている。環境構築、フォントレンダリング、まともな端末など理由を挙げればキリがない。 最近までDesktop Linuxを直接インストールしていたが(Windowsを持っていなかったが)、ゲームがしたいなどの理由によりWindows 10を買ってクリーンインストールしたのでLinux環境をVMに移行した。
 結論 Vmware Workstation Playerを使え
 Vmware Player vs VirtualBox vs Hyper-V 仕組みの上ではHyper-Vは他2つに比べてハードウェアに近く、よいパフォーマンスが得られることが期待される。 が、3つを試した上では圧倒的にVmware Player  VirtualBox  Hyper-Vという感じだった。
 環境
  ホスト: Windows 10 ゲスト: Ubuntu 18.04 Gnome/Xfce ゲストの設定: メモリ4GBくらい 4コア使っていいよぐらいの設定 特に細かくいじったりはしてない  結果
  Hyper-V: 入力遅延が大きすぎて使い物にならない、マウスもキーボードも数フレームは遅延してる。あと3つの中では明らかにこれだけ重かった(Gnomeのアニメーションの挙動とかを見ている限り)。Hyper-VのViewerがボロいのかと思ってRDP接続も試したけどVirtualBoxと比べても明らかに重くパフォーマンスが出てなかった。LISはUbuntu 16版のものを使用、BIOSでC-State切るといいよって言われてそれもやったけど効果ほぼなし。 VirtualBox: 比較的サクサク。Gnomeだとちょっと重いがXfceだと普通に快適。VMの起動と終了がちょっと重いかなくらい。 Vmware Workstation Player: 3つの中では最もサクサク。Gnomeのアニメーションもそれなりに反映されていた。Xfceにしたら本当に早い、実機インストールかと錯覚する快適さ。体感ではVMの終了がVirtualBoxより早い。  試すとわかるけど悩むまでもないという感じ。 ただしVmwareのみディスプレイサイズがホストOSのものに勝手に従ってくれなくてxrandrからaddmodeした。
 そもそもプログラミングするだけならDEいらないんじゃないですかという話もあるけど今はGUIアプリケーション開発してるからそうも行かないんだよな〜って人の話です。</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

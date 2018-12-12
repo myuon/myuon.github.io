@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.40.1" />
+<meta name="generator" content="Hugo 0.52" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -27,23 +27,8 @@
 confluenceへ (cont.) coherent lemmas parallel betaのcoherent lemmaを示す。 証明は基本的に場合分けやるだけなので省略するとして、まぁ常識的なことが成り立つよねという補題である。(説明の放棄)
 lemma elim_pb_var: &#34;Var x ⇒β N ⟹ N = Var x&#34; lemma elim_pb_abs: assumes &#34;lam [x]. M ⇒β N&#39;&#34; &#34;x ♯ N&#39;&#34; obtains N where &#34;M ⇒β N&#34; &#34;N&#39; = lam [x]. N&#34; lemma elim_pb_app: assumes &#34;M1 $ M2 ⇒β N&#34; obtains N1 N2 where &#34;N = N1 $ N2&#34; &#34;M1 ⇒β N1&#34; &#34;M2 ⇒β N2&#34; | x P P&#39; L where &#34;M1 = lam[x]." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/nominal-lambda-3/" />
-
-
-
-<meta property="article:published_time" content="2017-12-12T00:05:37&#43;09:00"/>
-
+<meta property="og:url" content="https://myuon.github.io/posts/nominal-lambda-3/" /><meta property="article:published_time" content="2017-12-12T00:05:37&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-12T00:05:37&#43;09:00"/>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -325,7 +310,7 @@ confluentはよく菱形の図で表現されるが、これは片方が長く�
       </div>
       <hr>
       <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -359,12 +344,16 @@ confluentはよく菱形の図で表現されるが、これは片方が長く�
 
     <script src="/assets/js/main.82829af440c4.js"></script>
     
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-33072399-3', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   </body>
 </html>
