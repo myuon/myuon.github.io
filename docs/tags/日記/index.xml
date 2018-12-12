@@ -6,17 +6,20 @@
     <description>Recent content in 日記 on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
+    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
+    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
     <lastBuildDate>Sun, 14 Jan 2018 23:14:19 +0900</lastBuildDate>
     
-      <atom:link href="https://myuon.github.io/tags/%E6%97%A5%E8%A8%98/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://myuon.github.io/tags/%E6%97%A5%E8%A8%98/index.xml" rel="self" type="application/rss+xml" />
     
     
-      <item>
-        <title>プロジェクトマネジメントを始めたい</title>
-        <link>https://myuon.github.io/posts/want-to-start-project-management/</link>
-        <pubDate>Sun, 14 Jan 2018 23:14:19 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/want-to-start-project-management/</guid>
-        <description>資料  担当になったら知っておきたい「プロジェクトマネジメント」実践講座: 2ヶ月前くらいに買って読んだ ゲーム開発 プロジェクトマネジメント講座: スクエニの資料 具体例がゲーム開発だけど内容は業種を問わないと思う  プロジェクトマネジメント実践講座を読んだ 内容は大変丁寧な感じでモチベーションと具体的な例を上げつつPMの重要性、あと必要な各種書類や仕事の詳しい日本語による解説という感じ。 それなりにページ数あるけど圧縮したら15ページ+図表くらいで収まる気がする(チートシートほしい) モチベーションを十分理解している人は安心して読み飛ばしていいと思う。
+    <item>
+      <title>プロジェクトマネジメントを始めたい</title>
+      <link>https://myuon.github.io/posts/want-to-start-project-management/</link>
+      <pubDate>Sun, 14 Jan 2018 23:14:19 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/want-to-start-project-management/</guid>
+      <description>資料  担当になったら知っておきたい「プロジェクトマネジメント」実践講座: 2ヶ月前くらいに買って読んだ ゲーム開発 プロジェクトマネジメント講座: スクエニの資料 具体例がゲーム開発だけど内容は業種を問わないと思う  プロジェクトマネジメント実践講座を読んだ 内容は大変丁寧な感じでモチベーションと具体的な例を上げつつPMの重要性、あと必要な各種書類や仕事の詳しい日本語による解説という感じ。 それなりにページ数あるけど圧縮したら15ページ+図表くらいで収まる気がする(チートシートほしい) モチベーションを十分理解している人は安心して読み飛ばしていいと思う。
 個人的な感想
  PMでは「納期を守る」という感覚が一番大事っぽい やたらExcelを推してくるのは逆に言えばまともなツールが他にないのだろうなぁ リスク管理についても書いてあってなるほどと思った(リスクを先に想定しておくのは難しいけど大事っぽい) モチベーションの説明がわかりやすい プロジェクトの発足と仕事を作って人に割り振る時のマネージャーの動き方について主に書いてる感じ  読んでる時はもっと色々思ったはずだけど読んでから時間経ちすぎて忘れた
 個人的に気になった方法論 「PMの話」っていうと結構マネージャーの動き方とか仕事の仕方的なものを指すこともあるんだけど(サイクルはこまめに回しましょうねとかそういう) 自分が欲しいのは方法論なのでそっちについてちょっとまとめておく
@@ -36,14 +39,15 @@ WBS &amp; ガントチャート WBSなんて分かればいいので構造化文
 作業の流れを把握するにはグラフ化されたものが欲しいけど、完了報告&amp;修正とか入れるならテキストでどうにかしたいという欲もあり色々大変。
 あと上では構造化文書っていったけどredmineみたいなやつでもいい気がする。あれってどうなんだろ、個人で使うにはめんどくさくならないかな。
 スケジューリング 自分はよく作業をボトムアップで見積もるけど、その前に「プロジェクトそのものに飽きる」という悲しい問題があり、それを考えると納期は個人趣味プロジェクトでも確かに存在する。 そういう視点が今までなかったのでよくプロジェクトがエターナってたけど、プロジェクトに飽きる前に最低限の完成形までもっていくというのが実は一番大事なのでは説がある。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>V.S. Hask圏</title>
-        <link>https://myuon.github.io/posts/versus-hask-category/</link>
-        <pubDate>Fri, 05 Jan 2018 22:52:56 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/versus-hask-category/</guid>
-        <description>Hask圏 Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
+    <item>
+      <title>V.S. Hask圏</title>
+      <link>https://myuon.github.io/posts/versus-hask-category/</link>
+      <pubDate>Fri, 05 Jan 2018 22:52:56 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/versus-hask-category/</guid>
+      <description>Hask圏 Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
 さて基本的な結果として次のことが知られている。
  Hask#Is Hask even a category? Hask is not a category  というわけでHask圏は圏にならないのでそのようなものは存在しない。
 Why not? これはundefinedというヤバイ元の存在とcall-by-needの悪魔的評価規則が合わさりこのような現象が生み出される。 主にこの2つが悪さをしているので、この辺をどうにかできればHask categoryが作れる可能性がある。
@@ -57,14 +61,15 @@ call-by-needを捨てる call-by-needを捨てて、call-by-valueとかcall-by-n
 data &amp; codata HaskellのListがListかつColistであるというのは有名な話だけれど、こういうdatatypeかつcodatatypeがとれるような圏を考えるきっかけは(歴史的なことには私は詳しくないのだけれど)こういうプログラミング言語からの現象が先にあったのかな？と想像してる。 ちなみにこのようなcategoryはalgebraically boundedと呼ばれたりします。
 enrichmentの隠蔽 関係ないのだけどHask categoryで圏論やろうとするとenrichmentが色々効いてきて困る、みたいな話をよく聞くし自分もそう思うのだけれど、実はenrichmentは結構避けられる(隠蔽できる)のかもと書いていてちょっと思った。
 例えばFunctorのfmap methodは fmap: (Functor F) =&amp;gt; (A -&amp;gt; B) -&amp;gt; FA -&amp;gt; FB という形で書かれる。 これはHaskからHask(の適当なsubcategory)へのfunctorのfmapの型になっているが、圏論的には実際は次のような形をしているはずである: fmap: Hask(A,B) -&amp;gt; Hask(FA,FB) .</description>
-      </item>
+    </item>
     
-      <item>
-        <title>2017年振り返り</title>
-        <link>https://myuon.github.io/posts/end-of-2017/</link>
-        <pubDate>Sun, 31 Dec 2017 20:24:14 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/end-of-2017/</guid>
-        <description>2017年が終わりそうなので(去年の記事)。
+    <item>
+      <title>2017年振り返り</title>
+      <link>https://myuon.github.io/posts/end-of-2017/</link>
+      <pubDate>Sun, 31 Dec 2017 20:24:14 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/end-of-2017/</guid>
+      <description>2017年が終わりそうなので(去年の記事)。
 アウトプット プログラミング&amp;定理証明 github見たら意外と色々やってた。 古い順に
  DOTO: todoリストをアレするwebアプリ。これは就活用に作ったような気がする。TypescriptとReactを使ってやっぱクライアントサイドはつらいって思った記憶。今ならElmとかで作ると思う。 CatQ: Coqによる圏論の形式化。Setoidベースでやったけど、圏論側で仮定したくなる公理の妥当性がCoqの上でも妥当なのかとかが無限に気になりやっぱ真面目にやるなら依存型使うのはダメだなと悟って放棄。 dan: やったことリストを登録してgithubの草みたいに表示したりするやつ。最近使ってない bwitterkuchen: CUI Twitterクライアント。nyantreamを作ることにしたのでメンテはしてないけどしばらく使ってた。 avix: AviUtlという動画編集ソフトのexoファイルを生成するためのHaskellライブラリ。動画編集のときに使おうと思って作ってから一度も使ってない。 sdlight/widx: sdlightはSDLのラッパーライブラリ(ゲームを作ろうとしてついでに作った)。widxはsdlightからwidgetだけを切り離してインターフェイスだけ提供するライブラリ、だったけどBackpackのバグが直らないので開発ができない状態になってる。 nott: Type Theoryに関するまとめノート的なものを置くところ(プログラミング関係ない)。今のバタバタが終わったらまた再開したい。 typed: 型付きラムダ計算の実装(TaPLみながら)と定理証明を雑に投げ込む場所。 claire: LKベースのproof assistant。今年の一人アドベントカレンダーでやったやつ。 myuon.github.io: このブログ。今年入ってからはてなブログからgithub pagesでホスティングすることにし、今はhugoを使うのに落ち着いてる。 nyantream: CUIストリームクライアント(絶賛開発中)。時報/Twitter/Gmail/Slackに対応。GUI版も作りたい。  あと開発中のゲーム(最近開発してないけど)もあった。sdlight/widxが真面目に動くようになれば再開したいけどどうだろう。
 絵 自分の中で二次創作という行為への折り合いが付き、二次創作を行えるようになったおかげか特に10月以降はかなり積極的に絵を描くようになった。 多分今年が一番絵が上手くなった(画力向上よりも魅せ方・道具の使い方的な意味で)1年だった気がする。
@@ -85,7 +90,7 @@ windowsライセンス欲しい、買ってデスクトップPCの方に入れ�
 ただし個人の趣味的活動に企業のお仕事的プロジェクトマネジメントを持ち込んでもあまり上手く行かなそうなので、まだ何も活かせてはない。
 この辺はもっと色々調べたり考えたりした上で2018年はマネジメントぢからをもっと磨いていきたい。
 進路 就活は今年の6月くらいに終わった気がする(これ)。 なので来年4月からは就職して働き始めることになりそう。</description>
-      </item>
+    </item>
     
   </channel>
 </rss>

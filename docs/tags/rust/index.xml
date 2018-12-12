@@ -6,17 +6,20 @@
     <description>Recent content in Rust on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
+    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
+    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
     <lastBuildDate>Sun, 28 Oct 2018 16:03:12 +0900</lastBuildDate>
     
-      <atom:link href="https://myuon.github.io/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://myuon.github.io/tags/rust/index.xml" rel="self" type="application/rss+xml" />
     
     
-      <item>
-        <title>RustとNode.js間通信にgRPCを使う</title>
-        <link>https://myuon.github.io/posts/grpc-rust/</link>
-        <pubDate>Sun, 28 Oct 2018 16:03:12 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/grpc-rust/</guid>
-        <description>gRPCしたくなった。具体的にはRustで作ってるデスクトップアプリケーションで、GUIをElectronで書きたいのでNode.jsと通信が発生するのでそれに使えないかなと思って調査した。
+    <item>
+      <title>RustとNode.js間通信にgRPCを使う</title>
+      <link>https://myuon.github.io/posts/grpc-rust/</link>
+      <pubDate>Sun, 28 Oct 2018 16:03:12 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/grpc-rust/</guid>
+      <description>gRPCしたくなった。具体的にはRustで作ってるデスクトップアプリケーションで、GUIをElectronで書きたいのでNode.jsと通信が発生するのでそれに使えないかなと思って調査した。
 gRPC(protocol buffers)とは gRPCはgoogleが作ったRPC(remote procedure call)のフレームワークで、簡単に言うとサーバー/クライアント間の通信が言語を問わずできるよ！みたいなやつ。 RPC自体は見た目は普通の関数呼び出しみたいな感じで書けて、裏ではHTTP/2の通信に乗ってやりとりが行われるようになっている。実際にはRPCを定義してからそれを呼び出すためにはサーバーやクライアントで言語ごとにインターフェイスの定義とかをしなければいけないが、それを自動で生成してくれるのがgRPCコンパイラという感じ。
 gRPCを使うには、protocol buffersというプロトコル定義言語(?)を.protoファイルに書いてgRPCコンパイラで言語ごとにコンパイルを行う。2018/10/28現在では公式にサポートされてる言語がC++, Java, Python, Go, Rusy, C#, Node.js, Android Java, Obj-C, PHP, Dartなどなど多岐にわたる。Rustは非公式だけどプラグインがあるので使える。
 gRPC/protocol buffersの個人的なポイントをまとめてみる。
@@ -28,14 +31,15 @@ RustでgRPC Rustでサーバー側の処理を書く。
 # インストール $ cargo install protobuf-codegen grpcio-compiler # コンパイル $ protoc --rust_out=. --grpc_out=. --plugin=protoc-gen-grpc=`which grpc_rust_plugin` example.proto これによって生成されたRustモジュールを読み込んで使うことになるけど、それにはgrpc-rsを使った(grpc-rustというのもあるけどこっちは触ってない)。
 サーバー側のプログラムはこんな感じで書くと良い。
 コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>動画編集ソフトを作り始めた</title>
-        <link>https://myuon.github.io/posts/madder-start-to-create/</link>
-        <pubDate>Sun, 04 Mar 2018 19:21:20 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/madder-start-to-create/</guid>
-        <description>Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。
+    <item>
+      <title>動画編集ソフトを作り始めた</title>
+      <link>https://myuon.github.io/posts/madder-start-to-create/</link>
+      <pubDate>Sun, 04 Mar 2018 19:21:20 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/madder-start-to-create/</guid>
+      <description>Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。
 最近日本語をかくのがめんどくさい以外の発言をしていない気がする。
 1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK+を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。
 Rust 前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)
@@ -45,14 +49,15 @@ Rust 前回の記事でも色々言ってたけどその後分かったことな
 思ったよりいいたいことがなかった。最近Rustの勉強と言うよりGTKとかの勉強に時間もコストも取られてる感あるからかなぁ。
 GTK+ gtk-rsというプロジェクトがありGTK関係のライブラリを色々提供してくれているので使ってる。たまに対応してないAPIがあるのとドキュメントにfeatureの指定が書いてないのでたまにハマる。
  gtk: gtkのガワ widgetとかを提供する gdk: 中身？ 内部実装のあれこれを提供する cairo: 2Dグラフィックスライブラリ pango: フォントレンダリングライブラリ pixbuf: cairo等で扱えるpixel buffer githubのイシューにもあるんだけど登録するcallbackがほぼ&#39;staticを要求するのでコード内の状態をcallback越しに持っていけない それを解決するために Rc&amp;lt;RefCell&amp;lt;S&amp;gt;&amp;gt; が必要になる widgetが色々あるようで実はそんなにない ちょっと凝ったことするなら自作するしかない widgetは内部状態を持っていてそれ自体がMVCみたいな感じになっているのでデータの持ち方を中央集権的にしようとすると結構めんどくさい Elmの人も言っていたが何でもコンポーネントは(ライブラリは作りやすいけど)あんまりいい設計ではない気がする ViewはModelからの単なる関数にしたほうが素直 ドキュメントが豊富なので頑張って読めば意外となんとかなる(ただし本家以外は基本アテにならない)  Gstreamer gstreamer-rsというライブラリがある。これもたまに対応してないAPIが(ry</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Rustに入門した</title>
-        <link>https://myuon.github.io/posts/rust-started/</link>
-        <pubDate>Fri, 09 Feb 2018 22:21:42 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/rust-started/</guid>
-        <description>Rustに入門して2週間くらい経ったぜ
+    <item>
+      <title>Rustに入門した</title>
+      <link>https://myuon.github.io/posts/rust-started/</link>
+      <pubDate>Fri, 09 Feb 2018 22:21:42 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/rust-started/</guid>
+      <description>Rustに入門して2週間くらい経ったぜ
 TL;DR Rustは普通に便利ないい言語
 入門した 入門にあたってはプログラミング言語Rustを読んだ。これの翻訳版ぽい。
 読んでRustに対して思ったこと:
@@ -68,7 +73,7 @@ TL;DR Rustは普通に便利ないい言語
 「higher kind typeがない」って言うのは聞いてて自分は今の所なくていいんじゃない？派なんだけどやっぱ場合によっては不便なんだろうか。 HKTって実装のコストと学習コストの肥大化の割に恩恵が大したことないというイメージだし、どうせHKT入れても次はアレをいれてくれコレもいるだろみたいになるのは必至なので(型システムとはそういう宿命なのだ)今の小さくて十分パワフルなRustでいいんじゃないでしょうか。
 それでも自分はHaskellの方が圧倒的に慣れてるのもあるので、敢えてRust使うならやっぱGUI方面かな〜(RustはFFI強いし楽だし一方Haskellは全然ライブラリメンテされてないし)と思ってる。 まーでもmakeLensesしないとまともなレコードも使えない某言語を頑張って使い続ける理由はあるのだろうかというアレも。 やっぱRustに比べるとHaskellは難しい言語だなぁと思いますね。
 以上</description>
-      </item>
+    </item>
     
   </channel>
 </rss>
