@@ -6,17 +6,20 @@
     <description>Recent content in Webサイト on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
+    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
+    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
     <lastBuildDate>Fri, 10 Nov 2017 02:37:31 +0900</lastBuildDate>
     
-      <atom:link href="https://myuon.github.io/tags/web%E3%82%B5%E3%82%A4%E3%83%88/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://myuon.github.io/tags/web%E3%82%B5%E3%82%A4%E3%83%88/index.xml" rel="self" type="application/rss+xml" />
     
     
-      <item>
-        <title>HakyllからHugoに移行した</title>
-        <link>https://myuon.github.io/posts/migrate-to-hugo/</link>
-        <pubDate>Fri, 10 Nov 2017 02:37:31 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/migrate-to-hugo/</guid>
-        <description>移行理由 前はHakyll+pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。
+    <item>
+      <title>HakyllからHugoに移行した</title>
+      <link>https://myuon.github.io/posts/migrate-to-hugo/</link>
+      <pubDate>Fri, 10 Nov 2017 02:37:31 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/migrate-to-hugo/</guid>
+      <description>移行理由 前はHakyll+pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。
 手順諸々 導入 hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。 各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。
 hugo serve --watch --buildDrafts でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。
 テーマ Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。 hugo new theme [テーマ名] で必要なファイル群が themes にできるのであとは Templates にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。
@@ -28,21 +31,22 @@ syntax highlight関係のデザイン pandocではsyntax highlight用にcssを�
 TOC 困ったことにorg-modeだとtocが表示されないバグがあるらしく1、調べたらテンプレートだけでTOCを作る方法があったのでそれをパクった。 リストを作ってCSSでheadingに応じて右にずらしているだけだけど。
 semantic-uiの読み込み このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。 と言っても git submodule add URL directory とかして管理するだけだけど。 公開するときとローカルビルドするときのどちらも必要になるのでどちらもsubmoduleに追加する必要がある。 それと、URLはgit@...じゃなくてhttps:... じゃないとだめらしい。(一度怒られた)
 hard line breaks これはやり方がわからない。 orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(&amp;lt;br&amp;gt; に)してほしい。 #+OPTIONS: \n:t 相当のやつ。markdownは対応しているみたいだけど…。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>HakyllでBlogを作る</title>
-        <link>https://myuon.github.io/posts/hakyll-blog/</link>
-        <pubDate>Wed, 16 Aug 2017 22:39:48 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/hakyll-blog/</guid>
-        <description>Hakyllでこのブログを作ったのでそのあれこれを
+    <item>
+      <title>HakyllでBlogを作る</title>
+      <link>https://myuon.github.io/posts/hakyll-blog/</link>
+      <pubDate>Wed, 16 Aug 2017 22:39:48 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/hakyll-blog/</guid>
+      <description>Hakyllでこのブログを作ったのでそのあれこれを
 概要 やりたいことは以下
  orgで文章をかく(大事) orgから良い感じのHTMLを生成し github pagesで公開  Hakyllのsetup 次を参考にした
  Hakyll Tutorials Hakyll, stack, Travis CI, Github でブログを管理する GitHub Pages はじめました hakyll package  stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく
 文書の変換・Hakyllの設定 プロジェクトの構造は次のようになっている
 - root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site.hs Hakyllの設定ファイル orgの変換 Hakyllは内部で文書変換にpandocを使っていて、pandocはorgに対応しているらしいので何も設定しなくても変換はできる (デフォルトの状態では posts 以下の文書ファイルが変換される)
 ただし、次の2つをやりたかったのであれこれ設定をかいた</description>
-      </item>
+    </item>
     
   </channel>
 </rss>

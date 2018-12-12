@@ -6,58 +6,64 @@
     <description>Recent content in Posts on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
+    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
+    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
     <lastBuildDate>Fri, 23 Nov 2018 21:00:48 +0900</lastBuildDate>
     
-      <atom:link href="https://myuon.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://myuon.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
-      <item>
-        <title>Lambda FunctionをReasonで書く</title>
-        <link>https://myuon.github.io/posts/serverless-reason/</link>
-        <pubDate>Fri, 23 Nov 2018 21:00:48 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/serverless-reason/</guid>
-        <description>Reason ML、やっていこうな 世はまさに大サーバーレス時代なのでLambda Functionやっていきというお気持ち。
+    <item>
+      <title>Lambda FunctionをReasonで書く</title>
+      <link>https://myuon.github.io/posts/serverless-reason/</link>
+      <pubDate>Fri, 23 Nov 2018 21:00:48 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/serverless-reason/</guid>
+      <description>Reason ML、やっていこうな 世はまさに大サーバーレス時代なのでLambda Functionやっていきというお気持ち。
 AWS Lambdaで現時点(2018年11月)で対応されている言語はNode.js, Python, Go, C#(dotnet), Javaの5つ。このうち後ろ2つはコールドスタートが激遅なので使い物にならない。で前3つのうちではドキュメントの多いNode.jsが安定ですが、Node.jsをランタイムに採用するとしてしかしJSは書きたくない、そういうときにReason MLはいい感じな選択肢なのでは？というのがこの記事の趣旨です。
 serverless-reason serverless frameworkというサーバーレスアプリをやるのにとても便利なツールがあって、それのReasonで動くテンプレートを作っておいたので好きに使ってくださいという感じ。
  
 以下このプロジェクトの中身の解説をする。
 echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに定義されている。
 /* Sorry I&amp;#39;m a lazy person! */ type event = { . &amp;#34;pathParameters&amp;#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&amp;gt; Js.Promise.t(unit); type response = { . &amp;#34;statusCode&amp;#34;: int, &amp;#34;body&amp;#34;: string, }; let handler : (event, context, callback) =&amp;gt; Js.Promise.t(response) = (event, _, _) =&amp;gt; { Js.</description>
-      </item>
+    </item>
     
-      <item>
-        <title>はじめようReason ML</title>
-        <link>https://myuon.github.io/posts/start-reasonml/</link>
-        <pubDate>Sat, 10 Nov 2018 00:24:20 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/start-reasonml/</guid>
-        <description>はじめに Reason MLを最近始めました。よき。
+    <item>
+      <title>はじめようReason ML</title>
+      <link>https://myuon.github.io/posts/start-reasonml/</link>
+      <pubDate>Sat, 10 Nov 2018 00:24:20 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/start-reasonml/</guid>
+      <description>はじめに Reason MLを最近始めました。よき。
 Reason MLとは Reason MLとはOCamlにインスパイアされたAltJSの一種。見た目は型の付いたJSみたいな感じだけど実際はJSのsyntaxに寄せたML。
 BuckleScriptというコンパイラ(この名前もどうなんという感じだけど)を使ってJSに変える。BuckleScriptはReason MLとOCamlをJSに変換するコンパイラであり、Reason MLとOCamlのいずれのsyntaxも混ぜて使うことができるっぽい。便利～。
 実際に使うときはBuckleScriptの方のドキュメントもちゃんと読んでおく必要がある(似たような見た目のページだけど内容は違う)。BuckleScriptにはコンパイラ拡張みたいなものが載っておりそれを上手く使うことで生成されるJSを制御したりJS側の関数を読み込んだりするのでこの辺も割と必須。
  https://reasonml.github.io/en/ Reason MLの言語リファレンス https://bucklescript.github.io/en/ BuckleScriptリファレンス https://bucklescript.github.io/bucklescript/api/index.html BuckleScript標準ライブラリ(Reason MLも同じものがportされてる)  よさ  まともな型が付く(OCamlの型システム、世界で一番分かりやすいみたいなところがある) 生成されるJSがまとも ドキュメントが割とそろってる JSとのブリッジが簡単(基本的に何もしなくてもできる; JS直接埋め込むのもできる) JS風syntax(これは完全な好みだけどブレース・セミコロンsyntaxが結局一番書きやすいみたいなところあるよ) まぁライブラリも意外とある bs-jsonも普通に使いやすいよ JSの標準ライブラリの関数とか型はすべてportされてるのでちゃんと使える  ハマりポイント  BuckleScript拡張最初はよくわからなかった(ドキュメントを100回くらい読むと分かる) 特殊な演算子とかが意外と多くてsyntaxを覚えるのは結構しんどい(Haskellとかだとライブラリ定義の演算子が多いから定義見ればいいけど組み込みの演算子が多いのがつらい) 関数はデフォルトではカリー化されて (a,b) =&amp;gt; ... は a =&amp;gt; b =&amp;gt; ... 相当のJSが生成されるので(これは回避可能)知らないとたまに思った通り動かない ReactはReasonReactというのがあるらしいけどVue.jsはどうしたらいいのかよくわからない(調べてもVue2のやつしか出てこない)  レポート Node.jsで書いていたサーバーサイドをReason MLで書き直したりVue.jsのビジネスロジック部分だけを切り離してReason MLで書き直したりして安寧を得ています。
 Rustに引き続き9ヵ月ぶりくらいに良い言語に巡り合えました。ていうか私はML系の言語大体「良い」って言う傾向にあるしまぁML好きなんだなと自分でも思います。
 あとはVue.jsでスムーズに使えるようになったらフロントもバックも全部Reason MLでできるのになーって言ってる。 create-vue-app あたりのエコシステムが正式にサポートしてくんないかな～って感じですね。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Elm: Concurrent FRP for Functional GUIsを読んで</title>
-        <link>https://myuon.github.io/posts/elm-functional-gui/</link>
-        <pubDate>Sun, 04 Nov 2018 12:32:56 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/elm-functional-gui/</guid>
-        <description>これ
+    <item>
+      <title>Elm: Concurrent FRP for Functional GUIsを読んで</title>
+      <link>https://myuon.github.io/posts/elm-functional-gui/</link>
+      <pubDate>Sun, 04 Nov 2018 12:32:56 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/elm-functional-gui/</guid>
+      <description>これ
 https://elm-lang.org/assets/papers/concurrent-frp.pdf
 はじめに 某所でFRPをeffect systemとみなせないか、という大変示唆的な質問をいただいて、気になったのでFRPについて調べてた流れで教えてもらったElmの作者が書いた論文。 自分はFRPについては「なんかEventとBehaviorがあってArrowになったりMonadになったりするやつ」くらいの感覚しかなかったので論文読んでみることにした。
 ところでmarkdownで数式や図を記述するのは大変つらいので記事は適当に日本語で書きます。詳しく知りたい人は論文の方を読んでください。
 あと、ElmはFRP捨てたって言ってた気がするので多分今のElmはもう論文にあるような仕組みで動いてないような気がしないでもない。
 2章 背景  FRPにはClassical, Real-time (とEvent-driven), Arrowizedの3種類ある Classical:  Behavior a = Time -&amp;gt; a: これが時間の経過とともに変わる値を表現する Event a = [(Time, a)]: これがBehaviorのスナップショットを取ったもの 基本はBehaviorをベースに計算を行うけど、実際のプログラムでは無限に細かい時間で計算はできないので30fpsとか決まったタイミングで再計算するかどうかを考えることになる。そういう離散化のためにEventがあるよみたいな感じ  Real-time:  Event a = Behavior (Maybe a) EventもBehaviorで書いちゃえばいいんちゃうん Event, Behaviorをまとめて Signal a = Time -&amp;gt; a と呼ぶことに 論文で説明されてるElm Coreもこれにinspireされてるっぽい  Arrowized:  SF a b = Signal a -&amp;gt; Signal b signal functionというものをベースにしてこれをArrowにする 論文読んだ限りだと理論が難しくなりそうなのでFRPにおける特にArrowの優位性はよくわからなかった 書きやすいってくらいなのか  Message-Passing Concurrency  Concurrent MLの説明 実装はこれで書いたり書かなかったりする(あとの章でtranslationが与えられる)  既存のFRP GUI frameworks  メモリリークする(Haskellなので)(って何度も書いてあってウケるって思った)   3章 Core Language  Dicreteなsignalを扱う 文法: e ::= () | n \in Z | \x.</description>
-      </item>
+    </item>
     
-      <item>
-        <title>RustとNode.js間通信にgRPCを使う</title>
-        <link>https://myuon.github.io/posts/grpc-rust/</link>
-        <pubDate>Sun, 28 Oct 2018 16:03:12 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/grpc-rust/</guid>
-        <description>gRPCしたくなった。具体的にはRustで作ってるデスクトップアプリケーションで、GUIをElectronで書きたいのでNode.jsと通信が発生するのでそれに使えないかなと思って調査した。
+    <item>
+      <title>RustとNode.js間通信にgRPCを使う</title>
+      <link>https://myuon.github.io/posts/grpc-rust/</link>
+      <pubDate>Sun, 28 Oct 2018 16:03:12 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/grpc-rust/</guid>
+      <description>gRPCしたくなった。具体的にはRustで作ってるデスクトップアプリケーションで、GUIをElectronで書きたいのでNode.jsと通信が発生するのでそれに使えないかなと思って調査した。
 gRPC(protocol buffers)とは gRPCはgoogleが作ったRPC(remote procedure call)のフレームワークで、簡単に言うとサーバー/クライアント間の通信が言語を問わずできるよ！みたいなやつ。 RPC自体は見た目は普通の関数呼び出しみたいな感じで書けて、裏ではHTTP/2の通信に乗ってやりとりが行われるようになっている。実際にはRPCを定義してからそれを呼び出すためにはサーバーやクライアントで言語ごとにインターフェイスの定義とかをしなければいけないが、それを自動で生成してくれるのがgRPCコンパイラという感じ。
 gRPCを使うには、protocol buffersというプロトコル定義言語(?)を.protoファイルに書いてgRPCコンパイラで言語ごとにコンパイルを行う。2018/10/28現在では公式にサポートされてる言語がC++, Java, Python, Go, Rusy, C#, Node.js, Android Java, Obj-C, PHP, Dartなどなど多岐にわたる。Rustは非公式だけどプラグインがあるので使える。
 gRPC/protocol buffersの個人的なポイントをまとめてみる。
@@ -69,14 +75,15 @@ RustでgRPC Rustでサーバー側の処理を書く。
 # インストール $ cargo install protobuf-codegen grpcio-compiler # コンパイル $ protoc --rust_out=. --grpc_out=. --plugin=protoc-gen-grpc=`which grpc_rust_plugin` example.proto これによって生成されたRustモジュールを読み込んで使うことになるけど、それにはgrpc-rsを使った(grpc-rustというのもあるけどこっちは触ってない)。
 サーバー側のプログラムはこんな感じで書くと良い。
 コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>ブログのテーマ(とGitの管理方法)を変えた</title>
-        <link>https://myuon.github.io/posts/blog-simplicity/</link>
-        <pubDate>Tue, 23 Oct 2018 22:53:56 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/blog-simplicity/</guid>
-        <description>Git管理が色々あれなことになっており記事を書くのがとても大変なことになっていたので直したかった、ついでにテーマを変えた。
+    <item>
+      <title>ブログのテーマ(とGitの管理方法)を変えた</title>
+      <link>https://myuon.github.io/posts/blog-simplicity/</link>
+      <pubDate>Tue, 23 Oct 2018 22:53:56 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/blog-simplicity/</guid>
+      <description>Git管理が色々あれなことになっており記事を書くのがとても大変なことになっていたので直したかった、ついでにテーマを変えた。
 テーマはもともと自作だったのだけれどまぁ私はデザイナーではないのであるやつに乗っかる方が色々便利だということが分かったりした(自分で書くと、状況によって変な空白が出たりとかしがち)。
 テーマを変えた Simplicity: https://github.com/eshlox/simplicity
 というテーマにしました。シンプルですっきりだけど普通に見やすいと思う(シンプルで見にくいテーマも多いのでこういうテーマは貴重)
@@ -87,14 +94,15 @@ Gitの管理方法を変えた こっちがむしろメイン。今使ってる�
 というわけで、よくわからないsubmoduleの管理などせずとも(gitのsubmoduleって結構難しい機能だと思う、いつもいまいちよくわからんって言って使ってたし結構気をつかわないといけなかったりする)、簡単にHTMLの管理ができるしpublishも1コマンドでできるしで便利～になった。
 実はこの辺の問題があって最近はブログ記事を書けていなかったのだけれど、環境をえいやと整えたのでまたなんか書いていきたいと思います。
 そういえば私は飽きっぽいので今までいろいろなプロジェクトを始めては途中で飽きてやめたりしてきたが(ここ7年くらいでGitHubリポジトリの数は58になった)、最近は昔やってたやつを引き継いでまた始めたりということもちょくちょくやるようになったりしている気がする。良い傾向だし、そういう感じで過去に挑戦したプロジェクトのサルベージやら供養やらも自然にやっていけたらいいなと思ったり思わなかったり。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>VSCodeでIsabelle2018環境構築</title>
-        <link>https://myuon.github.io/posts/isabelle-vscode-2018/</link>
-        <pubDate>Sat, 28 Jul 2018 11:46:33 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/isabelle-vscode-2018/</guid>
-        <description>こうなるよ スクショ
+    <item>
+      <title>VSCodeでIsabelle2018環境構築</title>
+      <link>https://myuon.github.io/posts/isabelle-vscode-2018/</link>
+      <pubDate>Sat, 28 Jul 2018 11:46:33 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/isabelle-vscode-2018/</guid>
+      <description>こうなるよ スクショ
  環境構築 ほぼこれにある通りでOK
 https://marketplace.visualstudio.com/items?itemName=makarius.isabelle
 Isabelleのインストール http://isabelle.in.tum.de/devel/release_snapshot
@@ -106,14 +114,15 @@ VSCode config user configを開いて次を追加
 対応状況 VSCodeサポートは残念ながら完璧とはいえない
  state: VSCodeで Isabelle: Show State しましょう, output panelが出る(白背景に勝手になるんだけどこれは設定できないのだろうか, ダークテーマだとつらい) syntax highlight: これは問題なし unicode symbolの入力: \&amp;lt;forall&amp;gt; とかで入力できるが結構カーソル移動の制御とかがキモイ, あと !! とかの入力方法が分からない(記号のままだと正しく変換されない) sledgehammer: vampireがnot activatedなのでvampire_noncommercialをyesにしろってメッセージが出てvampireが使えない. 設定方法は不明だが他のproverは使えるのでまぁセーフか？ 他panel: Query, Sledgehammerパネルはまだない模様 一部state画面に出ないものがある: solve_directのメッセージとかが出てくれない. 対応する箇所にエディタ側で下線が引かれてマウスカーソルをあてるとメッセージが出たりする(けどちゃんと対応してほしい)  一方でVSCodeがベースなのでauto-completionのUIが使いやすい(というかjEditが本当にひどかった)とか, VSCodeのemacs keybind pluginは出来がいいので快適にemacs keybindで証明が書けるなどのよさがあります.
 使っていきたい</description>
-      </item>
+    </item>
     
-      <item>
-        <title>静的解析の限界、現実世界との境界</title>
-        <link>https://myuon.github.io/posts/how-far-can-static-analysis-go/</link>
-        <pubDate>Wed, 11 Jul 2018 05:49:39 -0700</pubDate>
-        <guid>https://myuon.github.io/posts/how-far-can-static-analysis-go/</guid>
-        <description>はじめに 2018年に静的解析をとにかく強力につけまくるのは多分あんまりコストに見合わないのでよくない
+    <item>
+      <title>静的解析の限界、現実世界との境界</title>
+      <link>https://myuon.github.io/posts/how-far-can-static-analysis-go/</link>
+      <pubDate>Wed, 11 Jul 2018 05:49:39 -0700</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/how-far-can-static-analysis-go/</guid>
+      <description>はじめに 2018年に静的解析をとにかく強力につけまくるのは多分あんまりコストに見合わないのでよくない
 じゃあ静的解析を窓から投げ捨ててよいかというとそれはただの愚行
 (以下、静的解析を普通に使えてる人には自明なことしか言いません)
 依存型のつらみ 私が最初に静的解析の限界を感じたのは多分依存型で遊んでいたとき
@@ -128,14 +137,15 @@ VSCode config user configを開いて次を追加
 あるいは、もっとひどければ全く利用されないこともある。ソートされたデータを一度DBやファイルに書き出してしまえば、型の保証はなくなってしまう。ファイルに書き込まれる前にソートされたことが型で保証されていたデータは、ファイルから読み出したときにはすでにその保証を失っている。
 実際にはシステムレベルでの保証というのがある。ファイルに読み書きされると当然型による保証は失われてしまうが、「そのファイルがこのプログラム以外で読み書きされないことを仮定してよいのなら」ソートされたデータを書き込んだファイルは再び読み込むとソートされているとしてよいはずである。 というわけでプログラムの型レベルでは保証できなくとも、 システム全体がまともに動いているなら ちゃんと制約を満たしてくれているはず、というのがある。
 システムレベルでの「保証」とは人間の頭の中にしかなく、通常いくつかの仮定が必要であるので型システムではうまく取り扱うことができず、例えば unsafeCoerce : a -&amp;gt; b のような関数の出番ということになる。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>責務と層の分離</title>
-        <link>https://myuon.github.io/posts/architecture-basic-idea/</link>
-        <pubDate>Tue, 10 Jul 2018 02:49:04 -0700</pubDate>
-        <guid>https://myuon.github.io/posts/architecture-basic-idea/</guid>
-        <description>設計の話 設計の話です。
+    <item>
+      <title>責務と層の分離</title>
+      <link>https://myuon.github.io/posts/architecture-basic-idea/</link>
+      <pubDate>Tue, 10 Jul 2018 02:49:04 -0700</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/architecture-basic-idea/</guid>
+      <description>設計の話 設計の話です。
 責務 責務、誰がその仕事を行うかということを考えましょうというのはまぁさんざん言われていることだけど実際大事だと思う。
 テクニックとしては委譲だのなんだのとあるけど、結局は「その仕事はその人に任せて本当にいいの？」にYesと答えられる場合にのみその作業をそのモジュールなり関数なりクラスなりに任せましょうという話ですね。
 層の分離 プログラムが行う仕事は通常いくつかのオペレーションを組み合わせて実現されるわけだけど、それらの重要度というのは普通は一様ではない。
@@ -153,14 +163,15 @@ GoFのデザインパターンをチラ見して 本は読んでないのだけ�
 実際にDDDはドメイン駆動〜みたいなことを言っているが自分はそこで初めて層の分離の概念を得た。 DDDではドメイン層と〜 DDDのことはよく知らないんだけど例えばClean ArchitectureではEntity層, UseCase層, Adapter層, Driver層のように中にあるべきものと外に置くべきものをはっきり区別していたのが、オブジェクト指向でスパゲッティ設計を生み出し続けていた自分にはとても素晴らしいものに見えたというのがあった。
 オブジェクト指向がなぜ設計ではないかということは、今にして思えばオブジェクト指向は責務については問題にするものの(あるメソッドをどのクラスに入れるべきかという話はよく問題に上がるが)層の概念がないので縦方向への広がりがないというのが大きな問題としてあったのだろうということが分かったりした。
 終わりに 内容がない</description>
-      </item>
+    </item>
     
-      <item>
-        <title>HaskellでDIする</title>
-        <link>https://myuon.github.io/posts/haskell-di/</link>
-        <pubDate>Fri, 06 Jul 2018 05:51:00 -0700</pubDate>
-        <guid>https://myuon.github.io/posts/haskell-di/</guid>
-        <description>DI DIの重要性はここ数年で急速に高まってきている。 依存性が注入されたりとかそういうことはどうでもよくて、設計と実装を分けたい、人類はそれだけのために色々と工夫をこらし最終的にたどり着いたのがDIであったのだろう。
+    <item>
+      <title>HaskellでDIする</title>
+      <link>https://myuon.github.io/posts/haskell-di/</link>
+      <pubDate>Fri, 06 Jul 2018 05:51:00 -0700</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/haskell-di/</guid>
+      <description>DI DIの重要性はここ数年で急速に高まってきている。 依存性が注入されたりとかそういうことはどうでもよくて、設計と実装を分けたい、人類はそれだけのために色々と工夫をこらし最終的にたどり着いたのがDIであったのだろう。
 Haskellでも設計と実装を分けるためにDIしたいというのは自然な流れである。
 ここでは型も含めて設計が実装に依存してはいけないということを要求する。 例えば設計でMySqlConnection、みたいな型が出現することも分離できていないので禁止とする。
 問題点 設計を定義するときには他の言語ではインターフェイスなどの仕組みが使われることが多い。 Haskellには型システムという仕組みがあるのでこれがインターフェイス相当の機能として紹介される場合がある。
@@ -175,14 +186,15 @@ reflectionというパッケージがあり、これはconfigデータを外か�
 Loggerの例 例えばLoggerを作る例を考える。
 設計 class Logger a where writeLog :: a -&amp;gt; String -&amp;gt; IO () ロガーは文字列を受け取って何かするというインターフェイスを実装した型のことであろう。ここでの a に、具体的なLogger型が挿入される。
 data SomeLogger = forall a.</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Fluxを再発明する</title>
-        <link>https://myuon.github.io/posts/refluxible-library/</link>
-        <pubDate>Sat, 16 Jun 2018 08:00:49 -0700</pubDate>
-        <guid>https://myuon.github.io/posts/refluxible-library/</guid>
-        <description>Haskellの2D graphics libraryを作った 作った: refluxive
+    <item>
+      <title>Fluxを再発明する</title>
+      <link>https://myuon.github.io/posts/refluxible-library/</link>
+      <pubDate>Sat, 16 Jun 2018 08:00:49 -0700</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/refluxible-library/</guid>
+      <description>Haskellの2D graphics libraryを作った 作った: refluxive
 与太話に興味がない人は解説まで飛んでください
 なにこれ 大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。
 なぜ 大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。
@@ -202,14 +214,15 @@ https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4
 Component Componentはbuttonとappの2つ
 まずbuttonから。
 data ButtonState = None | Hover | Clicking deriving Eq instance Component UI &amp;#34;button&amp;#34; where type ModelParam &amp;#34;button&amp;#34; = Record [ &amp;#34;label&amp;#34; &amp;gt;: T.</description>
-      </item>
+    </item>
     
-      <item>
-        <title>私と型システムとポエム</title>
-        <link>https://myuon.github.io/posts/type-system-poem/</link>
-        <pubDate>Sat, 02 Jun 2018 08:27:31 -0700</pubDate>
-        <guid>https://myuon.github.io/posts/type-system-poem/</guid>
-        <description>最近巷では俄に型システムについての言及が増え、型システムポエマーが増えてる気がするので自分もその時流に乗りたい。
+    <item>
+      <title>私と型システムとポエム</title>
+      <link>https://myuon.github.io/posts/type-system-poem/</link>
+      <pubDate>Sat, 02 Jun 2018 08:27:31 -0700</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/type-system-poem/</guid>
+      <description>最近巷では俄に型システムについての言及が増え、型システムポエマーが増えてる気がするので自分もその時流に乗りたい。
 完全にポエムだけどなんかあったら随時指摘ください。直します。
 TL;DR 言いたいことはまとめると次
  型システムは程度問題なのでちょうどいいところを探すべき 型は万能でも強さが正義でもない(だから未だに研究されてる) よく知りもしないくせに計算機科学を侮辱するのはやめろ  予防線 あくまでポエムですので中身はないです
@@ -221,28 +234,30 @@ TL;DR 言いたいことはまとめると次
 割と単純な型をもつ言語  言語: simply typed lambda calculus、関数型はあるがジェネリクスを入れてないような一部の言語  ジェネリクスを入れると考えることが多くなるのでこの辺で落ち着くという選択肢もある。Goとかはこれかな？(よく知らないで言ってる)。 すごく単純なプログラムしか書かないなら、静的解析も楽でコンパイルも早くそれなりに型の恩恵も受けられてよい落とし所だと思う。ただライブラリを作る人にとっては抽象化への障壁が大きすぎると感じるかもしれない。
 頑張れば型推論の決定性を保てる言語  言語: OCaml, Java, C#など  多くの(現場で使われるような)静的型付き言語はここに属することが多い。 (実際はいろいろな事情によりできてない言語が多いが)OCamlに代表されるようにジェネリクスとサブタイピングまで入れても型推論は決定的にできる。 型を人間は書きたくないが抽象化はさせろという人にとっては最も都合の良い着地点になる。現状多くの人に受け入れられているように見えるので成功した型システムの一つと言っていいと思う。 この言語ではオーバーローディングなどの型推論を阻む仕組みに対してどのように対抗するかというのが大きな問題になる。現状では政治力と運用でカバーしていることが多いような気もする。
 typeclass/rank n types/higher kind polymorphism言語  言語: Haskell2010, Haskell(GHC), Scala  型推論の決定性を窓から投げ捨てて暗黒面の力を手に入れたやつ。OCamlは職人技のような言語デザインで決定性を保っていたのでそこに少し拡張を入れたり少し条件を緩めたりするだけであっという間に暗黒面に堕ちてしまうので意図せずこっちに転がってる言語もたまにある。 明確に意図してここに足を踏み入れた言語は(実用面でも使える言語となると)限られてくるが、型推論を気にせず理論的に便利な道具をたくさん追加できて気持ちよく型レベルプログラミングとかで遊べるようになる。 しかし暗黒面と称されるようにここから先は地獄である。依存型の誘惑を振り払うのは難しい。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Desktop Linux VM環境 on Windows</title>
-        <link>https://myuon.github.io/posts/vm-linux-on-windows/</link>
-        <pubDate>Sun, 20 May 2018 08:11:42 -0700</pubDate>
-        <guid>https://myuon.github.io/posts/vm-linux-on-windows/</guid>
-        <description>はじめに 私はプログラミングはすべてLinux環境でやっている。環境構築、フォントレンダリング、まともな端末など理由を挙げればキリがない。 最近までDesktop Linuxを直接インストールしていたが(Windowsを持っていなかったが)、ゲームがしたいなどの理由によりWindows 10を買ってクリーンインストールしたのでLinux環境をVMに移行した。
+    <item>
+      <title>Desktop Linux VM環境 on Windows</title>
+      <link>https://myuon.github.io/posts/vm-linux-on-windows/</link>
+      <pubDate>Sun, 20 May 2018 08:11:42 -0700</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/vm-linux-on-windows/</guid>
+      <description>はじめに 私はプログラミングはすべてLinux環境でやっている。環境構築、フォントレンダリング、まともな端末など理由を挙げればキリがない。 最近までDesktop Linuxを直接インストールしていたが(Windowsを持っていなかったが)、ゲームがしたいなどの理由によりWindows 10を買ってクリーンインストールしたのでLinux環境をVMに移行した。
 結論 Vmware Workstation Playerを使え
 Vmware Player vs VirtualBox vs Hyper-V 仕組みの上ではHyper-Vは他2つに比べてハードウェアに近く、よいパフォーマンスが得られることが期待される。 が、3つを試した上では圧倒的にVmware Player  VirtualBox  Hyper-Vという感じだった。
 環境
  ホスト: Windows 10 ゲスト: Ubuntu 18.04 Gnome/Xfce ゲストの設定: メモリ4GBくらい 4コア使っていいよぐらいの設定 特に細かくいじったりはしてない  結果
  Hyper-V: 入力遅延が大きすぎて使い物にならない、マウスもキーボードも数フレームは遅延してる。あと3つの中では明らかにこれだけ重かった(Gnomeのアニメーションの挙動とかを見ている限り)。Hyper-VのViewerがボロいのかと思ってRDP接続も試したけどVirtualBoxと比べても明らかに重くパフォーマンスが出てなかった。LISはUbuntu 16版のものを使用、BIOSでC-State切るといいよって言われてそれもやったけど効果ほぼなし。 VirtualBox: 比較的サクサク。Gnomeだとちょっと重いがXfceだと普通に快適。VMの起動と終了がちょっと重いかなくらい。 Vmware Workstation Player: 3つの中では最もサクサク。Gnomeのアニメーションもそれなりに反映されていた。Xfceにしたら本当に早い、実機インストールかと錯覚する快適さ。体感ではVMの終了がVirtualBoxより早い。  試すとわかるけど悩むまでもないという感じ。 ただしVmwareのみディスプレイサイズがホストOSのものに勝手に従ってくれなくてxrandrからaddmodeした。
 そもそもプログラミングするだけならDEいらないんじゃないですかという話もあるけど今はGUIアプリケーション開発してるからそうも行かないんだよな〜って人の話です。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>動画編集ソフトを作り始めた</title>
-        <link>https://myuon.github.io/posts/madder-start-to-create/</link>
-        <pubDate>Sun, 04 Mar 2018 19:21:20 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/madder-start-to-create/</guid>
-        <description>Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。
+    <item>
+      <title>動画編集ソフトを作り始めた</title>
+      <link>https://myuon.github.io/posts/madder-start-to-create/</link>
+      <pubDate>Sun, 04 Mar 2018 19:21:20 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/madder-start-to-create/</guid>
+      <description>Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。
 最近日本語をかくのがめんどくさい以外の発言をしていない気がする。
 1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK+を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。
 Rust 前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)
@@ -252,14 +267,15 @@ Rust 前回の記事でも色々言ってたけどその後分かったことな
 思ったよりいいたいことがなかった。最近Rustの勉強と言うよりGTKとかの勉強に時間もコストも取られてる感あるからかなぁ。
 GTK+ gtk-rsというプロジェクトがありGTK関係のライブラリを色々提供してくれているので使ってる。たまに対応してないAPIがあるのとドキュメントにfeatureの指定が書いてないのでたまにハマる。
  gtk: gtkのガワ widgetとかを提供する gdk: 中身？ 内部実装のあれこれを提供する cairo: 2Dグラフィックスライブラリ pango: フォントレンダリングライブラリ pixbuf: cairo等で扱えるpixel buffer githubのイシューにもあるんだけど登録するcallbackがほぼ&#39;staticを要求するのでコード内の状態をcallback越しに持っていけない それを解決するために Rc&amp;lt;RefCell&amp;lt;S&amp;gt;&amp;gt; が必要になる widgetが色々あるようで実はそんなにない ちょっと凝ったことするなら自作するしかない widgetは内部状態を持っていてそれ自体がMVCみたいな感じになっているのでデータの持ち方を中央集権的にしようとすると結構めんどくさい Elmの人も言っていたが何でもコンポーネントは(ライブラリは作りやすいけど)あんまりいい設計ではない気がする ViewはModelからの単なる関数にしたほうが素直 ドキュメントが豊富なので頑張って読めば意外となんとかなる(ただし本家以外は基本アテにならない)  Gstreamer gstreamer-rsというライブラリがある。これもたまに対応してないAPIが(ry</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Rustに入門した</title>
-        <link>https://myuon.github.io/posts/rust-started/</link>
-        <pubDate>Fri, 09 Feb 2018 22:21:42 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/rust-started/</guid>
-        <description>Rustに入門して2週間くらい経ったぜ
+    <item>
+      <title>Rustに入門した</title>
+      <link>https://myuon.github.io/posts/rust-started/</link>
+      <pubDate>Fri, 09 Feb 2018 22:21:42 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/rust-started/</guid>
+      <description>Rustに入門して2週間くらい経ったぜ
 TL;DR Rustは普通に便利ないい言語
 入門した 入門にあたってはプログラミング言語Rustを読んだ。これの翻訳版ぽい。
 読んでRustに対して思ったこと:
@@ -275,14 +291,15 @@ TL;DR Rustは普通に便利ないい言語
 「higher kind typeがない」って言うのは聞いてて自分は今の所なくていいんじゃない？派なんだけどやっぱ場合によっては不便なんだろうか。 HKTって実装のコストと学習コストの肥大化の割に恩恵が大したことないというイメージだし、どうせHKT入れても次はアレをいれてくれコレもいるだろみたいになるのは必至なので(型システムとはそういう宿命なのだ)今の小さくて十分パワフルなRustでいいんじゃないでしょうか。
 それでも自分はHaskellの方が圧倒的に慣れてるのもあるので、敢えてRust使うならやっぱGUI方面かな〜(RustはFFI強いし楽だし一方Haskellは全然ライブラリメンテされてないし)と思ってる。 まーでもmakeLensesしないとまともなレコードも使えない某言語を頑張って使い続ける理由はあるのだろうかというアレも。 やっぱRustに比べるとHaskellは難しい言語だなぁと思いますね。
 以上</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Namespace Haskell</title>
-        <link>https://myuon.github.io/posts/namespace-haskell/</link>
-        <pubDate>Sun, 04 Feb 2018 13:55:38 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/namespace-haskell/</guid>
-        <description>Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。
+    <item>
+      <title>Namespace Haskell</title>
+      <link>https://myuon.github.io/posts/namespace-haskell/</link>
+      <pubDate>Sun, 04 Feb 2018 13:55:38 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/namespace-haskell/</guid>
+      <description>Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。
 主な機能 open import Agdaにもある機能で、importをimport(モジュール読み込み)とopen(現在のコンテキストに名前を公開)に分割する.
  import M とすると, M.func によってモジュールMの関数funcにアクセスできる open M とすると, それを指定したブロックでMの関数を修飾子なしでアクセスできる open import M とすると, import M; open M の意味になる(現在のHaskellのimport)  openをwhereブロック内で宣言することで、一部でしか使わないimportをあっちこっちで展開するのを防げる。
 public export 現在のHaskellではモジュール宣言時に module M(..) where でexportする関数を選べる。
@@ -290,14 +307,15 @@ public export 現在のHaskellではモジュール宣言時に module M(..) whe
 associated function 要は「メソッド」機能なんだけどtypeclassの関数のことをメソッドって呼ぶことがあるような気がするので名前の衝突を避けるためにここではassociated functionとよぶ.
 次のような、データ型とそれに対する特別な関数定義を行うスコープを用意する。
 -- 例 data List a = Nil | Cons a (List a) impl (this :: List a) where { reverse :: List a reverse = .</description>
-      </item>
+    </item>
     
-      <item>
-        <title>プロジェクトマネジメントを始めたい</title>
-        <link>https://myuon.github.io/posts/want-to-start-project-management/</link>
-        <pubDate>Sun, 14 Jan 2018 23:14:19 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/want-to-start-project-management/</guid>
-        <description>資料  担当になったら知っておきたい「プロジェクトマネジメント」実践講座: 2ヶ月前くらいに買って読んだ ゲーム開発 プロジェクトマネジメント講座: スクエニの資料 具体例がゲーム開発だけど内容は業種を問わないと思う  プロジェクトマネジメント実践講座を読んだ 内容は大変丁寧な感じでモチベーションと具体的な例を上げつつPMの重要性、あと必要な各種書類や仕事の詳しい日本語による解説という感じ。 それなりにページ数あるけど圧縮したら15ページ+図表くらいで収まる気がする(チートシートほしい) モチベーションを十分理解している人は安心して読み飛ばしていいと思う。
+    <item>
+      <title>プロジェクトマネジメントを始めたい</title>
+      <link>https://myuon.github.io/posts/want-to-start-project-management/</link>
+      <pubDate>Sun, 14 Jan 2018 23:14:19 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/want-to-start-project-management/</guid>
+      <description>資料  担当になったら知っておきたい「プロジェクトマネジメント」実践講座: 2ヶ月前くらいに買って読んだ ゲーム開発 プロジェクトマネジメント講座: スクエニの資料 具体例がゲーム開発だけど内容は業種を問わないと思う  プロジェクトマネジメント実践講座を読んだ 内容は大変丁寧な感じでモチベーションと具体的な例を上げつつPMの重要性、あと必要な各種書類や仕事の詳しい日本語による解説という感じ。 それなりにページ数あるけど圧縮したら15ページ+図表くらいで収まる気がする(チートシートほしい) モチベーションを十分理解している人は安心して読み飛ばしていいと思う。
 個人的な感想
  PMでは「納期を守る」という感覚が一番大事っぽい やたらExcelを推してくるのは逆に言えばまともなツールが他にないのだろうなぁ リスク管理についても書いてあってなるほどと思った(リスクを先に想定しておくのは難しいけど大事っぽい) モチベーションの説明がわかりやすい プロジェクトの発足と仕事を作って人に割り振る時のマネージャーの動き方について主に書いてる感じ  読んでる時はもっと色々思ったはずだけど読んでから時間経ちすぎて忘れた
 個人的に気になった方法論 「PMの話」っていうと結構マネージャーの動き方とか仕事の仕方的なものを指すこともあるんだけど(サイクルはこまめに回しましょうねとかそういう) 自分が欲しいのは方法論なのでそっちについてちょっとまとめておく
@@ -317,24 +335,26 @@ WBS &amp; ガントチャート WBSなんて分かればいいので構造化文
 作業の流れを把握するにはグラフ化されたものが欲しいけど、完了報告&amp;修正とか入れるならテキストでどうにかしたいという欲もあり色々大変。
 あと上では構造化文書っていったけどredmineみたいなやつでもいい気がする。あれってどうなんだろ、個人で使うにはめんどくさくならないかな。
 スケジューリング 自分はよく作業をボトムアップで見積もるけど、その前に「プロジェクトそのものに飽きる」という悲しい問題があり、それを考えると納期は個人趣味プロジェクトでも確かに存在する。 そういう視点が今までなかったのでよくプロジェクトがエターナってたけど、プロジェクトに飽きる前に最低限の完成形までもっていくというのが実は一番大事なのでは説がある。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>GHC拡張一覧を眺める</title>
-        <link>https://myuon.github.io/posts/ghc-exts/</link>
-        <pubDate>Sat, 13 Jan 2018 00:38:01 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/ghc-exts/</guid>
-        <description>GHC-8.2.2のGHC拡張を眺めます。
+    <item>
+      <title>GHC拡張一覧を眺める</title>
+      <link>https://myuon.github.io/posts/ghc-exts/</link>
+      <pubDate>Sat, 13 Jan 2018 00:38:01 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/ghc-exts/</guid>
+      <description>GHC-8.2.2のGHC拡張を眺めます。
  10. GHC Language Features User&#39;s Guideの該当セクション 7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い  上から順に見ていって後から関連するものとかを再編します。
 GHC拡張一覧  AllowAmbiguousTypes 型変数が全て決定していないものを通すようにする (個人的)非推奨1 Arrows arrow notationを使えるようにする FRPする人なんかは使う ApplicativeDo do-notationがApplicativeに対しても使えるようになる 個人的には嫌い BangPatterns 関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする BinaryLiterals バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない CApiFFI FFI関連; 使ったことない ConstrainedClassMethods 型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ) ConstraintKinds Constraintというカインドが使えるようになる CPP Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる DataKinds データ型の宣言をカインドの宣言へ昇格する DefaultSignatures 型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる DeriveAnyClass defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう DeriveDataTypeable deriving Data ってかける DeriveFunctor deriving Functor ってかける DeriveFoldable deriving Foldable ってかける DeriveGeneric deriving Generic ってかける DeriveLift deriving Lift ってかける LiftはTHのこれで、値をsyntactic expressionに変換できるようにするやつ DeriveTraversable deriving Traversable ってかける DerivingStrategies derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ DisambiguateRecordFields \k -&amp;gt; k {hoge = x} におけるkのような、推論可能だが曖昧なレコード名を許す EmptyCase case x of {} ってかける Void型を扱う時なんかに使える EmptyDataDecls data Empty のようなコンストラクタを持たない型の宣言を許す ExistentialQuantification exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい ExplicitForall 型宣言のimplicitな全称量化をexplicitにかけるようにする id : forall a.</description>
-      </item>
+    </item>
     
-      <item>
-        <title>V.S. Hask圏</title>
-        <link>https://myuon.github.io/posts/versus-hask-category/</link>
-        <pubDate>Fri, 05 Jan 2018 22:52:56 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/versus-hask-category/</guid>
-        <description>Hask圏 Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
+    <item>
+      <title>V.S. Hask圏</title>
+      <link>https://myuon.github.io/posts/versus-hask-category/</link>
+      <pubDate>Fri, 05 Jan 2018 22:52:56 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/versus-hask-category/</guid>
+      <description>Hask圏 Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
 さて基本的な結果として次のことが知られている。
  Hask#Is Hask even a category? Hask is not a category  というわけでHask圏は圏にならないのでそのようなものは存在しない。
 Why not? これはundefinedというヤバイ元の存在とcall-by-needの悪魔的評価規則が合わさりこのような現象が生み出される。 主にこの2つが悪さをしているので、この辺をどうにかできればHask categoryが作れる可能性がある。
@@ -348,14 +368,15 @@ call-by-needを捨てる call-by-needを捨てて、call-by-valueとかcall-by-n
 data &amp; codata HaskellのListがListかつColistであるというのは有名な話だけれど、こういうdatatypeかつcodatatypeがとれるような圏を考えるきっかけは(歴史的なことには私は詳しくないのだけれど)こういうプログラミング言語からの現象が先にあったのかな？と想像してる。 ちなみにこのようなcategoryはalgebraically boundedと呼ばれたりします。
 enrichmentの隠蔽 関係ないのだけどHask categoryで圏論やろうとするとenrichmentが色々効いてきて困る、みたいな話をよく聞くし自分もそう思うのだけれど、実はenrichmentは結構避けられる(隠蔽できる)のかもと書いていてちょっと思った。
 例えばFunctorのfmap methodは fmap: (Functor F) =&amp;gt; (A -&amp;gt; B) -&amp;gt; FA -&amp;gt; FB という形で書かれる。 これはHaskからHask(の適当なsubcategory)へのfunctorのfmapの型になっているが、圏論的には実際は次のような形をしているはずである: fmap: Hask(A,B) -&amp;gt; Hask(FA,FB) .</description>
-      </item>
+    </item>
     
-      <item>
-        <title>2017年振り返り</title>
-        <link>https://myuon.github.io/posts/end-of-2017/</link>
-        <pubDate>Sun, 31 Dec 2017 20:24:14 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/end-of-2017/</guid>
-        <description>2017年が終わりそうなので(去年の記事)。
+    <item>
+      <title>2017年振り返り</title>
+      <link>https://myuon.github.io/posts/end-of-2017/</link>
+      <pubDate>Sun, 31 Dec 2017 20:24:14 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/end-of-2017/</guid>
+      <description>2017年が終わりそうなので(去年の記事)。
 アウトプット プログラミング&amp;定理証明 github見たら意外と色々やってた。 古い順に
  DOTO: todoリストをアレするwebアプリ。これは就活用に作ったような気がする。TypescriptとReactを使ってやっぱクライアントサイドはつらいって思った記憶。今ならElmとかで作ると思う。 CatQ: Coqによる圏論の形式化。Setoidベースでやったけど、圏論側で仮定したくなる公理の妥当性がCoqの上でも妥当なのかとかが無限に気になりやっぱ真面目にやるなら依存型使うのはダメだなと悟って放棄。 dan: やったことリストを登録してgithubの草みたいに表示したりするやつ。最近使ってない bwitterkuchen: CUI Twitterクライアント。nyantreamを作ることにしたのでメンテはしてないけどしばらく使ってた。 avix: AviUtlという動画編集ソフトのexoファイルを生成するためのHaskellライブラリ。動画編集のときに使おうと思って作ってから一度も使ってない。 sdlight/widx: sdlightはSDLのラッパーライブラリ(ゲームを作ろうとしてついでに作った)。widxはsdlightからwidgetだけを切り離してインターフェイスだけ提供するライブラリ、だったけどBackpackのバグが直らないので開発ができない状態になってる。 nott: Type Theoryに関するまとめノート的なものを置くところ(プログラミング関係ない)。今のバタバタが終わったらまた再開したい。 typed: 型付きラムダ計算の実装(TaPLみながら)と定理証明を雑に投げ込む場所。 claire: LKベースのproof assistant。今年の一人アドベントカレンダーでやったやつ。 myuon.github.io: このブログ。今年入ってからはてなブログからgithub pagesでホスティングすることにし、今はhugoを使うのに落ち着いてる。 nyantream: CUIストリームクライアント(絶賛開発中)。時報/Twitter/Gmail/Slackに対応。GUI版も作りたい。  あと開発中のゲーム(最近開発してないけど)もあった。sdlight/widxが真面目に動くようになれば再開したいけどどうだろう。
 絵 自分の中で二次創作という行為への折り合いが付き、二次創作を行えるようになったおかげか特に10月以降はかなり積極的に絵を描くようになった。 多分今年が一番絵が上手くなった(画力向上よりも魅せ方・道具の使い方的な意味で)1年だった気がする。
@@ -376,14 +397,15 @@ windowsライセンス欲しい、買ってデスクトップPCの方に入れ�
 ただし個人の趣味的活動に企業のお仕事的プロジェクトマネジメントを持ち込んでもあまり上手く行かなそうなので、まだ何も活かせてはない。
 この辺はもっと色々調べたり考えたりした上で2018年はマネジメントぢからをもっと磨いていきたい。
 進路 就活は今年の6月くらいに終わった気がする(これ)。 なので来年4月からは就職して働き始めることになりそう。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>一人CSアドベントカレンダー・最終回</title>
-        <link>https://myuon.github.io/posts/2017-csadv-finish/</link>
-        <pubDate>Mon, 25 Dec 2017 00:11:02 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/2017-csadv-finish/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 25日目の記事です。
+    <item>
+      <title>一人CSアドベントカレンダー・最終回</title>
+      <link>https://myuon.github.io/posts/2017-csadv-finish/</link>
+      <pubDate>Mon, 25 Dec 2017 00:11:02 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/2017-csadv-finish/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 25日目の記事です。
 くぅ疲 くぅ〜疲れましたw これにて完結です！
 実は、一人アドベントカレンダーを一度くらいやってみたいなと思ったのが始まりでした
 本当は話のネタなかったのですが←
@@ -396,14 +418,15 @@ windowsライセンス欲しい、買ってデスクトップPCの方に入れ�
 おわりに こんな記事読む人いるんかってずっと思いながら書いてましたがもし読んでくれる人がいたならありがとうございました。
 本当の本当に終わり1
  ってなんで俺くんが！？のところをやろうとしたら精神が持たなかったって言ったら「くぅ疲をやる覚悟が足りない」って言われました。そのとおりだと思います。 [return]   </description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・発展編 その7</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-7/</link>
-        <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-7/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・発展編 その7</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-7/</link>
+      <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-7/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
 Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
 実装すべき機能など prover さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
 Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
@@ -419,14 +442,15 @@ prop? bool? Isabelleではprop型というのはあまり見ない(存在しま�
 IsabelleのpropはClaireのprop型と同じく、メタロジックの基本型です。 しかし一方でHOLにはbool型というのが組み込みの型であり、これが要は「項の型」になります。
 前回も説明したと思いますが、型はFormulaとTermと2つにつき、Formulaにはprop型、Termには他の適当な型がつくことになっています。 bool型というのはTermの方につく型なのですね。
 さらにHOLではboolをpropに持ち上げるcoercionが定義されていてこれが効いているので、 lemma: True とか書けますが、これは本来は T :: bool =&amp;gt; prop みたいなのがあって T(True) と解釈されています。 ので、Isabelleを書いていると基本の型はboolでしょ、みたいな気持ちになると思いますがメタロジックの論理式の型はpropで、boolはあくまで項につく型だったのです。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・マクロ編 その6</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-6/</link>
-        <pubDate>Sat, 23 Dec 2017 00:04:55 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-6/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・マクロ編 その6</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-6/</link>
+      <pubDate>Sat, 23 Dec 2017 00:04:55 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-6/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
 Proof Assistant 「Claire」の実装について説明していきます。
 リポジトリはこちら: myuon/claire
 今回はClaireのマクロ機能について説明します。
@@ -437,14 +461,15 @@ Claireにもそういう機能を乗っけたいわけですが、言語を新�
 マクロの実装 マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。
 マクロ定義モジュール 定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。
 module Commands where import Claire macro :: Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command] macro = ... export_command :: [(String, Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command])] export_command = [ (&amp;#34;name&amp;#34;, macro) ] declmacro :: [Argument] -&amp;gt; [Decl] declmacro = ... export_decl :: [(String, [Argument] -&amp;gt; [Decl])] export_decl = [ (&amp;#34;name&amp;#34;, declmacro) ] これを使いたいときは、ClaireのファイルにHs_fileを記述します。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・実装編 その5</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-5/</link>
-        <pubDate>Fri, 22 Dec 2017 00:02:50 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-5/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・実装編 その5</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-5/</link>
+      <pubDate>Fri, 22 Dec 2017 00:02:50 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-5/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
 Proof Assistant 「Claire」の実装について説明していきます。
 リポジトリはこちら: myuon/claire
 機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
@@ -454,27 +479,29 @@ data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , pr
 また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。
 具体的には、
 theorem id: a ==&amp;gt; a proof ... qed -- この証明の直後、Envのthmsには (&amp;#34;id&amp;#34;, Pred &amp;#34;?</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・実装編 その4</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-4/</link>
-        <pubDate>Thu, 21 Dec 2017 00:20:35 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-4/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・実装編 その4</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-4/</link>
+      <pubDate>Thu, 21 Dec 2017 00:20:35 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-4/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
 Proof Assistant 「Claire」の実装について説明していきます。
 リポジトリはこちら: myuon/claire
 昨日に引き続いてClaireの宣言(Decl)について説明していきます。
 Declarations まずはtoplevelMの定義から。
 toplevelM :: (Monad m, MonadIO m) =&amp;gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &amp;lt;- lift get; utyp &amp;lt;- liftIO $ try $ infer env fml; case utyp of Left err -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&amp;gt; k Right typ -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &amp;lt;- suspend (DeclAwait return) env &amp;lt;- lift get case decl of ここに実装を書く Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・実装編 その3</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-3/</link>
-        <pubDate>Wed, 20 Dec 2017 00:12:26 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-3/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・実装編 その3</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-3/</link>
+      <pubDate>Wed, 20 Dec 2017 00:12:26 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-3/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
 Proof Assistant 「Claire」の実装について説明していきます。
 リポジトリはこちら: myuon/claire
 Proofchecker state machine さてClaireのproofcheckerを作っていきます。
@@ -485,14 +512,15 @@ Coroutine monad さてこういうステートマシンを作りたいときは�
 Claire.Checker
 Command Machine Suspender 簡単な方から行きます。
 data ComSuspender y = ComAwait (Command -&amp;gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&amp;gt; Env -&amp;gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = .</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・実装編 その2</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-2/</link>
-        <pubDate>Tue, 19 Dec 2017 00:00:24 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-2/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・実装編 その2</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-2/</link>
+      <pubDate>Tue, 19 Dec 2017 00:00:24 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-2/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
 Proof Assistant 「Claire」の実装について説明していきます。
 リポジトリはこちら: myuon/claire
 LK proofchecker ルールの適用 LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
@@ -502,14 +530,15 @@ LKのルールはほとんどintro ruleなのでルールの名前を指定す�
 Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
 data Rule = I | Cut Formula -- CutはFormulaを引数に取る ... チェッカー Claire.Checker
 newGoal :: Formula -&amp;gt; [Judgement] newGoal fml = [Judgement [] (return fml)] judge :: [Rule] -&amp;gt; [Judgement] -&amp;gt; Either (Rule, [Judgement]) [Judgement] judge rs js = foldl (\m r -&amp;gt; m &amp;gt;&amp;gt;= go r) (Right js) rs where go I (Judgement assms props : js) | length assms == 1 &amp;amp;&amp;amp; assms == props = Right js go (Cut fml) (Judgement assms props : js) = Right $ Judgement assms (fml:props) : Judgement (fml:assms) props : js go AndL1 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fa:assms) props : js go AndL2 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fb:assms) props : js go AndR (Judgement assms ((fa :/\: fb):props) : js) = Right $ Judgement assms (fa:props) : Judgement assms (fb:props) : js go OrL (Judgement ((fa :\/: fb):assms) props : js) = Right $ Judgement (fa:assms) props : Judgement (fb:assms) props : js go OrR1 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fa:props) : js go OrR2 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fb:props) : js go ImpL (Judgement ((fa :==&amp;gt;: fb):assms) props : js) = Right $ Judgement assms (fa:props) : Judgement (fb:assms) props : js go ImpR (Judgement assms ((fa :==&amp;gt;: fb):props) : js) = Right $ Judgement (fa:assms) (fb:props) : js go BottomL (Judgement (Bottom:assms) props : js) = Right js go TopR (Judgement assms (Top:props) : js) = Right js go (ForallL t) (Judgement (Forall x fml:assms) props : js) = Right $ Judgement (substTerm x t fml:assms) props : js go (ForallR y) (Judgement assms (Forall x fml:props) : js) = Right $ Judgement assms (substTerm x (Var y) fml:props) : js go (ExistL y) (Judgement (Exist x fml:assms) props : js) = Right $ Judgement (substTerm x (Var y) fml:assms) props : js go (ExistR t) (Judgement assms (Exist x fml:props) : js) = Right $ Judgement assms (substTerm x t fml:props) : js go WL (Judgement (_:assms) props : js) = Right $ Judgement assms props : js go WR (Judgement assms (_:props) : js) = Right $ Judgement assms props : js go CL (Judgement (fml:assms) props : js) = Right $ Judgement (fml:fml:assms) props : js go CR (Judgement assms (fml:props) : js) = Right $ Judgement assms (fml:fml:props) : js go (PL k) (Judgement assms props : js) | k &amp;lt; length assms = Right $ Judgement (assms !</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・実装編 その1</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-1/</link>
-        <pubDate>Mon, 18 Dec 2017 00:01:47 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-1/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・実装編 その1</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-1/</link>
+      <pubDate>Mon, 18 Dec 2017 00:01:47 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-1/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
 Proof Assistant 「Claire」の実装について説明していきます。
 リポジトリはこちら: myuon/claire
 Syntax: FOL, LK, Claire 初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
@@ -517,14 +546,15 @@ FOL Claire.Syntax.FOL
 data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&amp;gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show) それぞれfirst-order logicの項と論理式の定義です。
 項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。
 さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&amp;lt;==&amp;gt;: fml2 = (fml1 :==&amp;gt;: fml2) :/\: (fml2 :==&amp;gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 ~::~ をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・理論編 その2</title>
-        <link>https://myuon.github.io/posts/proof-assistant-theory-2/</link>
-        <pubDate>Sun, 17 Dec 2017 00:17:12 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-theory-2/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 17日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・理論編 その2</title>
+      <link>https://myuon.github.io/posts/proof-assistant-theory-2/</link>
+      <pubDate>Sun, 17 Dec 2017 00:17:12 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-theory-2/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 17日目の記事です。
 昨日に引き続き、Proof Assistantを作る話をしていきます。
 今日は実際にこの後作っていくProof Assistant固有の話をしていきます。
 Claire言語とその設計 唐突ですがこれから作るProof Assistantを「Claire1」と呼ぶことにします。
@@ -537,14 +567,15 @@ The system LK - Wikipedia
 あとLK触れたことないのでちょっと触ってみたかった的なアレもあります(こっちの理由のほうが大きいかもしれない)。
 LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。
  judgementは Pn,P(n-1)..P1 |- Q1,Q2..Qm の形(PやQはfirst-order logicの論理式)。左側を仮定、右側を命題(propositions)という。 仮定は「全てがなりたつ」 命題は「いずれかが成り立つ」の意味になる 仮定は右から、命題は左から順番に読んでいく(まぁこれは記法の問題なのでどちらでもよいが) 論理結合子に対する規則は、それが左辺に現れる場合と右辺に現れる場合とあることに注意。例えばAndの規則はAndL1, AndL2, AndRの3つ。 LKは古典的(背理法が使える)である。(注:命題の数を常に1つだけに制限すると直観主義になる) (例) AndLの規則により B |- Qs ==&amp;gt; And(A,B) |- Qs がわかる。これは、「Bの下でQ1.</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・理論編 その1</title>
-        <link>https://myuon.github.io/posts/proof-assistant-theory-1/</link>
-        <pubDate>Sat, 16 Dec 2017 00:04:42 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-theory-1/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 16日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・理論編 その1</title>
+      <link>https://myuon.github.io/posts/proof-assistant-theory-1/</link>
+      <pubDate>Sat, 16 Dec 2017 00:04:42 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-theory-1/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 16日目の記事です。
 さてCSアドベントカレンダーも後半戦ということで、Proof Assistantを作ります。
 Proof Assistantを作ったことがある人は少ないと思うのでまずどういう風に言語を設計していくかという話をしてから、今回実際に作る言語の説明に入ります。
 Proof Assistantとは Proof Assistantは大体次のいずれかの方式をとるものが多いです。
@@ -559,14 +590,15 @@ Proof Assistantとは Proof Assistantは大体次のいずれかの方式をと�
 当然ながらメタロジックが弱すぎると欲しいロジックが定義できなかったりするのでそのへんは注意が必要です。まともに数学をしたいならfirst-order logicくらいは欲しくなるという気がします(がもっと弱くしてもいいのかもしれません、ロジック詳しくないのでよくわかりません)。
 証明記述マクロ 公理系を用いた証明は、公理・推論規則をゴールに適用していくことで記述するわけです。しかしそれだけでは通常不便なので色々便利なコマンドを作ったりproverを作ったりすることになると思います。
 ところでこういう証明用のコマンドを実装するためにマクロとかそういうものが欲しくなると思います。 ここではコマンドは推論規則の列を、つまり証明を生成するマクロとして登録しておくことにします。例えばCoqではLtacという専用のマクロ記述言語(と呼んでいいのかな？普通に証明生成言語と呼ぶべきかもしれません)がありますが、IsabelleではSMLで内部実装のAPIを呼び出してこういう感じのことをしています。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Haskellプロジェクトを始めるにあたって</title>
-        <link>https://myuon.github.io/posts/haskell-project-setup/</link>
-        <pubDate>Fri, 15 Dec 2017 00:04:21 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/haskell-project-setup/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 15日目の記事です。
+    <item>
+      <title>Haskellプロジェクトを始めるにあたって</title>
+      <link>https://myuon.github.io/posts/haskell-project-setup/</link>
+      <pubDate>Fri, 15 Dec 2017 00:04:21 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/haskell-project-setup/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 15日目の記事です。
 Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)
 今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。 どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。
 ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。
@@ -584,27 +616,29 @@ $ stack new [プロジェクトの名前] simple-hpack simple-hpackというの�
 正直好みですが個人的にはhpackの方が楽なのでこれを使うためにここではsimple-hpackのテンプレートを指定しています。
 また、以下の説明は全てhpackのpackage.yaml前提です。cabalファイルはまた少し違うので対応表で各自調べてください。
 configuration stack newが終わると必要なファイル群と stack.</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Coroutineモナドとステートマシン</title>
-        <link>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</link>
-        <pubDate>Thu, 14 Dec 2017 00:03:01 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。
+    <item>
+      <title>Coroutineモナドとステートマシン</title>
+      <link>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</link>
+      <pubDate>Thu, 14 Dec 2017 00:03:01 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。
 今回は小ネタです。
 monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。
 Coroutine-monad example: coroutine 名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。
 サンプルとしては次のような感じ:
 countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {- &amp;gt; printProduce countup counting... 1 counting... 2 -} countup内ではyieldという関数が使われていて、 yield :: Monad m =&amp;gt; x -&amp;gt; Coroutine (Yield x) m () なので Coroutine (Yield x) m () ではx型の値をyieldして停止することができる。 pogoStickは Yield x r の挙動を指定して、それを使ってCoroutineを潰すことができる。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Nominal Isabelleとラムダ計算 その4</title>
-        <link>https://myuon.github.io/posts/nominal-lambda-4/</link>
-        <pubDate>Wed, 13 Dec 2017 00:04:03 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/nominal-lambda-4/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 13日目の記事です。
+    <item>
+      <title>Nominal Isabelleとラムダ計算 その4</title>
+      <link>https://myuon.github.io/posts/nominal-lambda-4/</link>
+      <pubDate>Wed, 13 Dec 2017 00:04:03 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/nominal-lambda-4/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 13日目の記事です。
 さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。 流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。
 まぁCRに比べればずっと簡単なのでいけるでしょ(適当)
 今回解説するコードは以下にあります:
@@ -612,36 +646,39 @@ myuon:typed/theory/Simply.thy
 Simply-typed nominal_datatype simply = TVar string | TArr simply simply (infixr &amp;#34;→&amp;#34; 90) simply-typedな型はtype variableとfunction typeからなる。 typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。
 valid context さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。
 inductive valid :: &amp;#34;(name × simply) list ⇒ bool&amp;#34; where valid_nil: &amp;#34;valid []&amp;#34; | valid_cons: &amp;#34;⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)&amp;#34; equivariance valid lemma elim_valid_cons: &amp;#34;valid ((x,T)#Γ) ⟹ valid Γ ∧ x ♯ Γ&amp;#34; by (cases rule: valid.</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Nominal Isabelleとラムダ計算 その3</title>
-        <link>https://myuon.github.io/posts/nominal-lambda-3/</link>
-        <pubDate>Tue, 12 Dec 2017 00:05:37 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/nominal-lambda-3/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 12日目の記事です。
+    <item>
+      <title>Nominal Isabelleとラムダ計算 その3</title>
+      <link>https://myuon.github.io/posts/nominal-lambda-3/</link>
+      <pubDate>Tue, 12 Dec 2017 00:05:37 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/nominal-lambda-3/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 12日目の記事です。
 前回はCRの証明の途中までやったので続きです。 内容多めですが今回で頑張って終わらせます。
 confluenceへ (cont.) coherent lemmas parallel betaのcoherent lemmaを示す。 証明は基本的に場合分けやるだけなので省略するとして、まぁ常識的なことが成り立つよねという補題である。(説明の放棄)
 lemma elim_pb_var: &amp;#34;Var x ⇒β N ⟹ N = Var x&amp;#34; lemma elim_pb_abs: assumes &amp;#34;lam [x]. M ⇒β N&amp;#39;&amp;#34; &amp;#34;x ♯ N&amp;#39;&amp;#34; obtains N where &amp;#34;M ⇒β N&amp;#34; &amp;#34;N&amp;#39; = lam [x]. N&amp;#34; lemma elim_pb_app: assumes &amp;#34;M1 $ M2 ⇒β N&amp;#34; obtains N1 N2 where &amp;#34;N = N1 $ N2&amp;#34; &amp;#34;M1 ⇒β N1&amp;#34; &amp;#34;M2 ⇒β N2&amp;#34; | x P P&amp;#39; L where &amp;#34;M1 = lam[x].</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Nominal Isabelleとラムダ計算 その2</title>
-        <link>https://myuon.github.io/posts/nominal-lambda-2/</link>
-        <pubDate>Mon, 11 Dec 2017 00:13:11 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/nominal-lambda-2/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 11日目の記事です。
+    <item>
+      <title>Nominal Isabelleとラムダ計算 その2</title>
+      <link>https://myuon.github.io/posts/nominal-lambda-2/</link>
+      <pubDate>Mon, 11 Dec 2017 00:13:11 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/nominal-lambda-2/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 11日目の記事です。
 前回はNominal Isabelleの説明と証明を少しだけしました。 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。
 equivarianceとnominal_inductive 補題 さて2つの補題を示しておく。
 lemma subst_eqvt[eqvt]: fixes π :: &amp;#34;var prm&amp;#34; shows &amp;#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&amp;#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &amp;#34;x ♯ t&amp;#34; shows &amp;#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&amp;#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda.strong_induct) apply (auto simp add: swap_simps fresh_atm abs_fresh) done subst_eqvtに [eqvt] というattributeがついていることに注目して欲しい。 これはprm(変数の置換)の作用に関する等式につけるattributeで、実際にsubst_eqvtは π∙M = .</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Nominal Isabelleとラムダ計算 その1</title>
-        <link>https://myuon.github.io/posts/nominal-lambda-1/</link>
-        <pubDate>Sun, 10 Dec 2017 00:13:17 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/nominal-lambda-1/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 10日目の記事です。
+    <item>
+      <title>Nominal Isabelleとラムダ計算 その1</title>
+      <link>https://myuon.github.io/posts/nominal-lambda-1/</link>
+      <pubDate>Sun, 10 Dec 2017 00:13:17 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/nominal-lambda-1/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 10日目の記事です。
 前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。 今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。
 定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。
 今回解説するコードは以下に置いてあります。
@@ -653,14 +690,15 @@ myuon/CR.thy
 はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。
 Nominal Isabelle Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。 binderは [x]. M のような形をしていて、この束縛変数 x の変数名の付け替えを区別しないような項である。
 Nominal Isabelleではこの変数の付け替え、「例えば変数 x を y に付け替える」という操作を「置換 (x,y) を作用させる」という操作とみなす、というところからスタートする。 より厳密には次のようなことである: 無限の変数からなる集合 V が与えられている時、 List (V×V) の元を置換と呼ぶ。このとき置換の作用を ∙ でかくことにし、 ((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M のようにして定める。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>IsabelleについてのQ&amp;A</title>
-        <link>https://myuon.github.io/posts/isabelle-qanda/</link>
-        <pubDate>Sat, 09 Dec 2017 00:03:23 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/isabelle-qanda/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 9日目の記事です。
+    <item>
+      <title>IsabelleについてのQ&amp;A</title>
+      <link>https://myuon.github.io/posts/isabelle-qanda/</link>
+      <pubDate>Sat, 09 Dec 2017 00:03:23 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/isabelle-qanda/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 9日目の記事です。
 さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。
 というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。
 Syntax関係 矢印がいっぱいあるんだけど何  =&amp;gt; : HOLのfunction type constructor ==&amp;gt; : Pure logicのimplication --&amp;gt; : HOLのimplication  Pure logicってなんですか (この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。 そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。
@@ -675,90 +713,97 @@ Syntax関係 矢印がいっぱいあるんだけど何  =&amp;gt; : HOLのfunct
 by (metis lemmaA lemmaB lemmaC) の時に、lemmaAが先に適用されてそれ以後使わないことがはっきりしているなら
 apply (rule lemmaA) by (metis lemmaB lemmC) としたほうが応答が早くなります。あるいはapplyの後にもう一度sledehammerをかけてもいいでしょう。
 自動証明コマンドって使い分けるもの？ ある程度はね。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>IMPのoperational semantics その4</title>
-        <link>https://myuon.github.io/posts/2017csadv-day8/</link>
-        <pubDate>Fri, 08 Dec 2017 00:01:48 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/2017csadv-day8/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 8日目の記事です。
+    <item>
+      <title>IMPのoperational semantics その4</title>
+      <link>https://myuon.github.io/posts/2017csadv-day8/</link>
+      <pubDate>Fri, 08 Dec 2017 00:01:48 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/2017csadv-day8/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 8日目の記事です。
 前回は、big-stepがdeterministicであることを示した。
 9. Small-step long reduction csmallを複数回適用した、ということを表す関係を &amp;lt;_,_&amp;gt; ⟶* &amp;lt;_,_&amp;gt; でかいて、次のように定める。
 subsubsection {* small-step long reduction *} inductive csmall_long (&amp;#34;&amp;lt;_,_&amp;gt; ⟶* &amp;lt;_,_&amp;gt;&amp;#34;) where SL_refl: &amp;#34;&amp;lt;c,st&amp;gt; ⟶* &amp;lt;c,st&amp;gt;&amp;#34; | SL_trans1: &amp;#34;⟦ &amp;lt;c,st&amp;gt; ⟶ &amp;lt;c&amp;#39;,st&amp;#39;&amp;gt;; &amp;lt;c&amp;#39;,st&amp;#39;&amp;gt; ⟶* &amp;lt;c&amp;#39;&amp;#39;,st&amp;#39;&amp;#39;&amp;gt; ⟧ ⟹ &amp;lt;c,st&amp;gt; ⟶* &amp;lt;c&amp;#39;&amp;#39;,st&amp;#39;&amp;#39;&amp;gt;&amp;#34; lemma SL_trans: &amp;#34;⟦ &amp;lt;c,st&amp;gt; ⟶* &amp;lt;c&amp;#39;,st&amp;#39;&amp;gt;; &amp;lt;c&amp;#39;,st&amp;#39;&amp;gt; ⟶* &amp;lt;c&amp;#39;&amp;#39;,st&amp;#39;&amp;#39;&amp;gt; ⟧ ⟹ &amp;lt;c,st&amp;gt; ⟶* &amp;lt;c&amp;#39;&amp;#39;,st&amp;#39;&amp;#39;&amp;gt;&amp;#34; apply (induction arbitrary: c&amp;#39;&amp;#39; st&amp;#39;&amp;#39; rule: csmall_long.induct) apply simp apply (blast intro: SL_trans1) done lemma SL_SeqStep: &amp;#34;&amp;lt;c1,st&amp;gt; ⟶* &amp;lt;c1&amp;#39;,st&amp;#39;&amp;gt; ⟹ &amp;lt;c1;;c2,st&amp;gt; ⟶* &amp;lt;c1&amp;#39;;;c2,st&amp;#39;&amp;gt;&amp;#34; apply (induction arbitrary: c2 rule: csmall_long.</description>
-      </item>
+    </item>
     
-      <item>
-        <title>IMPのoperational semantics その3</title>
-        <link>https://myuon.github.io/posts/2017csadv-day7/</link>
-        <pubDate>Thu, 07 Dec 2017 00:18:10 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/2017csadv-day7/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 7日目の記事です。
+    <item>
+      <title>IMPのoperational semantics その3</title>
+      <link>https://myuon.github.io/posts/2017csadv-day7/</link>
+      <pubDate>Thu, 07 Dec 2017 00:18:10 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/2017csadv-day7/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 7日目の記事です。
 前回はcommandとcommandの評価を定義した。
 6. Coherent lemmas SKIP subsection {* Coherent lemmas *} lemma coh_B_Skip: assumes &amp;#34;&amp;lt;SKIP,st&amp;gt; ⇓ st&amp;#39;&amp;#34; shows &amp;#34;st = st&amp;#39;&amp;#34; using cbig.cases [OF assms] by auto 始めの補題はSKIPについてで、 &amp;lt;SKIP,st&amp;gt; ⇓ st&#39; ならば st = st&#39; というものである。 直観的には明らかであろうし、証明も場合分けをするだけで済む。
 Ass lemma coh_B_Ass: assumes &amp;#34;&amp;lt;x ::= a , st&amp;gt; ⇓ st&amp;#39;&amp;#34; shows &amp;#34;st&amp;#39; = st [x ↦ aeval st a]&amp;#34; using cbig.cases [OF assms] by auto 次は変数への代入。これも簡単なので省略。
 Seq lemma coh_B_Seq: assumes &amp;#34;&amp;lt;c1 ;; c2 , st&amp;gt; ⇓ st&amp;#39;&amp;#34; obtains st&amp;#39;&amp;#39; where &amp;#34;&amp;lt;c1 , st&amp;gt; ⇓ st&amp;#39;&amp;#39;&amp;#34; and &amp;#34;&amp;lt;c2 , st&amp;#39;&amp;#39;&amp;gt; ⇓ st&amp;#39;&amp;#34; &amp;lt;c1 ;; c2,st&amp;gt; ⇓ st&#39; ならば、 c1 を実行すると評価が停止し、さらにその後 c2 を実行すると st&#39; の状態になって評価が停止するということが言えるはずである。 上では後々の便利さのために obtains .</description>
-      </item>
+    </item>
     
-      <item>
-        <title>IMPのoperational semantics その2</title>
-        <link>https://myuon.github.io/posts/2017csadv-day6/</link>
-        <pubDate>Wed, 06 Dec 2017 00:07:53 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/2017csadv-day6/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 6日目の記事です。
+    <item>
+      <title>IMPのoperational semantics その2</title>
+      <link>https://myuon.github.io/posts/2017csadv-day6/</link>
+      <pubDate>Wed, 06 Dec 2017 00:07:53 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/2017csadv-day6/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 6日目の記事です。
 前回はaexp/bexpとそのevaluationを定めた。
 3. Commands さて次にcommandを定義する。
 これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
 section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&amp;#34;SKIP&amp;#34;) and CAssign (&amp;#34;_ ::= _&amp;#34; [50,50] 90) and CSeq (infixr &amp;#34;;;&amp;#34; 30) and CIf (&amp;#34;IF _ THEN _ ELSE _&amp;#34; 80) and CWhile (&amp;#34;WHILE _ DO _&amp;#34; 90) comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>IMPのoperational semantics その1</title>
-        <link>https://myuon.github.io/posts/2017csadv-day5/</link>
-        <pubDate>Tue, 05 Dec 2017 00:02:29 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/2017csadv-day5/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 5日目の記事です。
+    <item>
+      <title>IMPのoperational semantics その1</title>
+      <link>https://myuon.github.io/posts/2017csadv-day5/</link>
+      <pubDate>Tue, 05 Dec 2017 00:02:29 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/2017csadv-day5/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 5日目の記事です。
 今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。 そしてこの記事は一人computer scienceアドベントカレンダーなのでCSらしい話題を、ということで、 IMPのoperational semanticsの話でもしようと思います。
 IMPについて IMPとはimperative languageの頭文字を取ったもので、natとboolを基本型にもつ簡単な手続き型言語です。 CSの教科書とかでよく見かけるやつです。 IMPの定義をし、そのevaluationを定めます。
 ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。 このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。
 0. States IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。
 section {* States *} type_synonym id = string type_synonym state = &amp;#34;id ⇒ nat&amp;#34; definition empty :: &amp;#34;state&amp;#34; where &amp;#34;empty _ = 0&amp;#34; no_syntax &amp;#34;_maplet&amp;#34; :: &amp;#34;[&amp;#39;a, &amp;#39;a] ⇒ maplet&amp;#34; (&amp;#34;_ /↦/ _&amp;#34;) fun update :: &amp;#34;state ⇒ id ⇒ nat ⇒ state&amp;#34; (&amp;#34;_[_ ↦ _]&amp;#34; [80,80,80] 80) where &amp;#34;update st x n y = (if x = y then n else st y)&amp;#34; sectionコマンドは証明には影響を与えないが、Sidekickにsectionとして表示されたりLaTeXに出力すると実際に節として扱われたりするもの。chapter, subsectio, subsubsectionなどもある。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Isabelle/HOLの基本 その3</title>
-        <link>https://myuon.github.io/posts/2017csadv-day4/</link>
-        <pubDate>Mon, 04 Dec 2017 00:39:09 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/2017csadv-day4/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 4日目の記事です。
+    <item>
+      <title>Isabelle/HOLの基本 その3</title>
+      <link>https://myuon.github.io/posts/2017csadv-day4/</link>
+      <pubDate>Mon, 04 Dec 2017 00:39:09 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/2017csadv-day4/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 4日目の記事です。
 テキスト代わりのチュートリアル: prog-prove.pdf
 前回はHOLと自動証明についてやりました。 今回やる4章では、Isarという新しい言語(？)について見ていきます。
 4. Isar: A Language for Structured Proofs IsabelleはIsarという、structured proofを記述するための言語を別に提供している。 これはapplyを繋げて証明をするのとは違い、構造化された証明をキーワードを組み合わせて記述する、より自然言語による証明に近い記述を可能にする言語である。
 Isarのsyntaxのコアは次のようになっている(実際はもっと膨大):
 proof = &amp;#39;by&amp;#39; method | &amp;#39;proof&amp;#39; [method] step* &amp;#39;qed&amp;#39; step = &amp;#39;fix&amp;#39; variables | &amp;#39;assume&amp;#39; proposition | [&amp;#39;from&amp;#39; fact+] (&amp;#39;have&amp;#39; | &amp;#39;show&amp;#39;) proposition proof proposition = [name :] &amp;#34;formula&amp;#34; 4.1 Isar by Example 初めにIsarによる証明を見せるので眺めてみよう。
 lemma &amp;#34;¬ surj (f :: &amp;#39;a ⇒ &amp;#39;a set)&amp;#34; proof - assume srjf: &amp;#34;surj f&amp;#34; from srjf have fa: &amp;#34;∀A.</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Isabelle/HOLの基本 その2</title>
-        <link>https://myuon.github.io/posts/2017csadv-day3/</link>
-        <pubDate>Sun, 03 Dec 2017 00:01:48 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/2017csadv-day3/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 3日目の記事です。
+    <item>
+      <title>Isabelle/HOLの基本 その2</title>
+      <link>https://myuon.github.io/posts/2017csadv-day3/</link>
+      <pubDate>Sun, 03 Dec 2017 00:01:48 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/2017csadv-day3/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 3日目の記事です。
 テキスト代わりのチュートリアル: prog-prove.pdf
 前回は導入と型・関数・証明について学びました。 今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。
 3. Logic and Proof Beyond Equality 3.1 Formulas HOLのformulaの定義は次:
 form ::= True | False | term = term | ¬ form | form ∧ form | form ∨ form | form --&amp;gt; form | ∀x. form | ∃x. form termはラムダ式とifとかcaseとかletとかそのへん
 3.2 Sets &#39;a のsetを &#39;a set とかく。次のようなnotationが定義されている。
  {} , {e1,e2,e3} e ∈ A , A ⊆ B A ∪ B , A ∩ B , A − B, − A {x | P}  HOLのsetはかなり便利なので積極的に使っていこう。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Isabelle/HOLの基本 その1</title>
-        <link>https://myuon.github.io/posts/2017csadv-day2/</link>
-        <pubDate>Sat, 02 Dec 2017 00:00:44 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/2017csadv-day2/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 2日目の記事です。
+    <item>
+      <title>Isabelle/HOLの基本 その1</title>
+      <link>https://myuon.github.io/posts/2017csadv-day2/</link>
+      <pubDate>Sat, 02 Dec 2017 00:00:44 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/2017csadv-day2/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 2日目の記事です。
 さて今回よりIsabelle/HOL(HOLはライブラリの名前)の基本の解説をしていきます。 一応極基本的なことを最初に少し説明をしてから、あとは実践形式で実際に証明を書きながら細かい機能などの説明をしていく予定です。 説明に割くページ数とコンテンツの内容と時間的な問題で、定理証明とは何かなどは詳しく話しません。
 Isabelle資料 Isabelleのお勉強のための資料をまとめておきます。
  prog-prove.pdf: 公式チュートリアルの一番基本のやつ。入門するならこれだけは 必ず読みましょう 。チュートリアルは他にもトピックごとに色々あるよ！ isar-ref: 主にIsarに関するReference Manualだけど慣れてきたら参照する機会が多いと思う。 caeruiroさんのIsabelle Tutorialシリーズ: 大変貴重な日本語の入門記事。Isabelle-2009を使っているらしいのでもしかしたら古い記述もあるかもしれない。 Concrete Semantics: Isabelleでプログラミング言語のセマンティクスとかやるテキスト。前半はIsabelle入門、後半はCSのテキストみたいな構成。 AFP: Archive of Formal Proofs; Isabelleで証明されたあれこれが投稿されてる証明集みたいなサイト Isabelleの入門の入門: 遥か昔に書いた記事; 何かの役には立つかもしれない  このシリーズの目的 prog-prove.pdfを読んでねでチュートリアルを済ませてしまっても良いのですが、まぁ読んでって言って読んでもらった試しがないので もう少し実際に証明を書きながら解説をすることで、英語が読みたくない人や雰囲気だけ知りたい人にも優しい解説シリーズになればいいかなと思っています。 ひとまずこのIsabelle/HOLの基本シリーズでは上のprog-prove.pdfに沿って話を進めていきます。
@@ -767,14 +812,15 @@ Isabelle資料 Isabelleのお勉強のための資料をまとめておきます
 よく使うパネルを一通り説明しておきます。
  Documentation: Isabelleは豊富な公式ドキュメントが用意されています。 Sidekick: 現在開いているファイルのアウトライン的なものが表示されます。 State: なんやねんこれ Theories: 複数のファイルを開いている場合に、各ファイルのどの辺りまでcheckerが走っているかが一覧で表示されたものです。 Output: ここに情報が表示されます。証明は基本的にこのパネルを見ながら書きます。 Query: 既知の定理の検索などを行います。 Sledgehammer: 現在focusしている証明に対してsledgehammer(後述)を実行することができます。 Symbols: unicode symbolを入力するために使います。  1. Introduction HOLとはhigher-order-logicの略で、Isabelleの標準ライブラリの1つです。 Isabelleでは組み込みのロジックの上に適当な公理系を構成したものをライブラリとして提供しており、HOLやZFC(ZFCはFOLの上のライブラリ)などがあります。
 最初はHOLから入るのが良いでしょう。ZFC上で形式化とかしたい人はZFCとか使うのもいいと思います。 また、変数の名前の付け替えなどをいい感じにアレする2Nominalという考え方もあり、それを使ったNominal HOLなんかもサードパーティライブラリとして開発されています。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>一人CSアドベントカレンダー開催のお知らせ</title>
-        <link>https://myuon.github.io/posts/2017csadv-day1/</link>
-        <pubDate>Fri, 01 Dec 2017 00:06:00 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/2017csadv-day1/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 1日目の記事です。
+    <item>
+      <title>一人CSアドベントカレンダー開催のお知らせ</title>
+      <link>https://myuon.github.io/posts/2017csadv-day1/</link>
+      <pubDate>Fri, 01 Dec 2017 00:06:00 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/2017csadv-day1/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 1日目の記事です。
 概要的なもの 「一人アドベントカレンダーって面白そうだな、やってみたい」みたいなノリで登録したんですが、 25日毎日記事を同じテーマで投稿し続けるのどう考えてもめっちゃ大変なのでやはりここは自分が一番得意な分野で行くしかないかなとなりCS関係ということになりました。
 上のQiitaのページでも書いてますが、キーワードとして&#34;ラムダ計算・定理証明・Haskell・ML・圏論 とかなんかそのへん&#34;を挙げていますので そのへんのお話になります。今のところは無難に定理証明を中心にテーマをいくつか選んでおいたので多分そのへんの話です。
 スケジュール 最終的にはQiitaのカレンダー見ればわかることなんでいいんですが一応今後どういう感じで進めていくのかのスケジュール的なものをまとめておきます。
@@ -795,14 +841,15 @@ checkerのコア機能の解説→assist機能関係の解説→プラグイン�
 意気込み的な 開催にあたり内容よりも25日にわたってずっとブログを書き続けるのがつらそう という感情しかないんですが まぁせっかくなので楽しんでいこうと思います。
 あと無理はよくないのでしんどくなったら細切れにしていこうというのも気をつけていきたい。
 というわけで、読んでくれる人は25日の間どうぞお付き合いください。よろしくお願いします。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>HakyllからHugoに移行した</title>
-        <link>https://myuon.github.io/posts/migrate-to-hugo/</link>
-        <pubDate>Fri, 10 Nov 2017 02:37:31 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/migrate-to-hugo/</guid>
-        <description>移行理由 前はHakyll+pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。
+    <item>
+      <title>HakyllからHugoに移行した</title>
+      <link>https://myuon.github.io/posts/migrate-to-hugo/</link>
+      <pubDate>Fri, 10 Nov 2017 02:37:31 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/migrate-to-hugo/</guid>
+      <description>移行理由 前はHakyll+pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。
 手順諸々 導入 hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。 各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。
 hugo serve --watch --buildDrafts でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。
 テーマ Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。 hugo new theme [テーマ名] で必要なファイル群が themes にできるのであとは Templates にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。
@@ -814,47 +861,50 @@ syntax highlight関係のデザイン pandocではsyntax highlight用にcssを�
 TOC 困ったことにorg-modeだとtocが表示されないバグがあるらしく1、調べたらテンプレートだけでTOCを作る方法があったのでそれをパクった。 リストを作ってCSSでheadingに応じて右にずらしているだけだけど。
 semantic-uiの読み込み このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。 と言っても git submodule add URL directory とかして管理するだけだけど。 公開するときとローカルビルドするときのどちらも必要になるのでどちらもsubmoduleに追加する必要がある。 それと、URLはgit@...じゃなくてhttps:... じゃないとだめらしい。(一度怒られた)
 hard line breaks これはやり方がわからない。 orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(&amp;lt;br&amp;gt; に)してほしい。 #+OPTIONS: \n:t 相当のやつ。markdownは対応しているみたいだけど…。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>n番煎じのrecursion-scheme</title>
-        <link>https://myuon.github.io/posts/recursion-scheme/</link>
-        <pubDate>Fri, 27 Oct 2017 00:59:31 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/recursion-scheme/</guid>
-        <description>前提になりそうなことをちょこっとPreliminariesに書いた.
+    <item>
+      <title>n番煎じのrecursion-scheme</title>
+      <link>https://myuon.github.io/posts/recursion-scheme/</link>
+      <pubDate>Fri, 27 Oct 2017 00:59:31 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/recursion-scheme/</guid>
+      <description>前提になりそうなことをちょこっとPreliminariesに書いた.
 Recursion schemes 以下, C は適当な条件を満たすfunctor F: C -&amp;gt; C がFixをもち, さらにそれがCofixにもなっていることを仮定する1. 以下ではこの適当な条件を満たすfunctorしか考えないものとする.
 catamorphism F-algebra p: FA -&amp;gt; A に対し, D のinitialityにより得られる射 cata(p): D -&amp;gt; A を catamorphism とよぶ. これは in; cata(p) = fmap F cata(p); p: FD -&amp;gt; A を満たす.
 anamorphism catamorphismの双対. F-coalgebra q: A -&amp;gt; FA に対し, D のterminalityにより得られる射 ana(q): A -&amp;gt; D を anamorphism とよぶ. これは q; fmap F ana(q)  ana(q); out= を満たす.
 hylomorphism F-algebra p: FB -&amp;gt; B と F-coalgebra q: A -&amp;gt; FA に対し, hylo(p,q) = ana(q); cata(p) : A -&amp;gt; B を hylomorphism とよぶ.</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Overlapping Instancesと戦う</title>
-        <link>https://myuon.github.io/posts/overlapping-instances/</link>
-        <pubDate>Mon, 21 Aug 2017 00:31:03 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/overlapping-instances/</guid>
-        <description>Overlapping Instances Haskellで少し凝ったinstanceをいくつか書いたりしているとoverlapping instancesに悩まされることはよくある。 この辺のまとまった解説があると便利なのではと思ったので書く。
+    <item>
+      <title>Overlapping Instancesと戦う</title>
+      <link>https://myuon.github.io/posts/overlapping-instances/</link>
+      <pubDate>Mon, 21 Aug 2017 00:31:03 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/overlapping-instances/</guid>
+      <description>Overlapping Instances Haskellで少し凝ったinstanceをいくつか書いたりしているとoverlapping instancesに悩まされることはよくある。 この辺のまとまった解説があると便利なのではと思ったので書く。
 ユーザーガイドにて 実際、overlapping instancesが何故起こるのかについてはGHCユーザーガイドにそれなりに詳しく書いてあるのでそこを読めば良いと思う。
 GHCユーザーガイド - Overlapping instances
 勝手に抄訳すると次のような感じ
 9.8.3.6 Overlapping instances   一般に、Instance resolutionで述べたように、 GHCは、型クラス制約を解決するために使用されるinstance宣言が曖昧ではないことを要求する。 GHCは、 最も具体的な形が存在する時に限って 複数のinstanceにマッチすることを許すという方法で、instanceの解決を緩める方法も提供している。さらに、これはもっと緩くすることもできて、最も具体的な形があるかどうかにかかわらず、複数のinstanceにマッチすることを許すこともできる。この節で詳しく述べる。  instanceの選択をコントロールするには、それぞれのinstanceについてオーバーラップしたときの挙動を指定することができる。 instance キーワードの直後に次のいずれかのプラグマを書けば良い: {-# OVERLAPPING #-}, {-# OVERLAPPABLE #-}, {-# OVERLAPS #-} または {-# INCOHERENT #-}  INCOHERENT はinstanceが自由にoverlapしたりされたりすることを許すが、使わないほうがいいプラグマなので出来る限り避けたほうがいい。 また、後にもあるように OVERLAPS は OVERLAPPING と OVERLAPPABLE のいずれにもなるので OVERLAPS で事足りる場合も多いと思う。
 また、いちいちプラグマを書かなくてもいいように、デフォルトの挙動を指定するための拡張 -XIncoherentInstances と -XOverlappingInstances も あるけれど使用は出来る限り避けよう。
   さて、あるクライアントモジュールで (C ty1 .. tyn) なる制約の対象になるようなinstanceを探しているとしよう。この検索は次のようにして行われる:  - 対象となる制約に マッチする instance I を全て見つける。つまり、対象となる制約 (C ty1 .</description>
-      </item>
+    </item>
     
-      <item>
-        <title>HakyllでBlogを作る</title>
-        <link>https://myuon.github.io/posts/hakyll-blog/</link>
-        <pubDate>Wed, 16 Aug 2017 22:39:48 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/hakyll-blog/</guid>
-        <description>Hakyllでこのブログを作ったのでそのあれこれを
+    <item>
+      <title>HakyllでBlogを作る</title>
+      <link>https://myuon.github.io/posts/hakyll-blog/</link>
+      <pubDate>Wed, 16 Aug 2017 22:39:48 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/hakyll-blog/</guid>
+      <description>Hakyllでこのブログを作ったのでそのあれこれを
 概要 やりたいことは以下
  orgで文章をかく(大事) orgから良い感じのHTMLを生成し github pagesで公開  Hakyllのsetup 次を参考にした
  Hakyll Tutorials Hakyll, stack, Travis CI, Github でブログを管理する GitHub Pages はじめました hakyll package  stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく
 文書の変換・Hakyllの設定 プロジェクトの構造は次のようになっている
 - root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site.hs Hakyllの設定ファイル orgの変換 Hakyllは内部で文書変換にpandocを使っていて、pandocはorgに対応しているらしいので何も設定しなくても変換はできる (デフォルトの状態では posts 以下の文書ファイルが変換される)
 ただし、次の2つをやりたかったのであれこれ設定をかいた</description>
-      </item>
+    </item>
     
   </channel>
 </rss>

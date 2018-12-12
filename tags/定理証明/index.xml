@@ -6,17 +6,20 @@
     <description>Recent content in 定理証明 on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
+    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
+    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
     <lastBuildDate>Sun, 24 Dec 2017 00:04:51 +0900</lastBuildDate>
     
-      <atom:link href="https://myuon.github.io/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://myuon.github.io/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E/index.xml" rel="self" type="application/rss+xml" />
     
     
-      <item>
-        <title>Proof Assistantを作る・発展編 その7</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-7/</link>
-        <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-7/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・発展編 その7</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-7/</link>
+      <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-7/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
 Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
 実装すべき機能など prover さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
 Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
@@ -32,14 +35,15 @@ prop? bool? Isabelleではprop型というのはあまり見ない(存在しま�
 IsabelleのpropはClaireのprop型と同じく、メタロジックの基本型です。 しかし一方でHOLにはbool型というのが組み込みの型であり、これが要は「項の型」になります。
 前回も説明したと思いますが、型はFormulaとTermと2つにつき、Formulaにはprop型、Termには他の適当な型がつくことになっています。 bool型というのはTermの方につく型なのですね。
 さらにHOLではboolをpropに持ち上げるcoercionが定義されていてこれが効いているので、 lemma: True とか書けますが、これは本来は T :: bool =&amp;gt; prop みたいなのがあって T(True) と解釈されています。 ので、Isabelleを書いていると基本の型はboolでしょ、みたいな気持ちになると思いますがメタロジックの論理式の型はpropで、boolはあくまで項につく型だったのです。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・マクロ編 その6</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-6/</link>
-        <pubDate>Sat, 23 Dec 2017 00:04:55 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-6/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・マクロ編 その6</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-6/</link>
+      <pubDate>Sat, 23 Dec 2017 00:04:55 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-6/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
 Proof Assistant 「Claire」の実装について説明していきます。
 リポジトリはこちら: myuon/claire
 今回はClaireのマクロ機能について説明します。
@@ -50,14 +54,15 @@ Claireにもそういう機能を乗っけたいわけですが、言語を新�
 マクロの実装 マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。
 マクロ定義モジュール 定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。
 module Commands where import Claire macro :: Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command] macro = ... export_command :: [(String, Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command])] export_command = [ (&amp;#34;name&amp;#34;, macro) ] declmacro :: [Argument] -&amp;gt; [Decl] declmacro = ... export_decl :: [(String, [Argument] -&amp;gt; [Decl])] export_decl = [ (&amp;#34;name&amp;#34;, declmacro) ] これを使いたいときは、ClaireのファイルにHs_fileを記述します。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・実装編 その5</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-5/</link>
-        <pubDate>Fri, 22 Dec 2017 00:02:50 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-5/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・実装編 その5</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-5/</link>
+      <pubDate>Fri, 22 Dec 2017 00:02:50 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-5/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
 Proof Assistant 「Claire」の実装について説明していきます。
 リポジトリはこちら: myuon/claire
 機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
@@ -67,27 +72,29 @@ data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , pr
 また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。
 具体的には、
 theorem id: a ==&amp;gt; a proof ... qed -- この証明の直後、Envのthmsには (&amp;#34;id&amp;#34;, Pred &amp;#34;?</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・実装編 その4</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-4/</link>
-        <pubDate>Thu, 21 Dec 2017 00:20:35 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-4/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・実装編 その4</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-4/</link>
+      <pubDate>Thu, 21 Dec 2017 00:20:35 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-4/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
 Proof Assistant 「Claire」の実装について説明していきます。
 リポジトリはこちら: myuon/claire
 昨日に引き続いてClaireの宣言(Decl)について説明していきます。
 Declarations まずはtoplevelMの定義から。
 toplevelM :: (Monad m, MonadIO m) =&amp;gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &amp;lt;- lift get; utyp &amp;lt;- liftIO $ try $ infer env fml; case utyp of Left err -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&amp;gt; k Right typ -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &amp;lt;- suspend (DeclAwait return) env &amp;lt;- lift get case decl of ここに実装を書く Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・実装編 その3</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-3/</link>
-        <pubDate>Wed, 20 Dec 2017 00:12:26 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-3/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・実装編 その3</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-3/</link>
+      <pubDate>Wed, 20 Dec 2017 00:12:26 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-3/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
 Proof Assistant 「Claire」の実装について説明していきます。
 リポジトリはこちら: myuon/claire
 Proofchecker state machine さてClaireのproofcheckerを作っていきます。
@@ -98,14 +105,15 @@ Coroutine monad さてこういうステートマシンを作りたいときは�
 Claire.Checker
 Command Machine Suspender 簡単な方から行きます。
 data ComSuspender y = ComAwait (Command -&amp;gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&amp;gt; Env -&amp;gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = .</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・実装編 その2</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-2/</link>
-        <pubDate>Tue, 19 Dec 2017 00:00:24 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-2/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・実装編 その2</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-2/</link>
+      <pubDate>Tue, 19 Dec 2017 00:00:24 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-2/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
 Proof Assistant 「Claire」の実装について説明していきます。
 リポジトリはこちら: myuon/claire
 LK proofchecker ルールの適用 LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
@@ -115,14 +123,15 @@ LKのルールはほとんどintro ruleなのでルールの名前を指定す�
 Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
 data Rule = I | Cut Formula -- CutはFormulaを引数に取る ... チェッカー Claire.Checker
 newGoal :: Formula -&amp;gt; [Judgement] newGoal fml = [Judgement [] (return fml)] judge :: [Rule] -&amp;gt; [Judgement] -&amp;gt; Either (Rule, [Judgement]) [Judgement] judge rs js = foldl (\m r -&amp;gt; m &amp;gt;&amp;gt;= go r) (Right js) rs where go I (Judgement assms props : js) | length assms == 1 &amp;amp;&amp;amp; assms == props = Right js go (Cut fml) (Judgement assms props : js) = Right $ Judgement assms (fml:props) : Judgement (fml:assms) props : js go AndL1 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fa:assms) props : js go AndL2 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fb:assms) props : js go AndR (Judgement assms ((fa :/\: fb):props) : js) = Right $ Judgement assms (fa:props) : Judgement assms (fb:props) : js go OrL (Judgement ((fa :\/: fb):assms) props : js) = Right $ Judgement (fa:assms) props : Judgement (fb:assms) props : js go OrR1 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fa:props) : js go OrR2 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fb:props) : js go ImpL (Judgement ((fa :==&amp;gt;: fb):assms) props : js) = Right $ Judgement assms (fa:props) : Judgement (fb:assms) props : js go ImpR (Judgement assms ((fa :==&amp;gt;: fb):props) : js) = Right $ Judgement (fa:assms) (fb:props) : js go BottomL (Judgement (Bottom:assms) props : js) = Right js go TopR (Judgement assms (Top:props) : js) = Right js go (ForallL t) (Judgement (Forall x fml:assms) props : js) = Right $ Judgement (substTerm x t fml:assms) props : js go (ForallR y) (Judgement assms (Forall x fml:props) : js) = Right $ Judgement assms (substTerm x (Var y) fml:props) : js go (ExistL y) (Judgement (Exist x fml:assms) props : js) = Right $ Judgement (substTerm x (Var y) fml:assms) props : js go (ExistR t) (Judgement assms (Exist x fml:props) : js) = Right $ Judgement assms (substTerm x t fml:props) : js go WL (Judgement (_:assms) props : js) = Right $ Judgement assms props : js go WR (Judgement assms (_:props) : js) = Right $ Judgement assms props : js go CL (Judgement (fml:assms) props : js) = Right $ Judgement (fml:fml:assms) props : js go CR (Judgement assms (fml:props) : js) = Right $ Judgement assms (fml:fml:props) : js go (PL k) (Judgement assms props : js) | k &amp;lt; length assms = Right $ Judgement (assms !</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・実装編 その1</title>
-        <link>https://myuon.github.io/posts/proof-assistant-impl-1/</link>
-        <pubDate>Mon, 18 Dec 2017 00:01:47 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-impl-1/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・実装編 その1</title>
+      <link>https://myuon.github.io/posts/proof-assistant-impl-1/</link>
+      <pubDate>Mon, 18 Dec 2017 00:01:47 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-impl-1/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
 Proof Assistant 「Claire」の実装について説明していきます。
 リポジトリはこちら: myuon/claire
 Syntax: FOL, LK, Claire 初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
@@ -130,14 +139,15 @@ FOL Claire.Syntax.FOL
 data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&amp;gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show) それぞれfirst-order logicの項と論理式の定義です。
 項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。
 さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&amp;lt;==&amp;gt;: fml2 = (fml1 :==&amp;gt;: fml2) :/\: (fml2 :==&amp;gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 ~::~ をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・理論編 その2</title>
-        <link>https://myuon.github.io/posts/proof-assistant-theory-2/</link>
-        <pubDate>Sun, 17 Dec 2017 00:17:12 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-theory-2/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 17日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・理論編 その2</title>
+      <link>https://myuon.github.io/posts/proof-assistant-theory-2/</link>
+      <pubDate>Sun, 17 Dec 2017 00:17:12 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-theory-2/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 17日目の記事です。
 昨日に引き続き、Proof Assistantを作る話をしていきます。
 今日は実際にこの後作っていくProof Assistant固有の話をしていきます。
 Claire言語とその設計 唐突ですがこれから作るProof Assistantを「Claire1」と呼ぶことにします。
@@ -150,14 +160,15 @@ The system LK - Wikipedia
 あとLK触れたことないのでちょっと触ってみたかった的なアレもあります(こっちの理由のほうが大きいかもしれない)。
 LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。
  judgementは Pn,P(n-1)..P1 |- Q1,Q2..Qm の形(PやQはfirst-order logicの論理式)。左側を仮定、右側を命題(propositions)という。 仮定は「全てがなりたつ」 命題は「いずれかが成り立つ」の意味になる 仮定は右から、命題は左から順番に読んでいく(まぁこれは記法の問題なのでどちらでもよいが) 論理結合子に対する規則は、それが左辺に現れる場合と右辺に現れる場合とあることに注意。例えばAndの規則はAndL1, AndL2, AndRの3つ。 LKは古典的(背理法が使える)である。(注:命題の数を常に1つだけに制限すると直観主義になる) (例) AndLの規則により B |- Qs ==&amp;gt; And(A,B) |- Qs がわかる。これは、「Bの下でQ1.</description>
-      </item>
+    </item>
     
-      <item>
-        <title>Proof Assistantを作る・理論編 その1</title>
-        <link>https://myuon.github.io/posts/proof-assistant-theory-1/</link>
-        <pubDate>Sat, 16 Dec 2017 00:04:42 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/proof-assistant-theory-1/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 16日目の記事です。
+    <item>
+      <title>Proof Assistantを作る・理論編 その1</title>
+      <link>https://myuon.github.io/posts/proof-assistant-theory-1/</link>
+      <pubDate>Sat, 16 Dec 2017 00:04:42 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/proof-assistant-theory-1/</guid>
+      <description>これは一人Computer Scienceアドベントカレンダー 16日目の記事です。
 さてCSアドベントカレンダーも後半戦ということで、Proof Assistantを作ります。
 Proof Assistantを作ったことがある人は少ないと思うのでまずどういう風に言語を設計していくかという話をしてから、今回実際に作る言語の説明に入ります。
 Proof Assistantとは Proof Assistantは大体次のいずれかの方式をとるものが多いです。
@@ -172,7 +183,7 @@ Proof Assistantとは Proof Assistantは大体次のいずれかの方式をと�
 当然ながらメタロジックが弱すぎると欲しいロジックが定義できなかったりするのでそのへんは注意が必要です。まともに数学をしたいならfirst-order logicくらいは欲しくなるという気がします(がもっと弱くしてもいいのかもしれません、ロジック詳しくないのでよくわかりません)。
 証明記述マクロ 公理系を用いた証明は、公理・推論規則をゴールに適用していくことで記述するわけです。しかしそれだけでは通常不便なので色々便利なコマンドを作ったりproverを作ったりすることになると思います。
 ところでこういう証明用のコマンドを実装するためにマクロとかそういうものが欲しくなると思います。 ここではコマンドは推論規則の列を、つまり証明を生成するマクロとして登録しておくことにします。例えばCoqではLtacという専用のマクロ記述言語(と呼んでいいのかな？普通に証明生成言語と呼ぶべきかもしれません)がありますが、IsabelleではSMLで内部実装のAPIを呼び出してこういう感じのことをしています。</description>
-      </item>
+    </item>
     
   </channel>
 </rss>

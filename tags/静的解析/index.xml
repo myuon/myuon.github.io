@@ -6,17 +6,20 @@
     <description>Recent content in 静的解析 on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
+    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
+    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
     <lastBuildDate>Wed, 11 Jul 2018 05:49:39 -0700</lastBuildDate>
     
-      <atom:link href="https://myuon.github.io/tags/%E9%9D%99%E7%9A%84%E8%A7%A3%E6%9E%90/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://myuon.github.io/tags/%E9%9D%99%E7%9A%84%E8%A7%A3%E6%9E%90/index.xml" rel="self" type="application/rss+xml" />
     
     
-      <item>
-        <title>静的解析の限界、現実世界との境界</title>
-        <link>https://myuon.github.io/posts/how-far-can-static-analysis-go/</link>
-        <pubDate>Wed, 11 Jul 2018 05:49:39 -0700</pubDate>
-        <guid>https://myuon.github.io/posts/how-far-can-static-analysis-go/</guid>
-        <description>はじめに 2018年に静的解析をとにかく強力につけまくるのは多分あんまりコストに見合わないのでよくない
+    <item>
+      <title>静的解析の限界、現実世界との境界</title>
+      <link>https://myuon.github.io/posts/how-far-can-static-analysis-go/</link>
+      <pubDate>Wed, 11 Jul 2018 05:49:39 -0700</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/how-far-can-static-analysis-go/</guid>
+      <description>はじめに 2018年に静的解析をとにかく強力につけまくるのは多分あんまりコストに見合わないのでよくない
 じゃあ静的解析を窓から投げ捨ててよいかというとそれはただの愚行
 (以下、静的解析を普通に使えてる人には自明なことしか言いません)
 依存型のつらみ 私が最初に静的解析の限界を感じたのは多分依存型で遊んでいたとき
@@ -31,7 +34,7 @@
 あるいは、もっとひどければ全く利用されないこともある。ソートされたデータを一度DBやファイルに書き出してしまえば、型の保証はなくなってしまう。ファイルに書き込まれる前にソートされたことが型で保証されていたデータは、ファイルから読み出したときにはすでにその保証を失っている。
 実際にはシステムレベルでの保証というのがある。ファイルに読み書きされると当然型による保証は失われてしまうが、「そのファイルがこのプログラム以外で読み書きされないことを仮定してよいのなら」ソートされたデータを書き込んだファイルは再び読み込むとソートされているとしてよいはずである。 というわけでプログラムの型レベルでは保証できなくとも、 システム全体がまともに動いているなら ちゃんと制約を満たしてくれているはず、というのがある。
 システムレベルでの「保証」とは人間の頭の中にしかなく、通常いくつかの仮定が必要であるので型システムではうまく取り扱うことができず、例えば unsafeCoerce : a -&amp;gt; b のような関数の出番ということになる。</description>
-      </item>
+    </item>
     
   </channel>
 </rss>
