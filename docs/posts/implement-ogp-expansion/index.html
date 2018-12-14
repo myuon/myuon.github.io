@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OGP画像の埋め込みを実装したい(しない) - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.52" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="OGP画像の埋め込みを実装したい(しない)" />
+<meta property="og:description" content="OGP画像というのがあって、ついったーとかﾌｪｰｽﾌﾞｯｸとかでURLを貼るとリンク先のページの説明文と画像が表示されるみたいなやつがあると思うんだけどそういうアレ。
+URLを貼ると自分のサイトにアレを動的に埋め込めるようにしたいというのが目標。
+まぁあんなん「クライアントサイドでちょちょっとやったらできるやろ～ｗ」と思ってたんだけどどうもそんな簡単ではないことに最近気が付いたので記事に書いてみた。
+(なお実装はしてない、めんどすぎる)
+(知ってる人にはすごい当たり前の話だと思うけど調べてもあんまりヒットしなかったので)
+なぜクライアントサイドだけでは無理か OGP画像は各サイトのmetaタグの該当箇所を引っ張ってくることにより得られるが、そもそもJavaScriptで別のサイトにアクセスしてその結果で何かをしようとすると確実にCORS(Cross-Origin Resource Sharing)にひっかかる。ひっかからないブラウザもあるかもしれないけどモダンなブラウザならほぼ間違いなくひっかかる。
+もしかしたらHTML自体にAllow-Origin: *みたいなことをしているサーバーも世の中にはあるかもしれないけど普通はやる意味がないのでまぁしょうがないね。
+サーバーサイドレンダリング ということでサーバーサイドにAPIを1つ用意してURLを投げるとその先のHTMLをとってきてmetaタグからCORS画像と説明文を引っ張ってくる処理を行うことにする。
+これで実装終わりかと思いきやこれをそのままページに埋め込むと、ページの画像ソースURLがよそ様のものになる。いわゆる直リンクという古のインターネッツで超嫌われたアレに該当し、まぁ嫌われるだけならまだしも、自分のサイトがそれなりに人気サイトになったりするとそこから大量のリクエストが埋め込み先のサーバーに飛ぶので量によってはBANされたりしそうだなという感じになる。
+TwitterにせよFacebookにせよ、URLを投稿するとタイムラインを開いているフォロワーが一斉にそのURLにリクエストを飛ばすのは当然良くないでしょう。そういうわけで画像はキャッシュしましょうという話になってくる。
+キャッシュクリア さてキャッシュサーバーを用意して画像はいったん自前のところでキャッシュしてそれを参照するようにした。これでめでたしかと思いきやまだめんどい問題があって、キャッシュはあくまでキャッシュなのでクリアするという仕組みを用意しなければ、OGP画像をサイト管理者が変えても古い画像が残り続けたり前の説明文が残り続けたりする。これはあまりよいことではないだろう。
+FacebookでもOGPキャッシュが残り続けるのが問題になってキャッシュクリア用のボタンが実装されたりしてたらしい。
+最適化 みんながどうやってるのかは知らないが、上の機能を全部やったとして、でもまぁ冷静に考えてすべてのURLに対して画像をキャッシュするのは少し無駄が多いような気がするだろう。
+OGP画像はサイト全体で使いまわされたりすることも多い(ページごとに変えているマメなブログ更新者もいるので全員ではない)ので、OGP画像のURLをキーにキャッシュを使いまわすことで画像をとってくる手間とキャッシュサーバーのリソースを最適化したいような気がする(しかし実際はそこまでする必要があるのかは不明 あんま変わんないような気もするけど)。
+みんなどうしてるんだろ みなさんどうやってるんですかね" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/implement-ogp-expansion/" /><meta property="article:published_time" content="2018-12-14T23:51:25&#43;09:00"/>
+<meta property="article:modified_time" content="2018-12-14T23:51:25&#43;09:00"/>
+
+
+
+<meta itemprop="name" content="OGP画像の埋め込みを実装したい(しない)">
+<meta itemprop="description" content="OGP画像というのがあって、ついったーとかﾌｪｰｽﾌﾞｯｸとかでURLを貼るとリンク先のページの説明文と画像が表示されるみたいなやつがあると思うんだけどそういうアレ。
+URLを貼ると自分のサイトにアレを動的に埋め込めるようにしたいというのが目標。
+まぁあんなん「クライアントサイドでちょちょっとやったらできるやろ～ｗ」と思ってたんだけどどうもそんな簡単ではないことに最近気が付いたので記事に書いてみた。
+(なお実装はしてない、めんどすぎる)
+(知ってる人にはすごい当たり前の話だと思うけど調べてもあんまりヒットしなかったので)
+なぜクライアントサイドだけでは無理か OGP画像は各サイトのmetaタグの該当箇所を引っ張ってくることにより得られるが、そもそもJavaScriptで別のサイトにアクセスしてその結果で何かをしようとすると確実にCORS(Cross-Origin Resource Sharing)にひっかかる。ひっかからないブラウザもあるかもしれないけどモダンなブラウザならほぼ間違いなくひっかかる。
+もしかしたらHTML自体にAllow-Origin: *みたいなことをしているサーバーも世の中にはあるかもしれないけど普通はやる意味がないのでまぁしょうがないね。
+サーバーサイドレンダリング ということでサーバーサイドにAPIを1つ用意してURLを投げるとその先のHTMLをとってきてmetaタグからCORS画像と説明文を引っ張ってくる処理を行うことにする。
+これで実装終わりかと思いきやこれをそのままページに埋め込むと、ページの画像ソースURLがよそ様のものになる。いわゆる直リンクという古のインターネッツで超嫌われたアレに該当し、まぁ嫌われるだけならまだしも、自分のサイトがそれなりに人気サイトになったりするとそこから大量のリクエストが埋め込み先のサーバーに飛ぶので量によってはBANされたりしそうだなという感じになる。
+TwitterにせよFacebookにせよ、URLを投稿するとタイムラインを開いているフォロワーが一斉にそのURLにリクエストを飛ばすのは当然良くないでしょう。そういうわけで画像はキャッシュしましょうという話になってくる。
+キャッシュクリア さてキャッシュサーバーを用意して画像はいったん自前のところでキャッシュしてそれを参照するようにした。これでめでたしかと思いきやまだめんどい問題があって、キャッシュはあくまでキャッシュなのでクリアするという仕組みを用意しなければ、OGP画像をサイト管理者が変えても古い画像が残り続けたり前の説明文が残り続けたりする。これはあまりよいことではないだろう。
+FacebookでもOGPキャッシュが残り続けるのが問題になってキャッシュクリア用のボタンが実装されたりしてたらしい。
+最適化 みんながどうやってるのかは知らないが、上の機能を全部やったとして、でもまぁ冷静に考えてすべてのURLに対して画像をキャッシュするのは少し無駄が多いような気がするだろう。
+OGP画像はサイト全体で使いまわされたりすることも多い(ページごとに変えているマメなブログ更新者もいるので全員ではない)ので、OGP画像のURLをキーにキャッシュを使いまわすことで画像をとってくる手間とキャッシュサーバーのリソースを最適化したいような気がする(しかし実際はそこまでする必要があるのかは不明 あんま変わんないような気もするけど)。
+みんなどうしてるんだろ みなさんどうやってるんですかね">
+
+
+<meta itemprop="datePublished" content="2018-12-14T23:51:25&#43;09:00" />
+<meta itemprop="dateModified" content="2018-12-14T23:51:25&#43;09:00" />
+<meta itemprop="wordCount" content="24">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="OGP画像の埋め込みを実装したい(しない)"/>
+<meta name="twitter:description" content="OGP画像というのがあって、ついったーとかﾌｪｰｽﾌﾞｯｸとかでURLを貼るとリンク先のページの説明文と画像が表示されるみたいなやつがあると思うんだけどそういうアレ。
+URLを貼ると自分のサイトにアレを動的に埋め込めるようにしたいというのが目標。
+まぁあんなん「クライアントサイドでちょちょっとやったらできるやろ～ｗ」と思ってたんだけどどうもそんな簡単ではないことに最近気が付いたので記事に書いてみた。
+(なお実装はしてない、めんどすぎる)
+(知ってる人にはすごい当たり前の話だと思うけど調べてもあんまりヒットしなかったので)
+なぜクライアントサイドだけでは無理か OGP画像は各サイトのmetaタグの該当箇所を引っ張ってくることにより得られるが、そもそもJavaScriptで別のサイトにアクセスしてその結果で何かをしようとすると確実にCORS(Cross-Origin Resource Sharing)にひっかかる。ひっかからないブラウザもあるかもしれないけどモダンなブラウザならほぼ間違いなくひっかかる。
+もしかしたらHTML自体にAllow-Origin: *みたいなことをしているサーバーも世の中にはあるかもしれないけど普通はやる意味がないのでまぁしょうがないね。
+サーバーサイドレンダリング ということでサーバーサイドにAPIを1つ用意してURLを投げるとその先のHTMLをとってきてmetaタグからCORS画像と説明文を引っ張ってくる処理を行うことにする。
+これで実装終わりかと思いきやこれをそのままページに埋め込むと、ページの画像ソースURLがよそ様のものになる。いわゆる直リンクという古のインターネッツで超嫌われたアレに該当し、まぁ嫌われるだけならまだしも、自分のサイトがそれなりに人気サイトになったりするとそこから大量のリクエストが埋め込み先のサーバーに飛ぶので量によってはBANされたりしそうだなという感じになる。
+TwitterにせよFacebookにせよ、URLを投稿するとタイムラインを開いているフォロワーが一斉にそのURLにリクエストを飛ばすのは当然良くないでしょう。そういうわけで画像はキャッシュしましょうという話になってくる。
+キャッシュクリア さてキャッシュサーバーを用意して画像はいったん自前のところでキャッシュしてそれを参照するようにした。これでめでたしかと思いきやまだめんどい問題があって、キャッシュはあくまでキャッシュなのでクリアするという仕組みを用意しなければ、OGP画像をサイト管理者が変えても古い画像が残り続けたり前の説明文が残り続けたりする。これはあまりよいことではないだろう。
+FacebookでもOGPキャッシュが残り続けるのが問題になってキャッシュクリア用のボタンが実装されたりしてたらしい。
+最適化 みんながどうやってるのかは知らないが、上の機能を全部やったとして、でもまぁ冷静に考えてすべてのURLに対して画像をキャッシュするのは少し無駄が多いような気がするだろう。
+OGP画像はサイト全体で使いまわされたりすることも多い(ページごとに変えているマメなブログ更新者もいるので全員ではない)ので、OGP画像のURLをキーにキャッシュを使いまわすことで画像をとってくる手間とキャッシュサーバーのリソースを最適化したいような気がする(しかし実際はそこまでする必要があるのかは不明 あんま変わんないような気もするけど)。
+みんなどうしてるんだろ みなさんどうやってるんですかね"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2018-12-14 11:51">2018-12-14</time>
+      <h1>OGP画像の埋め込みを実装したい(しない)</h1>
+    </header>
+    <section>
+
+<p>OGP画像というのがあって、ついったーとかﾌｪｰｽﾌﾞｯｸとかでURLを貼るとリンク先のページの説明文と画像が表示されるみたいなやつがあると思うんだけどそういうアレ。<br />
+URLを貼ると自分のサイトにアレを動的に埋め込めるようにしたいというのが目標。</p>
+
+<p>まぁあんなん「クライアントサイドでちょちょっとやったらできるやろ～ｗ」と思ってたんだけどどうもそんな簡単ではないことに最近気が付いたので記事に書いてみた。</p>
+
+<p>(なお実装はしてない、めんどすぎる)</p>
+
+<p>(知ってる人にはすごい当たり前の話だと思うけど調べてもあんまりヒットしなかったので)</p>
+
+<h2 id="なぜクライアントサイドだけでは無理か">なぜクライアントサイドだけでは無理か</h2>
+
+<p>OGP画像は各サイトのmetaタグの該当箇所を引っ張ってくることにより得られるが、そもそもJavaScriptで別のサイトにアクセスしてその結果で何かをしようとすると確実にCORS(Cross-Origin Resource Sharing)にひっかかる。ひっかからないブラウザもあるかもしれないけどモダンなブラウザならほぼ間違いなくひっかかる。</p>
+
+<p>もしかしたらHTML自体にAllow-Origin: *みたいなことをしているサーバーも世の中にはあるかもしれないけど普通はやる意味がないのでまぁしょうがないね。</p>
+
+<h2 id="サーバーサイドレンダリング">サーバーサイドレンダリング</h2>
+
+<p>ということでサーバーサイドにAPIを1つ用意してURLを投げるとその先のHTMLをとってきてmetaタグからCORS画像と説明文を引っ張ってくる処理を行うことにする。</p>
+
+<p>これで実装終わりかと思いきやこれをそのままページに埋め込むと、ページの画像ソースURLがよそ様のものになる。いわゆる直リンクという古のインターネッツで超嫌われたアレに該当し、まぁ嫌われるだけならまだしも、自分のサイトがそれなりに人気サイトになったりするとそこから大量のリクエストが埋め込み先のサーバーに飛ぶので量によってはBANされたりしそうだなという感じになる。</p>
+
+<p>TwitterにせよFacebookにせよ、URLを投稿するとタイムラインを開いているフォロワーが一斉にそのURLにリクエストを飛ばすのは当然良くないでしょう。そういうわけで画像はキャッシュしましょうという話になってくる。</p>
+
+<h2 id="キャッシュクリア">キャッシュクリア</h2>
+
+<p>さてキャッシュサーバーを用意して画像はいったん自前のところでキャッシュしてそれを参照するようにした。これでめでたしかと思いきやまだめんどい問題があって、キャッシュはあくまでキャッシュなのでクリアするという仕組みを用意しなければ、OGP画像をサイト管理者が変えても古い画像が残り続けたり前の説明文が残り続けたりする。これはあまりよいことではないだろう。</p>
+
+<p>FacebookでもOGPキャッシュが残り続けるのが問題になってキャッシュクリア用のボタンが実装されたりしてたらしい。</p>
+
+<h2 id="最適化">最適化</h2>
+
+<p>みんながどうやってるのかは知らないが、上の機能を全部やったとして、でもまぁ冷静に考えてすべてのURLに対して画像をキャッシュするのは少し無駄が多いような気がするだろう。</p>
+
+<p>OGP画像はサイト全体で使いまわされたりすることも多い(ページごとに変えているマメなブログ更新者もいるので全員ではない)ので、OGP画像のURLをキーにキャッシュを使いまわすことで画像をとってくる手間とキャッシュサーバーのリソースを最適化したいような気がする(しかし実際はそこまでする必要があるのかは不明 あんま変わんないような気もするけど)。</p>
+
+<h2 id="みんなどうしてるんだろ">みんなどうしてるんだろ</h2>
+
+<p>みなさんどうやってるんですかね</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2018 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
