@@ -6,10 +6,43 @@
     <description>Recent content in Posts on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Mon, 24 Dec 2018 14:25:05 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 25 Dec 2018 20:25:54 +0900</lastBuildDate>
     
       <atom:link href="https://myuon.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+      <item>
+        <title>バーチャル美少女定理証明士を支える技術</title>
+        <link>https://myuon.github.io/posts/juniq/</link>
+        <pubDate>Tue, 25 Dec 2018 20:25:54 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/juniq/</guid>
+        <description>この記事とは特に関係ないのですがVTuber Techアドベントカレンダー(その1 その2)があるらしいので興味がある人は覗いてみるといいんじゃないでしょうか。
+バーチャル引きこもり病弱定理証明士 夕暮寝子というのがいて、その子の裏側のシステムを作ったので(作ったのはだいぶ前)その解説をします。なお問題は山積みの模様(そもそも私以外の人が使う想定じゃないので自分でいじるなりなんなりしてください)。
+技術スタック: Docker, Python, TypeScript, dlib (Python bindings), OpenCVちょこっと, Live2D SDK
+💞はじめまして💞
+🎊夕暮寝子といいます🎊
+😴電脳空間で引きこもりをやっています😴
+💻プログラムとか証明とかを書きます💻
+💪Live2D動かすやつ作ってるのでそれができたらデビューします💪
+👏よろしくお願いします👏#Vtuber準備中#Vtuber始めました#新人Vtuber#Vtuber pic.twitter.com/UAM9iTrFLU
+&amp;mdash; 夕暮寝子 (@YugureNeko) 2018年7月24日 
+リポジトリ コードは全部公開しています。
+https://github.com/myuon/juniQ
+免責事項
+このプログラム群はMITライセンスで公開しています(リポジトリにsubmoduleとして含まれるcubism-jsには当たり前ですがこのライセンスは適用されません)。
+このソフトウェアはLive2D SDK for webを利用しており、ソースコードの公開及びブログにおけるコードの解説はLive2Dから許可を得て行っています。
+このソフトウェアを利用して作られたものを出版(コードの一部または全部を公開することも含まれるようです)する場合にはLive2Dとの契約が必要になる場合があるのでその辺はちゃんと問い合わせてください。
+Live2D SDKリリースライセンス: https://www.live2d.com/ja/products/releaselicense
+(これ読む限りだとソースコードの一部を公開するだけでも出版にあたるかもみたいな書き方だったけど問い合わせたらソースコードの公開だけなら契約不要って言われたので割とLive2D側に判断の裁量がありそうです。まぁなんかやりたくなったらとりあえず聞いてみるのがよさそうな感じだった。)
+アーキテクチャ 次のような仕組みで動きます
+ ブラウザからカメラ映像を取得、websocketサーバーに画像を30fpsで投げる サーバーが画像を受け取って顔の検出等を行いパラメータを計算する 計算されたパラメータがブラウザのviewerに再度投げ返される viewerはLive2Dモデルを描画  なんでやねん なんやねんこれと思うと思うんですがこれはホストPCがWindowsでありWindowsで開発はできないことと、VirtualBoxではUSBの映像出力等を直接受け取れない等の技術的制約により悲しくも厳しい設計になっています。
+やーまじ全部Unityかなんかで作ればよかったーって後になって後悔したんですがしかしdlibとかのライブラリがUnityのアセットストアだとまともそうなやつはすごく高くていやいやみたいな気持ちになったりしたのはある。Unityネイティブプラグインで頑張って作り直したいけどつらそう。
+あとクライアントからサーバーに直接映像を投げるのって意外と難しくて(browser to browserだとそれっぽい技術は意外とあるんだけど…)あんま選択肢がないし、そもそも検出とかの関係で絶対画像を切り出す必要があるのでまぁブラウザで切って送ればいいんじゃないかみたいになっておる。当然この処理は割と負荷かかるのでうんまぁみたいな感じ。
+あとCORSの設定がこれを作ったときはよくわかってなかったのでFirefoxでしか多分動かないです。そのうちFirefoxでも動かなくなる可能性がある。
+映像取得部分 映像と音声を取得する。getUserMediaとかを使うとできる。映像は30fpsくらいに落としてwebsocketサーバーにjpeg画像として投げつける。音声はリップシンクのために使う。
+リップシンク作るところだけ載せます。
+// https://github.com/myuon/juniQ/blob/master/viewer/src/index.ts#L42 class AudioVolume { processor: ScriptProcessorNode; volume: number; clipLevel: number; averaging: number; clipping: boolean; lastClip: number; clipLag: number; constructor(audioContext: AudioContext, clipLevel = 0.</description>
+      </item>
     
       <item>
         <title>実装詳細テスト要るのか問題(反語)</title>
