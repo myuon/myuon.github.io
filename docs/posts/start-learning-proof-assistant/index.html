@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>定理証明リンク集 - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.52" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="定理証明リンク集" />
+<meta property="og:description" content="定理証明、特に定理証明支援系(Proof Assistant)はその存在こそ少しずつ浸透しつつあるような気がしないでもないけれど資料とか全然まとまってないのが不便だなと前々から思っていたのでリソースをまとめておきます。
+これも追加してほしいみたいなのあったら教えてください。
+Proof Assistants 始めるなら次の中から選ぶのがよいと思います。
+ Coq  Calculus of constructionsベースの型システムとリッチなコマンドを備えた言語 このリストの中では最もコミュニティが大きい、入門書等も豊富 型システムと項を書くためのGallina, コンパイラへの命令を記述するためのVernacular, タクティクスの定義に使うLtacなどの言語が混ざって出てくるのが初心者には混乱必至 結構複雑な言語なので使いこなすのはそれなりに大変  Agda  Martin-Löf type theoryベースの言語 Coqと違ってコマンド等はとても貧弱だが言語が薄いので中の仕組みが分かりやすい、依存型の勉強にはもってこい 実践的に使おうとするとパフォーマンスが悪いのがネック モジュール分割や証明のスキップみたいな面白くないところに時間を取られる可能性あり  Idris  Agdaに似た感じの言語 この中では唯一純粋なプログラミング言語として使用可能(runtimeがあって実行可能コードを吐ける)だが実際に動かして使うにはまだまだという感じ Agdaよりはサポートが多く証明が書きやすいはず(未検証なので嘘かも)  Lean  この中では後発、CoqやAgdaに似ており、Agdaよりは書きやすくリッチでCoqよりは薄くて簡単 数年前にメジャーバージョンが2から3に上がりそこで多少の断絶があるらしい 機能網羅的なリファレンスがまだ用意されてないらしいのでCoqやAgdaの知識がないと使いこなすのは難しいかもしれない  Isabelle  この中では唯一Curry-Howardをベースとしない形式証明(依存型もない) 豊富なライブラリと強力なproverによる自動証明が魅力 「普通の」数学をやりたいならこれがおすすめ 公式のリファレンスはあるが機能は膨大、非公式ドキュメントも少ないので習得は骨が折れるかも   入門書等 出版されていてもドラフト版のpdfが無料で読めるものが多い
+ Software Foundations: Coqを使用しプログラム意味論的な話題が中心。Coqの説明ばかりというわけではないので他言語ユーザーでも読めると思われる。 Concrete Semantics: Isabelle/HOLを使用しこちらもプログラム意味論系の証明を行う本。前半はIsabelleの説明で後半はコンピューターサイエンスという構成。 Certified Programming with Dependent Types: Coqで依存型を学べる本。Coqに限らず定理証明で幅広く使える話が書いてあるので非Coqユーザーでもおすすめ。 Verified Functional Programming in Agda: Agdaの本、読んでないので詳細知らず Coq&rsquo;Art: Coqの定評のある入門書、詳細は知らない Coq/SSReflect/MathCompによる定理証明: 日本語(！)で書かれたCoqの入門書  入門記事等 読み物もあり" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/start-learning-proof-assistant/" /><meta property="article:published_time" content="2019-01-06T15:46:06&#43;09:00"/>
+<meta property="article:modified_time" content="2019-01-06T15:46:06&#43;09:00"/>
+
+
+
+<meta itemprop="name" content="定理証明リンク集">
+<meta itemprop="description" content="定理証明、特に定理証明支援系(Proof Assistant)はその存在こそ少しずつ浸透しつつあるような気がしないでもないけれど資料とか全然まとまってないのが不便だなと前々から思っていたのでリソースをまとめておきます。
+これも追加してほしいみたいなのあったら教えてください。
+Proof Assistants 始めるなら次の中から選ぶのがよいと思います。
+ Coq  Calculus of constructionsベースの型システムとリッチなコマンドを備えた言語 このリストの中では最もコミュニティが大きい、入門書等も豊富 型システムと項を書くためのGallina, コンパイラへの命令を記述するためのVernacular, タクティクスの定義に使うLtacなどの言語が混ざって出てくるのが初心者には混乱必至 結構複雑な言語なので使いこなすのはそれなりに大変  Agda  Martin-Löf type theoryベースの言語 Coqと違ってコマンド等はとても貧弱だが言語が薄いので中の仕組みが分かりやすい、依存型の勉強にはもってこい 実践的に使おうとするとパフォーマンスが悪いのがネック モジュール分割や証明のスキップみたいな面白くないところに時間を取られる可能性あり  Idris  Agdaに似た感じの言語 この中では唯一純粋なプログラミング言語として使用可能(runtimeがあって実行可能コードを吐ける)だが実際に動かして使うにはまだまだという感じ Agdaよりはサポートが多く証明が書きやすいはず(未検証なので嘘かも)  Lean  この中では後発、CoqやAgdaに似ており、Agdaよりは書きやすくリッチでCoqよりは薄くて簡単 数年前にメジャーバージョンが2から3に上がりそこで多少の断絶があるらしい 機能網羅的なリファレンスがまだ用意されてないらしいのでCoqやAgdaの知識がないと使いこなすのは難しいかもしれない  Isabelle  この中では唯一Curry-Howardをベースとしない形式証明(依存型もない) 豊富なライブラリと強力なproverによる自動証明が魅力 「普通の」数学をやりたいならこれがおすすめ 公式のリファレンスはあるが機能は膨大、非公式ドキュメントも少ないので習得は骨が折れるかも   入門書等 出版されていてもドラフト版のpdfが無料で読めるものが多い
+ Software Foundations: Coqを使用しプログラム意味論的な話題が中心。Coqの説明ばかりというわけではないので他言語ユーザーでも読めると思われる。 Concrete Semantics: Isabelle/HOLを使用しこちらもプログラム意味論系の証明を行う本。前半はIsabelleの説明で後半はコンピューターサイエンスという構成。 Certified Programming with Dependent Types: Coqで依存型を学べる本。Coqに限らず定理証明で幅広く使える話が書いてあるので非Coqユーザーでもおすすめ。 Verified Functional Programming in Agda: Agdaの本、読んでないので詳細知らず Coq&rsquo;Art: Coqの定評のある入門書、詳細は知らない Coq/SSReflect/MathCompによる定理証明: 日本語(！)で書かれたCoqの入門書  入門記事等 読み物もあり">
+
+
+<meta itemprop="datePublished" content="2019-01-06T15:46:06&#43;09:00" />
+<meta itemprop="dateModified" content="2019-01-06T15:46:06&#43;09:00" />
+<meta itemprop="wordCount" content="163">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="定理証明リンク集"/>
+<meta name="twitter:description" content="定理証明、特に定理証明支援系(Proof Assistant)はその存在こそ少しずつ浸透しつつあるような気がしないでもないけれど資料とか全然まとまってないのが不便だなと前々から思っていたのでリソースをまとめておきます。
+これも追加してほしいみたいなのあったら教えてください。
+Proof Assistants 始めるなら次の中から選ぶのがよいと思います。
+ Coq  Calculus of constructionsベースの型システムとリッチなコマンドを備えた言語 このリストの中では最もコミュニティが大きい、入門書等も豊富 型システムと項を書くためのGallina, コンパイラへの命令を記述するためのVernacular, タクティクスの定義に使うLtacなどの言語が混ざって出てくるのが初心者には混乱必至 結構複雑な言語なので使いこなすのはそれなりに大変  Agda  Martin-Löf type theoryベースの言語 Coqと違ってコマンド等はとても貧弱だが言語が薄いので中の仕組みが分かりやすい、依存型の勉強にはもってこい 実践的に使おうとするとパフォーマンスが悪いのがネック モジュール分割や証明のスキップみたいな面白くないところに時間を取られる可能性あり  Idris  Agdaに似た感じの言語 この中では唯一純粋なプログラミング言語として使用可能(runtimeがあって実行可能コードを吐ける)だが実際に動かして使うにはまだまだという感じ Agdaよりはサポートが多く証明が書きやすいはず(未検証なので嘘かも)  Lean  この中では後発、CoqやAgdaに似ており、Agdaよりは書きやすくリッチでCoqよりは薄くて簡単 数年前にメジャーバージョンが2から3に上がりそこで多少の断絶があるらしい 機能網羅的なリファレンスがまだ用意されてないらしいのでCoqやAgdaの知識がないと使いこなすのは難しいかもしれない  Isabelle  この中では唯一Curry-Howardをベースとしない形式証明(依存型もない) 豊富なライブラリと強力なproverによる自動証明が魅力 「普通の」数学をやりたいならこれがおすすめ 公式のリファレンスはあるが機能は膨大、非公式ドキュメントも少ないので習得は骨が折れるかも   入門書等 出版されていてもドラフト版のpdfが無料で読めるものが多い
+ Software Foundations: Coqを使用しプログラム意味論的な話題が中心。Coqの説明ばかりというわけではないので他言語ユーザーでも読めると思われる。 Concrete Semantics: Isabelle/HOLを使用しこちらもプログラム意味論系の証明を行う本。前半はIsabelleの説明で後半はコンピューターサイエンスという構成。 Certified Programming with Dependent Types: Coqで依存型を学べる本。Coqに限らず定理証明で幅広く使える話が書いてあるので非Coqユーザーでもおすすめ。 Verified Functional Programming in Agda: Agdaの本、読んでないので詳細知らず Coq&rsquo;Art: Coqの定評のある入門書、詳細は知らない Coq/SSReflect/MathCompによる定理証明: 日本語(！)で書かれたCoqの入門書  入門記事等 読み物もあり"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2019-01-06 03:46">2019-01-06</time>
+      <h1>定理証明リンク集</h1>
+    </header>
+    <section>
+
+<p>定理証明、特に定理証明支援系(Proof Assistant)はその存在こそ少しずつ浸透しつつあるような気がしないでもないけれど資料とか全然まとまってないのが不便だなと前々から思っていたのでリソースをまとめておきます。</p>
+
+<p>これも追加してほしいみたいなのあったら教えてください。</p>
+
+<h2 id="proof-assistants">Proof Assistants</h2>
+
+<p>始めるなら次の中から選ぶのがよいと思います。</p>
+
+<ul>
+<li><a href="https://coq.inria.fr">Coq</a>
+
+<ul>
+<li>Calculus of constructionsベースの型システムとリッチなコマンドを備えた言語</li>
+<li>このリストの中では最もコミュニティが大きい、入門書等も豊富</li>
+<li>型システムと項を書くためのGallina, コンパイラへの命令を記述するためのVernacular, タクティクスの定義に使うLtacなどの言語が混ざって出てくるのが初心者には混乱必至</li>
+<li>結構複雑な言語なので使いこなすのはそれなりに大変</li>
+</ul></li>
+<li><a href="https://wiki.portal.chalmers.se/agda/pmwiki.php">Agda</a>
+
+<ul>
+<li>Martin-Löf type theoryベースの言語</li>
+<li>Coqと違ってコマンド等はとても貧弱だが言語が薄いので中の仕組みが分かりやすい、依存型の勉強にはもってこい</li>
+<li>実践的に使おうとするとパフォーマンスが悪いのがネック モジュール分割や証明のスキップみたいな面白くないところに時間を取られる可能性あり</li>
+</ul></li>
+<li><a href="https://www.idris-lang.org">Idris</a>
+
+<ul>
+<li>Agdaに似た感じの言語</li>
+<li>この中では唯一純粋なプログラミング言語として使用可能(runtimeがあって実行可能コードを吐ける)だが実際に動かして使うにはまだまだという感じ</li>
+<li>Agdaよりはサポートが多く証明が書きやすいはず(未検証なので嘘かも)</li>
+</ul></li>
+<li><a href="https://leanprover.github.io">Lean</a>
+
+<ul>
+<li>この中では後発、CoqやAgdaに似ており、Agdaよりは書きやすくリッチでCoqよりは薄くて簡単</li>
+<li>数年前にメジャーバージョンが2から3に上がりそこで多少の断絶があるらしい</li>
+<li>機能網羅的なリファレンスがまだ用意されてないらしいのでCoqやAgdaの知識がないと使いこなすのは難しいかもしれない</li>
+</ul></li>
+<li><a href="https://isabelle.in.tum.de">Isabelle</a>
+
+<ul>
+<li>この中では唯一Curry-Howardをベースとしない形式証明(依存型もない)</li>
+<li>豊富なライブラリと強力なproverによる自動証明が魅力</li>
+<li>「普通の」数学をやりたいならこれがおすすめ</li>
+<li>公式のリファレンスはあるが機能は膨大、非公式ドキュメントも少ないので習得は骨が折れるかも</li>
+</ul></li>
+</ul>
+
+<h2 id="入門書等">入門書等</h2>
+
+<p>出版されていてもドラフト版のpdfが無料で読めるものが多い</p>
+
+<ul>
+<li><a href="https://softwarefoundations.cis.upenn.edu">Software Foundations</a>: Coqを使用しプログラム意味論的な話題が中心。Coqの説明ばかりというわけではないので他言語ユーザーでも読めると思われる。</li>
+<li><a href="http://concrete-semantics.org">Concrete Semantics</a>: Isabelle/HOLを使用しこちらもプログラム意味論系の証明を行う本。前半はIsabelleの説明で後半はコンピューターサイエンスという構成。</li>
+<li><a href="http://adam.chlipala.net/cpdt/">Certified Programming with Dependent Types</a>: Coqで依存型を学べる本。Coqに限らず定理証明で幅広く使える話が書いてあるので非Coqユーザーでもおすすめ。</li>
+<li><a href="https://www.amazon.co.jp/dp/B01K0MK318/ref=cm_sw_r_tw_dp_U_x_sYAmCbKFTKKX0">Verified Functional Programming in Agda</a>: Agdaの本、読んでないので詳細知らず</li>
+<li><a href="https://www.labri.fr/perso/casteran/CoqArt/">Coq&rsquo;Art</a>: Coqの定評のある入門書、詳細は知らない</li>
+<li><a href="https://www.morikita.co.jp/books/book/3287">Coq/SSReflect/MathCompによる定理証明</a>: 日本語(！)で書かれたCoqの入門書</li>
+</ul>
+
+<h2 id="入門記事等">入門記事等</h2>
+
+<p>読み物もあり</p>
+
+<ul>
+<li><a href="http://yuchiki1000yen.hatenablog.com/entry/2018/07/07/155854">F*(F Star)の複雑な型システムの何が嬉しいのか？</a>: 依存型のモチベーションの話</li>
+<li><a href="https://employment.en-japan.com/engineerhub/entry/2018/08/10/110000">Coqで学ぶ証明プログラミング！ テストだけでなく「証明」で安全性を保証する</a></li>
+<li><a href="https://www.iij-ii.co.jp/activities/programming-coq/">プログラミング Coq　〜 絶対にバグのないプログラムの書き方 〜</a>: Coqの丁寧な入門記事</li>
+<li><a href="http://learnyouanagda.liamoc.net">Learn you an Agda</a></li>
+<li><a href="http://www.ie.u-ryukyu.ac.jp/~kono/lecture/software/Agda/index.html">Agda による圏論入門</a>: 圏論と定理証明多少知ってる人向け</li>
+</ul>
+
+<h4 id="私が書いてる記事とか">私が書いてる記事とか</h4>
+
+<p>それなりに色々書いたつもりではあるので まぁ参考になればくらいの気持ちで(話半分で読んだ方がいいやつとかもある)</p>
+
+<ul>
+<li><a href="http://myuon-myon.hatenablog.com/entry/2017/04/16/195944">あのとき知りたかったCoqの話</a></li>
+<li><a href="http://myuon-myon.hatenablog.com/entry/2016/01/09/212750">Theorem Prover Leanの紹介</a>: Lean2と他言語との比較とか</li>
+<li><a href="http://myuon-myon.hatenablog.com/entry/2016/12/01/221636">Theorem Prover Haskellの紹介</a>: Haskellで定理証明する話、お遊びとして</li>
+<li><a href="https://qiita.com/myuon_myon/items/11bb5bfc2e274fdaea7c">Isabelle入門の入門</a></li>
+<li><a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Science Advent Calendar 2017</a>: 前半にIsabelleの解説 後半にProof Assistantを作る話を連載してます</li>
+</ul>
+
+<h2 id="その他リソース">その他リソース</h2>
+
+<ul>
+<li><a href="https://qiita.com/junjihashimoto@github/items/a4ed0fa528ef2d831d6c">定理証明支援の紹介</a></li>
+<li><a href="https://staff.aist.go.jp/reynald.affeldt/ssrcoq/install.html">Coq/SSReflect/MathCompの設定</a>: Coqのインストールガイド</li>
+<li><a href="https://qnighy.hatenablog.com/entry/20101220/1292829222">Coqで独習するならどのページがいい？と聞かれたときのメモ</a></li>
+<li><a href="http://d.hatena.ne.jp/m-hiyama/20141207/1417948454">誰も書かないCoq入門以前の話</a></li>
+<li><a href="https://wiki.portal.chalmers.se/agda/pmwiki.php">The Agda wiki</a></li>
+<li><a href="https://www.cl.cam.ac.uk/~jrh13/atp/">Handbook of Practical Logic and Automated Reasoning</a>: MLでproof assistantを作る本</li>
+<li><a href="https://www.amazon.co.jp/Advanced-Topics-Types-Programming-Languages/dp/0262162288">Advanced Topics in Types and Programming Languages</a>: TaPLの続編、依存型の話もあり</li>
+<li><a href="https://www.lambdanote.com/products/littleprover-paperbook">定理証明手習い</a>: Schemeを使って定理証明に入門する本、最近出たやつ</li>
+<li><a href="http://strictlypositive.org/Easy.pdf">Simply Easy! An Implementation of a Dependently Typed Lambda Calculus (Andres Loh, Conor McBride, Wouter Swierstra)</a>: Haskellでdependent type入りのラムダ計算の実装を書く論文</li>
+<li><a href="https://homotopytypetheory.org/book/">Homotopy Type Theory</a>: The HoTT Bookと言われるやつ</li>
+<li><a href="https://qiita.com/kikx/items/10d143edc090bdfec477">Write Yourself a Theorem Prover in 48 Hours (その1)</a>: Coq風のproof assistantを作る記事</li>
+</ul>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2019 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
