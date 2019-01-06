@@ -6,10 +6,24 @@
     <description>Recent content in Posts on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sat, 29 Dec 2018 19:06:59 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 06 Jan 2019 13:34:10 +0900</lastBuildDate>
     
       <atom:link href="https://myuon.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+      <item>
+        <title>レイトレーシングに入門した</title>
+        <link>https://myuon.github.io/posts/start-ray-tracing/</link>
+        <pubDate>Sun, 06 Jan 2019 13:34:10 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/start-ray-tracing/</guid>
+        <description> レイトレ自体は前から興味あったんだけど年末年始でいよいよ真面目に入門し始めました(今後も続けるかは不明)。
+Ray tracing in one weekendシリーズを読んでこの3冊分の実装をRustで書きました。 本に沿って実装したのでレイトレーサーとして使えるような感じにはなってない(再利用性がなさすぎるところがちょいちょいある)。
+ Ray Tracing Minibooks (3 Book Series) リポジトリ  スクショ 個人的にお気に入りのやつをいくつか貼っておきます
+今後やりたいこととか 本では純粋なCPU実装で最適化とかもそこまで(3冊目の後半はやるけど)だったので、まぁその辺かなー。SIMDとか使って高速化するのはできそうなのと、GPUを使ったちゃんとした高速レイトレみたいなのもちょっとやってみたい(そこまでそっちに傾倒する気はないしガリガリチューニングしたり最適化テク実装というよりは、もっと綺麗な絵を高速にレンダリングしたい)。
+レイトレにも色々なテクがあるようで(bidirectionalなんとかとかmetropolisなんとかとか)、その辺によっても得意なシチュエーションが変わってくるみたいなので色々実装して遊べたりしたら面白そうだなーと思う。
+アルゴリズムの詳細については以下のスライドが詳しくてしかも超面白かった。
+ </description>
+      </item>
     
       <item>
         <title>2018年を振り返って</title>
