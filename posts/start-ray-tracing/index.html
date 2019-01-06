@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>レイトレーシングに入門した - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.52" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="レイトレーシングに入門した" />
+<meta property="og:description" content=" レイトレ自体は前から興味あったんだけど年末年始でいよいよ真面目に入門し始めました(今後も続けるかは不明)。
+Ray tracing in one weekendシリーズを読んでこの3冊分の実装をRustで書きました。 本に沿って実装したのでレイトレーサーとして使えるような感じにはなってない(再利用性がなさすぎるところがちょいちょいある)。
+ Ray Tracing Minibooks (3 Book Series) リポジトリ  スクショ 個人的にお気に入りのやつをいくつか貼っておきます
+今後やりたいこととか 本では純粋なCPU実装で最適化とかもそこまで(3冊目の後半はやるけど)だったので、まぁその辺かなー。SIMDとか使って高速化するのはできそうなのと、GPUを使ったちゃんとした高速レイトレみたいなのもちょっとやってみたい(そこまでそっちに傾倒する気はないしガリガリチューニングしたり最適化テク実装というよりは、もっと綺麗な絵を高速にレンダリングしたい)。
+レイトレにも色々なテクがあるようで(bidirectionalなんとかとかmetropolisなんとかとか)、その辺によっても得意なシチュエーションが変わってくるみたいなので色々実装して遊べたりしたら面白そうだなーと思う。
+アルゴリズムの詳細については以下のスライドが詳しくてしかも超面白かった。
+ " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/start-ray-tracing/" /><meta property="article:published_time" content="2019-01-06T13:34:10&#43;09:00"/>
+<meta property="article:modified_time" content="2019-01-06T13:34:10&#43;09:00"/>
+
+
+
+<meta itemprop="name" content="レイトレーシングに入門した">
+<meta itemprop="description" content=" レイトレ自体は前から興味あったんだけど年末年始でいよいよ真面目に入門し始めました(今後も続けるかは不明)。
+Ray tracing in one weekendシリーズを読んでこの3冊分の実装をRustで書きました。 本に沿って実装したのでレイトレーサーとして使えるような感じにはなってない(再利用性がなさすぎるところがちょいちょいある)。
+ Ray Tracing Minibooks (3 Book Series) リポジトリ  スクショ 個人的にお気に入りのやつをいくつか貼っておきます
+今後やりたいこととか 本では純粋なCPU実装で最適化とかもそこまで(3冊目の後半はやるけど)だったので、まぁその辺かなー。SIMDとか使って高速化するのはできそうなのと、GPUを使ったちゃんとした高速レイトレみたいなのもちょっとやってみたい(そこまでそっちに傾倒する気はないしガリガリチューニングしたり最適化テク実装というよりは、もっと綺麗な絵を高速にレンダリングしたい)。
+レイトレにも色々なテクがあるようで(bidirectionalなんとかとかmetropolisなんとかとか)、その辺によっても得意なシチュエーションが変わってくるみたいなので色々実装して遊べたりしたら面白そうだなーと思う。
+アルゴリズムの詳細については以下のスライドが詳しくてしかも超面白かった。
+ ">
+
+
+<meta itemprop="datePublished" content="2019-01-06T13:34:10&#43;09:00" />
+<meta itemprop="dateModified" content="2019-01-06T13:34:10&#43;09:00" />
+<meta itemprop="wordCount" content="20">
+
+
+
+<meta itemprop="keywords" content="" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="レイトレーシングに入門した"/>
+<meta name="twitter:description" content=" レイトレ自体は前から興味あったんだけど年末年始でいよいよ真面目に入門し始めました(今後も続けるかは不明)。
+Ray tracing in one weekendシリーズを読んでこの3冊分の実装をRustで書きました。 本に沿って実装したのでレイトレーサーとして使えるような感じにはなってない(再利用性がなさすぎるところがちょいちょいある)。
+ Ray Tracing Minibooks (3 Book Series) リポジトリ  スクショ 個人的にお気に入りのやつをいくつか貼っておきます
+今後やりたいこととか 本では純粋なCPU実装で最適化とかもそこまで(3冊目の後半はやるけど)だったので、まぁその辺かなー。SIMDとか使って高速化するのはできそうなのと、GPUを使ったちゃんとした高速レイトレみたいなのもちょっとやってみたい(そこまでそっちに傾倒する気はないしガリガリチューニングしたり最適化テク実装というよりは、もっと綺麗な絵を高速にレンダリングしたい)。
+レイトレにも色々なテクがあるようで(bidirectionalなんとかとかmetropolisなんとかとか)、その辺によっても得意なシチュエーションが変わってくるみたいなので色々実装して遊べたりしたら面白そうだなーと思う。
+アルゴリズムの詳細については以下のスライドが詳しくてしかも超面白かった。
+ "/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2019-01-06 01:34">2019-01-06</time>
+      <h1>レイトレーシングに入門した</h1>
+    </header>
+    <section>
+
+<p>レイトレ自体は前から興味あったんだけど年末年始でいよいよ真面目に入門し始めました(今後も続けるかは不明)。</p>
+
+<p>Ray tracing in one weekendシリーズを読んでこの3冊分の実装をRustで書きました。
+本に沿って実装したのでレイトレーサーとして使えるような感じにはなってない(再利用性がなさすぎるところがちょいちょいある)。</p>
+
+<ul>
+<li><a href="https://www.amazon.co.jp/gp/product/B0785N5QTC/ref=series_rw_dp_sw">Ray Tracing Minibooks (3 Book Series)</a></li>
+<li><a href="https://github.com/myuon/ruyt">リポジトリ</a></li>
+</ul>
+
+<h2 id="スクショ">スクショ</h2>
+
+<p>個人的にお気に入りのやつをいくつか貼っておきます</p>
+
+<p><img src="https://github.com/myuon/ruyt/blob/master/assets/14413648f55e334871d6f07836adfdac5d77ad76.png?raw=true" alt="https://github.com/myuon/ruyt/blob/master/assets/14413648f55e334871d6f07836adfdac5d77ad76.png?raw=true" /></p>
+
+<p><img src="https://github.com/myuon/ruyt/blob/master/assets/22cd0642d79f817b7bae173fd957a33b8b9e8244.png?raw=true" alt="https://github.com/myuon/ruyt/blob/master/assets/22cd0642d79f817b7bae173fd957a33b8b9e8244.png?raw=true" /></p>
+
+<p><img src="https://github.com/myuon/ruyt/blob/master/assets/8073afea1de6acdb0040b5d51b5f28c7ecf5d504.png?raw=true" alt="https://github.com/myuon/ruyt/blob/master/assets/8073afea1de6acdb0040b5d51b5f28c7ecf5d504.png?raw=true" /></p>
+
+<h2 id="今後やりたいこととか">今後やりたいこととか</h2>
+
+<p>本では純粋なCPU実装で最適化とかもそこまで(3冊目の後半はやるけど)だったので、まぁその辺かなー。SIMDとか使って高速化するのはできそうなのと、GPUを使ったちゃんとした高速レイトレみたいなのもちょっとやってみたい(そこまでそっちに傾倒する気はないしガリガリチューニングしたり最適化テク実装というよりは、もっと綺麗な絵を高速にレンダリングしたい)。</p>
+
+<p>レイトレにも色々なテクがあるようで(bidirectionalなんとかとかmetropolisなんとかとか)、その辺によっても得意なシチュエーションが変わってくるみたいなので色々実装して遊べたりしたら面白そうだなーと思う。</p>
+
+<p>アルゴリズムの詳細については以下のスライドが詳しくてしかも超面白かった。</p>
+
+<script async class="speakerdeck-embed" data-id="4b7909e99889472386a8dea2f0a9b5aa" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2019 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
