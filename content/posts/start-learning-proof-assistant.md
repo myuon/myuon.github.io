@@ -39,6 +39,7 @@ date: 2019-01-06T15:46:06+09:00
 出版されていてもドラフト版のpdfが無料で読めるものが多い
 
 - [Software Foundations](https://softwarefoundations.cis.upenn.edu): Coqを使用しプログラム意味論的な話題が中心。Coqの説明ばかりというわけではないので他言語ユーザーでも読めると思われる。
+- [Software Foundations in Idris](https://github.com/idris-hackers/software-foundations): Software FoundationsのIdris版
 - [Concrete Semantics](http://concrete-semantics.org): Isabelle/HOLを使用しこちらもプログラム意味論系の証明を行う本。前半はIsabelleの説明で後半はコンピューターサイエンスという構成。
 - [Certified Programming with Dependent Types](http://adam.chlipala.net/cpdt/): Coqで依存型を学べる本。Coqに限らず定理証明で幅広く使える話が書いてあるので非Coqユーザーでもおすすめ。
 - [Verified Functional Programming in Agda](https://www.amazon.co.jp/dp/B01K0MK318/ref=cm_sw_r_tw_dp_U_x_sYAmCbKFTKKX0): Agdaの本、読んでないので詳細知らず
