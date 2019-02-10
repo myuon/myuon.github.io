@@ -1,5 +1,5 @@
 watch:
-	hugo server --buildDrafts --bind 172.27.16.166
+	hugo server --buildDrafts
 
 build:
 	hugo
