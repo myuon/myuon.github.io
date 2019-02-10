@@ -6,10 +6,25 @@
     <description>Recent content in Aws on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Fri, 23 Nov 2018 21:00:48 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 11 Feb 2019 00:22:05 +0900</lastBuildDate>
     
       <atom:link href="https://myuon.github.io/tags/aws/index.xml" rel="self" type="application/rss+xml" />
     
+    
+      <item>
+        <title>DynamoDB LocalをTerraformから使う</title>
+        <link>https://myuon.github.io/posts/dynanmodb-local-terraform/</link>
+        <pubDate>Mon, 11 Feb 2019 00:22:05 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/dynanmodb-local-terraform/</guid>
+        <description>タイトルの通り。大体以下のPRの説明読めば分かる。
+https://github.com/hashicorp/terraform/pull/2825
+Terraform側の設定 local envで環境を作ってDynamoDB Localをテスト用途で動かすという前提。以下がproject structure。
+&amp;lt;project root&amp;gt; - infrastructure - local/ - main.tf ここにDynamoDB Localの設定を入れる - modules/ - dynamodb/table.tf ここにテーブルの設定など  infrastructure/local/main.tfでは、endpointsを指定することができる。(デプロイ時にこのendpointを参照してテーブルを作ったりする)
+provider &amp;quot;aws&amp;quot; { region = &amp;quot;ap-northeast-1&amp;quot; endpoints { dynamodb = &amp;quot;http://localhost:8000&amp;quot; } }  DynamoDB Localは普通に動かせばよい。
+port:8000で起動させたら、いつも通りterraform -e dev applyでDynamoDB Localにテーブルができる。
+スクリプト テストで使おうと思ったら、このDynamoDB Localを立ち上げる→terraform apply→テスト実行→DynamoDB Localを落とすを何度も繰り返すことになって面倒なので、私はMakefileを書いている。
+install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dynamodb; \ 	wget https://s3-ap-northeast-1.amazonaws.com/dynamodb-local-tokyo/dynamodb_local_latest.tar.gz; \ 	tar -xf ./dynamodb_local_latest.tar.gz test: $(MAKE) startTest # ここでテスト export .</description>
+      </item>
     
       <item>
         <title>Lambda FunctionをReasonで書く</title>
