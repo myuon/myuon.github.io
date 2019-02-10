@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DynamoDB LocalをTerraformから使う - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.52" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="DynamoDB LocalをTerraformから使う" />
+<meta property="og:description" content="タイトルの通り。大体以下のPRの説明読めば分かる。
+https://github.com/hashicorp/terraform/pull/2825
+Terraform側の設定 local envで環境を作ってDynamoDB Localをテスト用途で動かすという前提。以下がproject structure。
+&lt;project root&gt; - infrastructure - local/ - main.tf ここにDynamoDB Localの設定を入れる - modules/ - dynamodb/table.tf ここにテーブルの設定など  infrastructure/local/main.tfでは、endpointsを指定することができる。(デプロイ時にこのendpointを参照してテーブルを作ったりする)
+provider &quot;aws&quot; { region = &quot;ap-northeast-1&quot; endpoints { dynamodb = &quot;http://localhost:8000&quot; } }  DynamoDB Localは普通に動かせばよい。
+port:8000で起動させたら、いつも通りterraform -e dev applyでDynamoDB Localにテーブルができる。
+スクリプト テストで使おうと思ったら、このDynamoDB Localを立ち上げる→terraform apply→テスト実行→DynamoDB Localを落とすを何度も繰り返すことになって面倒なので、私はMakefileを書いている。
+install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dynamodb; \ 	wget https://s3-ap-northeast-1.amazonaws.com/dynamodb-local-tokyo/dynamodb_local_latest.tar.gz; \ 	tar -xf ./dynamodb_local_latest.tar.gz test: $(MAKE) startTest # ここでテスト export ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/dynanmodb-local-terraform/" /><meta property="article:published_time" content="2019-02-11T00:22:05&#43;09:00"/>
+<meta property="article:modified_time" content="2019-02-11T00:22:05&#43;09:00"/>
+
+
+
+<meta itemprop="name" content="DynamoDB LocalをTerraformから使う">
+<meta itemprop="description" content="タイトルの通り。大体以下のPRの説明読めば分かる。
+https://github.com/hashicorp/terraform/pull/2825
+Terraform側の設定 local envで環境を作ってDynamoDB Localをテスト用途で動かすという前提。以下がproject structure。
+&lt;project root&gt; - infrastructure - local/ - main.tf ここにDynamoDB Localの設定を入れる - modules/ - dynamodb/table.tf ここにテーブルの設定など  infrastructure/local/main.tfでは、endpointsを指定することができる。(デプロイ時にこのendpointを参照してテーブルを作ったりする)
+provider &quot;aws&quot; { region = &quot;ap-northeast-1&quot; endpoints { dynamodb = &quot;http://localhost:8000&quot; } }  DynamoDB Localは普通に動かせばよい。
+port:8000で起動させたら、いつも通りterraform -e dev applyでDynamoDB Localにテーブルができる。
+スクリプト テストで使おうと思ったら、このDynamoDB Localを立ち上げる→terraform apply→テスト実行→DynamoDB Localを落とすを何度も繰り返すことになって面倒なので、私はMakefileを書いている。
+install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dynamodb; \ 	wget https://s3-ap-northeast-1.amazonaws.com/dynamodb-local-tokyo/dynamodb_local_latest.tar.gz; \ 	tar -xf ./dynamodb_local_latest.tar.gz test: $(MAKE) startTest # ここでテスト export .">
+
+
+<meta itemprop="datePublished" content="2019-02-11T00:22:05&#43;09:00" />
+<meta itemprop="dateModified" content="2019-02-11T00:22:05&#43;09:00" />
+<meta itemprop="wordCount" content="117">
+
+
+
+<meta itemprop="keywords" content="AWS," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="DynamoDB LocalをTerraformから使う"/>
+<meta name="twitter:description" content="タイトルの通り。大体以下のPRの説明読めば分かる。
+https://github.com/hashicorp/terraform/pull/2825
+Terraform側の設定 local envで環境を作ってDynamoDB Localをテスト用途で動かすという前提。以下がproject structure。
+&lt;project root&gt; - infrastructure - local/ - main.tf ここにDynamoDB Localの設定を入れる - modules/ - dynamodb/table.tf ここにテーブルの設定など  infrastructure/local/main.tfでは、endpointsを指定することができる。(デプロイ時にこのendpointを参照してテーブルを作ったりする)
+provider &quot;aws&quot; { region = &quot;ap-northeast-1&quot; endpoints { dynamodb = &quot;http://localhost:8000&quot; } }  DynamoDB Localは普通に動かせばよい。
+port:8000で起動させたら、いつも通りterraform -e dev applyでDynamoDB Localにテーブルができる。
+スクリプト テストで使おうと思ったら、このDynamoDB Localを立ち上げる→terraform apply→テスト実行→DynamoDB Localを落とすを何度も繰り返すことになって面倒なので、私はMakefileを書いている。
+install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dynamodb; \ 	wget https://s3-ap-northeast-1.amazonaws.com/dynamodb-local-tokyo/dynamodb_local_latest.tar.gz; \ 	tar -xf ./dynamodb_local_latest.tar.gz test: $(MAKE) startTest # ここでテスト export ."/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2019-02-11 12:22">2019-02-11</time>
+      <h1>DynamoDB LocalをTerraformから使う</h1>
+    </header>
+    <section>
+
+<p>タイトルの通り。大体以下のPRの説明読めば分かる。</p>
+
+<p><a href="https://github.com/hashicorp/terraform/pull/2825">https://github.com/hashicorp/terraform/pull/2825</a></p>
+
+<h2 id="terraform側の設定">Terraform側の設定</h2>
+
+<p>local envで環境を作ってDynamoDB Localをテスト用途で動かすという前提。以下がproject structure。</p>
+
+<pre><code>&lt;project root&gt;
+  - infrastructure
+    - local/
+      - main.tf ここにDynamoDB Localの設定を入れる
+    - modules/
+      - dynamodb/table.tf ここにテーブルの設定など
+</code></pre>
+
+<p><code>infrastructure/local/main.tf</code>では、endpointsを指定することができる。(デプロイ時にこのendpointを参照してテーブルを作ったりする)</p>
+
+<pre><code>provider &quot;aws&quot; {
+  region = &quot;ap-northeast-1&quot;
+  endpoints {
+    dynamodb = &quot;http://localhost:8000&quot;
+  }
+}
+</code></pre>
+
+<p>DynamoDB Localは普通に動かせばよい。</p>
+
+<p>port:8000で起動させたら、いつも通り<code>terraform -e dev apply</code>でDynamoDB Localにテーブルができる。</p>
+
+<h2 id="スクリプト">スクリプト</h2>
+
+<p>テストで使おうと思ったら、このDynamoDB Localを立ち上げる→terraform apply→テスト実行→DynamoDB Localを落とすを何度も繰り返すことになって面倒なので、私はMakefileを書いている。</p>
+<div class="highlight"><pre class="chroma"><code class="language-make" data-lang="make"><span class="nf">install</span><span class="o">:</span>
+	mkdir -p ./infrastructure/local/.dynamodb
+	<span class="nb">cd</span> ./infrastructure/local/.dynamodb<span class="p">;</span> <span class="se">\
+</span><span class="se"></span>	wget https://s3-ap-northeast-1.amazonaws.com/dynamodb-local-tokyo/dynamodb_local_latest.tar.gz<span class="p">;</span> <span class="se">\
+</span><span class="se"></span>	tar -xf ./dynamodb_local_latest.tar.gz
+
+<span class="nf">test</span><span class="o">:</span>
+	<span class="k">$(</span>MAKE<span class="k">)</span> startTest
+
+	<span class="c1"># ここでテスト</span>
+	<span class="nb">export</span> ...<span class="p">;</span> <span class="se">\
+</span><span class="se"></span>	go <span class="nb">test</span> ./functions/... <span class="o">&amp;&amp;</span> <span class="k">$(</span>MAKE<span class="k">)</span> endTest <span class="o">||</span> <span class="k">$(</span>MAKE<span class="k">)</span> endTest
+
+<span class="nf">endTest</span><span class="o">:</span>
+	<span class="nb">kill</span> <span class="sb">`</span>cat .dynamo.pid<span class="sb">`</span>
+	rm .dynamo.pid
+	rm shared-local-instance.db
+
+<span class="nf">startTest</span><span class="o">:</span>
+	<span class="o">{</span> java -Djava.library.path<span class="o">=</span>./infrastructure/local/.dynamodb/DynamoDBLocal_lib -jar ./infrastructure/local/.dynamodb/DynamoDBLocal.jar -sharedDb <span class="p">&amp;</span> <span class="o">}</span><span class="p">;</span> <span class="nb">echo</span> <span class="nv">$$</span>! &gt; .dynamo.pid
+	sleep <span class="m">1</span>
+
+	<span class="nb">cd</span> infrastructure/local <span class="o">&amp;&amp;</span> terraform apply -auto-approve
+	sleep <span class="m">2</span>
+</code></pre></div>
+<p>(上のproject structureで<code>infrastructure/local/.dynamodb</code>に色々入れるという前提)</p>
+
+<p>色々汚いけどまぁ許してくれって感じ。</p>
+
+<h2 id="おまけ">おまけ</h2>
+
+<p>DynamoDB Localは実はStreamsにも対応してるんだけど、そもそもLambda ARNを設定する関係上どうせローカルでは動かないのでテスト時には切っている。</p>
+
+<p>あとTerraformは柔軟性がなさすぎてつらいのでGoでTerraformをライブラリとして使ってtfファイルをコードで生成みたいなことやりたいなーとか思った。aws-cdk的なやつ。(調べてないけどすでにあったりしないのかな)</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/aws">
+                <span>#</span>AWS</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2019 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
