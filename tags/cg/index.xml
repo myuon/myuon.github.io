@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cg on The curse of λ</title>
+    <link>https://myuon.github.io/tags/cg/</link>
+    <description>Recent content in Cg on The curse of λ</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Sun, 03 Mar 2019 19:33:25 +0900</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/cg/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>パストレーシングについて調べてる</title>
+        <link>https://myuon.github.io/posts/survey-ray-tracing/</link>
+        <pubDate>Sun, 03 Mar 2019 19:33:25 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/survey-ray-tracing/</guid>
+        <description>前に入門記事を書いてそこから色々調べたりしてたのでその備忘録として
+アルゴリズムについて カメラから出たレイをたどりながら光線のシミュレーションを行う単純なアルゴリズムをレイトレーシングと言って、それを確率的な計算によってオブジェクトの数に依らない計算量で計算できるように改良したものをパストレーシングと呼ぶらしい(正確な定義はよくわからなかったがアルゴリズムの差から名前が違うみたい)。
+アルゴリズムの詳細については次とかを見るとよさそう。
+ memoRANDOM 物理ベースレンダラ edupt解説  パストレーシングアルゴリズムの初出は&amp;rdquo;The rendering equation (J. Kajiya, 1986)&amp;ldquo;か？
+bidirectional, NEE, metropolis light transport, photon mappingあたりは実装してみたいがお勉強が先かも。
+NEE (Next Event Estimation) 悩みとして、memoRANDOMさんのサイトに載ってる通りに、3点のレンダリング方程式をベースにしたNEEを実装してみたけど寄与が小さすぎて全然効果がなかった。単に実装を間違えているだけか？
+また、調べているとshadow rayを蓄積したあと反射を行い、そっちで同じ光源に向けてexplicitなrayが飛んだとしたら無視するみたいなアルゴリズムでNEEを計算しているサイトも見かけたけど、それは何か違いがあるのだろうかと思った。NEEの正しいアルゴリズムがよくわからない。(というか、本当はちゃんと平均とかを計算してどういうアルゴリズムなら正しい結果が得られるかは手で確認すべきかなと思う)
+Stratified Sampling 層化サンプリングによってサンプルの座標がいい感じに均等にばらけるようにとるといいらしい。これってどれくらいの改善になるのだろうか、気になる。
+ Stratified Sampling of Spherical Triangles  GPU どうせならGPU使った計算もしたい。GPUでレイトレーシングやるみたいな話は調べると色々出てくる。
+疑問としてロシアンルーレットとかの実装だと分岐が入る(というかレイごとの計算回数が見積もれない)わけだけどその辺はどうするのだろうか。調べた感じだと1レイ1スレッドにするのが普通っぽかったのと、ロシアンルーレットのときにどうするかみたいな話は出てこなかったので、計算を打ち切る代わりに寄与を0にするみたいな感じで並列処理を止めないように作っているのかもしれない。
+そもそもシェーダー言語とかCUDAとかにパストレーシングアルゴリズムをナイーブに突っ込んでるのとかよく見るんだけど本当にそんなんでいいの？という気持ちになったりならんかったりする。
+ Path tracing on GPU  Unity Unity(のComputeShaderなんか)を使うとGPUを使った計算が簡単にできる。要は単にHLSL(これはWindowsだから？)とのintegrationがUnityに用意されているというだけのことだけど、Unityは普通に解説も多いしGPUを使ったレイトレーシングの入門にはいいかもしれない。
+ GPU Ray Tracing in Unity – Part 1  例えば次のような画像が割と簡単に出せる。
+なるほど pic.twitter.com/vgvv8ohDdk
+&amp;mdash; みょん (@myuon_myon) 2019年3月3日</description>
+      </item>
+    
+  </channel>
+</rss>
