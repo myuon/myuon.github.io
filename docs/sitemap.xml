@@ -3,6 +3,13 @@
   
     
       <url>
+        <loc>https://myuon.github.io/posts/survey-ray-tracing/</loc>
+        <lastmod>2019-03-03T19:33:25+09:00</lastmod>
+      </url>
+    
+  
+    
+      <url>
         <loc>https://myuon.github.io/posts/dynanmodb-local-terraform/</loc>
         <lastmod>2019-02-11T00:22:05+09:00</lastmod>
       </url>
@@ -424,6 +431,14 @@
   
     
       <url>
+        <loc>https://myuon.github.io/tags/cg/</loc>
+        <lastmod>2019-03-03T19:33:25+09:00</lastmod>
+        <priority>0</priority>
+      </url>
+    
+  
+    
+      <url>
         <loc>https://myuon.github.io/tags/frp/</loc>
         <lastmod>2018-11-04T12:32:56+09:00</lastmod>
         <priority>0</priority>
@@ -489,7 +504,7 @@
     
       <url>
         <loc>https://myuon.github.io/posts/</loc>
-        <lastmod>2019-02-11T00:22:05+09:00</lastmod>
+        <lastmod>2019-03-03T19:33:25+09:00</lastmod>
         <priority>0</priority>
       </url>
     
@@ -520,7 +535,7 @@
     
       <url>
         <loc>https://myuon.github.io/</loc>
-        <lastmod>2019-02-11T00:22:05+09:00</lastmod>
+        <lastmod>2019-03-03T19:33:25+09:00</lastmod>
       </url>
     
   
