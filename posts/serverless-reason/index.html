@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.52" />
+<meta name="generator" content="Hugo 0.54.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -30,7 +30,8 @@ serverless-reason serverless frameworkというサーバーレスアプリをや
 echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに定義されている。
 /* Sorry I&#39;m a lazy person! */ type event = { . &#34;pathParameters&#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&gt; Js.Promise.t(unit); type response = { . &#34;statusCode&#34;: int, &#34;body&#34;: string, }; let handler : (event, context, callback) =&gt; Js.Promise.t(response) = (event, _, _) =&gt; { Js." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/serverless-reason/" /><meta property="article:published_time" content="2018-11-23T21:00:48&#43;09:00"/>
+<meta property="og:url" content="https://myuon.github.io/posts/serverless-reason/" />
+<meta property="article:published_time" content="2018-11-23T21:00:48&#43;09:00"/>
 <meta property="article:modified_time" content="2018-11-23T21:00:48&#43;09:00"/>
 
 

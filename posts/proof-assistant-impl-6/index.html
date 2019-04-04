@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.52" />
+<meta name="generator" content="Hugo 0.54.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -34,7 +34,8 @@ Claireにもそういう機能を乗っけたいわけですが、言語を新�
 マクロ定義モジュール 定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。
 module Commands where import Claire macro :: Env -&gt; Argument -&gt; [Judgement] -&gt; [Command] macro = ... export_command :: [(String, Env -&gt; Argument -&gt; [Judgement] -&gt; [Command])] export_command = [ (&#34;name&#34;, macro) ] declmacro :: [Argument] -&gt; [Decl] declmacro = ... export_decl :: [(String, [Argument] -&gt; [Decl])] export_decl = [ (&#34;name&#34;, declmacro) ] これを使いたいときは、ClaireのファイルにHs_fileを記述します。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-6/" /><meta property="article:published_time" content="2017-12-23T00:04:55&#43;09:00"/>
+<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-6/" />
+<meta property="article:published_time" content="2017-12-23T00:04:55&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-23T00:04:55&#43;09:00"/>
 
 

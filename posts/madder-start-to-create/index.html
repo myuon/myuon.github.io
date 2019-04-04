@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.52" />
+<meta name="generator" content="Hugo 0.54.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -33,7 +33,8 @@ Rust 前回の記事でも色々言ってたけどその後分かったことな
 GTK&#43; gtk-rsというプロジェクトがありGTK関係のライブラリを色々提供してくれているので使ってる。たまに対応してないAPIがあるのとドキュメントにfeatureの指定が書いてないのでたまにハマる。
  gtk: gtkのガワ widgetとかを提供する gdk: 中身？ 内部実装のあれこれを提供する cairo: 2Dグラフィックスライブラリ pango: フォントレンダリングライブラリ pixbuf: cairo等で扱えるpixel buffer githubのイシューにもあるんだけど登録するcallbackがほぼ&#39;staticを要求するのでコード内の状態をcallback越しに持っていけない それを解決するために Rc&lt;RefCell&lt;S&gt;&gt; が必要になる widgetが色々あるようで実はそんなにない ちょっと凝ったことするなら自作するしかない widgetは内部状態を持っていてそれ自体がMVCみたいな感じになっているのでデータの持ち方を中央集権的にしようとすると結構めんどくさい Elmの人も言っていたが何でもコンポーネントは(ライブラリは作りやすいけど)あんまりいい設計ではない気がする ViewはModelからの単なる関数にしたほうが素直 ドキュメントが豊富なので頑張って読めば意外となんとかなる(ただし本家以外は基本アテにならない)  Gstreamer gstreamer-rsというライブラリがある。これもたまに対応してないAPIが(ry" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/madder-start-to-create/" /><meta property="article:published_time" content="2018-03-04T19:21:20&#43;09:00"/>
+<meta property="og:url" content="https://myuon.github.io/posts/madder-start-to-create/" />
+<meta property="article:published_time" content="2018-03-04T19:21:20&#43;09:00"/>
 <meta property="article:modified_time" content="2018-03-04T19:21:20&#43;09:00"/>
 
 
