@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.52" />
+<meta name="generator" content="Hugo 0.54.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -28,7 +28,8 @@
 Ass lemma coh_B_Ass: assumes &#34;&lt;x ::= a , st&gt; ⇓ st&#39;&#34; shows &#34;st&#39; = st [x ↦ aeval st a]&#34; using cbig.cases [OF assms] by auto 次は変数への代入。これも簡単なので省略。
 Seq lemma coh_B_Seq: assumes &#34;&lt;c1 ;; c2 , st&gt; ⇓ st&#39;&#34; obtains st&#39;&#39; where &#34;&lt;c1 , st&gt; ⇓ st&#39;&#39;&#34; and &#34;&lt;c2 , st&#39;&#39;&gt; ⇓ st&#39;&#34; &lt;c1 ;; c2,st&gt; ⇓ st&#39; ならば、 c1 を実行すると評価が停止し、さらにその後 c2 を実行すると st&#39; の状態になって評価が停止するということが言えるはずである。 上では後々の便利さのために obtains ." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day7/" /><meta property="article:published_time" content="2017-12-07T00:18:10&#43;09:00"/>
+<meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day7/" />
+<meta property="article:published_time" content="2017-12-07T00:18:10&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-07T00:18:10&#43;09:00"/>
 
 

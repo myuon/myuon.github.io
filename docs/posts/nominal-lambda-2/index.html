@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.52" />
+<meta name="generator" content="Hugo 0.54.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -27,7 +27,8 @@
 equivarianceとnominal_inductive 補題 さて2つの補題を示しておく。
 lemma subst_eqvt[eqvt]: fixes π :: &#34;var prm&#34; shows &#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &#34;x ♯ t&#34; shows &#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda.strong_induct) apply (auto simp add: swap_simps fresh_atm abs_fresh) done subst_eqvtに [eqvt] というattributeがついていることに注目して欲しい。 これはprm(変数の置換)の作用に関する等式につけるattributeで、実際にsubst_eqvtは π∙M = ." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/nominal-lambda-2/" /><meta property="article:published_time" content="2017-12-11T00:13:11&#43;09:00"/>
+<meta property="og:url" content="https://myuon.github.io/posts/nominal-lambda-2/" />
+<meta property="article:published_time" content="2017-12-11T00:13:11&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-11T00:13:11&#43;09:00"/>
 
 

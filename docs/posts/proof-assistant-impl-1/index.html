@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.52" />
+<meta name="generator" content="Hugo 0.54.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,7 +31,8 @@ data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) d
 項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。
 さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&lt;==&gt;: fml2 = (fml1 :==&gt;: fml2) :/\: (fml2 :==&gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 ~::~ をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-1/" /><meta property="article:published_time" content="2017-12-18T00:01:47&#43;09:00"/>
+<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-1/" />
+<meta property="article:published_time" content="2017-12-18T00:01:47&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-18T00:01:47&#43;09:00"/>
 
 

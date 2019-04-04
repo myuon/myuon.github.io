@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.52" />
+<meta name="generator" content="Hugo 0.54.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -33,7 +33,8 @@ LKのルールはほとんどintro ruleなのでルールの名前を指定す�
 data Rule = I | Cut Formula -- CutはFormulaを引数に取る ... チェッカー Claire.Checker
 newGoal :: Formula -&gt; [Judgement] newGoal fml = [Judgement [] (return fml)] judge :: [Rule] -&gt; [Judgement] -&gt; Either (Rule, [Judgement]) [Judgement] judge rs js = foldl (\m r -&gt; m &gt;&gt;= go r) (Right js) rs where go I (Judgement assms props : js) | length assms == 1 &amp;&amp; assms == props = Right js go (Cut fml) (Judgement assms props : js) = Right $ Judgement assms (fml:props) : Judgement (fml:assms) props : js go AndL1 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fa:assms) props : js go AndL2 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fb:assms) props : js go AndR (Judgement assms ((fa :/\: fb):props) : js) = Right $ Judgement assms (fa:props) : Judgement assms (fb:props) : js go OrL (Judgement ((fa :\/: fb):assms) props : js) = Right $ Judgement (fa:assms) props : Judgement (fb:assms) props : js go OrR1 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fa:props) : js go OrR2 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fb:props) : js go ImpL (Judgement ((fa :==&gt;: fb):assms) props : js) = Right $ Judgement assms (fa:props) : Judgement (fb:assms) props : js go ImpR (Judgement assms ((fa :==&gt;: fb):props) : js) = Right $ Judgement (fa:assms) (fb:props) : js go BottomL (Judgement (Bottom:assms) props : js) = Right js go TopR (Judgement assms (Top:props) : js) = Right js go (ForallL t) (Judgement (Forall x fml:assms) props : js) = Right $ Judgement (substTerm x t fml:assms) props : js go (ForallR y) (Judgement assms (Forall x fml:props) : js) = Right $ Judgement assms (substTerm x (Var y) fml:props) : js go (ExistL y) (Judgement (Exist x fml:assms) props : js) = Right $ Judgement (substTerm x (Var y) fml:assms) props : js go (ExistR t) (Judgement assms (Exist x fml:props) : js) = Right $ Judgement assms (substTerm x t fml:props) : js go WL (Judgement (_:assms) props : js) = Right $ Judgement assms props : js go WR (Judgement assms (_:props) : js) = Right $ Judgement assms props : js go CL (Judgement (fml:assms) props : js) = Right $ Judgement (fml:fml:assms) props : js go CR (Judgement assms (fml:props) : js) = Right $ Judgement assms (fml:fml:props) : js go (PL k) (Judgement assms props : js) | k &lt; length assms = Right $ Judgement (assms !" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-2/" /><meta property="article:published_time" content="2017-12-19T00:00:24&#43;09:00"/>
+<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-2/" />
+<meta property="article:published_time" content="2017-12-19T00:00:24&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-19T00:00:24&#43;09:00"/>
 
 

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.52" />
+<meta name="generator" content="Hugo 0.54.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -29,7 +29,8 @@ Coroutine-monad example: coroutine 名前の通りmonad-coroutineはコルーチ
 サンプルとしては次のような感じ:
 countup :: Coroutine (Yield Int) IO () countup = do lift $ print &#34;counting...&#34; yield 1 lift $ print &#34;counting...&#34; yield 2 return () printProduce :: Show x =&gt; Coroutine (Yield x) IO r -&gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&gt; lift (print x) &gt;&gt; cont) producer {- &gt; printProduce countup counting... 1 counting... 2 -} countup内ではyieldという関数が使われていて、 yield :: Monad m =&gt; x -&gt; Coroutine (Yield x) m () なので Coroutine (Yield x) m () ではx型の値をyieldして停止することができる。 pogoStickは Yield x r の挙動を指定して、それを使ってCoroutineを潰すことができる。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/coroutine-monad-as-state-machine/" /><meta property="article:published_time" content="2017-12-14T00:03:01&#43;09:00"/>
+<meta property="og:url" content="https://myuon.github.io/posts/coroutine-monad-as-state-machine/" />
+<meta property="article:published_time" content="2017-12-14T00:03:01&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-14T00:03:01&#43;09:00"/>
 
 

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.52" />
+<meta name="generator" content="Hugo 0.54.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -29,7 +29,8 @@ Proof Assistant 「Claire」の実装について説明していきます。
 Declarations まずはtoplevelMの定義から。
 toplevelM :: (Monad m, MonadIO m) =&gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &lt;- lift get; utyp &lt;- liftIO $ try $ infer env fml; case utyp of Left err -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&gt; k Right typ -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &lt;- suspend (DeclAwait return) env &lt;- lift get case decl of ここに実装を書く Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-4/" /><meta property="article:published_time" content="2017-12-21T00:20:35&#43;09:00"/>
+<meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-4/" />
+<meta property="article:published_time" content="2017-12-21T00:20:35&#43;09:00"/>
 <meta property="article:modified_time" content="2017-12-21T00:20:35&#43;09:00"/>
 
 
