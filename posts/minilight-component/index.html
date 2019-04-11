@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>newtype decoratorパターンとグラフィックスライブラリ - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.55.0" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="newtype decoratorパターンとグラフィックスライブラリ" />
+<meta property="og:description" content="minilightというSDL2の上で動くグラフィックスライブラリを作っている。
+前にも似たようなことをしており、フルスクラッチで作ったくせにそんなに変わらないという代物。
+(別にFluxとかを目指しているわけではないので…まぁ偶然の一致というやつだな)
+比較的簡単にコンポーネントが作れるようになったので、その紹介も兼ねて。
+例: ボタン 例として押した回数が表示されるボタンを作ってみる。
+[https://github.com/myuon/minilight/blob/master/examples/button-counter.hs]
+コード自体はせいぜい30行程度で書けるので結構お手軽だと思う。
+以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
+data Button = Button { font :: SDL.Font.Font, counter :: Int } new :: MiniLight Button new = do font &lt;- loadFont (FontDescriptor &#34;IPAGothic&#34; (FontStyle False False)) 22 return $ Button {font = font, counter = 0} 以下がボタンコンポーネントの定義。ComponentUnitのインスタンスを作れば良い。viewはfiguresで、イベントハンドラーはonSignalで、モデルの更新はupdateで、キャッシュの設定はuseCacheでそれぞれ行う。
+instance ComponentUnit Button where update = return figures comp = do textTexture &lt;- liftMiniLight $ text (font comp) (Vect.V4 255 255 255 255) $ if counter comp == 0 then &#34;Click me!" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/minilight-component/" />
+<meta property="article:published_time" content="2019-04-11T20:30:21&#43;09:00"/>
+<meta property="article:modified_time" content="2019-04-11T20:30:21&#43;09:00"/>
+
+
+
+<meta itemprop="name" content="newtype decoratorパターンとグラフィックスライブラリ">
+<meta itemprop="description" content="minilightというSDL2の上で動くグラフィックスライブラリを作っている。
+前にも似たようなことをしており、フルスクラッチで作ったくせにそんなに変わらないという代物。
+(別にFluxとかを目指しているわけではないので…まぁ偶然の一致というやつだな)
+比較的簡単にコンポーネントが作れるようになったので、その紹介も兼ねて。
+例: ボタン 例として押した回数が表示されるボタンを作ってみる。
+[https://github.com/myuon/minilight/blob/master/examples/button-counter.hs]
+コード自体はせいぜい30行程度で書けるので結構お手軽だと思う。
+以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
+data Button = Button { font :: SDL.Font.Font, counter :: Int } new :: MiniLight Button new = do font &lt;- loadFont (FontDescriptor &#34;IPAGothic&#34; (FontStyle False False)) 22 return $ Button {font = font, counter = 0} 以下がボタンコンポーネントの定義。ComponentUnitのインスタンスを作れば良い。viewはfiguresで、イベントハンドラーはonSignalで、モデルの更新はupdateで、キャッシュの設定はuseCacheでそれぞれ行う。
+instance ComponentUnit Button where update = return figures comp = do textTexture &lt;- liftMiniLight $ text (font comp) (Vect.V4 255 255 255 255) $ if counter comp == 0 then &#34;Click me!">
+
+
+<meta itemprop="datePublished" content="2019-04-11T20:30:21&#43;09:00" />
+<meta itemprop="dateModified" content="2019-04-11T20:30:21&#43;09:00" />
+<meta itemprop="wordCount" content="284">
+
+
+
+<meta itemprop="keywords" content="Haskell," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="newtype decoratorパターンとグラフィックスライブラリ"/>
+<meta name="twitter:description" content="minilightというSDL2の上で動くグラフィックスライブラリを作っている。
+前にも似たようなことをしており、フルスクラッチで作ったくせにそんなに変わらないという代物。
+(別にFluxとかを目指しているわけではないので…まぁ偶然の一致というやつだな)
+比較的簡単にコンポーネントが作れるようになったので、その紹介も兼ねて。
+例: ボタン 例として押した回数が表示されるボタンを作ってみる。
+[https://github.com/myuon/minilight/blob/master/examples/button-counter.hs]
+コード自体はせいぜい30行程度で書けるので結構お手軽だと思う。
+以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
+data Button = Button { font :: SDL.Font.Font, counter :: Int } new :: MiniLight Button new = do font &lt;- loadFont (FontDescriptor &#34;IPAGothic&#34; (FontStyle False False)) 22 return $ Button {font = font, counter = 0} 以下がボタンコンポーネントの定義。ComponentUnitのインスタンスを作れば良い。viewはfiguresで、イベントハンドラーはonSignalで、モデルの更新はupdateで、キャッシュの設定はuseCacheでそれぞれ行う。
+instance ComponentUnit Button where update = return figures comp = do textTexture &lt;- liftMiniLight $ text (font comp) (Vect.V4 255 255 255 255) $ if counter comp == 0 then &#34;Click me!"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2019-04-11 08:30">2019-04-11</time>
+      <h1>newtype decoratorパターンとグラフィックスライブラリ</h1>
+    </header>
+    <section>
+
+<p><a href="https://github.com/myuon/minilight">minilight</a>というSDL2の上で動くグラフィックスライブラリを作っている。</p>
+
+<p>前にも<a href="https://myuon.github.io/posts/refluxible-library/">似たようなこと</a>をしており、フルスクラッチで作ったくせにそんなに変わらないという代物。<br />
+(別にFluxとかを目指しているわけではないので…まぁ偶然の一致というやつだな)</p>
+
+<p>比較的簡単にコンポーネントが作れるようになったので、その紹介も兼ねて。</p>
+
+<h2 id="例-ボタン">例: ボタン</h2>
+
+<p>例として押した回数が表示されるボタンを作ってみる。</p>
+
+<p>[<a href="https://github.com/myuon/minilight/blob/master/examples/button-counter.hs">https://github.com/myuon/minilight/blob/master/examples/button-counter.hs</a>]</p>
+
+<p>コード自体はせいぜい30行程度で書けるので結構お手軽だと思う。</p>
+
+<hr />
+
+<p>以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従って<code>MiniLight</code>モナドが基本のモナドです。</p>
+<div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="kr">data</span> <span class="kt">Button</span> <span class="ow">=</span> <span class="kt">Button</span> <span class="p">{</span>
+  <span class="nf">font</span> <span class="ow">::</span> <span class="kt">SDL</span><span class="o">.</span><span class="kt">Font</span><span class="o">.</span><span class="kt">Font</span><span class="p">,</span>
+  <span class="nf">counter</span> <span class="ow">::</span> <span class="kt">Int</span>
+<span class="p">}</span>
+
+<span class="nf">new</span> <span class="ow">::</span> <span class="kt">MiniLight</span> <span class="kt">Button</span>
+<span class="nf">new</span> <span class="ow">=</span> <span class="kr">do</span>
+  <span class="nf">font</span> <span class="ow">&lt;-</span> <span class="nf">loadFont</span> <span class="p">(</span><span class="kt">FontDescriptor</span> <span class="s">&#34;IPAGothic&#34;</span> <span class="p">(</span><span class="kt">FontStyle</span> <span class="kt">False</span> <span class="kt">False</span><span class="p">))</span> <span class="mi">22</span>
+  <span class="nf">return</span> <span class="o">$</span> <span class="kt">Button</span> <span class="p">{</span><span class="nf">font</span> <span class="ow">=</span> <span class="nf">font</span><span class="p">,</span> <span class="nf">counter</span> <span class="ow">=</span> <span class="mi">0</span><span class="p">}</span></code></pre></div>
+<p>以下がボタンコンポーネントの定義。<code>ComponentUnit</code>のインスタンスを作れば良い。viewは<code>figures</code>で、イベントハンドラーは<code>onSignal</code>で、モデルの更新は<code>update</code>で、キャッシュの設定は<code>useCache</code>でそれぞれ行う。</p>
+<div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="kr">instance</span> <span class="kt">ComponentUnit</span> <span class="kt">Button</span> <span class="kr">where</span>
+  <span class="nf">update</span> <span class="ow">=</span> <span class="nf">return</span>
+
+  <span class="nf">figures</span> <span class="nf">comp</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">textTexture</span> <span class="ow">&lt;-</span> <span class="nf">liftMiniLight</span> <span class="o">$</span> <span class="nf">text</span> <span class="p">(</span><span class="nf">font</span> <span class="nf">comp</span><span class="p">)</span> <span class="p">(</span><span class="kt">Vect</span><span class="o">.</span><span class="kt">V4</span> <span class="mi">255</span> <span class="mi">255</span> <span class="mi">255</span> <span class="mi">255</span><span class="p">)</span> <span class="o">$</span>
+      <span class="kr">if</span> <span class="nf">counter</span> <span class="nf">comp</span> <span class="o">==</span> <span class="mi">0</span> <span class="kr">then</span> <span class="s">&#34;Click me!&#34;</span> <span class="kr">else</span> <span class="s">&#34;You&#39;ve clicked &#34;</span> <span class="p">`</span><span class="kt">T</span><span class="o">.</span><span class="nf">append</span><span class="p">`</span> <span class="kt">T</span><span class="o">.</span><span class="nf">pack</span> <span class="p">(</span><span class="nf">show</span> <span class="p">(</span><span class="nf">counter</span> <span class="nf">comp</span><span class="p">))</span> <span class="p">`</span><span class="kt">T</span><span class="o">.</span><span class="nf">append</span><span class="p">`</span> <span class="s">&#34; times!&#34;</span>
+    <span class="nf">base</span> <span class="ow">&lt;-</span> <span class="nf">liftMiniLight</span> <span class="o">$</span> <span class="nf">rectangleFilled</span> <span class="p">(</span><span class="kt">Vect</span><span class="o">.</span><span class="kt">V4</span> <span class="mi">60</span> <span class="mi">60</span> <span class="mi">60</span> <span class="mi">255</span><span class="p">)</span> <span class="p">(</span><span class="nf">getFigureSize</span> <span class="nf">textTexture</span><span class="p">)</span>
+
+    <span class="nf">return</span> <span class="p">[</span>
+      <span class="nf">base</span><span class="p">,</span>
+      <span class="nf">textTexture</span>
+      <span class="p">]</span>
+
+  <span class="nf">useCache</span> <span class="nf">prev</span> <span class="nf">now</span> <span class="ow">=</span> <span class="nf">counter</span> <span class="nf">prev</span> <span class="o">==</span> <span class="nf">counter</span> <span class="nf">now</span>
+
+  <span class="nf">onSignal</span> <span class="p">(</span><span class="kt">RawEvent</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">Event</span> <span class="kr">_</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">MouseButtonEvent</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">MouseButtonEventData</span> <span class="kr">_</span> <span class="kt">SDL</span><span class="o">.</span><span class="kt">Released</span> <span class="kr">_</span> <span class="kr">_</span> <span class="kr">_</span> <span class="kr">_</span><span class="p">))))</span> <span class="nf">comp</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">return</span> <span class="o">$</span> <span class="nf">comp</span> <span class="p">{</span> <span class="nf">counter</span> <span class="ow">=</span> <span class="nf">counter</span> <span class="nf">comp</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">}</span>
+  <span class="nf">onSignal</span> <span class="kr">_</span> <span class="nf">comp</span> <span class="ow">=</span> <span class="nf">return</span> <span class="nf">comp</span></code></pre></div>
+<p><code>figures</code>では色付きの長方形の表示とテキスト表示を行っている。ここではSDLテクスチャの生成が走るので結構重い処理だけど、中ではキャッシュされるので(counterがupdateされたときだけ作り直す)問題がない。</p>
+
+<p><code>useCache</code>は1F前の状態と今の状態をもらってきて、viewのキャッシュを使うかどうかを判定する。ここでは1F前と現在でカウンターの値が同じであればviewは変わらないのでキャッシュを利用する、そうでなければキャッシュを破棄するという設定にしている。</p>
+
+<p>まぁはいという実装ですね。</p>
+
+<h2 id="component-wrapper">Component wrapper</h2>
+
+<p>このようにして作られたボタンは、コンポーネントという単位でライブラリ側で管理される。異なる種類のコンポーネントをまとめて扱うために、実際にはコンポーネントラッパーが被される。</p>
+<div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="kr">data</span> <span class="kt">Component</span> <span class="ow">=</span> <span class="nf">forall</span> <span class="nf">c</span><span class="o">.</span> <span class="kt">ComponentUnit</span> <span class="nf">c</span> <span class="ow">=&gt;</span> <span class="kt">Component</span> <span class="p">{</span>
+  <span class="nf">component</span> <span class="ow">::</span> <span class="nf">c</span><span class="p">,</span>
+  <span class="nf">prev</span> <span class="ow">::</span> <span class="nf">c</span><span class="p">,</span>
+  <span class="nf">cache</span> <span class="ow">::</span> <span class="kt">IORef</span> <span class="p">[</span><span class="kt">Figure</span><span class="p">]</span>
+<span class="p">}</span></code></pre></div>
+<p>ComponentはExistentialQuantificationが入っており、ここではComponentUnit型のインスタンスならば何でもComponentに出来るようにしてある。中身はコンポーネントそのものと、1F前の状態と、viewキャッシュからなる。</p>
+
+<p>コンポーネントのライフサイクルは次のような感じ:</p>
+
+<p><code>登録 → mainloop{描画 → state反映 → update → onSignal} → 削除</code></p>
+
+<p>state反映というのは、現在のcomponentの値をprevに反映させることを言う。これによって、updateとonSignalによって変更される前の値と変更された値を比較して、描画時にキャッシュを使うかどうかを判定することになる。</p>
+
+<p>実際にはComponentそれ自体もComponentUnitインスタンスである。</p>
+<div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="kr">instance</span> <span class="kt">ComponentUnit</span> <span class="kt">Component</span> <span class="kr">where</span>
+  <span class="nf">update</span> <span class="p">(</span><span class="kt">Component</span> <span class="nf">comp</span> <span class="nf">prev</span> <span class="nf">cache</span><span class="p">)</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="nf">comp&#39;</span> <span class="ow">&lt;-</span> <span class="nf">update</span> <span class="nf">comp</span>
+    <span class="nf">return</span> <span class="o">$</span> <span class="kt">Component</span> <span class="nf">comp&#39;</span> <span class="nf">prev</span> <span class="nf">cache</span>
+
+  <span class="nf">figures</span> <span class="p">(</span><span class="kt">Component</span> <span class="nf">comp</span> <span class="kr">_</span> <span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="nf">figures</span> <span class="nf">comp</span>
+
+  <span class="nf">draw</span> <span class="p">(</span><span class="kt">Component</span> <span class="nf">comp</span> <span class="nf">prev</span> <span class="nf">ref</span><span class="p">)</span> <span class="ow">=</span> <span class="nf">liftMiniLight</span> <span class="o">$</span> <span class="kr">do</span>
+    <span class="kr">if</span> <span class="nf">useCache</span> <span class="nf">prev</span> <span class="nf">comp</span>
+      <span class="kr">then</span> <span class="nf">renders</span> <span class="o">=&lt;&lt;</span> <span class="nf">liftIO</span> <span class="p">(</span><span class="nf">readIORef</span> <span class="nf">ref</span><span class="p">)</span>
+      <span class="kr">else</span> <span class="kr">do</span>
+        <span class="nf">figs</span> <span class="ow">&lt;-</span> <span class="nf">liftIO</span> <span class="p">(</span><span class="nf">readIORef</span> <span class="nf">ref</span><span class="p">)</span>
+        <span class="nf">mapM_</span> <span class="nf">freeFigure</span> <span class="nf">figs</span>
+
+        <span class="nf">figs</span> <span class="ow">&lt;-</span> <span class="nf">figures</span> <span class="nf">comp</span>
+        <span class="nf">renders</span> <span class="nf">figs</span>
+        <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">writeIORef</span> <span class="nf">ref</span> <span class="nf">figs</span>
+
+  <span class="nf">onSignal</span> <span class="nf">ev</span> <span class="p">(</span><span class="kt">Component</span> <span class="nf">comp</span> <span class="nf">prev</span> <span class="nf">cache</span><span class="p">)</span> <span class="ow">=</span> <span class="nf">fmap</span> <span class="p">(</span><span class="nf">\comp&#39;</span> <span class="ow">-&gt;</span> <span class="kt">Component</span> <span class="nf">comp&#39;</span> <span class="nf">prev</span> <span class="nf">cache</span><span class="p">)</span> <span class="o">$</span> <span class="nf">onSignal</span> <span class="nf">ev</span> <span class="nf">comp</span></code></pre></div>
+<p>このように、ExistentialQuantificationを付けたnewtype wrapperによって内部のinstanceからwrapper型のinstanceを導出し、さらにそこでデコレータ的な処理を行うパターンはHaskellではとても便利なのでよく使っている。</p>
+
+<h2 id="おわりに">おわりに</h2>
+
+<p>Componentのテクニックはminilightではそこまでアピールポイントというほどではなく、他にもviewがyamlファイルで定義できたりSDL2のラッパーとして色々頑張っていたりするんだけどまぁそのへんはある程度開発ができてきたらまた紹介しようと思います。</p>
+
+<p>本当はゲームを作りたくてこれを作り始めたんだけど、ゲームエンジンから作る人間がゲームを完成されられることはないっていうアレがアレでアレしている…</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/haskell">
+                <span>#</span>Haskell</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2019 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
