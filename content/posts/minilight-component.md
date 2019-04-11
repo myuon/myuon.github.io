@@ -15,7 +15,7 @@ tags: [ "Haskell" ]
 
 例として押した回数が表示されるボタンを作ってみる。
 
-[https://github.com/myuon/minilight/blob/master/examples/button-counter.hs]
+https://github.com/myuon/minilight/blob/master/examples/button-counter.hs
 
 コード自体はせいぜい30行程度で書けるので結構お手軽だと思う。
 
