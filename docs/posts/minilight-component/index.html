@@ -27,7 +27,7 @@
 (別にFluxとかを目指しているわけではないので…まぁ偶然の一致というやつだな)
 比較的簡単にコンポーネントが作れるようになったので、その紹介も兼ねて。
 例: ボタン 例として押した回数が表示されるボタンを作ってみる。
-[https://github.com/myuon/minilight/blob/master/examples/button-counter.hs]
+https://github.com/myuon/minilight/blob/master/examples/button-counter.hs
 コード自体はせいぜい30行程度で書けるので結構お手軽だと思う。
 以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
 data Button = Button { font :: SDL.Font.Font, counter :: Int } new :: MiniLight Button new = do font &lt;- loadFont (FontDescriptor &#34;IPAGothic&#34; (FontStyle False False)) 22 return $ Button {font = font, counter = 0} 以下がボタンコンポーネントの定義。ComponentUnitのインスタンスを作れば良い。viewはfiguresで、イベントハンドラーはonSignalで、モデルの更新はupdateで、キャッシュの設定はuseCacheでそれぞれ行う。
@@ -45,7 +45,7 @@ instance ComponentUnit Button where update = return figures comp = do textTextur
 (別にFluxとかを目指しているわけではないので…まぁ偶然の一致というやつだな)
 比較的簡単にコンポーネントが作れるようになったので、その紹介も兼ねて。
 例: ボタン 例として押した回数が表示されるボタンを作ってみる。
-[https://github.com/myuon/minilight/blob/master/examples/button-counter.hs]
+https://github.com/myuon/minilight/blob/master/examples/button-counter.hs
 コード自体はせいぜい30行程度で書けるので結構お手軽だと思う。
 以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
 data Button = Button { font :: SDL.Font.Font, counter :: Int } new :: MiniLight Button new = do font &lt;- loadFont (FontDescriptor &#34;IPAGothic&#34; (FontStyle False False)) 22 return $ Button {font = font, counter = 0} 以下がボタンコンポーネントの定義。ComponentUnitのインスタンスを作れば良い。viewはfiguresで、イベントハンドラーはonSignalで、モデルの更新はupdateで、キャッシュの設定はuseCacheでそれぞれ行う。
@@ -67,7 +67,7 @@ instance ComponentUnit Button where update = return figures comp = do textTextur
 (別にFluxとかを目指しているわけではないので…まぁ偶然の一致というやつだな)
 比較的簡単にコンポーネントが作れるようになったので、その紹介も兼ねて。
 例: ボタン 例として押した回数が表示されるボタンを作ってみる。
-[https://github.com/myuon/minilight/blob/master/examples/button-counter.hs]
+https://github.com/myuon/minilight/blob/master/examples/button-counter.hs
 コード自体はせいぜい30行程度で書けるので結構お手軽だと思う。
 以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
 data Button = Button { font :: SDL.Font.Font, counter :: Int } new :: MiniLight Button new = do font &lt;- loadFont (FontDescriptor &#34;IPAGothic&#34; (FontStyle False False)) 22 return $ Button {font = font, counter = 0} 以下がボタンコンポーネントの定義。ComponentUnitのインスタンスを作れば良い。viewはfiguresで、イベントハンドラーはonSignalで、モデルの更新はupdateで、キャッシュの設定はuseCacheでそれぞれ行う。
@@ -113,7 +113,7 @@ instance ComponentUnit Button where update = return figures comp = do textTextur
 
 <p>例として押した回数が表示されるボタンを作ってみる。</p>
 
-<p>[<a href="https://github.com/myuon/minilight/blob/master/examples/button-counter.hs">https://github.com/myuon/minilight/blob/master/examples/button-counter.hs</a>]</p>
+<p><a href="https://github.com/myuon/minilight/blob/master/examples/button-counter.hs">https://github.com/myuon/minilight/blob/master/examples/button-counter.hs</a></p>
 
 <p>コード自体はせいぜい30行程度で書けるので結構お手軽だと思う。</p>
 
