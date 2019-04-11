@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Gtk on The curse of λ</title>
+    <title>GTK on The curse of λ</title>
     <link>https://myuon.github.io/tags/gtk/</link>
-    <description>Recent content in Gtk on The curse of λ</description>
+    <description>Recent content in GTK on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Sun, 04 Mar 2018 19:21:20 +0900</lastBuildDate>

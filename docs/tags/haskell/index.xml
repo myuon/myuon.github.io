@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Haskell on The curse of λ</title>
@@ -6,10 +5,27 @@
     <description>Recent content in Haskell on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Thu, 04 Apr 2019 22:30:29 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 11 Apr 2019 20:30:21 +0900</lastBuildDate>
     
       <atom:link href="https://myuon.github.io/tags/haskell/index.xml" rel="self" type="application/rss+xml" />
     
+    
+      <item>
+        <title>newtype decoratorパターンとグラフィックスライブラリ</title>
+        <link>https://myuon.github.io/posts/minilight-component/</link>
+        <pubDate>Thu, 11 Apr 2019 20:30:21 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/minilight-component/</guid>
+        <description>minilightというSDL2の上で動くグラフィックスライブラリを作っている。
+前にも似たようなことをしており、フルスクラッチで作ったくせにそんなに変わらないという代物。
+(別にFluxとかを目指しているわけではないので…まぁ偶然の一致というやつだな)
+比較的簡単にコンポーネントが作れるようになったので、その紹介も兼ねて。
+例: ボタン 例として押した回数が表示されるボタンを作ってみる。
+[https://github.com/myuon/minilight/blob/master/examples/button-counter.hs]
+コード自体はせいぜい30行程度で書けるので結構お手軽だと思う。
+以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
+data Button = Button { font :: SDL.Font.Font, counter :: Int } new :: MiniLight Button new = do font &amp;lt;- loadFont (FontDescriptor &amp;#34;IPAGothic&amp;#34; (FontStyle False False)) 22 return $ Button {font = font, counter = 0} 以下がボタンコンポーネントの定義。ComponentUnitのインスタンスを作れば良い。viewはfiguresで、イベントハンドラーはonSignalで、モデルの更新はupdateで、キャッシュの設定はuseCacheでそれぞれ行う。
+instance ComponentUnit Button where update = return figures comp = do textTexture &amp;lt;- liftMiniLight $ text (font comp) (Vect.V4 255 255 255 255) $ if counter comp == 0 then &amp;#34;Click me!</description>
+      </item>
     
       <item>
         <title>GHCのソースコードのノートを読むやつを作った</title>
