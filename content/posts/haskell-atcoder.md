@@ -132,7 +132,7 @@ Immutable同士、Mutable同士のAPIが大体同じである。
     - referenceも保持しない、再帰するときはunsafe valueも引数に持って回ること(通常referenceを保持しておけば好きな場所で更新ができるが、unsafeValueはインライン化されて面倒なことになる)
     - コピーは死んでも取らない(unsafeな値を不用意に2箇所以上で使うと死ぬ)
     - replicateもしない(unsafe creationをreplicateするとメモ化されて死ぬ)
-- unsafeな値の評価タイミングには最新の注意を払うこと
+- unsafeな値の評価タイミングには細心の注意を払うこと
     - 特に遅延リストやタプルは外側の評価が行われても中の値が遅延されるので面倒なことになる場合がある
     - 面倒なときは全部Unboxed Vectorに入れると楽
     - 複数の操作を行うときはletをつなげて全部Bang Patternしてしまうのが楽
