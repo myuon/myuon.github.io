@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GHC Coreのパーサー書いてたけど諦めた - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.55.6" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="GHC Coreのパーサー書いてたけど諦めた" />
+<meta property="og:description" content="-ddump-simpl で出力されるSimplified Coreをいい感じに解析して読めるやつを作ろうかと思ってたけどつらすぎたので(少なくともこの方針では)やめた。
+以下愚痴を述べますがこれは私が結構無理なことをやろうとしているだけでGHCに(そこまで)非はないと思うし直してくれという意味で言ってるわけでもない。いや直してくれるならありがたいんだけど。
+様子 様子です
+Coreに色がつき始めたぞ pic.twitter.com/M1SmAFgPOB
+&mdash; みょん (@myuon_myon) 2019年5月16日 
+CoreSyn CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。
+まずこの時点で嫌な予感がするよねという感じ。CoreSynは自作することになる。
+PprCore -ddump-simplの出力フォーマットはPprCoreによって制御されている。中を読むとわかるがこれが実はASTとあまり対応がない。
+ASTに乗ってない情報が付加されていたり、あるいはASTの情報が一部出力されてなかったりする。
+そもそもPprCoreは何かしらの規則やdatatypeに則って書かれたものではなくdumpするという目的を果たすだけのために書かれている感じがありアドホックな処理が大量に入っている。どう考えてもこれに合わせてパーサーを書くとバージョンアップで即死である。
+また、面倒な問題の一つにIdInfoがあり、Coreは次のように識別子に関する統計情報をコードに埋め込んで出してくれる。
+foobar :: Type [GblId, Str=&lt;S,U&gt;, Unf=Unf{...なんやらかんやら, Guidance=ALWAYS_IF(arity=0,unsat_ok=True,boring_ok=True) Tmpl= piyo `cast` ..}] foobar = ... 当然こんなものを埋め込まれてもHaskellのコードとしてはvalidでないため、ここで専用のパーサーを書かなければいけないこともほぼ確定である。idinfoだけ剥がしてexpressionは組み込みのを使う手もあるがそれも後述の理由により多分上手く行かない。
+また、上のCoreコードは実際にあるようなものであるが、他のフィールド間には区切りのカンマがあるのに Tmpl の前にはカンマがないことや Guidance だけなぜかHaskellのレコード構文と全然違う謎の構文になっているなど、不可解な点が多々ある。まぁ細かいことを気にしてはいけないのかもしれない。
+識別子 ここまでで、パーサーとASTを自作することになった。Lexerはまぁなんとかなるだろうと期待したいところであるが、実はLexerですらGHC提供のものでは動かないことを見ていく。
+(ちなみにGHCはGHC拡張をオンにするとParserどころかLexerもゴリゴリ挙動が変わるので結構すごいと思う。MagicHashとか典型例ですね。あとはCPP入れると複数行文字列リテラルを改行をエスケープすることで書けるようになるとか。変態的すぎると思う。)
+識別子は主に $ 問題と # 問題の2つ？ある。
+GHC Coreにはworker/wrapper変換という有名な最適化が入っているがこれにより新たに導入されるworkerには識別子の先頭に $w マークが付与される。ユーザー側で識別子に使えない文字を割り振ることで衝突等を回避してるんだろうか(しかしRenamerとかで上手く処理することも可能な気はする。そうでもないんだろうか)。しかしこれによりLexerが正しくtokenizeできなくなる(Module.$wfoobar は qualified operator Module.$ と varid foobar に分解される)。
+次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/giving-up-core-parser/" />
+<meta property="article:published_time" content="2019-05-21T23:25:02&#43;09:00"/>
+<meta property="article:modified_time" content="2019-05-21T23:25:02&#43;09:00"/>
+
+
+
+<meta itemprop="name" content="GHC Coreのパーサー書いてたけど諦めた">
+<meta itemprop="description" content="-ddump-simpl で出力されるSimplified Coreをいい感じに解析して読めるやつを作ろうかと思ってたけどつらすぎたので(少なくともこの方針では)やめた。
+以下愚痴を述べますがこれは私が結構無理なことをやろうとしているだけでGHCに(そこまで)非はないと思うし直してくれという意味で言ってるわけでもない。いや直してくれるならありがたいんだけど。
+様子 様子です
+Coreに色がつき始めたぞ pic.twitter.com/M1SmAFgPOB
+&mdash; みょん (@myuon_myon) 2019年5月16日 
+CoreSyn CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。
+まずこの時点で嫌な予感がするよねという感じ。CoreSynは自作することになる。
+PprCore -ddump-simplの出力フォーマットはPprCoreによって制御されている。中を読むとわかるがこれが実はASTとあまり対応がない。
+ASTに乗ってない情報が付加されていたり、あるいはASTの情報が一部出力されてなかったりする。
+そもそもPprCoreは何かしらの規則やdatatypeに則って書かれたものではなくdumpするという目的を果たすだけのために書かれている感じがありアドホックな処理が大量に入っている。どう考えてもこれに合わせてパーサーを書くとバージョンアップで即死である。
+また、面倒な問題の一つにIdInfoがあり、Coreは次のように識別子に関する統計情報をコードに埋め込んで出してくれる。
+foobar :: Type [GblId, Str=&lt;S,U&gt;, Unf=Unf{...なんやらかんやら, Guidance=ALWAYS_IF(arity=0,unsat_ok=True,boring_ok=True) Tmpl= piyo `cast` ..}] foobar = ... 当然こんなものを埋め込まれてもHaskellのコードとしてはvalidでないため、ここで専用のパーサーを書かなければいけないこともほぼ確定である。idinfoだけ剥がしてexpressionは組み込みのを使う手もあるがそれも後述の理由により多分上手く行かない。
+また、上のCoreコードは実際にあるようなものであるが、他のフィールド間には区切りのカンマがあるのに Tmpl の前にはカンマがないことや Guidance だけなぜかHaskellのレコード構文と全然違う謎の構文になっているなど、不可解な点が多々ある。まぁ細かいことを気にしてはいけないのかもしれない。
+識別子 ここまでで、パーサーとASTを自作することになった。Lexerはまぁなんとかなるだろうと期待したいところであるが、実はLexerですらGHC提供のものでは動かないことを見ていく。
+(ちなみにGHCはGHC拡張をオンにするとParserどころかLexerもゴリゴリ挙動が変わるので結構すごいと思う。MagicHashとか典型例ですね。あとはCPP入れると複数行文字列リテラルを改行をエスケープすることで書けるようになるとか。変態的すぎると思う。)
+識別子は主に $ 問題と # 問題の2つ？ある。
+GHC Coreにはworker/wrapper変換という有名な最適化が入っているがこれにより新たに導入されるworkerには識別子の先頭に $w マークが付与される。ユーザー側で識別子に使えない文字を割り振ることで衝突等を回避してるんだろうか(しかしRenamerとかで上手く処理することも可能な気はする。そうでもないんだろうか)。しかしこれによりLexerが正しくtokenizeできなくなる(Module.$wfoobar は qualified operator Module.$ と varid foobar に分解される)。
+次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。">
+
+
+<meta itemprop="datePublished" content="2019-05-21T23:25:02&#43;09:00" />
+<meta itemprop="dateModified" content="2019-05-21T23:25:02&#43;09:00" />
+<meta itemprop="wordCount" content="78">
+
+
+
+<meta itemprop="keywords" content="Haskell," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="GHC Coreのパーサー書いてたけど諦めた"/>
+<meta name="twitter:description" content="-ddump-simpl で出力されるSimplified Coreをいい感じに解析して読めるやつを作ろうかと思ってたけどつらすぎたので(少なくともこの方針では)やめた。
+以下愚痴を述べますがこれは私が結構無理なことをやろうとしているだけでGHCに(そこまで)非はないと思うし直してくれという意味で言ってるわけでもない。いや直してくれるならありがたいんだけど。
+様子 様子です
+Coreに色がつき始めたぞ pic.twitter.com/M1SmAFgPOB
+&mdash; みょん (@myuon_myon) 2019年5月16日 
+CoreSyn CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。
+まずこの時点で嫌な予感がするよねという感じ。CoreSynは自作することになる。
+PprCore -ddump-simplの出力フォーマットはPprCoreによって制御されている。中を読むとわかるがこれが実はASTとあまり対応がない。
+ASTに乗ってない情報が付加されていたり、あるいはASTの情報が一部出力されてなかったりする。
+そもそもPprCoreは何かしらの規則やdatatypeに則って書かれたものではなくdumpするという目的を果たすだけのために書かれている感じがありアドホックな処理が大量に入っている。どう考えてもこれに合わせてパーサーを書くとバージョンアップで即死である。
+また、面倒な問題の一つにIdInfoがあり、Coreは次のように識別子に関する統計情報をコードに埋め込んで出してくれる。
+foobar :: Type [GblId, Str=&lt;S,U&gt;, Unf=Unf{...なんやらかんやら, Guidance=ALWAYS_IF(arity=0,unsat_ok=True,boring_ok=True) Tmpl= piyo `cast` ..}] foobar = ... 当然こんなものを埋め込まれてもHaskellのコードとしてはvalidでないため、ここで専用のパーサーを書かなければいけないこともほぼ確定である。idinfoだけ剥がしてexpressionは組み込みのを使う手もあるがそれも後述の理由により多分上手く行かない。
+また、上のCoreコードは実際にあるようなものであるが、他のフィールド間には区切りのカンマがあるのに Tmpl の前にはカンマがないことや Guidance だけなぜかHaskellのレコード構文と全然違う謎の構文になっているなど、不可解な点が多々ある。まぁ細かいことを気にしてはいけないのかもしれない。
+識別子 ここまでで、パーサーとASTを自作することになった。Lexerはまぁなんとかなるだろうと期待したいところであるが、実はLexerですらGHC提供のものでは動かないことを見ていく。
+(ちなみにGHCはGHC拡張をオンにするとParserどころかLexerもゴリゴリ挙動が変わるので結構すごいと思う。MagicHashとか典型例ですね。あとはCPP入れると複数行文字列リテラルを改行をエスケープすることで書けるようになるとか。変態的すぎると思う。)
+識別子は主に $ 問題と # 問題の2つ？ある。
+GHC Coreにはworker/wrapper変換という有名な最適化が入っているがこれにより新たに導入されるworkerには識別子の先頭に $w マークが付与される。ユーザー側で識別子に使えない文字を割り振ることで衝突等を回避してるんだろうか(しかしRenamerとかで上手く処理することも可能な気はする。そうでもないんだろうか)。しかしこれによりLexerが正しくtokenizeできなくなる(Module.$wfoobar は qualified operator Module.$ と varid foobar に分解される)。
+次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2019-05-21 11:25">2019-05-21</time>
+      <h1>GHC Coreのパーサー書いてたけど諦めた</h1>
+    </header>
+    <section>
+
+<p><code>-ddump-simpl</code> で出力されるSimplified Coreをいい感じに解析して読めるやつを作ろうかと思ってたけどつらすぎたので(少なくともこの方針では)やめた。</p>
+
+<p>以下愚痴を述べますがこれは私が結構無理なことをやろうとしているだけでGHCに(そこまで)非はないと思うし直してくれという意味で言ってるわけでもない。いや直してくれるならありがたいんだけど。</p>
+
+<h2 id="様子">様子</h2>
+
+<p>様子です</p>
+
+<p><blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">Coreに色がつき始めたぞ <a href="https://t.co/M1SmAFgPOB">pic.twitter.com/M1SmAFgPOB</a></p>&mdash; みょん (@myuon_myon) <a href="https://twitter.com/myuon_myon/status/1129021022584229888?ref_src=twsrc%5Etfw">2019年5月16日</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+
+<h2 id="coresyn">CoreSyn</h2>
+
+<p>CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。</p>
+
+<p>まずこの時点で嫌な予感がするよねという感じ。CoreSynは自作することになる。</p>
+
+<h2 id="pprcore">PprCore</h2>
+
+<p>-ddump-simplの出力フォーマットはPprCoreによって制御されている。中を読むとわかるがこれが実はASTとあまり対応がない。</p>
+
+<p>ASTに乗ってない情報が付加されていたり、あるいはASTの情報が一部出力されてなかったりする。</p>
+
+<p>そもそもPprCoreは何かしらの規則やdatatypeに則って書かれたものではなくdumpするという目的を果たすだけのために書かれている感じがありアドホックな処理が大量に入っている。どう考えてもこれに合わせてパーサーを書くとバージョンアップで即死である。</p>
+
+<p>また、面倒な問題の一つにIdInfoがあり、Coreは次のように識別子に関する統計情報をコードに埋め込んで出してくれる。</p>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">foobar</span> <span class="ow">::</span> <span class="kt">Type</span>
+<span class="p">[</span><span class="kt">GblId</span><span class="p">,</span>
+ <span class="kt">Str</span><span class="o">=&lt;</span><span class="kt">S</span><span class="p">,</span><span class="kt">U</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="kt">Unf</span><span class="ow">=</span><span class="kt">Unf</span><span class="p">{</span><span class="o">...</span><span class="err">なんやらかんやら</span><span class="p">,</span> <span class="kt">Guidance</span><span class="ow">=</span><span class="kt">ALWAYS_IF</span><span class="p">(</span><span class="nf">arity</span><span class="ow">=</span><span class="mi">0</span><span class="p">,</span><span class="nf">unsat_ok</span><span class="ow">=</span><span class="kt">True</span><span class="p">,</span><span class="nf">boring_ok</span><span class="ow">=</span><span class="kt">True</span><span class="p">)</span>
+         <span class="kt">Tmpl</span><span class="ow">=</span> <span class="nf">piyo</span> <span class="p">`</span><span class="nf">cast</span><span class="p">`</span> <span class="o">..</span><span class="p">}]</span>
+<span class="nf">foobar</span> <span class="ow">=</span> <span class="o">...</span></code></pre></div>
+<p>当然こんなものを埋め込まれてもHaskellのコードとしてはvalidでないため、ここで専用のパーサーを書かなければいけないこともほぼ確定である。idinfoだけ剥がしてexpressionは組み込みのを使う手もあるがそれも後述の理由により多分上手く行かない。</p>
+
+<p>また、上のCoreコードは実際にあるようなものであるが、他のフィールド間には区切りのカンマがあるのに <code>Tmpl</code> の前にはカンマがないことや <code>Guidance</code> だけなぜかHaskellのレコード構文と全然違う謎の構文になっているなど、不可解な点が多々ある。まぁ細かいことを気にしてはいけないのかもしれない。</p>
+
+<h2 id="識別子">識別子</h2>
+
+<p>ここまでで、パーサーとASTを自作することになった。Lexerはまぁなんとかなるだろうと期待したいところであるが、実はLexerですらGHC提供のものでは動かないことを見ていく。</p>
+
+<p>(ちなみにGHCはGHC拡張をオンにするとParserどころかLexerもゴリゴリ挙動が変わるので結構すごいと思う。MagicHashとか典型例ですね。あとはCPP入れると複数行文字列リテラルを改行をエスケープすることで書けるようになるとか。変態的すぎると思う。)</p>
+
+<p>識別子は主に <code>$</code> 問題と <code>#</code> 問題の2つ？ある。</p>
+
+<p>GHC Coreにはworker/wrapper変換という有名な最適化が入っているがこれにより新たに導入されるworkerには識別子の先頭に <code>$w</code> マークが付与される。ユーザー側で識別子に使えない文字を割り振ることで衝突等を回避してるんだろうか(しかしRenamerとかで上手く処理することも可能な気はする。そうでもないんだろうか)。しかしこれによりLexerが正しくtokenizeできなくなる(<code>Module.$wfoobar</code> は qualified operator <code>Module.$</code> と varid <code>foobar</code> に分解される)。</p>
+
+<p>次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に <code>#</code> 記号が付与されるものがある。 <code>n#_a8qS</code> みたいな。おそらく元々の変数 <code>n</code> に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) <code>n#</code> と <code>_a8qS</code> としかtokenizeできない。</p>
+
+<p>というわけでLexerも自作することになる。</p>
+
+<h2 id="この辺で諦めた">この辺で諦めた</h2>
+
+<p>ここまで来ていや〜厳しいってなった。Lexer Parser ASTまで自作するとか何と戦ってるんだという感じだしそもそもCoreくらいちゃんと読んでって言われるとまぁそうね…という気持ちになる。そもそもここでこれを頑張ったところでGHCのCore付近は毎バージョンごとにめちゃくちゃ変わりまくるのでどうせすぐ動かなくなると思うとメンテも大変そうだしなぁという後ろ向きな感情しかない。</p>
+
+<p>一応前を向いた話もしておくと、GHCにはPluginというコンパイラの処理の途中に手を入れる機能もあるので、一応これをCoreの中で使うという手はある。すると上述のコンストラクタの公開されておらずdumpされた文字列との対応もよくわからないASTと戦うことになるがまぁ全部自作するよりはずっとマシかなと言う感じ。プラグインはインストールとかそういう面倒事を避けたかったのでやりたくなかったがGHC的には正統派な方法な気もしている。</p>
+
+<p>あと本当はSTGを解析するのが本来的な目的だったんだけどPluginでSTGに手を入れるって可能なのだろうか。。。(CoreToSTGを手で呼べばいい？まぁそれはそうかも)</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/haskell">
+                <span>#</span>Haskell</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2019 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
