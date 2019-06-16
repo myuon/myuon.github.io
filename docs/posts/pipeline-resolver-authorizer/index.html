@@ -48,7 +48,7 @@ Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorize
 
 <meta itemprop="datePublished" content="2019-06-16T14:26:31&#43;09:00" />
 <meta itemprop="dateModified" content="2019-06-16T14:26:31&#43;09:00" />
-<meta itemprop="wordCount" content="181">
+<meta itemprop="wordCount" content="291">
 
 
 
@@ -227,6 +227,58 @@ $util.toJson($context.result)
 </code></pre>
 
 <p>Authorizer Lambdaの中ではJWTのverificationを行ってユーザー情報を取り出し、後続のDynamoDB Resolverでは<code>$context.prev.result</code>という形でそれを受けている。これはPipeline Resolverで直前のfunctionの結果を参照する機能で、これらを組み合わせるとAPI GatewayでのLambda Authorizer相当のことがAppSyncでも出来る。</p>
+
+<h2 id="余談-authorization-header-in-amplify">余談: Authorization header in Amplify</h2>
+
+<p>上のように自前でAuthorizerを入れたいということは(認可はCognito等に頼らず)サービス内で独自のトークンを発行してる場合が多いと思う。その場合、クライアントからAuthorizationヘッダーにトークンを載せる必要があるが、Amplifyのclientとかだとそれをするには手で設定をする必要がある。</p>
+
+<p>例えばaws-appsyncを使っている場合には次のようにすればよいし、</p>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="k">import</span> <span class="nx">AWSAppSyncClient</span><span class="p">,</span> <span class="p">{</span> <span class="nx">AUTH_TYPE</span><span class="p">,</span> <span class="nx">createAppSyncLink</span><span class="p">,</span> <span class="nx">AWSAppSyncClientOptions</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;aws-appsync&#39;</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ApolloLink</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;apollo-link&#39;</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">setContext</span> <span class="p">}</span> <span class="nx">from</span> <span class="s2">&#34;apollo-link-context&#34;</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">createHttpLink</span> <span class="p">}</span> <span class="nx">from</span> <span class="s2">&#34;apollo-link-http&#34;</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="nx">AppSyncConfig</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">url</span><span class="o">:</span> <span class="nx">aws_config</span><span class="p">.</span><span class="nx">aws_appsync_graphqlEndpoint</span><span class="p">,</span>
+  <span class="nx">region</span><span class="o">:</span> <span class="nx">aws_config</span><span class="p">.</span><span class="nx">aws_appsync_region</span><span class="p">,</span>
+  <span class="nx">auth</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="nx">AUTH_TYPE</span><span class="p">.</span><span class="nx">API_KEY</span><span class="p">,</span>
+    <span class="nx">apiKey</span><span class="o">:</span> <span class="nx">aws_config</span><span class="p">.</span><span class="nx">aws_appsync_apiKey</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="nx">disableOffline</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+<span class="p">}</span> <span class="nx">as</span> <span class="nx">AWSAppSyncClientOptions</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="nx">client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AWSAppSyncClient</span><span class="p">(</span><span class="nx">AppSyncConfig</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">link</span><span class="o">:</span> <span class="nx">createAppSyncLink</span><span class="p">({</span>
+    <span class="p">...</span><span class="nx">AppSyncConfig</span><span class="p">,</span>
+    <span class="nx">resultsFetcherLink</span><span class="o">:</span> <span class="nx">ApolloLink</span><span class="p">.</span><span class="nx">from</span><span class="p">([</span>
+      <span class="nx">setContext</span><span class="p">((</span><span class="nx">request</span><span class="p">,</span> <span class="nx">previousContext</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">({</span>
+        <span class="nx">headers</span><span class="o">:</span> <span class="p">{</span>
+          <span class="p">...</span><span class="nx">previousContext</span><span class="p">.</span><span class="nx">headers</span><span class="p">,</span>
+          <span class="nx">Authorization</span><span class="o">:</span> <span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span>  <span class="c1">// ここ
+</span><span class="c1"></span>        <span class="p">}</span>
+      <span class="p">})),</span>
+      <span class="nx">createHttpLink</span><span class="p">({</span>
+        <span class="nx">uri</span><span class="o">:</span> <span class="nx">AppSyncConfig</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span>
+      <span class="p">})</span>
+    <span class="p">])</span>
+  <span class="p">}</span> <span class="nx">as</span> <span class="nx">any</span><span class="p">)</span>
+</code></pre></div>
+<p>aws-amplifyを使っているなら次のようにすると良い。</p>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">Amplify</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="nx">awsconfig</span><span class="p">);</span>
+<span class="nx">Amplify</span><span class="p">.</span><span class="nx">configure</span><span class="p">({</span>
+  <span class="nx">API</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">graphql_headers</span><span class="o">:</span> <span class="kr">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;Authorization&#39;</span><span class="o">:</span> <span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span>  <span class="c1">// ここ
+</span><span class="c1"></span>      <span class="p">};</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>なおトークンの管理として、nodeなら環境変数に、ブラウザ上ならcookieまたはlocalStorageに入れるでまぁいいのかなと思う。</p>
+
+<p>上の設定ではクライアント生成時にheaderの設定を書く必要があって、外から引数として渡すのは難しいので。</p>
 
 <h2 id="終わりに">終わりに</h2>
 
