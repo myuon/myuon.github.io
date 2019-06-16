@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline Resolverを使ったAppSync Authorizerパターン - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.55.6" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Pipeline Resolverを使ったAppSync Authorizerパターン" />
+<meta property="og:description" content="調べたけどあんまり情報がなかったので。
+AppSync Pipeline Resolver AppSyncにはPipeline Resolverというリゾルバーがあり、これによって複数のリゾルバーを指定できる、とある。
+CFnにはfunctionConfigurationを指定するといいよと書いてある。serverless-appsync-pluginだと次のように書ける。
+custom:appSync:mappingTemplates:-type:Queryfield:testPipelineQueryrequest:&#39;./mapping-templates/before.vtl&#39;# the pipeline&#39;s &#34;before&#34; mapping templateresponse:&#39;./mapping-templates/after.vtl&#39;# the pipeline&#39;s &#34;after&#34; mapping templatekind:PIPELINEfunctions:-authorizeFunction-fetchDataFunctionfunctionConfigurations:-dataSource:graphqlLambdaname:&#39;authorizeFunction&#39;request:&#39;./mapping-templates/authorize-request.vtl&#39;response:&#39;./mapping-templates/common-response.vtl&#39;-dataSource:dataTablename:&#39;fetchDataFunction&#39;request:&#39;./mapping-templates/fetchData.vtl&#39;response:&#39;./mapping-templates/common-response.vtl&#39; でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
+ リゾルバーに対して指定できる処理の単位を&rdquo;function&rdquo;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&rdquo;functionからなる&rdquo; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
+before mapping template ↓ authorizeFunction request mapping template ↓ authorizeFunction本体 ↓ authorizeFunction response mapping template ↓ fetchDataFunction request mapping template ↓ fetchDataFunction本体 ↓ fetchDataFunction response mapping template ↓ after mapping template  functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。
+Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/pipeline-resolver-authorizer/" />
+<meta property="article:published_time" content="2019-06-16T14:26:31&#43;09:00"/>
+<meta property="article:modified_time" content="2019-06-16T14:26:31&#43;09:00"/>
+
+
+
+<meta itemprop="name" content="Pipeline Resolverを使ったAppSync Authorizerパターン">
+<meta itemprop="description" content="調べたけどあんまり情報がなかったので。
+AppSync Pipeline Resolver AppSyncにはPipeline Resolverというリゾルバーがあり、これによって複数のリゾルバーを指定できる、とある。
+CFnにはfunctionConfigurationを指定するといいよと書いてある。serverless-appsync-pluginだと次のように書ける。
+custom:appSync:mappingTemplates:-type:Queryfield:testPipelineQueryrequest:&#39;./mapping-templates/before.vtl&#39;# the pipeline&#39;s &#34;before&#34; mapping templateresponse:&#39;./mapping-templates/after.vtl&#39;# the pipeline&#39;s &#34;after&#34; mapping templatekind:PIPELINEfunctions:-authorizeFunction-fetchDataFunctionfunctionConfigurations:-dataSource:graphqlLambdaname:&#39;authorizeFunction&#39;request:&#39;./mapping-templates/authorize-request.vtl&#39;response:&#39;./mapping-templates/common-response.vtl&#39;-dataSource:dataTablename:&#39;fetchDataFunction&#39;request:&#39;./mapping-templates/fetchData.vtl&#39;response:&#39;./mapping-templates/common-response.vtl&#39; でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
+ リゾルバーに対して指定できる処理の単位を&rdquo;function&rdquo;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&rdquo;functionからなる&rdquo; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
+before mapping template ↓ authorizeFunction request mapping template ↓ authorizeFunction本体 ↓ authorizeFunction response mapping template ↓ fetchDataFunction request mapping template ↓ fetchDataFunction本体 ↓ fetchDataFunction response mapping template ↓ after mapping template  functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。
+Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。">
+
+
+<meta itemprop="datePublished" content="2019-06-16T14:26:31&#43;09:00" />
+<meta itemprop="dateModified" content="2019-06-16T14:26:31&#43;09:00" />
+<meta itemprop="wordCount" content="181">
+
+
+
+<meta itemprop="keywords" content="AWS," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Pipeline Resolverを使ったAppSync Authorizerパターン"/>
+<meta name="twitter:description" content="調べたけどあんまり情報がなかったので。
+AppSync Pipeline Resolver AppSyncにはPipeline Resolverというリゾルバーがあり、これによって複数のリゾルバーを指定できる、とある。
+CFnにはfunctionConfigurationを指定するといいよと書いてある。serverless-appsync-pluginだと次のように書ける。
+custom:appSync:mappingTemplates:-type:Queryfield:testPipelineQueryrequest:&#39;./mapping-templates/before.vtl&#39;# the pipeline&#39;s &#34;before&#34; mapping templateresponse:&#39;./mapping-templates/after.vtl&#39;# the pipeline&#39;s &#34;after&#34; mapping templatekind:PIPELINEfunctions:-authorizeFunction-fetchDataFunctionfunctionConfigurations:-dataSource:graphqlLambdaname:&#39;authorizeFunction&#39;request:&#39;./mapping-templates/authorize-request.vtl&#39;response:&#39;./mapping-templates/common-response.vtl&#39;-dataSource:dataTablename:&#39;fetchDataFunction&#39;request:&#39;./mapping-templates/fetchData.vtl&#39;response:&#39;./mapping-templates/common-response.vtl&#39; でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
+ リゾルバーに対して指定できる処理の単位を&rdquo;function&rdquo;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&rdquo;functionからなる&rdquo; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
+before mapping template ↓ authorizeFunction request mapping template ↓ authorizeFunction本体 ↓ authorizeFunction response mapping template ↓ fetchDataFunction request mapping template ↓ fetchDataFunction本体 ↓ fetchDataFunction response mapping template ↓ after mapping template  functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。
+Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2019-06-16 02:26">2019-06-16</time>
+      <h1>Pipeline Resolverを使ったAppSync Authorizerパターン</h1>
+    </header>
+    <section>
+
+<p>調べたけどあんまり情報がなかったので。</p>
+
+<h2 id="appsync-pipeline-resolver">AppSync Pipeline Resolver</h2>
+
+<p>AppSyncにはPipeline Resolverというリゾルバーがあり、これによって複数のリゾルバーを指定できる、とある。</p>
+
+<p>CFnにはfunctionConfigurationを指定するといいよと書いてある。serverless-appsync-pluginだと次のように書ける。</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">custom<span class="p">:</span><span class="w">
+</span><span class="w">  </span>appSync<span class="p">:</span><span class="w">
+</span><span class="w">    </span>mappingTemplates<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>type<span class="p">:</span><span class="w"> </span>Query<span class="w">
+</span><span class="w">        </span>field<span class="p">:</span><span class="w"> </span>testPipelineQuery<span class="w">
+</span><span class="w">        </span>request<span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/before.vtl&#39;</span><span class="w"> </span><span class="c"># the pipeline&#39;s &#34;before&#34; mapping template</span><span class="w">
+</span><span class="w">        </span>response<span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/after.vtl&#39;</span><span class="w"> </span><span class="c"># the pipeline&#39;s &#34;after&#34; mapping template</span><span class="w">
+</span><span class="w">        </span>kind<span class="p">:</span><span class="w"> </span>PIPELINE<span class="w">
+</span><span class="w">        </span>functions<span class="p">:</span><span class="w">
+</span><span class="w">          </span>-<span class="w"> </span>authorizeFunction<span class="w">
+</span><span class="w">          </span>-<span class="w"> </span>fetchDataFunction<span class="w">
+</span><span class="w">    </span>functionConfigurations<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>dataSource<span class="p">:</span><span class="w"> </span>graphqlLambda<span class="w">
+</span><span class="w">        </span>name<span class="p">:</span><span class="w"> </span><span class="s1">&#39;authorizeFunction&#39;</span><span class="w">
+</span><span class="w">        </span>request<span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/authorize-request.vtl&#39;</span><span class="w">
+</span><span class="w">        </span>response<span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/common-response.vtl&#39;</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>dataSource<span class="p">:</span><span class="w"> </span>dataTable<span class="w">
+</span><span class="w">        </span>name<span class="p">:</span><span class="w"> </span><span class="s1">&#39;fetchDataFunction&#39;</span><span class="w">
+</span><span class="w">        </span>request<span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/fetchData.vtl&#39;</span><span class="w">
+</span><span class="w">        </span>response<span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/common-response.vtl&#39;</span></code></pre></div>
+<p>でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。</p>
+
+<ul>
+<li>リゾルバーに対して指定できる処理の単位を&rdquo;function&rdquo;とここでは呼んでいる</li>
+<li>functionを複数指定すると、それぞれが順番に実行される</li>
+<li>functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する</li>
+<li>上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する</li>
+<li>DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&rdquo;functionからなる&rdquo;</li>
+<li>Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある</li>
+</ul>
+
+<p>で、上のような例だと次のように処理が進む</p>
+
+<pre><code>before mapping template
+↓
+authorizeFunction request mapping template
+↓
+authorizeFunction本体
+↓
+authorizeFunction response mapping template
+↓
+fetchDataFunction request mapping template
+↓
+fetchDataFunction本体
+↓
+fetchDataFunction response mapping template
+↓
+after mapping template
+</code></pre>
+
+<p>functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。</p>
+
+<h2 id="authorizer">Authorizer</h2>
+
+<p>上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。</p>
+
+<p>設定例を以下に示す。</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">(serverless.yml)<span class="w">
+</span><span class="w"></span>custom<span class="p">:</span><span class="w">
+</span><span class="w">  </span>appSync<span class="p">:</span><span class="w">
+</span><span class="w">    </span>mappingTemplates<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>type<span class="p">:</span><span class="w"> </span>Mutation<span class="w">
+</span><span class="w">        </span>field<span class="p">:</span><span class="w"> </span>addCollection<span class="w">
+</span><span class="w">        </span>request<span class="p">:</span><span class="w"> </span>ContextRequest.vtl<span class="w"> </span><span class="c"># before</span><span class="w">
+</span><span class="w">        </span>response<span class="p">:</span><span class="w"> </span>JsonResponse.vtl<span class="w"> </span><span class="c"># after</span><span class="w">
+</span><span class="w">        </span>kind<span class="p">:</span><span class="w"> </span>PIPELINE<span class="w">
+</span><span class="w">        </span>functions<span class="p">:</span><span class="w">
+</span><span class="w">          </span>-<span class="w"> </span>authorizer<span class="w">
+</span><span class="w">          </span>-<span class="w"> </span>addCollection<span class="w">
+</span><span class="w">      </span>functionConfigurations<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>dataSource<span class="p">:</span><span class="w"> </span>authorizer<span class="w">
+</span><span class="w">        </span>name<span class="p">:</span><span class="w"> </span>authorizer<span class="w">
+</span><span class="w">        </span>request<span class="p">:</span><span class="w"> </span>AuthorizerRequest.vtl<span class="w">
+</span><span class="w">        </span>response<span class="p">:</span><span class="w"> </span>AuthorizerResponse.vtl<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>dataSource<span class="p">:</span><span class="w"> </span>collection<span class="w">
+</span><span class="w">        </span>name<span class="p">:</span><span class="w"> </span>addCollection<span class="w">
+</span><span class="w">        </span>request<span class="p">:</span><span class="w"> </span>AddCollection.vtl<span class="w">
+</span><span class="w">        </span>response<span class="p">:</span><span class="w"> </span>JsonResponse.vtl</code></pre></div>
+<pre><code>(ContextRequest.vtl; 特に何もしない)
+$util.toJson($context)
+
+(JsonResponse.vtl; 特に何もしない)
+$utils.toJson($context.result)
+
+(AuthorizerRequest.vtl; Lambda Resolverを呼ぶときと同様の設定)
+{
+  &quot;version&quot;: &quot;2017-02-28&quot;,
+  &quot;operation&quot;: &quot;Invoke&quot;,
+  &quot;payload&quot;: $utils.toJson($context)
+}
+
+(AuthorizerResponse.vtl; Lambdaでエラーがあるとそこでエラーを返す、それ以外は素通し)
+#if($context.error)
+  $util.error($context.error.type, $context.error.message)
+#end
+
+$util.toJson($context.result)
+
+(AddCollection.vtl; DynamoDB Resolverを呼ぶときと同様の設定、ここでは権限のチェックとか色々してる)
+{
+  &quot;version&quot;: &quot;2017-02-28&quot;,
+  &quot;operation&quot;: &quot;PutItem&quot;,
+  &quot;key&quot;: {
+    &quot;id&quot;: { &quot;S&quot;: &quot;${util.autoId()}&quot; },
+    &quot;sort-id&quot;: { &quot;S&quot;: &quot;detail&quot; }
+  },
+
+  #set ( $account = $context.prev.result )
+
+  ## Check ownership
+  #if ( $account.id != $context.arguments.owner )
+    $util.unauthorized()
+  #end
+
+  #set ( $args = $util.dynamodb.toMapValues($context.arguments) )
+  #set ( $args.created_at = $util.dynamodb.toNumber($util.time.nowEpochSeconds()) )
+  #set ( $args.updated_at = $util.dynamodb.toNumber($util.time.nowEpochSeconds()) )
+
+  ## Set title
+  #if ( !$args.title )
+    #set ( $args.title = $util.dynamodb.toString(&quot;No title&quot;) )
+  #end
+  &quot;attributeValues&quot;: $util.toJson($args)
+}
+</code></pre>
+
+<p>Authorizer Lambdaの中ではJWTのverificationを行ってユーザー情報を取り出し、後続のDynamoDB Resolverでは<code>$context.prev.result</code>という形でそれを受けている。これはPipeline Resolverで直前のfunctionの結果を参照する機能で、これらを組み合わせるとAPI GatewayでのLambda Authorizer相当のことがAppSyncでも出来る。</p>
+
+<h2 id="終わりに">終わりに</h2>
+
+<p>AppSync早くLambda Authorizer正式に対応してくんないかな〜〜〜</p>
+
+<p>cf: <a href="https://github.com/aws/aws-appsync-community/issues/2">https://github.com/aws/aws-appsync-community/issues/2</a></p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/aws">
+                <span>#</span>AWS</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2019 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

@@ -5,10 +5,24 @@
     <description>Recent content in Posts on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Tue, 21 May 2019 23:25:02 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 16 Jun 2019 14:26:31 +0900</lastBuildDate>
     
       <atom:link href="https://myuon.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+      <item>
+        <title>Pipeline Resolverを使ったAppSync Authorizerパターン</title>
+        <link>https://myuon.github.io/posts/pipeline-resolver-authorizer/</link>
+        <pubDate>Sun, 16 Jun 2019 14:26:31 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/pipeline-resolver-authorizer/</guid>
+        <description>調べたけどあんまり情報がなかったので。
+AppSync Pipeline Resolver AppSyncにはPipeline Resolverというリゾルバーがあり、これによって複数のリゾルバーを指定できる、とある。
+CFnにはfunctionConfigurationを指定するといいよと書いてある。serverless-appsync-pluginだと次のように書ける。
+custom:appSync:mappingTemplates:-type:Queryfield:testPipelineQueryrequest:&amp;#39;./mapping-templates/before.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;before&amp;#34; mapping templateresponse:&amp;#39;./mapping-templates/after.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;after&amp;#34; mapping templatekind:PIPELINEfunctions:-authorizeFunction-fetchDataFunctionfunctionConfigurations:-dataSource:graphqlLambdaname:&amp;#39;authorizeFunction&amp;#39;request:&amp;#39;./mapping-templates/authorize-request.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39;-dataSource:dataTablename:&amp;#39;fetchDataFunction&amp;#39;request:&amp;#39;./mapping-templates/fetchData.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39; でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
+ リゾルバーに対して指定できる処理の単位を&amp;rdquo;function&amp;rdquo;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&amp;rdquo;functionからなる&amp;rdquo; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
+before mapping template ↓ authorizeFunction request mapping template ↓ authorizeFunction本体 ↓ authorizeFunction response mapping template ↓ fetchDataFunction request mapping template ↓ fetchDataFunction本体 ↓ fetchDataFunction response mapping template ↓ after mapping template  functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。
+Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。</description>
+      </item>
     
       <item>
         <title>GHC Coreのパーサー書いてたけど諦めた</title>
