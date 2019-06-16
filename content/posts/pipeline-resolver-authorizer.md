@@ -147,6 +147,64 @@ $util.toJson($context.result)
 
 Authorizer Lambdaの中ではJWTのverificationを行ってユーザー情報を取り出し、後続のDynamoDB Resolverでは`$context.prev.result`という形でそれを受けている。これはPipeline Resolverで直前のfunctionの結果を参照する機能で、これらを組み合わせるとAPI GatewayでのLambda Authorizer相当のことがAppSyncでも出来る。
 
+## 余談: Authorization header in Amplify
+
+上のように自前でAuthorizerを入れたいということは(認可はCognito等に頼らず)サービス内で独自のトークンを発行してる場合が多いと思う。その場合、クライアントからAuthorizationヘッダーにトークンを載せる必要があるが、Amplifyのclientとかだとそれをするには手で設定をする必要がある。
+
+例えばaws-appsyncを使っている場合には次のようにすればよいし、
+
+```js
+import AWSAppSyncClient, { AUTH_TYPE, createAppSyncLink, AWSAppSyncClientOptions } from 'aws-appsync';
+import { ApolloLink } from 'apollo-link';
+import { setContext } from "apollo-link-context";
+import { createHttpLink } from "apollo-link-http";
+
+const AppSyncConfig = {
+  url: aws_config.aws_appsync_graphqlEndpoint,
+  region: aws_config.aws_appsync_region,
+  auth: {
+    type: AUTH_TYPE.API_KEY,
+    apiKey: aws_config.aws_appsync_apiKey,
+  },
+  disableOffline: true,
+} as AWSAppSyncClientOptions;
+
+const client = new AWSAppSyncClient(AppSyncConfig, {
+  link: createAppSyncLink({
+    ...AppSyncConfig,
+    resultsFetcherLink: ApolloLink.from([
+      setContext((request, previousContext) => ({
+        headers: {
+          ...previousContext.headers,
+          Authorization: `Bearer ${token}`,  // ここ
+        }
+      })),
+      createHttpLink({
+        uri: AppSyncConfig.url,
+      })
+    ])
+  } as any)
+```
+
+aws-amplifyを使っているなら次のようにすると良い。
+
+```js
+Amplify.configure(awsconfig);
+Amplify.configure({
+  API: {
+    graphql_headers: async () => {
+      return {
+        'Authorization': `Bearer ${token}`  // ここ
+      };
+    }
+  }
+});
+```
+
+なおトークンの管理として、nodeなら環境変数に、ブラウザ上ならcookieまたはlocalStorageに入れるでまぁいいのかなと思う。
+
+上の設定ではクライアント生成時にheaderの設定を書く必要があって、外から引数として渡すのは難しいので。
+
 ## 終わりに
 
 AppSync早くLambda Authorizer正式に対応してくんないかな〜〜〜
