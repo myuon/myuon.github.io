@@ -2,6 +2,43 @@
   
     
       <url>
+        <loc>https://myuon.github.io/tags/aws/</loc>
+        <lastmod>2019-06-16T14:26:31+09:00</lastmod>
+        <priority>0</priority>
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://myuon.github.io/posts/pipeline-resolver-authorizer/</loc>
+        <lastmod>2019-06-16T14:26:31+09:00</lastmod>
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://myuon.github.io/posts/</loc>
+        <lastmod>2019-06-16T14:26:31+09:00</lastmod>
+        <priority>0</priority>
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://myuon.github.io/tags/</loc>
+        <lastmod>2019-06-16T14:26:31+09:00</lastmod>
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://myuon.github.io/</loc>
+        <lastmod>2019-06-16T14:26:31+09:00</lastmod>
+      </url>
+    
+  
+    
+      <url>
         <loc>https://myuon.github.io/posts/giving-up-core-parser/</loc>
         <lastmod>2019-05-21T23:25:02+09:00</lastmod>
       </url>
@@ -12,28 +49,6 @@
         <loc>https://myuon.github.io/tags/haskell/</loc>
         <lastmod>2019-05-21T23:25:02+09:00</lastmod>
         <priority>0</priority>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/</loc>
-        <lastmod>2019-05-21T23:25:02+09:00</lastmod>
-        <priority>0</priority>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/</loc>
-        <lastmod>2019-05-21T23:25:02+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/</loc>
-        <lastmod>2019-05-21T23:25:02+09:00</lastmod>
       </url>
     
   
@@ -70,14 +85,6 @@
       <url>
         <loc>https://myuon.github.io/posts/survey-ray-tracing/</loc>
         <lastmod>2019-03-03T19:33:25+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/aws/</loc>
-        <lastmod>2019-02-11T00:22:05+09:00</lastmod>
-        <priority>0</priority>
       </url>
     
   
