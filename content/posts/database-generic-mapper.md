@@ -1,7 +1,6 @@
 ---
 title: Genericなデータマッパーを書いた
 date: 2019-09-28T17:15:06+09:00
-draft: true
 tags: ["haskell"]
 ---
 
