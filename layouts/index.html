@@ -99,7 +99,7 @@
   <h3>Recent Articles</h3>
 
   <ol class="decimal-list">
-    {{ range first 5 .Data.Pages }}
+    {{ range first 5 .Site.RegularPages }}
     <li>
       <span class="date">{{ .Date.Format "2006-01-02" }}</span> - <a href="{{ .RelPermalink }}">{{ .Title }}</a>
     </li>
@@ -111,8 +111,8 @@
   <h3>Tags</h3>
 
   <ol class="decimal-list">
-    {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
-      <li><a href="/tags/{{ $name | urlize }}">{{ $name }}</a> <sup>{{ len $taxonomy.Pages }}</sup></li>
+    {{ range .Site.Taxonomies.tags.ByCount }}
+      <li><a href="/tags/{{ .Name | urlize }}">{{ .Name }}</a> <sup>{{ .Count }}</sup></li>
     {{ end }}
   </ol>
 {{ end }}
