@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,36 +22,15 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Proof Assistantを作る・実装編 その3" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-Proofchecker state machine さてClaireのproofcheckerを作っていきます。
-前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。
-proof state 初めに仕様を固めます。
- (state:toplevel) Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する (state:command) Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る  注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。
-Coroutine monad さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。
-Claire.Checker
-Command Machine Suspender 簡単な方から行きます。
-data ComSuspender y = ComAwait (Command -&gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&gt; Env -&gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = ." />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 20日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Proofchecker state machine   さてClaireのproofcheckerを作っていきます。  前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。 proof state   初めに仕様を固めます。   (state:toplevel)    Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する   (state:command)    Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る    注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。 Coroutine monad   さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。  Claire.Checker Command Machine Suspender   簡単な方から行きます。 data ComSuspender y = ComAwait (Command -&gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&gt; Env -&gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = ." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-3/" />
-<meta property="article:published_time" content="2017-12-20T00:12:26&#43;09:00"/>
-<meta property="article:modified_time" content="2017-12-20T00:12:26&#43;09:00"/>
-
+<meta property="article:published_time" content="2017-12-20T00:12:26+09:00" />
+<meta property="article:modified_time" content="2017-12-20T00:12:26+09:00" />
 
 
 <meta itemprop="name" content="Proof Assistantを作る・実装編 その3">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-Proofchecker state machine さてClaireのproofcheckerを作っていきます。
-前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。
-proof state 初めに仕様を固めます。
- (state:toplevel) Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する (state:command) Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る  注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。
-Coroutine monad さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。
-Claire.Checker
-Command Machine Suspender 簡単な方から行きます。
-data ComSuspender y = ComAwait (Command -&gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&gt; Env -&gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = .">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 20日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Proofchecker state machine   さてClaireのproofcheckerを作っていきます。  前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。 proof state   初めに仕様を固めます。   (state:toplevel)    Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する   (state:command)    Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る    注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。 Coroutine monad   さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。  Claire.Checker Command Machine Suspender   簡単な方から行きます。 data ComSuspender y = ComAwait (Command -&gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&gt; Env -&gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = .">
 
 
 <meta itemprop="datePublished" content="2017-12-20T00:12:26&#43;09:00" />
@@ -64,17 +43,7 @@ data ComSuspender y = ComAwait (Command -&gt; y) | CommandError Ident SomeExcept
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Proof Assistantを作る・実装編 その3"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-Proofchecker state machine さてClaireのproofcheckerを作っていきます。
-前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。
-proof state 初めに仕様を固めます。
- (state:toplevel) Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する (state:command) Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る  注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。
-Coroutine monad さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。
-Claire.Checker
-Command Machine Suspender 簡単な方から行きます。
-data ComSuspender y = ComAwait (Command -&gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&gt; Env -&gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = ."/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 20日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Proofchecker state machine   さてClaireのproofcheckerを作っていきます。  前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。 proof state   初めに仕様を固めます。   (state:toplevel)    Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する   (state:command)    Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る    注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。 Coroutine monad   さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。  Claire.Checker Command Machine Suspender   簡単な方から行きます。 data ComSuspender y = ComAwait (Command -&gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&gt; Env -&gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = ."/>
 
 
   </head>
@@ -103,181 +72,267 @@ data ComSuspender y = ComAwait (Command -&gt; y) | CommandError Ident SomeExcept
       <time datetime="2017-12-20 12:12">2017-12-20</time>
       <h1>Proof Assistantを作る・実装編 その3</h1>
     </header>
-    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 20日目の記事です。</strong></p>
-
-<hr />
-
-<p>Proof Assistant 「Claire」の実装について説明していきます。</p>
-
-<p>リポジトリはこちら: <a href="https://github.com/myuon/claire" title="myuon/claire">myuon/claire</a></p>
-
-<h1 id="proofchecker-state-machine">Proofchecker state machine</h1>
-
-<p>さてClaireのproofcheckerを作っていきます。</p>
-
-<p>前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。
-これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。</p>
-
-<h2 id="proof-state">proof state</h2>
-
-<p>初めに仕様を固めます。</p>
-
+    <section>
+<p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 20日目の記事です。</strong>
+</p>
+<hr>
+<p>
+Proof Assistant 「Claire」の実装について説明していきます。
+</p>
+<p>
+リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a>
+</p>
+<h1 id="headline-1">
+Proofchecker state machine
+</h1>
+<p>
+さてClaireのproofcheckerを作っていきます。
+</p>
+<p>
+前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。
+これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。
+</p>
+<h2 id="headline-2">
+proof state
+</h2>
+<p>
+初めに仕様を固めます。
+</p>
 <dl>
-<dt>(state:toplevel)</dt>
-<dd>Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する</dd>
-<dt>(state:command)</dt>
-<dd>Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る</dd>
+<dt>
+(state:toplevel)
+</dt>
+<dd>
+<p>
+Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する
+</p>
+</dd>
+<dt>
+(state:command)
+</dt>
+<dd>
+<p>
+Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る
+</p>
+</dd>
 </dl>
-
-<p>注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。
-このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。</p>
-
-<h2 id="coroutine-monad">Coroutine monad</h2>
-
-<p>さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？
-察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 <a href="https://myuon.github.io/posts/coroutine-monad-as-state-machine/" title="Coroutineモナドとステートマシン">Coroutineモナドとステートマシン</a> でも説明したとおり、Coroutine monadを使います<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>。</p>
-
-<p><a href="https://github.com/myuon/claire/blob/master/src/Claire/Checker.hs" title="Claire.Checker">Claire.Checker</a></p>
-
-<h3 id="command-machine-suspender">Command Machine Suspender</h3>
-
-<p>簡単な方から行きます。</p>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">ComSuspender</span> <span class="nf">y</span>
-    <span class="ow">=</span> <span class="kt">ComAwait</span> <span class="p">(</span><span class="kt">Command</span> <span class="ow">-&gt;</span> <span class="nf">y</span><span class="p">)</span>
-    <span class="o">|</span> <span class="kt">CommandError</span> <span class="kt">Ident</span> <span class="kt">SomeException</span> <span class="nf">y</span>
+<p>
+注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。
+このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。
+</p>
+<h2 id="headline-3">
+Coroutine monad
+</h2>
+<p>
+さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？
+察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 <a href="https://myuon.github.io/posts/coroutine-monad-as-state-machine/">Coroutineモナドとステートマシン</a> でも説明したとおり、Coroutine monadを使います<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>。
+</p>
+<p>
+<a href="https://github.com/myuon/claire/blob/master/src/Claire/Checker.hs">Claire.Checker</a>
+</p>
+<h3 id="headline-4">
+Command Machine Suspender
+</h3>
+<p>
+簡単な方から行きます。
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">ComSuspender</span> <span class="n">y</span>
+    <span class="ow">=</span> <span class="kt">ComAwait</span> <span class="p">(</span><span class="kt">Command</span> <span class="ow">-&gt;</span> <span class="n">y</span><span class="p">)</span>
+    <span class="o">|</span> <span class="kt">CommandError</span> <span class="kt">Ident</span> <span class="kt">SomeException</span> <span class="n">y</span>
     <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Functor</span><span class="p">)</span>
 
-  <span class="nf">commandM</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Monad</span> <span class="nf">m</span><span class="p">,</span> <span class="kt">MonadIO</span> <span class="nf">m</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Coroutine</span> <span class="kt">ComSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="nf">m</span><span class="p">)</span> <span class="nb">()</span>
-  <span class="nf">commandM</span> <span class="ow">=</span> <span class="o">...</span></code></pre></div>
-<p>Coroutine monadは最初に受け取る型の形によってawaitになったりyieldになったりします。
-ComSuspenderは2つのコンストラクタがあり、ComAwaitがawaitとして、CommandErrorがエラー生成部分として機能します。</p>
-
-<p>ところでCommandErrorではSomeExceptionを使っていて、以下でも度々SomeExceptionを使います。
-ここはもっと具体的なexceptionを使うこともできますが、この辺は内部の実装のあれこれを表層に出さず隠蔽するという設計を取った結果です。</p>
-
-<p>commandMの型から、command machineはJudgementのリスト(つまりゴール)を変形するようなステートマシンであることが分かります。</p>
-
-<h3 id="toplevel-machine-suspender">Toplevel Machine Suspender</h3>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">DeclSuspender</span> <span class="nf">y</span>
-    <span class="ow">=</span> <span class="kt">DeclAwait</span> <span class="p">(</span><span class="kt">Decl</span> <span class="ow">-&gt;</span> <span class="nf">y</span><span class="p">)</span>
-    <span class="o">|</span> <span class="kt">ProofNotFinished</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="p">(</span><span class="kt">Command</span> <span class="ow">-&gt;</span> <span class="nf">y</span><span class="p">)</span>
-    <span class="o">|</span> <span class="kt">RunCommandError</span> <span class="kt">Ident</span> <span class="kt">SomeException</span> <span class="nf">y</span>
-    <span class="o">|</span> <span class="kt">DeclError</span> <span class="kt">Ident</span> <span class="kt">SomeException</span> <span class="nf">y</span>
+  <span class="n">commandM</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Monad</span> <span class="n">m</span><span class="p">,</span> <span class="kt">MonadIO</span> <span class="n">m</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Coroutine</span> <span class="kt">ComSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="n">m</span><span class="p">)</span> <span class="nb">()</span>
+  <span class="n">commandM</span> <span class="ow">=</span> <span class="o">...</span></code></pre></div>
+</div>
+<p>
+Coroutine monadは最初に受け取る型の形によってawaitになったりyieldになったりします。
+ComSuspenderは2つのコンストラクタがあり、ComAwaitがawaitとして、CommandErrorがエラー生成部分として機能します。
+</p>
+<p>
+ところでCommandErrorではSomeExceptionを使っていて、以下でも度々SomeExceptionを使います。
+ここはもっと具体的なexceptionを使うこともできますが、この辺は内部の実装のあれこれを表層に出さず隠蔽するという設計を取った結果です。
+</p>
+<p>
+commandMの型から、command machineはJudgementのリスト(つまりゴール)を変形するようなステートマシンであることが分かります。
+</p>
+<h3 id="headline-5">
+Toplevel Machine Suspender
+</h3>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">DeclSuspender</span> <span class="n">y</span>
+    <span class="ow">=</span> <span class="kt">DeclAwait</span> <span class="p">(</span><span class="kt">Decl</span> <span class="ow">-&gt;</span> <span class="n">y</span><span class="p">)</span>
+    <span class="o">|</span> <span class="kt">ProofNotFinished</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="p">(</span><span class="kt">Command</span> <span class="ow">-&gt;</span> <span class="n">y</span><span class="p">)</span>
+    <span class="o">|</span> <span class="kt">RunCommandError</span> <span class="kt">Ident</span> <span class="kt">SomeException</span> <span class="n">y</span>
+    <span class="o">|</span> <span class="kt">DeclError</span> <span class="kt">Ident</span> <span class="kt">SomeException</span> <span class="n">y</span>
     <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Functor</span><span class="p">)</span>
 
-  <span class="nf">toplevelM</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Monad</span> <span class="nf">m</span><span class="p">,</span> <span class="kt">MonadIO</span> <span class="nf">m</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Coroutine</span> <span class="kt">DeclSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="kt">Env</span> <span class="nf">m</span><span class="p">)</span> <span class="nb">()</span>
-  <span class="nf">toplevelM</span> <span class="ow">=</span> <span class="o">...</span></code></pre></div>
-<p>DeclSuspenderは(1)Declを受け取るawait (2)Proofが終了していない状態(コマンドを受け付ける状態) (3)コマンドの実行中にエラーが出た状態 (4)Declの解釈中にエラーが出た状態
-のいずれかからなります。</p>
+  <span class="n">toplevelM</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Monad</span> <span class="n">m</span><span class="p">,</span> <span class="kt">MonadIO</span> <span class="n">m</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Coroutine</span> <span class="kt">DeclSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="kt">Env</span> <span class="n">m</span><span class="p">)</span> <span class="nb">()</span>
+  <span class="n">toplevelM</span> <span class="ow">=</span> <span class="o">...</span></code></pre></div>
+</div>
+<p>
+DeclSuspenderは(1)Declを受け取るawait (2)Proofが終了していない状態(コマンドを受け付ける状態) (3)コマンドの実行中にエラーが出た状態 (4)Declの解釈中にエラーが出た状態
+のいずれかからなります。
+</p>
+<p>
+toplevelMはEnvを変えるステートマシンです。
+</p>
+<h1 id="headline-6">
+Commands
+</h1>
+<p>
+commandMは、コマンドをawaitで受け取り、コマンドを実行し、ゴールが全て解消されていなければ再びcommandMを繰り返すという単純な実装です。
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">commandM</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Monad</span> <span class="n">m</span><span class="p">,</span> <span class="kt">MonadIO</span> <span class="n">m</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Coroutine</span> <span class="kt">ComSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="n">m</span><span class="p">)</span> <span class="nb">()</span>
+  <span class="n">commandM</span> <span class="n">env</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="n">com</span> <span class="ow">&lt;-</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">ComAwait</span> <span class="n">return</span>
+    <span class="kr">let</span> <span class="n">insts</span> <span class="n">fml</span> <span class="n">pairs</span> <span class="ow">=</span> <span class="n">foldlM</span> <span class="p">(</span><span class="nf">\</span><span class="n">f</span> <span class="p">(</span><span class="n">idt</span><span class="p">,</span><span class="n">pred</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">substPred</span> <span class="p">(</span><span class="sc">&#39;?&#39;</span><span class="kt">:</span><span class="n">idt</span><span class="p">)</span> <span class="n">pred</span> <span class="n">f</span><span class="p">)</span> <span class="n">fml</span> <span class="n">pairs</span>
 
-<p>toplevelMはEnvを変えるステートマシンです。</p>
-
-<h1 id="commands">Commands</h1>
-
-<p>commandMは、コマンドをawaitで受け取り、コマンドを実行し、ゴールが全て解消されていなければ再びcommandMを繰り返すという単純な実装です。</p>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">commandM</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Monad</span> <span class="nf">m</span><span class="p">,</span> <span class="kt">MonadIO</span> <span class="nf">m</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Coroutine</span> <span class="kt">ComSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="nf">m</span><span class="p">)</span> <span class="nb">()</span>
-  <span class="nf">commandM</span> <span class="nf">env</span> <span class="ow">=</span> <span class="kr">do</span>
-    <span class="nf">com</span> <span class="ow">&lt;-</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">ComAwait</span> <span class="nf">return</span>
-    <span class="kr">let</span> <span class="nf">insts</span> <span class="nf">fml</span> <span class="nf">pairs</span> <span class="ow">=</span> <span class="nf">foldlM</span> <span class="p">(</span><span class="nf">\f</span> <span class="p">(</span><span class="nf">idt</span><span class="p">,</span><span class="nf">pred</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="nf">substPred</span> <span class="p">(</span><span class="sc">&#39;?&#39;</span><span class="kt">:</span><span class="nf">idt</span><span class="p">)</span> <span class="nf">pred</span> <span class="nf">f</span><span class="p">)</span> <span class="nf">fml</span> <span class="nf">pairs</span>
-
-    <span class="kr">case</span> <span class="nf">com</span> <span class="kr">of</span>
+    <span class="kr">case</span> <span class="n">com</span> <span class="kr">of</span>
       <span class="kr">_</span> <span class="ow">-&gt;</span> <span class="err">ここにコマンドの実装を追加する</span>
 
-    <span class="nf">js</span> <span class="ow">&lt;-</span> <span class="nf">lift</span> <span class="nf">get</span>
-    <span class="nf">unless</span> <span class="p">(</span><span class="nf">null</span> <span class="nf">js</span><span class="p">)</span> <span class="o">$</span> <span class="nf">commandM</span> <span class="nf">env</span></code></pre></div>
-<p>さて実際にcommandMの実装がどうなっているかを説明するために、ClaireのCommandについてちゃんと説明する必要がありますのでそれを先にしましょう。</p>
-
-<p>Claireに組み込みのコマンド(ゴールを変形する仕組み)は5つあります。</p>
-
-<h2 id="apply-rule">Apply [rule]</h2>
-
-<p>applyはLKのルールを現在のゴールに対して適用します。</p>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">Apply</span> <span class="nf">rs</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-        <span class="nf">js</span> <span class="ow">&lt;-</span> <span class="nf">lift</span> <span class="nf">get</span>
-        <span class="kr">case</span> <span class="nf">judge</span> <span class="nf">env</span> <span class="nf">rs</span> <span class="nf">js</span> <span class="kr">of</span>
-          <span class="kt">Left</span> <span class="p">(</span><span class="nf">r</span><span class="p">,</span><span class="nf">js&#39;</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-            <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;apply&#34;</span> <span class="p">(</span><span class="nf">toException</span> <span class="o">$</span> <span class="kt">CannotApply</span> <span class="nf">r</span> <span class="nf">js&#39;</span><span class="p">)</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span>
-            <span class="nf">commandM</span> <span class="nf">env</span>
-          <span class="kt">Right</span> <span class="nf">js&#39;</span> <span class="ow">-&gt;</span> <span class="nf">lift</span> <span class="o">$</span> <span class="nf">put</span> <span class="nf">js&#39;</span></code></pre></div>
-<p>中では普通にjudgeを読んで、エラーがあればCommandErrorを、なければそのままゴールを書き換えるということをします。</p>
-
-<h2 id="noapply-rule">NoApply rule</h2>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">NoApply</span> <span class="nf">r</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-        <span class="nf">js</span> <span class="ow">&lt;-</span> <span class="nf">lift</span> <span class="nf">get</span>
-        <span class="kr">case</span> <span class="nf">judge</span> <span class="nf">env</span> <span class="p">[</span><span class="nf">r</span><span class="p">]</span> <span class="nf">js</span> <span class="kr">of</span>
-          <span class="kt">Left</span> <span class="p">(</span><span class="nf">r</span><span class="p">,</span><span class="nf">js&#39;</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-            <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;noapply&#34;</span> <span class="p">(</span><span class="nf">toException</span> <span class="o">$</span> <span class="kt">CannotApply</span> <span class="nf">r</span> <span class="nf">js&#39;</span><span class="p">)</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span>
-            <span class="nf">commandM</span> <span class="nf">env</span>
-          <span class="kt">Right</span> <span class="nf">js&#39;</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-            <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">putStrLn</span> <span class="o">$</span> <span class="s">&#34;= NoApply &#34;</span> <span class="o">++</span> <span class="nf">show</span> <span class="nf">r</span> <span class="o">++</span> <span class="s">&#34; result&#34;</span>
-            <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">mapM_</span> <span class="nf">print</span> <span class="nf">js&#39;</span>
-            <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">putStrLn</span> <span class="o">$</span> <span class="s">&#34;=</span><span class="se">\n</span><span class="s">&#34;</span></code></pre></div>
-<p>noapplyは「applyを実行し、その結果を画面に表示するが実際にゴールは書き換えない」というコマンドです。
-これはインタラクティブシェルで証明を書く際に「うっかり意図しないルールを適用しちゃった」を防ぐために、applyコマンドのプレビューができるように作ったものです。</p>
-
-<p>実装はapplyのときとほぼ同じで、ただしゴールには触れずにprintするというところが違います。</p>
-
-<h2 id="use-thmindex-identifier-predicate">Use thmindex [(identifier,predicate)]</h2>
-
-<p>useは「すでに証明した定理を仮定に追加する」です。</p>
-
-<p>さてここでメタロジックについて考える必要があります。
-すでに証明した定理を仮定に勝手に追加してよいか？ということは、つまり次のことが言えるかどうかということです。</p>
-
-<p><strong>Question(in LK):</strong> ⊢ Pの証明が存在するとする。このとき任意の論理式Qに対し、P ⊢ Qの証明が存在するならば⊢ Qの証明も存在するか？</p>
-
-<p>Answer) Yes: P ⊢ Qと⊢ Pがあるならば、Cut規則により⊢ Qが言えるから。
-このとき、⊢ Pの証明はPの自由変数のとり方によらないことを用いると、Pの自由変数に適当な値を代入して得られるP'に対して、P' ⊢ Qの証明が存在すれば⊢ Qの証明も存在することが分かる。</p>
-
-<p>というわけでuseコマンドは使っても問題なく、さらにすでに示した定理の自由変数を別のものに取り替えても良さそうです。
-なので、useの第一引数に証明した定理の名前、第二引数には自由変数への名前の付け替えを要求します。syntaxとしては <code>use hoge_theorem {P: (x,y) =&gt; Q(x), S: x =&gt; R(x)}</code> みたいな感じで使えるようにしてあります。</p>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">Use</span> <span class="nf">idx</span> <span class="nf">pairs</span> <span class="o">|</span> <span class="nf">idx</span> <span class="p">`</span><span class="kt">M</span><span class="o">.</span><span class="nf">member</span><span class="p">`</span> <span class="nf">thms</span> <span class="nf">env</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-        <span class="kr">let</span> <span class="nf">fml</span> <span class="ow">=</span> <span class="nf">thms</span> <span class="nf">env</span> <span class="kt">M</span><span class="o">.!</span> <span class="nf">idx</span>
-        <span class="kr">case</span> <span class="nf">insts</span> <span class="nf">fml</span> <span class="nf">pairs</span> <span class="kr">of</span>
-          <span class="kt">Right</span> <span class="nf">r</span> <span class="ow">-&gt;</span> <span class="nf">lift</span> <span class="o">$</span> <span class="nf">modify</span> <span class="o">$</span> <span class="nf">\</span><span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">r</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span>
-          <span class="kt">Left</span> <span class="nf">err</span> <span class="ow">-&gt;</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;inst&#34;</span> <span class="p">(</span><span class="nf">toException</span> <span class="o">$</span> <span class="kt">CannotInstantiate</span> <span class="nf">err</span><span class="p">)</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
-<p>実装としては、環境から対応する定理を引っ張ってきて自由変数を書き換えて仮定に追加するだけです。</p>
-
-<p>このような、自由変数を書き換えて使えるというのは意外と証明の書きやすさに影響してくるのでuseに機能として持たせることにしました。
-これはIsabelleでも自由変数Pは一度証明すると?Pの形になり、OFで後から代入したり出来ましたがそれと同じことです。</p>
-
-<h2 id="inst-identifier-predicate">Inst identifier predicate</h2>
-
-<p>instは「自由変数への代入を行う」です。
-上のuseが仮定に追加しさらに代入を行うことが出来ましたが、この代入部分だけ取り出したものです。</p>
-
-<p>元々はuseが仮定への追加のみ、instで代入と分けていたんですがinstをいっぱい書くのが面倒になったのでuseがinstの機能も含むようになってしまっただけです。
-ただしひとまず仮定へと追加して、代入を後で行うことができるのでこれはこれで必要な場面があります。</p>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">Inst</span> <span class="nf">idt</span> <span class="nf">pred</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-        <span class="nf">js</span> <span class="ow">&lt;-</span> <span class="nf">lift</span> <span class="nf">get</span>
-        <span class="kr">case</span> <span class="nf">js</span> <span class="kr">of</span>
-          <span class="kt">[]</span> <span class="ow">-&gt;</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;inst&#34;</span> <span class="p">(</span><span class="nf">toException</span> <span class="p">(</span><span class="ne">error</span> <span class="s">&#34;empty judgement&#34;</span> <span class="ow">::</span> <span class="kt">ErrorCall</span><span class="p">))</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span>
-          <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="nf">assm</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js&#39;</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-            <span class="kr">case</span> <span class="nf">substPred</span> <span class="p">(</span><span class="sc">&#39;?&#39;</span><span class="kt">:</span><span class="nf">idt</span><span class="p">)</span> <span class="nf">pred</span> <span class="nf">assm</span> <span class="kr">of</span>
-              <span class="kt">Right</span> <span class="nf">r</span> <span class="ow">-&gt;</span> <span class="nf">lift</span> <span class="o">$</span> <span class="nf">put</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">r</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js&#39;</span>
-              <span class="kt">Left</span> <span class="nf">err</span> <span class="ow">-&gt;</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;inst&#34;</span> <span class="p">(</span><span class="nf">toException</span> <span class="o">$</span> <span class="kt">CannotInstantiate</span> <span class="nf">err</span><span class="p">)</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
-<p>代入するのは仮定の一番最初の項だけなことに注意します。</p>
-
-<h2 id="newcommand-identifier-argument">NewCommand identifier argument</h2>
-
-<p>最後は組み込みのコマンドではなく、マクロで定義されたコマンドの読み込みです。</p>
-
-<p>これは一旦置いておいてあとの方で説明しましょう。</p>
-
-<h1 id="まとめ">まとめ</h1>
-
-<p>というわけで組み込みのコマンド Command型を説明しました。
-次にClaireのメインの文法にあたるDeclを説明する必要があるのでそれはまた明日ということで。</p>
-
-<p>コアに近い機能から説明しているのでなんか説明がとっちらかっているような気がしますが
-次回・次次回くらいで一通りproofcheckerが動くところまで行けるはずなので、そこまでは辛抱ください。</p>
+    <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
+    <span class="n">unless</span> <span class="p">(</span><span class="n">null</span> <span class="n">js</span><span class="p">)</span> <span class="o">$</span> <span class="n">commandM</span> <span class="n">env</span></code></pre></div>
+</div>
+<p>
+さて実際にcommandMの実装がどうなっているかを説明するために、ClaireのCommandについてちゃんと説明する必要がありますのでそれを先にしましょう。
+</p>
+<p>
+Claireに組み込みのコマンド(ゴールを変形する仕組み)は5つあります。
+</p>
+<h2 id="headline-7">
+Apply [rule]
+</h2>
+<p>
+applyはLKのルールを現在のゴールに対して適用します。
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">Apply</span> <span class="n">rs</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
+        <span class="kr">case</span> <span class="n">judge</span> <span class="n">env</span> <span class="n">rs</span> <span class="n">js</span> <span class="kr">of</span>
+          <span class="kt">Left</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">js&#39;</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+            <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;apply&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotApply</span> <span class="n">r</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+            <span class="n">commandM</span> <span class="n">env</span>
+          <span class="kt">Right</span> <span class="n">js&#39;</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">put</span> <span class="n">js&#39;</span></code></pre></div>
+</div>
+<p>
+中では普通にjudgeを読んで、エラーがあればCommandErrorを、なければそのままゴールを書き換えるということをします。
+</p>
+<h2 id="headline-8">
+NoApply rule
+</h2>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">NoApply</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
+        <span class="kr">case</span> <span class="n">judge</span> <span class="n">env</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="n">js</span> <span class="kr">of</span>
+          <span class="kt">Left</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">js&#39;</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+            <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;noapply&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotApply</span> <span class="n">r</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+            <span class="n">commandM</span> <span class="n">env</span>
+          <span class="kt">Right</span> <span class="n">js&#39;</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+            <span class="n">liftIO</span> <span class="o">$</span> <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&#34;= NoApply &#34;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">r</span> <span class="o">++</span> <span class="s">&#34; result&#34;</span>
+            <span class="n">liftIO</span> <span class="o">$</span> <span class="n">mapM_</span> <span class="n">print</span> <span class="n">js&#39;</span>
+            <span class="n">liftIO</span> <span class="o">$</span> <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&#34;=</span><span class="se">\n</span><span class="s">&#34;</span></code></pre></div>
+</div>
+<p>
+noapplyは「applyを実行し、その結果を画面に表示するが実際にゴールは書き換えない」というコマンドです。
+これはインタラクティブシェルで証明を書く際に「うっかり意図しないルールを適用しちゃった」を防ぐために、applyコマンドのプレビューができるように作ったものです。
+</p>
+<p>
+実装はapplyのときとほぼ同じで、ただしゴールには触れずにprintするというところが違います。
+</p>
+<h2 id="headline-9">
+Use thmindex [(identifier,predicate)]
+</h2>
+<p>
+useは「すでに証明した定理を仮定に追加する」です。
+</p>
+<p>
+さてここでメタロジックについて考える必要があります。
+すでに証明した定理を仮定に勝手に追加してよいか？ということは、つまり次のことが言えるかどうかということです。
+</p>
+<p>
+<strong>Question(in LK):</strong> ⊢ Pの証明が存在するとする。このとき任意の論理式Qに対し、P ⊢ Qの証明が存在するならば⊢ Qの証明も存在するか？
+</p>
+<p>
+Answer) Yes: P ⊢ Qと⊢ Pがあるならば、Cut規則により⊢ Qが言えるから。
+このとき、⊢ Pの証明はPの自由変数のとり方によらないことを用いると、Pの自由変数に適当な値を代入して得られるP&#39;に対して、P&#39; ⊢ Qの証明が存在すれば⊢ Qの証明も存在することが分かる。
+</p>
+<p>
+というわけでuseコマンドは使っても問題なく、さらにすでに示した定理の自由変数を別のものに取り替えても良さそうです。
+なので、useの第一引数に証明した定理の名前、第二引数には自由変数への名前の付け替えを要求します。syntaxとしては <code>use hoge_theorem {P: (x,y) =&gt; Q(x), S: x =&gt; R(x)}</code> みたいな感じで使えるようにしてあります。
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">Use</span> <span class="n">idx</span> <span class="n">pairs</span> <span class="o">|</span> <span class="n">idx</span> <span class="p">`</span><span class="kt">M</span><span class="o">.</span><span class="n">member</span><span class="p">`</span> <span class="n">thms</span> <span class="n">env</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="kr">let</span> <span class="n">fml</span> <span class="ow">=</span> <span class="n">thms</span> <span class="n">env</span> <span class="kt">M</span><span class="o">.!</span> <span class="n">idx</span>
+        <span class="kr">case</span> <span class="n">insts</span> <span class="n">fml</span> <span class="n">pairs</span> <span class="kr">of</span>
+          <span class="kt">Right</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">modify</span> <span class="o">$</span> <span class="nf">\</span><span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">r</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
+          <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;inst&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotInstantiate</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
+</div>
+<p>
+実装としては、環境から対応する定理を引っ張ってきて自由変数を書き換えて仮定に追加するだけです。
+</p>
+<p>
+このような、自由変数を書き換えて使えるというのは意外と証明の書きやすさに影響してくるのでuseに機能として持たせることにしました。
+これはIsabelleでも自由変数Pは一度証明すると?Pの形になり、OFで後から代入したり出来ましたがそれと同じことです。
+</p>
+<h2 id="headline-10">
+Inst identifier predicate
+</h2>
+<p>
+instは「自由変数への代入を行う」です。
+上のuseが仮定に追加しさらに代入を行うことが出来ましたが、この代入部分だけ取り出したものです。
+</p>
+<p>
+元々はuseが仮定への追加のみ、instで代入と分けていたんですがinstをいっぱい書くのが面倒になったのでuseがinstの機能も含むようになってしまっただけです。
+ただしひとまず仮定へと追加して、代入を後で行うことができるのでこれはこれで必要な場面があります。
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">Inst</span> <span class="n">idt</span> <span class="n">pred</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
+        <span class="kr">case</span> <span class="n">js</span> <span class="kr">of</span>
+          <span class="kt">[]</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;inst&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="p">(</span><span class="ne">error</span> <span class="s">&#34;empty judgement&#34;</span> <span class="ow">::</span> <span class="kt">ErrorCall</span><span class="p">))</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+          <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="n">assm</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+            <span class="kr">case</span> <span class="n">substPred</span> <span class="p">(</span><span class="sc">&#39;?&#39;</span><span class="kt">:</span><span class="n">idt</span><span class="p">)</span> <span class="n">pred</span> <span class="n">assm</span> <span class="kr">of</span>
+              <span class="kt">Right</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">put</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">r</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js&#39;</span>
+              <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;inst&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotInstantiate</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
+</div>
+<p>
+代入するのは仮定の一番最初の項だけなことに注意します。
+</p>
+<h2 id="headline-11">
+NewCommand identifier argument
+</h2>
+<p>
+最後は組み込みのコマンドではなく、マクロで定義されたコマンドの読み込みです。
+</p>
+<p>
+これは一旦置いておいてあとの方で説明しましょう。
+</p>
+<h1 id="headline-12">
+まとめ
+</h1>
+<p>
+というわけで組み込みのコマンド Command型を説明しました。
+次にClaireのメインの文法にあたるDeclを説明する必要があるのでそれはまた明日ということで。
+</p>
+<p>
+コアに近い機能から説明しているのでなんか説明がとっちらかっているような気がしますが
+次回・次次回くらいで一通りproofcheckerが動くところまで行けるはずなので、そこまでは辛抱ください。
+</p>
 <div class="footnotes">
-
-<hr />
-
-<ol>
-<li id="fn:1">ここで使いたいからわざわざこの記事を途中に挟んだ……つまりこの前の記事は今日の記事のための伏線だったのさ！！ハーハッハッハッハ！！ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-</ol>
+<hr class="footnotes-separatator">
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>
+ここで使いたいからわざわざこの記事を途中に挟んだ……つまりこの前の記事は今日の記事のための伏線だったのさ！！ハーハッハッハッハ！！
+</p>
+</div>
+</div>
+</div>
 </div>
 </section>
     <footer>

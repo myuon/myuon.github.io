@@ -89,21 +89,7 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
         <link>https://myuon.github.io/posts/haskell-di/</link>
         <pubDate>Fri, 06 Jul 2018 05:51:00 -0700</pubDate>
         <guid>https://myuon.github.io/posts/haskell-di/</guid>
-        <description>DI DIの重要性はここ数年で急速に高まってきている。 依存性が注入されたりとかそういうことはどうでもよくて、設計と実装を分けたい、人類はそれだけのために色々と工夫をこらし最終的にたどり着いたのがDIであったのだろう。
-Haskellでも設計と実装を分けるためにDIしたいというのは自然な流れである。
-ここでは型も含めて設計が実装に依存してはいけないということを要求する。 例えば設計でMySqlConnection、みたいな型が出現することも分離できていないので禁止とする。
-問題点 設計を定義するときには他の言語ではインターフェイスなどの仕組みが使われることが多い。 Haskellには型システムという仕組みがあるのでこれがインターフェイス相当の機能として紹介される場合がある。
-しかし型システムはインターフェイスとは違い、型を固定する仕組みがない。型クラス TypeClass a のインスタンスの値が x:TypeClass a =&amp;gt; a と y:TypeClass a =&amp;gt; a のように2つ与えられたとしても、xとyが同じ型である保証はないし、これが同じ型であることを強制するためにはxとyを同時に作って常に同時に運ぶ必要がある。
-というわけでインターフェイスを使うと型が固定できないのでDIしようとすると困ったことになる、と私はずっと思っていた。
-存在型とreflection 型を固定する仕組みは実はどうにかすることができて、要は存在型を使って data Trapped = forall a. TypeClass a =&amp;gt; Trapped a とやると型を外から見えないように隠蔽することができる。
-存在型は中を開いたときにもともと何が入っていたかはわからなくなるが、設計ではそれを意識する必要がないはずなので特に問題がない。
-さらに、いわゆるDIコンテナ的な仕組みでは生成したオブジェクトを必要なところに注入してくれるという機能があることが多いが、実はこれと同じこともHaskellではできる。
-reflectionというパッケージがあり、これはconfigデータを外から与えるためによく使用される。 Given a =&amp;gt; ... なる型をもつプログラムは given と書くといつでも好きなタイミングで外から挿入されたaの値を取り出すことができる。
-同じ型に対しては1つの値しか注入できないが、実際にDIするときは利用する型は1つだけなので問題がない。
-というわけでこれでHaskellでもDIできそう！ということが分かる。
-Loggerの例 例えばLoggerを作る例を考える。
-設計 class Logger a where writeLog :: a -&amp;gt; String -&amp;gt; IO () ロガーは文字列を受け取って何かするというインターフェイスを実装した型のことであろう。ここでの a に、具体的なLogger型が挿入される。
-data SomeLogger = forall a.</description>
+        <description>DI   DIの重要性はここ数年で急速に高まってきている。 依存性が注入されたりとかそういうことはどうでもよくて、設計と実装を分けたい、人類はそれだけのために色々と工夫をこらし最終的にたどり着いたのがDIであったのだろう。  Haskellでも設計と実装を分けるためにDIしたいというのは自然な流れである。  ここでは型も含めて設計が実装に依存してはいけないということを要求する。 例えば設計でMySqlConnection、みたいな型が出現することも分離できていないので禁止とする。 問題点   設計を定義するときには他の言語ではインターフェイスなどの仕組みが使われることが多い。 Haskellには型システムという仕組みがあるのでこれがインターフェイス相当の機能として紹介される場合がある。  しかし型システムはインターフェイスとは違い、型を固定する仕組みがない。型クラス TypeClass a のインスタンスの値が x:TypeClass a =&amp;gt; a と y:TypeClass a =&amp;gt; a のように2つ与えられたとしても、xとyが同じ型である保証はないし、これが同じ型であることを強制するためにはxとyを同時に作って常に同時に運ぶ必要がある。  というわけでインターフェイスを使うと型が固定できないのでDIしようとすると困ったことになる、と私はずっと思っていた。 存在型とreflection   型を固定する仕組みは実はどうにかすることができて、要は存在型を使って data Trapped = forall a. TypeClass a =&amp;gt; Trapped a とやると型を外から見えないように隠蔽することができる。  存在型は中を開いたときにもともと何が入っていたかはわからなくなるが、設計ではそれを意識する必要がないはずなので特に問題がない。  さらに、いわゆるDIコンテナ的な仕組みでは生成したオブジェクトを必要なところに注入してくれるという機能があることが多いが、実はこれと同じこともHaskellではできる。  reflectionというパッケージがあり、これはconfigデータを外から与えるためによく使用される。 Given a =&amp;gt; ... なる型をもつプログラムは given と書くといつでも好きなタイミングで外から挿入されたaの値を取り出すことができる。  同じ型に対しては1つの値しか注入できないが、実際にDIするときは利用する型は1つだけなので問題がない。  というわけでこれでHaskellでもDIできそう！ということが分かる。 Loggerの例   例えばLoggerを作る例を考える。 設計  class Logger a where writeLog :: a -&amp;gt; String -&amp;gt; IO ()   ロガーは文字列を受け取って何かするというインターフェイスを実装した型のことであろう。ここでの a に、具体的なLogger型が挿入される。 data SomeLogger = forall a.</description>
       </item>
     
       <item>
@@ -111,26 +97,7 @@ data SomeLogger = forall a.</description>
         <link>https://myuon.github.io/posts/refluxible-library/</link>
         <pubDate>Sat, 16 Jun 2018 08:00:49 -0700</pubDate>
         <guid>https://myuon.github.io/posts/refluxible-library/</guid>
-        <description>Haskellの2D graphics libraryを作った 作った: refluxive
-与太話に興味がない人は解説まで飛んでください
-なにこれ 大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。
-なぜ 大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。
----
-なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。 画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。
-グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。
-Flux JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。 といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。
-Haskellとは HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。 Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。
-テクいところ 最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。
-refluxive ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。
-あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。
-構成要素  Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない Model: Componentの内部状態 Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる Graphical: Viewの表現 UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる  例:ボタン とりあえず例をやろうということでボタン。
-https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs
-動作例は次のようになります
-ボタンのめんどくささよ pic.twitter.com/ImMyAwXJ7G
-&amp;mdash; みょん (@myuon_myon) June 16, 2018 
-Component Componentはbuttonとappの2つ
-まずbuttonから。
-data ButtonState = None | Hover | Clicking deriving Eq instance Component UI &amp;#34;button&amp;#34; where type ModelParam &amp;#34;button&amp;#34; = Record [ &amp;#34;label&amp;#34; &amp;gt;: T.</description>
+        <description>Haskellの2D graphics libraryを作った   作った: refluxive  与太話に興味がない人は解説まで飛んでください なにこれ   大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。 なぜ   大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。  —  なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。 画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。  グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。 Flux   JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。 といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。 Haskellとは   HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。 Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。 テクいところ   最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。 refluxive   ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。  あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。 構成要素     Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない    Model: Componentの内部状態    Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる    ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる    Graphical: Viewの表現    UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる   例:ボタン   とりあえず例をやろうということでボタン。  https://github.</description>
       </item>
     
       <item>
@@ -138,14 +105,7 @@ data ButtonState = None | Hover | Clicking deriving Eq instance Component UI &am
         <link>https://myuon.github.io/posts/namespace-haskell/</link>
         <pubDate>Sun, 04 Feb 2018 13:55:38 +0900</pubDate>
         <guid>https://myuon.github.io/posts/namespace-haskell/</guid>
-        <description>Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。
-主な機能 open import Agdaにもある機能で、importをimport(モジュール読み込み)とopen(現在のコンテキストに名前を公開)に分割する.
- import M とすると, M.func によってモジュールMの関数funcにアクセスできる open M とすると, それを指定したブロックでMの関数を修飾子なしでアクセスできる open import M とすると, import M; open M の意味になる(現在のHaskellのimport)  openをwhereブロック内で宣言することで、一部でしか使わないimportをあっちこっちで展開するのを防げる。
-public export 現在のHaskellではモジュール宣言時に module M(..) where でexportする関数を選べる。
-そして module M where は全て公開の意味になるが、これを全て非公開に変更し、モジュール内で export (..) のように宣言したもののみexportすることにする。
-associated function 要は「メソッド」機能なんだけどtypeclassの関数のことをメソッドって呼ぶことがあるような気がするので名前の衝突を避けるためにここではassociated functionとよぶ.
-次のような、データ型とそれに対する特別な関数定義を行うスコープを用意する。
--- 例 data List a = Nil | Cons a (List a) impl (this :: List a) where { reverse :: List a reverse = .</description>
+        <description>Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。 主な機能  open import   Agdaにもある機能で、importをimport(モジュール読み込み)とopen(現在のコンテキストに名前を公開)に分割する.    import M とすると, M.func によってモジュールMの関数funcにアクセスできる    open M とすると, それを指定したブロックでMの関数を修飾子なしでアクセスできる    open import M とすると, import M; open M の意味になる(現在のHaskellのimport)    openをwhereブロック内で宣言することで、一部でしか使わないimportをあっちこっちで展開するのを防げる。 public export   現在のHaskellではモジュール宣言時に module M(..) where でexportする関数を選べる。  そして module M where は全て公開の意味になるが、これを全て非公開に変更し、モジュール内で export (..) のように宣言したもののみexportすることにする。 associated function   要は「メソッド」機能なんだけどtypeclassの関数のことをメソッドって呼ぶことがあるような気がするので名前の衝突を避けるためにここではassociated functionとよぶ.  次のような、データ型とそれに対する特別な関数定義を行うスコープを用意する。 -- 例 data List a = Nil | Cons a (List a) impl (this :: List a) where { reverse :: List a reverse = .</description>
       </item>
     
       <item>
@@ -153,9 +113,7 @@ associated function 要は「メソッド」機能なんだけどtypeclassの関
         <link>https://myuon.github.io/posts/ghc-exts/</link>
         <pubDate>Sat, 13 Jan 2018 00:38:01 +0900</pubDate>
         <guid>https://myuon.github.io/posts/ghc-exts/</guid>
-        <description>GHC-8.2.2のGHC拡張を眺めます。
- 10. GHC Language Features User&#39;s Guideの該当セクション 7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い  上から順に見ていって後から関連するものとかを再編します。
-GHC拡張一覧  AllowAmbiguousTypes 型変数が全て決定していないものを通すようにする (個人的)非推奨1 Arrows arrow notationを使えるようにする FRPする人なんかは使う ApplicativeDo do-notationがApplicativeに対しても使えるようになる 個人的には嫌い BangPatterns 関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする BinaryLiterals バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない CApiFFI FFI関連; 使ったことない ConstrainedClassMethods 型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ) ConstraintKinds Constraintというカインドが使えるようになる CPP Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる DataKinds データ型の宣言をカインドの宣言へ昇格する DefaultSignatures 型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる DeriveAnyClass defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう DeriveDataTypeable deriving Data ってかける DeriveFunctor deriving Functor ってかける DeriveFoldable deriving Foldable ってかける DeriveGeneric deriving Generic ってかける DeriveLift deriving Lift ってかける LiftはTHのこれで、値をsyntactic expressionに変換できるようにするやつ DeriveTraversable deriving Traversable ってかける DerivingStrategies derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ DisambiguateRecordFields \k -&amp;gt; k {hoge = x} におけるkのような、推論可能だが曖昧なレコード名を許す EmptyCase case x of {} ってかける Void型を扱う時なんかに使える EmptyDataDecls data Empty のようなコンストラクタを持たない型の宣言を許す ExistentialQuantification exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい ExplicitForall 型宣言のimplicitな全称量化をexplicitにかけるようにする id : forall a.</description>
+        <description>GHC-8.2.2のGHC拡張を眺めます。    10. GHC Language Features User&amp;#39;s Guideの該当セクション    7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い    上から順に見ていって後から関連するものとかを再編します。 GHC拡張一覧    AllowAmbiguousTypes    型変数が全て決定していないものを通すようにする (個人的)非推奨1   Arrows    arrow notationを使えるようにする FRPする人なんかは使う   ApplicativeDo    do-notationがApplicativeに対しても使えるようになる 個人的には嫌い   BangPatterns    関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする   BinaryLiterals    バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない   CApiFFI    FFI関連; 使ったことない   ConstrainedClassMethods    型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ)   ConstraintKinds    Constraintというカインドが使えるようになる   CPP    Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる   DataKinds    データ型の宣言をカインドの宣言へ昇格する   DefaultSignatures    型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる   DeriveAnyClass    defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう   DeriveDataTypeable    deriving Data ってかける   DeriveFunctor    deriving Functor ってかける   DeriveFoldable    deriving Foldable ってかける   DeriveGeneric    deriving Generic ってかける   DeriveLift    deriving Lift ってかける LiftはTHのこれで、値をsyntactic expressionに変換できるようにするやつ   DeriveTraversable    deriving Traversable ってかける   DerivingStrategies    derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ   DisambiguateRecordFields    \k -&amp;gt; k {hoge = x} におけるkのような、推論可能だが曖昧なレコード名を許す   EmptyCase    case x of {} ってかける Void型を扱う時なんかに使える   EmptyDataDecls    data Empty のようなコンストラクタを持たない型の宣言を許す   ExistentialQuantification    exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい   ExplicitForall    型宣言のimplicitな全称量化をexplicitにかけるようにする id : forall a.</description>
       </item>
     
       <item>
@@ -163,20 +121,7 @@ GHC拡張一覧  AllowAmbiguousTypes 型変数が全て決定していないも�
         <link>https://myuon.github.io/posts/versus-hask-category/</link>
         <pubDate>Fri, 05 Jan 2018 22:52:56 +0900</pubDate>
         <guid>https://myuon.github.io/posts/versus-hask-category/</guid>
-        <description>Hask圏 Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
-さて基本的な結果として次のことが知られている。
- Hask#Is Hask even a category? Hask is not a category  というわけでHask圏は圏にならないのでそのようなものは存在しない。
-Why not? これはundefinedというヤバイ元の存在とcall-by-needの悪魔的評価規則が合わさりこのような現象が生み出される。 主にこの2つが悪さをしているので、この辺をどうにかできればHask categoryが作れる可能性がある。
-undefinedを抜く undefinedは「評価ができない(プログラムが正しい値を返さない)」ことを表す元で、普通は(多分)domainのbottomに対応させ、無限ループするプログラムの解釈なんかに使う。 undefinedを抜くためにはプログラムが常に停止して値を返す必要があるので無限ループができないようにする必要がある。
-とまぁ言うのは簡単でfixpointを抜けばいいだけなんだけどfixpointもないcalculusがプログラミング言語を名乗るのは片腹痛いのでこれはちょっとナシかなという気持ちになったりする。
-call-by-needを捨てる call-by-needを捨てて、call-by-valueとかcall-by-nameとかそういうやつに行くというのも1つだと思う。 GHCのStrict拡張を入れてライブラリもStrict付けて全てビルドしなおせばそれはもうcall-by-valueになる(よね？)はずだったり、まぁcall-by-nameもcall-by-needみたいなもんやろという乱暴な考え方によりcall-by-needを捨てるのは現実的な案だと個人的には思う。
-しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。
-ここからポエム いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。
-個人的に、CSとは「計算機で観測可能な現象に説明をつける」学問であると思うので、実際にHaskellという言語で観測可能な現象について圏論で説明をつけようとする営み自体が否定されることはないと思う。 計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。
-実際にHaskellに限らず色々なプログラミング言語で観測可能な現象について圏論の方からそれっぽいモデルを提供するぜ的研究はあちこちで見られるので、call-by-needとかにも上手い説明を付けられる直観的で構成が大変じゃないモデルを誰か思いついてくれればよいのだけど。
-data &amp; codata HaskellのListがListかつColistであるというのは有名な話だけれど、こういうdatatypeかつcodatatypeがとれるような圏を考えるきっかけは(歴史的なことには私は詳しくないのだけれど)こういうプログラミング言語からの現象が先にあったのかな？と想像してる。 ちなみにこのようなcategoryはalgebraically boundedと呼ばれたりします。
-enrichmentの隠蔽 関係ないのだけどHask categoryで圏論やろうとするとenrichmentが色々効いてきて困る、みたいな話をよく聞くし自分もそう思うのだけれど、実はenrichmentは結構避けられる(隠蔽できる)のかもと書いていてちょっと思った。
-例えばFunctorのfmap methodは fmap: (Functor F) =&amp;gt; (A -&amp;gt; B) -&amp;gt; FA -&amp;gt; FB という形で書かれる。 これはHaskからHask(の適当なsubcategory)へのfunctorのfmapの型になっているが、圏論的には実際は次のような形をしているはずである: fmap: Hask(A,B) -&amp;gt; Hask(FA,FB) .</description>
+        <description>Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。  さて基本的な結果として次のことが知られている。    Hask#Is Hask even a category?    Hask is not a category    というわけでHask圏は圏にならないのでそのようなものは存在しない。 Why not?   これはundefinedというヤバイ元の存在とcall-by-needの悪魔的評価規則が合わさりこのような現象が生み出される。 主にこの2つが悪さをしているので、この辺をどうにかできればHask categoryが作れる可能性がある。 undefinedを抜く   undefinedは「評価ができない(プログラムが正しい値を返さない)」ことを表す元で、普通は(多分)domainのbottomに対応させ、無限ループするプログラムの解釈なんかに使う。 undefinedを抜くためにはプログラムが常に停止して値を返す必要があるので無限ループができないようにする必要がある。  とまぁ言うのは簡単でfixpointを抜けばいいだけなんだけどfixpointもないcalculusがプログラミング言語を名乗るのは片腹痛いのでこれはちょっとナシかなという気持ちになったりする。 call-by-needを捨てる   call-by-needを捨てて、call-by-valueとかcall-by-nameとかそういうやつに行くというのも1つだと思う。 GHCのStrict拡張を入れてライブラリもStrict付けて全てビルドしなおせばそれはもうcall-by-valueになる(よね？)はずだったり、まぁcall-by-nameもcall-by-needみたいなもんやろという乱暴な考え方によりcall-by-needを捨てるのは現実的な案だと個人的には思う。  しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。 ここからポエム   いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。  個人的に、CSとは「計算機で観測可能な現象に説明をつける」学問であると思うので、実際にHaskellという言語で観測可能な現象について圏論で説明をつけようとする営み自体が否定されることはないと思う。 計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。  実際にHaskellに限らず色々なプログラミング言語で観測可能な現象について圏論の方からそれっぽいモデルを提供するぜ的研究はあちこちで見られるので、call-by-needとかにも上手い説明を付けられる直観的で構成が大変じゃないモデルを誰か思いついてくれればよいのだけど。 data &amp;amp; codata   HaskellのListがListかつColistであるというのは有名な話だけれど、こういうdatatypeかつcodatatypeがとれるような圏を考えるきっかけは(歴史的なことには私は詳しくないのだけれど)こういうプログラミング言語からの現象が先にあったのかな？と想像してる。 ちなみにこのようなcategoryはalgebraically boundedと呼ばれたりします。 enrichmentの隠蔽   関係ないのだけどHask categoryで圏論やろうとするとenrichmentが色々効いてきて困る、みたいな話をよく聞くし自分もそう思うのだけれど、実はenrichmentは結構避けられる(隠蔽できる)のかもと書いていてちょっと思った。  例えばFunctorのfmap methodは fmap: (Functor F) =&amp;gt; (A -&amp;gt; B) -&amp;gt; FA -&amp;gt; FB という形で書かれる。 これはHaskからHask(の適当なsubcategory)へのfunctorのfmapの型になっているが、圏論的には実際は次のような形をしているはずである: fmap: Hask(A,B) -&amp;gt; Hask(FA,FB) .</description>
       </item>
     
       <item>
@@ -184,22 +129,7 @@ enrichmentの隠蔽 関係ないのだけどHask categoryで圏論やろうと�
         <link>https://myuon.github.io/posts/proof-assistant-impl-7/</link>
         <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
         <guid>https://myuon.github.io/posts/proof-assistant-impl-7/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
-Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
-実装すべき機能など prover さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
-Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
-unifier 一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。
-各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。
-あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&amp;gt; P(a) かつ thm: ?X /\ ?Y ==&amp;gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。
-HOLの実装 大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。
-ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
-それに関連するrefl, substなどのコマンドを定義しておくと便利です。
-マクロ記述言語 前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。
-Isabelleとの関連 ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。
-prop? bool? Isabelleではprop型というのはあまり見ない(存在しますが、チュートリアルを少しやったくらいでは見ないかもしれません)と思います。
-IsabelleのpropはClaireのprop型と同じく、メタロジックの基本型です。 しかし一方でHOLにはbool型というのが組み込みの型であり、これが要は「項の型」になります。
-前回も説明したと思いますが、型はFormulaとTermと2つにつき、Formulaにはprop型、Termには他の適当な型がつくことになっています。 bool型というのはTermの方につく型なのですね。
-さらにHOLではboolをpropに持ち上げるcoercionが定義されていてこれが効いているので、 lemma: True とか書けますが、これは本来は T :: bool =&amp;gt; prop みたいなのがあって T(True) と解釈されています。 ので、Isabelleを書いていると基本の型はboolでしょ、みたいな気持ちになると思いますがメタロジックの論理式の型はpropで、boolはあくまで項につく型だったのです。</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 24日目の記事です。   Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。 実装すべき機能など  prover   さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。  Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。 unifier   一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。  各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。  あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&amp;gt; P(a) かつ thm: ?X /\ ?Y ==&amp;gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。 HOLの実装   大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。  ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。  それに関連するrefl, substなどのコマンドを定義しておくと便利です。 マクロ記述言語   前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。 Isabelleとの関連   ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。 prop?</description>
       </item>
     
       <item>
@@ -207,17 +137,7 @@ IsabelleのpropはClaireのprop型と同じく、メタロジックの基本型�
         <link>https://myuon.github.io/posts/proof-assistant-impl-6/</link>
         <pubDate>Sat, 23 Dec 2017 00:04:55 +0900</pubDate>
         <guid>https://myuon.github.io/posts/proof-assistant-impl-6/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-今回はClaireのマクロ機能について説明します。
-マクロ記述言語 Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。
-Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。
-Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。
-マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。
-マクロの実装 マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。
-マクロ定義モジュール 定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。
-module Commands where import Claire macro :: Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command] macro = ... export_command :: [(String, Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command])] export_command = [ (&amp;#34;name&amp;#34;, macro) ] declmacro :: [Argument] -&amp;gt; [Decl] declmacro = ... export_decl :: [(String, [Argument] -&amp;gt; [Decl])] export_decl = [ (&amp;#34;name&amp;#34;, declmacro) ] これを使いたいときは、ClaireのファイルにHs_fileを記述します。</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 23日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  今回はClaireのマクロ機能について説明します。 マクロ記述言語   Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。  Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。  Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。  マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。 マクロの実装   マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。 マクロ定義モジュール   定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。 module Commands where import Claire macro :: Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command] macro = ... export_command :: [(String, Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command])] export_command = [ (&amp;#34;name&amp;#34;, macro) ] declmacro :: [Argument] -&amp;gt; [Decl] declmacro = .</description>
       </item>
     
       <item>
@@ -225,16 +145,7 @@ module Commands where import Claire macro :: Env -&amp;gt; Argument -&amp;gt; [J
         <link>https://myuon.github.io/posts/proof-assistant-impl-5/</link>
         <pubDate>Fri, 22 Dec 2017 00:02:50 +0900</pubDate>
         <guid>https://myuon.github.io/posts/proof-assistant-impl-5/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
-Environment proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。 説明していませんでしたが一応紹介しておきます。
-Claire.Env
-data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&amp;gt; [Decl]) } 上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。
-また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。
-具体的には、
-theorem id: a ==&amp;gt; a proof ... qed -- この証明の直後、Envのthmsには (&amp;#34;id&amp;#34;, Pred &amp;#34;?</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 22日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。 Environment   proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。 説明していませんでしたが一応紹介しておきます。  Claire.Env data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&amp;gt; [Decl]) }   上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。  また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。  具体的には、 theorem id: a ==&amp;gt; a proof .</description>
       </item>
     
       <item>
@@ -242,12 +153,7 @@ theorem id: a ==&amp;gt; a proof ... qed -- この証明の直後、Envのthms�
         <link>https://myuon.github.io/posts/proof-assistant-impl-4/</link>
         <pubDate>Thu, 21 Dec 2017 00:20:35 +0900</pubDate>
         <guid>https://myuon.github.io/posts/proof-assistant-impl-4/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-昨日に引き続いてClaireの宣言(Decl)について説明していきます。
-Declarations まずはtoplevelMの定義から。
-toplevelM :: (Monad m, MonadIO m) =&amp;gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &amp;lt;- lift get; utyp &amp;lt;- liftIO $ try $ infer env fml; case utyp of Left err -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&amp;gt; k Right typ -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &amp;lt;- suspend (DeclAwait return) env &amp;lt;- lift get case decl of ここに実装を書く Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 21日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  昨日に引き続いてClaireの宣言(Decl)について説明していきます。 Declarations   まずはtoplevelMの定義から。 toplevelM :: (Monad m, MonadIO m) =&amp;gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &amp;lt;- lift get; utyp &amp;lt;- liftIO $ try $ infer env fml; case utyp of Left err -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&amp;gt; k Right typ -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &amp;lt;- suspend (DeclAwait return) env &amp;lt;- lift get case decl of ここに実装を書く   Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。 ThmD thmindex formula proof   定理と証明を宣言します。 ThmD idx fml (Proof coms) -&amp;gt; typecheck fml Prop $ do lift $ modify $ \env -&amp;gt; env { proof = [] } runThmD idx fml coms where runThmD :: (Monad m, MonadIO m) =&amp;gt; ThmIndex -&amp;gt; Formula -&amp;gt; [Command] -&amp;gt; Coroutine DeclSuspender (StateT Env m) () runThmD idx fml coms = do env &amp;lt;- lift get go (commandM env) (newGoal fml) coms lift $ modify $ insertThm idx fml where go :: (Monad m) =&amp;gt; Coroutine ComSuspender (StateT [Judgement] m) () -&amp;gt; [Judgement] -&amp;gt; [Command] -&amp;gt; Coroutine DeclSuspender (StateT Env m) () go machine js coms = do env &amp;lt;- lift get (result,js&amp;#39;) &amp;lt;- lift $ lift $ runStateT (resume machine) js case result of Right () -&amp;gt; return () Left (ComAwait cont) -&amp;gt; do case coms of [] -&amp;gt; do com&amp;#39; &amp;lt;- suspend $ ProofNotFinished js&amp;#39; return go (suspend $ ComAwait cont) js&amp;#39; [com&amp;#39;] (c:cs) -&amp;gt; do go (cont c) js&amp;#39; cs Left (z@(CommandError idt err cont)) -&amp;gt; do suspend $ RunCommandError idt err (return ()) go cont js coms   ThmDは中でcommandMを走らせ、その結果によって挙動を決めます。  commandMが問題なく終了した時(=与えられたProofが与えられた命題の証明を完成させた時)、示した論理式を環境に追加して終了します。 commandMがコマンドを要求するComAwaitで終了したとき、toplevelM全体をProofNotFinishedという証明が完了していないことを表すsuspenderでsuspendします。 commandMがエラーになった時toplevelM全体をRunCommandErrorで返します。  syntaxは次のような感じです。 theorem hoge: a ==&amp;gt; a proof apply ImpR apply I qed  AxiomD thmindex formula   公理として指定された論理式を追加します。 AxiomD idx fml -&amp;gt; typecheck fml Prop $ do lift $ modify $ insertThm idx fml   環境に定理として追加するだけ。 ImportD path   他の証明ファイルをインポートします。 ImportD path -&amp;gt; do env &amp;lt;- lift get env&amp;#39; &amp;lt;- liftIO $ claire env .</description>
       </item>
     
       <item>
@@ -255,17 +161,7 @@ toplevelM :: (Monad m, MonadIO m) =&amp;gt; Coroutine DeclSuspender (StateT Env 
         <link>https://myuon.github.io/posts/proof-assistant-impl-3/</link>
         <pubDate>Wed, 20 Dec 2017 00:12:26 +0900</pubDate>
         <guid>https://myuon.github.io/posts/proof-assistant-impl-3/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-Proofchecker state machine さてClaireのproofcheckerを作っていきます。
-前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。
-proof state 初めに仕様を固めます。
- (state:toplevel) Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する (state:command) Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る  注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。
-Coroutine monad さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。
-Claire.Checker
-Command Machine Suspender 簡単な方から行きます。
-data ComSuspender y = ComAwait (Command -&amp;gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&amp;gt; Env -&amp;gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = .</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 20日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Proofchecker state machine   さてClaireのproofcheckerを作っていきます。  前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。 proof state   初めに仕様を固めます。   (state:toplevel)    Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する   (state:command)    Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る    注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。 Coroutine monad   さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。  Claire.Checker Command Machine Suspender   簡単な方から行きます。 data ComSuspender y = ComAwait (Command -&amp;gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&amp;gt; Env -&amp;gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = .</description>
       </item>
     
       <item>
@@ -273,16 +169,7 @@ data ComSuspender y = ComAwait (Command -&amp;gt; y) | CommandError Ident SomeEx
         <link>https://myuon.github.io/posts/proof-assistant-impl-2/</link>
         <pubDate>Tue, 19 Dec 2017 00:00:24 +0900</pubDate>
         <guid>https://myuon.github.io/posts/proof-assistant-impl-2/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-LK proofchecker ルールの適用 LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
-例として次のルールを考えます。
-Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。
-LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
-Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
-data Rule = I | Cut Formula -- CutはFormulaを引数に取る ... チェッカー Claire.Checker
-newGoal :: Formula -&amp;gt; [Judgement] newGoal fml = [Judgement [] (return fml)] judge :: [Rule] -&amp;gt; [Judgement] -&amp;gt; Either (Rule, [Judgement]) [Judgement] judge rs js = foldl (\m r -&amp;gt; m &amp;gt;&amp;gt;= go r) (Right js) rs where go I (Judgement assms props : js) | length assms == 1 &amp;amp;&amp;amp; assms == props = Right js go (Cut fml) (Judgement assms props : js) = Right $ Judgement assms (fml:props) : Judgement (fml:assms) props : js go AndL1 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fa:assms) props : js go AndL2 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fb:assms) props : js go AndR (Judgement assms ((fa :/\: fb):props) : js) = Right $ Judgement assms (fa:props) : Judgement assms (fb:props) : js go OrL (Judgement ((fa :\/: fb):assms) props : js) = Right $ Judgement (fa:assms) props : Judgement (fb:assms) props : js go OrR1 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fa:props) : js go OrR2 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fb:props) : js go ImpL (Judgement ((fa :==&amp;gt;: fb):assms) props : js) = Right $ Judgement assms (fa:props) : Judgement (fb:assms) props : js go ImpR (Judgement assms ((fa :==&amp;gt;: fb):props) : js) = Right $ Judgement (fa:assms) (fb:props) : js go BottomL (Judgement (Bottom:assms) props : js) = Right js go TopR (Judgement assms (Top:props) : js) = Right js go (ForallL t) (Judgement (Forall x fml:assms) props : js) = Right $ Judgement (substTerm x t fml:assms) props : js go (ForallR y) (Judgement assms (Forall x fml:props) : js) = Right $ Judgement assms (substTerm x (Var y) fml:props) : js go (ExistL y) (Judgement (Exist x fml:assms) props : js) = Right $ Judgement (substTerm x (Var y) fml:assms) props : js go (ExistR t) (Judgement assms (Exist x fml:props) : js) = Right $ Judgement assms (substTerm x t fml:props) : js go WL (Judgement (_:assms) props : js) = Right $ Judgement assms props : js go WR (Judgement assms (_:props) : js) = Right $ Judgement assms props : js go CL (Judgement (fml:assms) props : js) = Right $ Judgement (fml:fml:assms) props : js go CR (Judgement assms (fml:props) : js) = Right $ Judgement assms (fml:fml:props) : js go (PL k) (Judgement assms props : js) | k &amp;lt; length assms = Right $ Judgement (assms !</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 19日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。  例として次のルールを考えます。 Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ   このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。  LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。 Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ   このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。 data Rule = I | Cut Formula -- CutはFormulaを引数に取る ...  チェッカー   Claire.</description>
       </item>
     
       <item>
@@ -290,14 +177,7 @@ newGoal :: Formula -&amp;gt; [Judgement] newGoal fml = [Judgement [] (return fml
         <link>https://myuon.github.io/posts/proof-assistant-impl-1/</link>
         <pubDate>Mon, 18 Dec 2017 00:01:47 +0900</pubDate>
         <guid>https://myuon.github.io/posts/proof-assistant-impl-1/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-Syntax: FOL, LK, Claire 初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
-FOL Claire.Syntax.FOL
-data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&amp;gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show) それぞれfirst-order logicの項と論理式の定義です。
-項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。
-さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&amp;lt;==&amp;gt;: fml2 = (fml1 :==&amp;gt;: fml2) :/\: (fml2 :==&amp;gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 ~::~ をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 18日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Syntax: FOL, LK, Claire   初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。 FOL   Claire.Syntax.FOL data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&amp;gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show)   それぞれfirst-order logicの項と論理式の定義です。  項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。  さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&amp;lt;==&amp;gt;: fml2 = (fml1 :==&amp;gt;: fml2) :/\: (fml2 :==&amp;gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 :&amp;lt;==&amp;gt;: をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。  そもそもこのFormulaはProof Assistantのメタロジックを表すもので、Proof Assistantにおいてメタロジックが正しい(おかしなことがおこらない)ことは絶対に必要なことですがこのことはProof Assistantによって直接検証することは出来ません。 Proof Assistantはメタロジックを用いて現在考えているロジックの上で証明を書く道具なので、メタロジックとしてのFormulaを変えるような操作はしてはいけません。  これがわざわざIsabelleやこのClaireでも標準ライブラリでロジックを再定義する理由で、このメタロジックとロジックの区別は今後も大変重要になるので覚えておいてください。 LK   Claire.</description>
       </item>
     
       <item>
@@ -305,24 +185,7 @@ data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) d
         <link>https://myuon.github.io/posts/haskell-project-setup/</link>
         <pubDate>Fri, 15 Dec 2017 00:04:21 +0900</pubDate>
         <guid>https://myuon.github.io/posts/haskell-project-setup/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 15日目の記事です。
-Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)
-今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。 どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。
-ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。
-開発環境構築 このセクションは初回のみです。
-Haskellのインストール stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。
-linux系なら公式ドキュメントを見ながら次のようにするといいと思います。
-$ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall $ stack setup # GHC(コンパイラ)を入れる stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。
-エディタ  emacsの人: intero spacemacsの人: haskell layer IntelliJ IDEAの人: intellij-haskell  を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。
-プロジェクトセットアップ stack new [2017/12/16追記]
-どうやらstackのデフォルトテンプレートであるnew-templateがいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に stack new [プロジェクトの名前] とすれば同じものが得られます1。
-[/追記]
-さてHaskellでプロジェクトを始めます。
-$ stack new [プロジェクトの名前] simple-hpack simple-hpackというのはテンプレートの名前です。ここではhpackというツールを使っています(私が普段から使っているので)。
-(以下昔話なので読まなくてもいいです) さて少しだけ説明をすると、stackという便利ツールが登場する前はみんなcabalというビルドツールを使っていました。cabalはcabalファイルの情報を読み込んでビルドをするのですが、cabalファイルはちょっと面倒な部分があったのでこれをもっと簡単に書けるようにするためにhpackというツールが最近登場しました。 hpackはpackage.yamlをcabalファイルに変換するツールですが、今はstackが公式にhpackをサポートしたので、プロジェクトでpackage.yamlに必要な情報を書くとそれがhpackによってcabalファイルに変換されてcabalによるビルドが走るというところまで全てstackが面倒を見てくれます。
-正直好みですが個人的にはhpackの方が楽なのでこれを使うためにここではsimple-hpackのテンプレートを指定しています。
-また、以下の説明は全てhpackのpackage.yaml前提です。cabalファイルはまた少し違うので対応表で各自調べてください。
-configuration stack newが終わると必要なファイル群と stack.yaml と package.</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 15日目の記事です。   Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)  今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。 どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。  ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。 開発環境構築   このセクションは初回のみです。 Haskellのインストール   stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。  linux系なら公式ドキュメントを見ながら次のようにするといいと思います。 $ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall $ stack setup # GHC(コンパイラ)を入れる   stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。 エディタ     emacsの人: intero    spacemacsの人: haskell layer    IntelliJ IDEAの人: intellij-haskell    を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。 プロジェクトセットアップ  stack new   [2017/12/16追記]  どうやらstackのデフォルトテンプレートであるnew-templateがいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に stack new [プロジェクトの名前] とすれば同じものが得られます1。 configuration   stack newが終わると必要なファイル群と stack.</description>
       </item>
     
       <item>
@@ -330,12 +193,7 @@ configuration stack newが終わると必要なファイル群と stack.yaml と
         <link>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</link>
         <pubDate>Thu, 14 Dec 2017 00:03:01 +0900</pubDate>
         <guid>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。
-今回は小ネタです。
-monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。
-Coroutine-monad example: coroutine 名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。
-サンプルとしては次のような感じ:
-countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {- &amp;gt; printProduce countup counting... 1 counting... 2 -} countup内ではyieldという関数が使われていて、 yield :: Monad m =&amp;gt; x -&amp;gt; Coroutine (Yield x) m () なので Coroutine (Yield x) m () ではx型の値をyieldして停止することができる。 pogoStickは Yield x r の挙動を指定して、それを使ってCoroutineを潰すことができる。</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。   今回は小ネタです。  monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。 Coroutine-monad  example: coroutine   名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。  サンプルとしては次のような感じ: countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {- &amp;gt; printProduce countup counting.</description>
       </item>
     
       <item>
@@ -343,27 +201,7 @@ countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counti
         <link>https://myuon.github.io/posts/2017csadv-day1/</link>
         <pubDate>Fri, 01 Dec 2017 00:06:00 +0900</pubDate>
         <guid>https://myuon.github.io/posts/2017csadv-day1/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 1日目の記事です。
-概要的なもの 「一人アドベントカレンダーって面白そうだな、やってみたい」みたいなノリで登録したんですが、 25日毎日記事を同じテーマで投稿し続けるのどう考えてもめっちゃ大変なのでやはりここは自分が一番得意な分野で行くしかないかなとなりCS関係ということになりました。
-上のQiitaのページでも書いてますが、キーワードとして&#34;ラムダ計算・定理証明・Haskell・ML・圏論 とかなんかそのへん&#34;を挙げていますので そのへんのお話になります。今のところは無難に定理証明を中心にテーマをいくつか選んでおいたので多分そのへんの話です。
-スケジュール 最終的にはQiitaのカレンダー見ればわかることなんでいいんですが一応今後どういう感じで進めていくのかのスケジュール的なものをまとめておきます。
-Isabelle編 Isabelle/HOL入門(3-4日くらい) 最初にIsabelle(ここではHOL系しか扱わない)に入門します。って言ってもチュートリアルの解説をするだけです。 ある程度知ってる人が読む意味はないんですが、Isabelle全く知らん人向けに日本語で読める資料ってあんまりなさそうなので、チュートリアルを適当にやるだけでも実は意味があるんでは的な発想でとりあえずこれをやることにしました。
-真面目に入門したくて英語にそこまで抵抗ない人は公式のprog-prove.pdf読みに行く方が早いです。
-Isabelleでの定理証明・基礎編(3-4日くらい) ここでは実際にIsabelle/HOLを使った証明を紹介・解説していきます。今の所IMPの意味論ちょろっとやるみたいな感じです。 Isabelleの解説がメインなので内容は薄いですがIsabelleってこうやって使うんだよ〜証明ってこうやって書くんだよ〜って雰囲気が伝わればいいかなと思っています。 (そういうのが伝わる日本語資料もあんまりない気がしたので)
-Isabelleでの定理証明・実践編(2-3日+2日？くらい) せっかくなので個人的にこの前お世話になったりしたNominal Isabelle使ってtyped lambda calculusの簡単な証明とかやってみようかなという内容です。 あとかつてIsabelleで圏論(Yoneda lemma示すくらいまで)もやったことあるのでその解説もやってもいいかもしれないということで2日分くらいは余裕を持たせてあります。
-この辺は後で変更あるかも知れないのでそのへんはあしからず。
-Haskell編 ライブラリ紹介(1日1ライブラリ, 日数未定) Haskellで最近使ったり使ってなかったりするライブラリの紹介とか解説とかをします。 ここ以外のコンテンツで25日分埋まらなかった場合に備えて空けてある枠なので日数は未定です。 Haskell編の最初にまとめてやるかも不明ですが一応ってことで。
-定理証明支援系を作ろう・理論編(2-3日くらい) ここからがメインコンテンツで、Haskellを使ってproof assistantを作ります。 (最初に断っておくとproverは作りません。あくまでcheckerとそのassistする部分がメインです。)
-多分色々前提になる知識を解説したり、proof assistantを作るには何が必要かとかの説明がいると思うのでそのへんを初めに少し解説します。
-定理証明支援系を作ろう・実践編(5-7日くらい) proof assistantを実際に作っていきます。
-最初はステップアップで徐々に拡張して行く感じで作ろうと思っていたんですが、特に参考にできるものもなく始めてだったので自分で手を動かして作ってみた所そうそう前に進めるはずもなく backwardな変更が出過ぎてステップアップするのつらすぎたので普通に現在のproof assistantのコードの解説になります。
-checkerのコア機能の解説→assist機能関係の解説→プラグイン・拡張部分の解説 の順になります。
-定理証明支援系を作ろう・拡張編(1日) 上で作ったものは当然ですがまともに証明を書こうとすると色々足りないので、今後ちゃんとしたassistantにするにはどういう感じの拡張が欲しいかな〜とかそういう話を、 「開発が間に合わなかったものは全部読者への演習問題にしたらええねん」的な思想により丸投げされるコーナーです。
-まとめ 最終日は多分まとめと振り返りに使います。
-これでだいたい25日分になるはず。
-意気込み的な 開催にあたり内容よりも25日にわたってずっとブログを書き続けるのがつらそう という感情しかないんですが まぁせっかくなので楽しんでいこうと思います。
-あと無理はよくないのでしんどくなったら細切れにしていこうというのも気をつけていきたい。
-というわけで、読んでくれる人は25日の間どうぞお付き合いください。よろしくお願いします。</description>
+        <description>  これは一人Computer Scienceアドベントカレンダー 1日目の記事です。 概要的なもの   「一人アドベントカレンダーって面白そうだな、やってみたい」みたいなノリで登録したんですが、 25日毎日記事を同じテーマで投稿し続けるのどう考えてもめっちゃ大変なのでやはりここは自分が一番得意な分野で行くしかないかなとなりCS関係ということになりました。  上のQiitaのページでも書いてますが、キーワードとして&amp;#34;ラムダ計算・定理証明・Haskell・ML・圏論 とかなんかそのへん&amp;#34;を挙げていますので そのへんのお話になります。今のところは無難に定理証明を中心にテーマをいくつか選んでおいたので多分そのへんの話です。 スケジュール   最終的にはQiitaのカレンダー見ればわかることなんでいいんですが一応今後どういう感じで進めていくのかのスケジュール的なものをまとめておきます。 Isabelle編  Isabelle/HOL入門(3-4日くらい)   最初にIsabelle(ここではHOL系しか扱わない)に入門します。って言ってもチュートリアルの解説をするだけです。 ある程度知ってる人が読む意味はないんですが、Isabelle全く知らん人向けに日本語で読める資料ってあんまりなさそうなので、チュートリアルを適当にやるだけでも実は意味があるんでは的な発想でとりあえずこれをやることにしました。  真面目に入門したくて英語にそこまで抵抗ない人は公式のprog-prove.pdf読みに行く方が早いです。 Isabelleでの定理証明・基礎編(3-4日くらい)   ここでは実際にIsabelle/HOLを使った証明を紹介・解説していきます。今の所IMPの意味論ちょろっとやるみたいな感じです。 Isabelleの解説がメインなので内容は薄いですがIsabelleってこうやって使うんだよ〜証明ってこうやって書くんだよ〜って雰囲気が伝わればいいかなと思っています。 (そういうのが伝わる日本語資料もあんまりない気がしたので) Isabelleでの定理証明・実践編(2-3日+2日？くらい)   せっかくなので個人的にこの前お世話になったりしたNominal Isabelle使ってtyped lambda calculusの簡単な証明とかやってみようかなという内容です。 あとかつてIsabelleで圏論(Yoneda lemma示すくらいまで)もやったことあるのでその解説もやってもいいかもしれないということで2日分くらいは余裕を持たせてあります。  この辺は後で変更あるかも知れないのでそのへんはあしからず。 Haskell編  ライブラリ紹介(1日1ライブラリ, 日数未定)   Haskellで最近使ったり使ってなかったりするライブラリの紹介とか解説とかをします。 ここ以外のコンテンツで25日分埋まらなかった場合に備えて空けてある枠なので日数は未定です。 Haskell編の最初にまとめてやるかも不明ですが一応ってことで。 定理証明支援系を作ろう・理論編(2-3日くらい)   ここからがメインコンテンツで、Haskellを使ってproof assistantを作ります。 (最初に断っておくとproverは作りません。あくまでcheckerとそのassistする部分がメインです。)  多分色々前提になる知識を解説したり、proof assistantを作るには何が必要かとかの説明がいると思うのでそのへんを初めに少し解説します。 定理証明支援系を作ろう・実践編(5-7日くらい)   proof assistantを実際に作っていきます。  最初はステップアップで徐々に拡張して行く感じで作ろうと思っていたんですが、特に参考にできるものもなく始めてだったので自分で手を動かして作ってみた所そうそう前に進めるはずもなく backwardな変更が出過ぎてステップアップするのつらすぎたので普通に現在のproof assistantのコードの解説になります。  checkerのコア機能の解説→assist機能関係の解説→プラグイン・拡張部分の解説 の順になります。 定理証明支援系を作ろう・拡張編(1日)   上で作ったものは当然ですがまともに証明を書こうとすると色々足りないので、今後ちゃんとしたassistantにするにはどういう感じの拡張が欲しいかな〜とかそういう話を、 「開発が間に合わなかったものは全部読者への演習問題にしたらええねん」的な思想により丸投げされるコーナーです。 まとめ   最終日は多分まとめと振り返りに使います。  これでだいたい25日分になるはず。 意気込み的な   開催にあたり内容よりも25日にわたってずっとブログを書き続けるのがつらそう という感情しかないんですが まぁせっかくなので楽しんでいこうと思います。  あと無理はよくないのでしんどくなったら細切れにしていこうというのも気をつけていきたい。  というわけで、読んでくれる人は25日の間どうぞお付き合いください。よろしくお願いします。 </description>
       </item>
     
       <item>
@@ -371,18 +209,7 @@ checkerのコア機能の解説→assist機能関係の解説→プラグイン�
         <link>https://myuon.github.io/posts/migrate-to-hugo/</link>
         <pubDate>Fri, 10 Nov 2017 02:37:31 +0900</pubDate>
         <guid>https://myuon.github.io/posts/migrate-to-hugo/</guid>
-        <description>移行理由 前はHakyll+pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。
-手順諸々 導入 hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。 各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。
-hugo serve --watch --buildDrafts でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。
-テーマ Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。 hugo new theme [テーマ名] で必要なファイル群が themes にできるのであとは Templates にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。
-まぁ変に汎用性とか気にしなければ簡単、だと思う。
-コードのsyntax highlight config.tomlに
-pygmentscodefences = true pygmentsstyle = &amp;#34;manni&amp;#34; と書いた。 pygmentscodefencesはmarkdownで ```lang みたいに書けるようにするやつだけど、org-modeのcode blockもありがたいことに対応してくれてたのでそのまま色がついた。
-カラースキームはPygmentsの公式サイトから色々試してしっくり来るやつを探すと良さそう。
-syntax highlight関係のデザイン pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。 それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。
-TOC 困ったことにorg-modeだとtocが表示されないバグがあるらしく1、調べたらテンプレートだけでTOCを作る方法があったのでそれをパクった。 リストを作ってCSSでheadingに応じて右にずらしているだけだけど。
-semantic-uiの読み込み このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。 と言っても git submodule add URL directory とかして管理するだけだけど。 公開するときとローカルビルドするときのどちらも必要になるのでどちらもsubmoduleに追加する必要がある。 それと、URLはgit@...じゃなくてhttps:... じゃないとだめらしい。(一度怒られた)
-hard line breaks これはやり方がわからない。 orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(&amp;lt;br&amp;gt; に)してほしい。 #+OPTIONS: \n:t 相当のやつ。markdownは対応しているみたいだけど…。</description>
+        <description> 移行理由   前はHakyll+pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。 手順諸々  導入   hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。 各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。  hugo serve --watch --buildDrafts でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。 テーマ   Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。 hugo new theme [テーマ名] で必要なファイル群が themes にできるのであとは Templates にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。  まぁ変に汎用性とか気にしなければ簡単、だと思う。 コードのsyntax highlight   config.tomlに pygmentscodefences = true pygmentsstyle = &amp;#34;manni&amp;#34;   と書いた。 pygmentscodefencesはmarkdownで ```lang みたいに書けるようにするやつだけど、org-modeのcode blockもありがたいことに対応してくれてたのでそのまま色がついた。  カラースキームはPygmentsの公式サイトから色々試してしっくり来るやつを探すと良さそう。 syntax highlight関係のデザイン   pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。 それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。 TOC   困ったことにorg-modeだとtocが表示されないバグがあるらしく1、調べたらテンプレートだけでTOCを作る方法があったのでそれをパクった。 リストを作ってCSSでheadingに応じて右にずらしているだけだけど。 semantic-uiの読み込み   このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。 と言っても git submodule add URL directory とかして管理するだけだけど。 公開するときとローカルビルドするときのどちらも必要になるのでどちらもsubmoduleに追加する必要がある。 それと、URLはgit@…じゃなくてhttps:… じゃないとだめらしい。(一度怒られた) hard line breaks   これはやり方がわからない。 orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(&amp;lt;br&amp;gt; に)してほしい。 #+OPTIONS: \n:t 相当のやつ。markdownは対応しているみたいだけど…。  一度pandocでhard line breaks入れるフィルターを通すとかすると良いのかもしれないけど強引すぎるからやりたくはない。 hugoが対応してくれるのを待つしかないのかな〜。 1  2017-11-10現在。最近報告されたらしいのでそのうち直ると思う。     </description>
       </item>
     
       <item>
@@ -390,11 +217,7 @@ hard line breaks これはやり方がわからない。 orgで書いた時に�
         <link>https://myuon.github.io/posts/recursion-scheme/</link>
         <pubDate>Fri, 27 Oct 2017 00:59:31 +0900</pubDate>
         <guid>https://myuon.github.io/posts/recursion-scheme/</guid>
-        <description>前提になりそうなことをちょこっとPreliminariesに書いた.
-Recursion schemes 以下, C は適当な条件を満たすfunctor F: C -&amp;gt; C がFixをもち, さらにそれがCofixにもなっていることを仮定する1. 以下ではこの適当な条件を満たすfunctorしか考えないものとする.
-catamorphism F-algebra p: FA -&amp;gt; A に対し, D のinitialityにより得られる射 cata(p): D -&amp;gt; A を catamorphism とよぶ. これは in; cata(p) = fmap F cata(p); p: FD -&amp;gt; A を満たす.
-anamorphism catamorphismの双対. F-coalgebra q: A -&amp;gt; FA に対し, D のterminalityにより得られる射 ana(q): A -&amp;gt; D を anamorphism とよぶ. これは q; fmap F ana(q)  ana(q); out= を満たす.
-hylomorphism F-algebra p: FB -&amp;gt; B と F-coalgebra q: A -&amp;gt; FA に対し, hylo(p,q) = ana(q); cata(p) : A -&amp;gt; B を hylomorphism とよぶ.</description>
+        <description>前提になりそうなことをちょこっとPreliminariesに書いた. Recursion schemes   以下, C は適当な条件を満たすfunctor F: C -&amp;gt; C がFixをもち, さらにそれがCofixにもなっていることを仮定する1. 以下ではこの適当な条件を満たすfunctorしか考えないものとする. catamorphism   F-algebra p: FA -&amp;gt; A に対し, D のinitialityにより得られる射 cata(p): D -&amp;gt; A を catamorphism とよぶ. これは in; cata(p) = fmap F cata(p); p: FD -&amp;gt; A を満たす. anamorphism   catamorphismの双対. F-coalgebra q: A -&amp;gt; FA に対し, D のterminalityにより得られる射 ana(q): A -&amp;gt; D を anamorphism とよぶ. これは q; fmap F ana(q) = ana(q); out を満たす.</description>
       </item>
     
       <item>
@@ -402,13 +225,7 @@ hylomorphism F-algebra p: FB -&amp;gt; B と F-coalgebra q: A -&amp;gt; FA に�
         <link>https://myuon.github.io/posts/overlapping-instances/</link>
         <pubDate>Mon, 21 Aug 2017 00:31:03 +0900</pubDate>
         <guid>https://myuon.github.io/posts/overlapping-instances/</guid>
-        <description>Overlapping Instances Haskellで少し凝ったinstanceをいくつか書いたりしているとoverlapping instancesに悩まされることはよくある。 この辺のまとまった解説があると便利なのではと思ったので書く。
-ユーザーガイドにて 実際、overlapping instancesが何故起こるのかについてはGHCユーザーガイドにそれなりに詳しく書いてあるのでそこを読めば良いと思う。
-GHCユーザーガイド - Overlapping instances
-勝手に抄訳すると次のような感じ
-9.8.3.6 Overlapping instances   一般に、Instance resolutionで述べたように、 GHCは、型クラス制約を解決するために使用されるinstance宣言が曖昧ではないことを要求する。 GHCは、 最も具体的な形が存在する時に限って 複数のinstanceにマッチすることを許すという方法で、instanceの解決を緩める方法も提供している。さらに、これはもっと緩くすることもできて、最も具体的な形があるかどうかにかかわらず、複数のinstanceにマッチすることを許すこともできる。この節で詳しく述べる。  instanceの選択をコントロールするには、それぞれのinstanceについてオーバーラップしたときの挙動を指定することができる。 instance キーワードの直後に次のいずれかのプラグマを書けば良い: {-# OVERLAPPING #-}, {-# OVERLAPPABLE #-}, {-# OVERLAPS #-} または {-# INCOHERENT #-}  INCOHERENT はinstanceが自由にoverlapしたりされたりすることを許すが、使わないほうがいいプラグマなので出来る限り避けたほうがいい。 また、後にもあるように OVERLAPS は OVERLAPPING と OVERLAPPABLE のいずれにもなるので OVERLAPS で事足りる場合も多いと思う。
-また、いちいちプラグマを書かなくてもいいように、デフォルトの挙動を指定するための拡張 -XIncoherentInstances と -XOverlappingInstances も あるけれど使用は出来る限り避けよう。
-  さて、あるクライアントモジュールで (C ty1 .. tyn) なる制約の対象になるようなinstanceを探しているとしよう。この検索は次のようにして行われる:  - 対象となる制約に マッチする instance I を全て見つける。つまり、対象となる制約 (C ty1 .</description>
+        <description>Overlapping Instances   Haskellで少し凝ったinstanceをいくつか書いたりしているとoverlapping instancesに悩まされることはよくある。 この辺のまとまった解説があると便利なのではと思ったので書く。 ユーザーガイドにて   実際、overlapping instancesが何故起こるのかについてはGHCユーザーガイドにそれなりに詳しく書いてあるのでそこを読めば良いと思う。  GHCユーザーガイド - Overlapping instances  勝手に抄訳すると次のような感じ 9.8.3.6 Overlapping instances    一般に、Instance resolutionで述べたように、 GHCは、型クラス制約を解決するために使用されるinstance宣言が曖昧ではないことを要求する。 GHCは、 最も具体的な形が存在する時に限って 複数のinstanceにマッチすることを許すという方法で、instanceの解決を緩める方法も提供している。さらに、これはもっと緩くすることもできて、最も具体的な形があるかどうかにかかわらず、複数のinstanceにマッチすることを許すこともできる。この節で詳しく述べる。  instanceの選択をコントロールするには、それぞれのinstanceについてオーバーラップしたときの挙動を指定することができる。 instance キーワードの直後に次のいずれかのプラグマを書けば良い: {-# OVERLAPPING #-}, {-# OVERLAPPABLE #-}, {-# OVERLAPS #-} または {-# INCOHERENT #-}   INCOHERENT はinstanceが自由にoverlapしたりされたりすることを許すが、使わないほうがいいプラグマなので出来る限り避けたほうがいい。 また、後にもあるように OVERLAPS は OVERLAPPING と OVERLAPPABLE のいずれにもなるので OVERLAPS で事足りる場合も多いと思う。  また、いちいちプラグマを書かなくてもいいように、デフォルトの挙動を指定するための拡張 -XIncoherentInstances と -XOverlappingInstances も あるけれど使用は出来る限り避けよう。   さて、あるクライアントモジュールで (C ty1 .</description>
       </item>
     
       <item>
@@ -416,13 +233,7 @@ GHCユーザーガイド - Overlapping instances
         <link>https://myuon.github.io/posts/hakyll-blog/</link>
         <pubDate>Wed, 16 Aug 2017 22:39:48 +0900</pubDate>
         <guid>https://myuon.github.io/posts/hakyll-blog/</guid>
-        <description>Hakyllでこのブログを作ったのでそのあれこれを
-概要 やりたいことは以下
- orgで文章をかく(大事) orgから良い感じのHTMLを生成し github pagesで公開  Hakyllのsetup 次を参考にした
- Hakyll Tutorials Hakyll, stack, Travis CI, Github でブログを管理する GitHub Pages はじめました hakyll package  stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく
-文書の変換・Hakyllの設定 プロジェクトの構造は次のようになっている
-- root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site.hs Hakyllの設定ファイル orgの変換 Hakyllは内部で文書変換にpandocを使っていて、pandocはorgに対応しているらしいので何も設定しなくても変換はできる (デフォルトの状態では posts 以下の文書ファイルが変換される)
-ただし、次の2つをやりたかったのであれこれ設定をかいた</description>
+        <description>Hakyllでこのブログを作ったのでそのあれこれを 概要   やりたいことは以下    orgで文章をかく(大事)    orgから良い感じのHTMLを生成し    github pagesで公開   Hakyllのsetup   次を参考にした    Hakyll Tutorials    Hakyll, stack, Travis CI, Github でブログを管理する    GitHub Pages はじめました    hakyll package    stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく 文書の変換・Hakyllの設定   プロジェクトの構造は次のようになっている - root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site.</description>
       </item>
     
   </channel>

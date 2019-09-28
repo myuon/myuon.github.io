@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,30 +22,15 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Nominal Isabelleとラムダ計算 その4" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 13日目の記事です。
-さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。 流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。
-まぁCRに比べればずっと簡単なのでいけるでしょ(適当)
-今回解説するコードは以下にあります:
-myuon:typed/theory/Simply.thy
-Simply-typed nominal_datatype simply = TVar string | TArr simply simply (infixr &#34;→&#34; 90) simply-typedな型はtype variableとfunction typeからなる。 typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。
-valid context さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。
-inductive valid :: &#34;(name × simply) list ⇒ bool&#34; where valid_nil: &#34;valid []&#34; | valid_cons: &#34;⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)&#34; equivariance valid lemma elim_valid_cons: &#34;valid ((x,T)#Γ) ⟹ valid Γ ∧ x ♯ Γ&#34; by (cases rule: valid." />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 13日目の記事です。   さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。 流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。  まぁCRに比べればずっと簡単なのでいけるでしょ(適当)  今回解説するコードは以下にあります:  myuon:typed/theory/Simply.thy Simply-typed  nominal_datatype simply = TVar string | TArr simply simply (infixr &#34;→&#34; 90)   simply-typedな型はtype variableとfunction typeからなる。 typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。 valid context   さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。 inductive valid :: &#34;(name × simply) list ⇒ bool&#34; where valid_nil: &#34;valid []&#34; | valid_cons: &#34;⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)&#34; equivariance valid lemma elim_valid_cons: &#34;valid ((x,T)#Γ) ⟹ valid Γ ∧ x ♯ Γ&#34; by (cases rule: valid." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/nominal-lambda-4/" />
-<meta property="article:published_time" content="2017-12-13T00:04:03&#43;09:00"/>
-<meta property="article:modified_time" content="2017-12-13T00:04:03&#43;09:00"/>
-
+<meta property="article:published_time" content="2017-12-13T00:04:03+09:00" />
+<meta property="article:modified_time" content="2017-12-13T00:04:03+09:00" />
 
 
 <meta itemprop="name" content="Nominal Isabelleとラムダ計算 その4">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 13日目の記事です。
-さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。 流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。
-まぁCRに比べればずっと簡単なのでいけるでしょ(適当)
-今回解説するコードは以下にあります:
-myuon:typed/theory/Simply.thy
-Simply-typed nominal_datatype simply = TVar string | TArr simply simply (infixr &#34;→&#34; 90) simply-typedな型はtype variableとfunction typeからなる。 typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。
-valid context さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。
-inductive valid :: &#34;(name × simply) list ⇒ bool&#34; where valid_nil: &#34;valid []&#34; | valid_cons: &#34;⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)&#34; equivariance valid lemma elim_valid_cons: &#34;valid ((x,T)#Γ) ⟹ valid Γ ∧ x ♯ Γ&#34; by (cases rule: valid.">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 13日目の記事です。   さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。 流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。  まぁCRに比べればずっと簡単なのでいけるでしょ(適当)  今回解説するコードは以下にあります:  myuon:typed/theory/Simply.thy Simply-typed  nominal_datatype simply = TVar string | TArr simply simply (infixr &#34;→&#34; 90)   simply-typedな型はtype variableとfunction typeからなる。 typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。 valid context   さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。 inductive valid :: &#34;(name × simply) list ⇒ bool&#34; where valid_nil: &#34;valid []&#34; | valid_cons: &#34;⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)&#34; equivariance valid lemma elim_valid_cons: &#34;valid ((x,T)#Γ) ⟹ valid Γ ∧ x ♯ Γ&#34; by (cases rule: valid.">
 
 
 <meta itemprop="datePublished" content="2017-12-13T00:04:03&#43;09:00" />
@@ -58,14 +43,7 @@ inductive valid :: &#34;(name × simply) list ⇒ bool&#34; where valid_nil: &#3
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Nominal Isabelleとラムダ計算 その4"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 13日目の記事です。
-さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。 流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。
-まぁCRに比べればずっと簡単なのでいけるでしょ(適当)
-今回解説するコードは以下にあります:
-myuon:typed/theory/Simply.thy
-Simply-typed nominal_datatype simply = TVar string | TArr simply simply (infixr &#34;→&#34; 90) simply-typedな型はtype variableとfunction typeからなる。 typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。
-valid context さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。
-inductive valid :: &#34;(name × simply) list ⇒ bool&#34; where valid_nil: &#34;valid []&#34; | valid_cons: &#34;⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)&#34; equivariance valid lemma elim_valid_cons: &#34;valid ((x,T)#Γ) ⟹ valid Γ ∧ x ♯ Γ&#34; by (cases rule: valid."/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 13日目の記事です。   さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。 流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。  まぁCRに比べればずっと簡単なのでいけるでしょ(適当)  今回解説するコードは以下にあります:  myuon:typed/theory/Simply.thy Simply-typed  nominal_datatype simply = TVar string | TArr simply simply (infixr &#34;→&#34; 90)   simply-typedな型はtype variableとfunction typeからなる。 typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。 valid context   さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。 inductive valid :: &#34;(name × simply) list ⇒ bool&#34; where valid_nil: &#34;valid []&#34; | valid_cons: &#34;⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)&#34; equivariance valid lemma elim_valid_cons: &#34;valid ((x,T)#Γ) ⟹ valid Γ ∧ x ♯ Γ&#34; by (cases rule: valid."/>
 
 
   </head>
@@ -94,27 +72,41 @@ inductive valid :: &#34;(name × simply) list ⇒ bool&#34; where valid_nil: &#3
       <time datetime="2017-12-13 12:04">2017-12-13</time>
       <h1>Nominal Isabelleとラムダ計算 その4</h1>
     </header>
-    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 13日目の記事です。</strong></p>
-
-<hr />
-
-<p>さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。
-流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。</p>
-
-<p>まぁCRに比べればずっと簡単なのでいけるでしょ(適当)</p>
-
-<p>今回解説するコードは以下にあります:</p>
-
-<p><a href="https://github.com/myuon/typed/blob/1f735c6580ce8c55a5fbf51e35b29ee00bae7e2c/theory/Simply.thy" title="myuon:typed/theory/Simply.thy">myuon:typed/theory/Simply.thy</a></p>
-
-<h1 id="simply-typed">Simply-typed</h1>
+    <section>
+<p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 13日目の記事です。</strong>
+</p>
+<hr>
+<p>
+さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。
+流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。
+</p>
+<p>
+まぁCRに比べればずっと簡単なのでいけるでしょ(適当)
+</p>
+<p>
+今回解説するコードは以下にあります:
+</p>
+<p>
+<a href="https://github.com/myuon/typed/blob/1f735c6580ce8c55a5fbf51e35b29ee00bae7e2c/theory/Simply.thy">myuon:typed/theory/Simply.thy</a>
+</p>
+<h1 id="headline-1">
+Simply-typed
+</h1>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  nominal_datatype simply = TVar string | TArr simply simply (infixr &#34;→&#34; 90)</code></pre></div>
-<p>simply-typedな型はtype variableとfunction typeからなる。
-typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。</p>
-
-<h2 id="valid-context">valid context</h2>
-
-<p>さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。</p>
+</div>
+<p>
+simply-typedな型はtype variableとfunction typeからなる。
+typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。
+</p>
+<h2 id="headline-2">
+valid context
+</h2>
+<p>
+さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  inductive valid :: &#34;(name × simply) list ⇒ bool&#34; where
     valid_nil: &#34;valid []&#34;
   | valid_cons: &#34;⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)&#34;
@@ -140,11 +132,17 @@ typeの定義自体は特にbinderを含まないが、後に型を含むnominal
     using fresh_notin apply simp
     using fresh_notin apply simp
   done</code></pre></div>
-<p>validから言えることなどを補題で示した。</p>
-
-<h2 id="typing-rules">typing rules</h2>
-
-<p>typing ruleを定めよう。ここではwell-typedな項であることを表す述語をinductiveに定める。</p>
+</div>
+<p>
+validから言えることなどを補題で示した。
+</p>
+<h2 id="headline-3">
+typing rules
+</h2>
+<p>
+typing ruleを定めよう。ここではwell-typedな項であることを表す述語をinductiveに定める。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  inductive typed (&#34;_ ⊢ _ : _&#34; 40) where
     st_var: &#34;⟦ valid Γ; (x,σ) ∈ set Γ ⟧ ⟹ Γ ⊢ Var x : σ&#34;
   | st_app: &#34;⟦ Γ ⊢ M : (σ → τ); Γ ⊢ N : σ ⟧ ⟹ Γ ⊢ App M N : τ&#34;
@@ -157,17 +155,24 @@ typeの定義自体は特にbinderを含まないが、後に型を含むnominal
     and T :: simply
     shows &#34;x ♯ T&#34;
   by (nominal_induct T rule:simply.strong_induct, simp_all add: fresh_string)
-
+  
   nominal_inductive typed
     by (simp_all add: fresh_type abs_fresh)</code></pre></div>
-<p>(<code>♯</code> はnominalのfreshnessだが <code>#</code> はリストのcons記号なことに注意)</p>
-
-<p>equivarianceはよいのだが、strong_inductを言う場合には <code>x ♯ Γ</code> となるようにxを取り直せることを保証する必要があり、それに際してtypeが常にvariableとfreshなことが必要になるのでそれを示した。</p>
-
-<h2 id="context-lemmas">context lemmas</h2>
-
-<p>well-typednessとcontextに関連する補題を述べる。
-それぞれweakening、well-typedならばcontextはすでにcontextであること、contextは順序に依らないこと(の弱い形)である。</p>
+</div>
+<p>
+(<code>♯</code> はnominalのfreshnessだが <code>#</code> はリストのcons記号なことに注意)
+</p>
+<p>
+equivarianceはよいのだが、strong_inductを言う場合には <code>x ♯ Γ</code> となるようにxを取り直せることを保証する必要があり、それに際してtypeが常にvariableとfreshなことが必要になるのでそれを示した。
+</p>
+<h2 id="headline-4">
+context lemmas
+</h2>
+<p>
+well-typednessとcontextに関連する補題を述べる。
+それぞれweakening、well-typedならばcontextはすでにcontextであること、contextは順序に依らないこと(の弱い形)である。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma weak_ctx:
     assumes &#34;set Γ ⊆ set Γ&#39;&#34; &#34;valid Γ&#39;&#34; &#34;Γ ⊢ M : σ&#34;
     shows &#34;Γ&#39; ⊢ M : σ&#34;
@@ -175,9 +180,14 @@ typeの定義自体は特にbinderを含まないが、後に型を含むnominal
   lemma typed_valid: &#34;Γ ⊢ M : A ⟹ valid Γ&#34;
 
   lemma ctx_swap_head_typed: &#34;(x,t) # (y,s) # Γ ⊢ M : A ⟹ (y,s) # (x,t) # Γ ⊢ M : A&#34;</code></pre></div>
-<p>ctx_swap_head_typedはもう少し強められるが、これはたまたまこの補題があとで必要になったことと、「順序をどう変えてもよい」ことをステートメントとして述べるのもそれを示すのもかなり大変なのでやらなかった。</p>
-
-<h2 id="coherence-lemmas">coherence lemmas</h2>
+</div>
+<p>
+ctx_swap_head_typedはもう少し強められるが、これはたまたまこの補題があとで必要になったことと、「順序をどう変えてもよい」ことをステートメントとして述べるのもそれを示すのもかなり大変なのでやらなかった。
+</p>
+<h2 id="headline-5">
+coherence lemmas
+</h2>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma gen_typed_valid: &#34;Γ ⊢ M : σ ⟹ valid Γ&#34;
 
   lemma gen_typed_var: &#34;Γ ⊢ Var x : σ ⟹ (x,σ) ∈ set Γ&#34;
@@ -189,13 +199,19 @@ typeの定義自体は特にbinderを含まないが、後に型を含むnominal
   lemma gen_typed_abs:
     assumes &#34;Γ ⊢ lam [x]. M : ρ&#34; &#34;x ♯ Γ&#34;
     obtains σ τ where &#34;(x,σ)#Γ ⊢ M : τ&#34; &#34;ρ = σ → τ&#34;</code></pre></div>
-<p>さて、well-typednessのcoherenceである。
-どれも場合分け(typed.strong_cases)でいける。</p>
-
-<h2 id="towards-soundness">towards soundness</h2>
-
-<p>初めに2つの補題を示す。
-最初のやつは次の補題に必要になっただけなので大事なのは2つ目。</p>
+</div>
+<p>
+さて、well-typednessのcoherenceである。
+どれも場合分け(typed.strong_cases)でいける。
+</p>
+<h2 id="headline-6">
+towards soundness
+</h2>
+<p>
+初めに2つの補題を示す。
+最初のやつは次の補題に必要になっただけなので大事なのは2つ目。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma typed_var_unique: &#34;(x,σ)#Γ ⊢ Var x : τ ⟹ σ = τ&#34;
   apply (cases rule: typed.strong_cases, auto simp add: lambda.inject)
   using elim_valid_cons apply (rule, simp)
@@ -230,15 +246,22 @@ typeの定義自体は特にbinderを含まないが、後に型を含むnominal
       apply (simp add: tau(1))
       by (simp add: name_fresh(4) st_abs)
   qed</code></pre></div>
-<p>subst_typedはtypingに関するsubstitution lemmaなどと呼ばれるやつである。
-well-typedな項から代入した項のwell-typednessが言える。Mがabstractionの時に名前のfreshnessなどが問題になるのでそれを頑張って示しているのがここの証明である。</p>
-
-<h2 id="preservation">preservation</h2>
-
-<p>さてpreservation、つまりβ簡約によってもwell-typedが保たれることを示そう。
-これはβ簡約についての帰納法でよく、一番難しいのはβ変換のときだが、これもsubst_typedなどからすぐ言える。</p>
-
-<p>betaだけでなくlong_betaでも同じことが言える。</p>
+</div>
+<p>
+subst_typedはtypingに関するsubstitution lemmaなどと呼ばれるやつである。
+well-typedな項から代入した項のwell-typednessが言える。Mがabstractionの時に名前のfreshnessなどが問題になるのでそれを頑張って示しているのがここの証明である。
+</p>
+<h2 id="headline-7">
+preservation
+</h2>
+<p>
+さてpreservation、つまりβ簡約によってもwell-typedが保たれることを示そう。
+これはβ簡約についての帰納法でよく、一番難しいのはβ変換のときだが、これもsubst_typedなどからすぐ言える。
+</p>
+<p>
+betaだけでなくlong_betaでも同じことが言える。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma preservation_one:
     assumes &#34;M →β M&#39;&#34;
     shows &#34;Γ ⊢ M : σ ⟹ Γ ⊢ M&#39; : σ&#34;
@@ -256,10 +279,15 @@ well-typedな項から代入した項のwell-typednessが言える。Mがabstrac
     assumes &#34;M ⟶β* M&#39;&#34;
     shows &#34;Γ ⊢ M : σ ⟹ Γ ⊢ M&#39; : σ&#34;
   by (induct rule: long_beta.induct [OF assms], auto simp add: preservation_one)</code></pre></div>
-<h2 id="progress">progress</h2>
-
-<p>progressとは、プログラムの実行(簡約)が値を吐くまで続くという性質である。
-このラムダ計算では値とは関数(lambda abstraction)のことであるので、任意のラムダ項はabstractionになるまで簡約が停止しない(ただしprogressはcontextが空の時という条件が付いていることに注意。 <code>Var x</code> とかはそれ以上簡約できないがclosedでない項は普通考えないので)。</p>
+</div>
+<h2 id="headline-8">
+progress
+</h2>
+<p>
+progressとは、プログラムの実行(簡約)が値を吐くまで続くという性質である。
+このラムダ計算では値とは関数(lambda abstraction)のことであるので、任意のラムダ項はabstractionになるまで簡約が停止しない(ただしprogressはcontextが空の時という条件が付いていることに注意。 <code>Var x</code> とかはそれ以上簡約できないがclosedでない項は普通考えないので)。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  nominal_primrec Value :: &#34;lambda ⇒ bool&#34; where
     &#34;Value (lam [_]._) = True&#34;
     | &#34;Value (Var _) = False&#34;
@@ -270,7 +298,7 @@ well-typedな項から代入した項のwell-typednessが言える。Mがabstrac
     assumes &#34;Value M&#34;
     obtains x M&#39; where &#34;M = lam [x]. M&#39;&#34;
   using assms by (nominal_induct M rule: lambda.strong_induct, auto)
-
+  
   lemma progress: &#34;[] ⊢ M : σ ⟹ Value M ∨ (∃M&#39;. M →β M&#39;)&#34;
   proof-
     have &#34;⋀Γ. ⟦ Γ ⊢ M : σ; Γ = [] ⟧ ⟹ Value M ∨ (∃M&#39;. M →β M&#39;)&#34;
@@ -283,35 +311,51 @@ well-typedな項から代入した項のwell-typednessが言える。Mがabstrac
       qed
     thus &#34;[] ⊢ M : σ ⟹ Value M ∨ (∃M&#39;. M →β M&#39;)&#34; by simp
   qed</code></pre></div>
-<p><code>Value</code> はnominal_primrecで定義することにして(これはexistenceなどを陽に扱いたくないという理由による)、あとは帰納法を回すため。
-なのだが、 <code>[] ⊢ M : σ ⟹ ...</code> に対してそのまま帰納法をすると「contextが空である」という情報が捨てられてしまうので(Isabelleとしてはこういう情報をどうやって扱ったらいいのか分からないので)、これを明示的にするために <code>⋀Γ. ⟦ Γ ⊢ M : σ; Γ = [] ⟧ ⟹ Value M ∨ (∃M'. M →β M')</code> の形に変形してから帰納法を回している。</p>
-
-<p>証明は簡単。</p>
-
-<h2 id="soundness">soundness</h2>
-
-<p>preservation & progressを組み合わせて、「well-typed項はValueになるまで停止しない」ことを示すことができる。
-これが(simply-typed lambda calculusの)type soundnessである。</p>
+</div>
+<p>
+<code>Value</code> はnominal_primrecで定義することにして(これはexistenceなどを陽に扱いたくないという理由による)、あとは帰納法を回すため。
+なのだが、 <code>[] ⊢ M : σ ⟹ ...</code> に対してそのまま帰納法をすると「contextが空である」という情報が捨てられてしまうので(Isabelleとしてはこういう情報をどうやって扱ったらいいのか分からないので)、これを明示的にするために <code>⋀Γ. ⟦ Γ ⊢ M : σ; Γ = [] ⟧ ⟹ Value M ∨ (∃M&#39;. M →β M&#39;)</code> の形に変形してから帰納法を回している。
+</p>
+<p>
+証明は簡単。
+</p>
+<h2 id="headline-9">
+soundness
+</h2>
+<p>
+preservation &amp; progressを組み合わせて、「well-typed項はValueになるまで停止しない」ことを示すことができる。
+これが(simply-typed lambda calculusの)type soundnessである。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  theorem soundness:
     assumes &#34;[] ⊢ M : σ&#34; &#34;M ⟶β* M&#39;&#34;
     shows &#34;Value M&#39; ∨ (∃ M&#39;&#39;. M&#39; →β M&#39;&#39;)&#34;
   by (rule progress, rule preservation, rule assms, rule assms)</code></pre></div>
-<p>というわけで証明完了！やったね！</p>
-
-<h1 id="まとめ">まとめ</h1>
-
-<p>まぁ証明自体は結構簡単で、Nominal Isabelleが手に馴染んでいれば結構すんなり証明できるのでは〜という感じだった。
-Strong Normalizationも実は示そうと今やっているところなのだけれど、間に合わなかったのとこっちはtype soundnessとは違って本気で大変なのでアドベントカレンダーでやるのは厳しそう。</p>
-
-<p>いずれにせよ4日に渡ってやってきたラムダ計算編は、Isabelle知らない人には(Nominal) Isabelleの強力さを、ラムダ計算での定理証明知らない人には定理証明の雰囲気を感じ取ってもらえるような内容になったのではないかなと思います。
-(どっちも知らない人にはつらかったと思います、すみません…って思ったけどどっちも知らない人はここまで読まなそう;まだ読んでない人は読まなくていいですよ)</p>
-
-<p>とりあえず、前半のIsabelle編もこれでおしまいになります。
-ちゃんとついてこれた人はここまででIsabelle/HOLによる定理証明にだいぶ馴染んだと思います。</p>
-
-<p>後半はHaskell編ということで、ここまでにやってきた定理証明の知識も使ってproof assistantを今度は「作る」という話をしていこうと思います。</p>
-
-<p>お楽しみに！</p>
+</div>
+<p>
+というわけで証明完了！やったね！
+</p>
+<h1 id="headline-10">
+まとめ
+</h1>
+<p>
+まぁ証明自体は結構簡単で、Nominal Isabelleが手に馴染んでいれば結構すんなり証明できるのでは〜という感じだった。
+Strong Normalizationも実は示そうと今やっているところなのだけれど、間に合わなかったのとこっちはtype soundnessとは違って本気で大変なのでアドベントカレンダーでやるのは厳しそう。
+</p>
+<p>
+いずれにせよ4日に渡ってやってきたラムダ計算編は、Isabelle知らない人には(Nominal) Isabelleの強力さを、ラムダ計算での定理証明知らない人には定理証明の雰囲気を感じ取ってもらえるような内容になったのではないかなと思います。
+(どっちも知らない人にはつらかったと思います、すみません…って思ったけどどっちも知らない人はここまで読まなそう;まだ読んでない人は読まなくていいですよ)
+</p>
+<p>
+とりあえず、前半のIsabelle編もこれでおしまいになります。
+ちゃんとついてこれた人はここまででIsabelle/HOLによる定理証明にだいぶ馴染んだと思います。
+</p>
+<p>
+後半はHaskell編ということで、ここまでにやってきた定理証明の知識も使ってproof assistantを今度は「作る」という話をしていこうと思います。
+</p>
+<p>
+お楽しみに！
+</p>
 </section>
     <footer>
       <hr>

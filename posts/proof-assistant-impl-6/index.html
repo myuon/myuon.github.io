@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,36 +22,15 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Proof Assistantを作る・マクロ編 その6" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-今回はClaireのマクロ機能について説明します。
-マクロ記述言語 Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。
-Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。
-Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。
-マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。
-マクロの実装 マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。
-マクロ定義モジュール 定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。
-module Commands where import Claire macro :: Env -&gt; Argument -&gt; [Judgement] -&gt; [Command] macro = ... export_command :: [(String, Env -&gt; Argument -&gt; [Judgement] -&gt; [Command])] export_command = [ (&#34;name&#34;, macro) ] declmacro :: [Argument] -&gt; [Decl] declmacro = ... export_decl :: [(String, [Argument] -&gt; [Decl])] export_decl = [ (&#34;name&#34;, declmacro) ] これを使いたいときは、ClaireのファイルにHs_fileを記述します。" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 23日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  今回はClaireのマクロ機能について説明します。 マクロ記述言語   Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。  Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。  Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。  マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。 マクロの実装   マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。 マクロ定義モジュール   定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。 module Commands where import Claire macro :: Env -&gt; Argument -&gt; [Judgement] -&gt; [Command] macro = ... export_command :: [(String, Env -&gt; Argument -&gt; [Judgement] -&gt; [Command])] export_command = [ (&#34;name&#34;, macro) ] declmacro :: [Argument] -&gt; [Decl] declmacro = ." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-6/" />
-<meta property="article:published_time" content="2017-12-23T00:04:55&#43;09:00"/>
-<meta property="article:modified_time" content="2017-12-23T00:04:55&#43;09:00"/>
-
+<meta property="article:published_time" content="2017-12-23T00:04:55+09:00" />
+<meta property="article:modified_time" content="2017-12-23T00:04:55+09:00" />
 
 
 <meta itemprop="name" content="Proof Assistantを作る・マクロ編 その6">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-今回はClaireのマクロ機能について説明します。
-マクロ記述言語 Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。
-Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。
-Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。
-マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。
-マクロの実装 マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。
-マクロ定義モジュール 定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。
-module Commands where import Claire macro :: Env -&gt; Argument -&gt; [Judgement] -&gt; [Command] macro = ... export_command :: [(String, Env -&gt; Argument -&gt; [Judgement] -&gt; [Command])] export_command = [ (&#34;name&#34;, macro) ] declmacro :: [Argument] -&gt; [Decl] declmacro = ... export_decl :: [(String, [Argument] -&gt; [Decl])] export_decl = [ (&#34;name&#34;, declmacro) ] これを使いたいときは、ClaireのファイルにHs_fileを記述します。">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 23日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  今回はClaireのマクロ機能について説明します。 マクロ記述言語   Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。  Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。  Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。  マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。 マクロの実装   マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。 マクロ定義モジュール   定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。 module Commands where import Claire macro :: Env -&gt; Argument -&gt; [Judgement] -&gt; [Command] macro = ... export_command :: [(String, Env -&gt; Argument -&gt; [Judgement] -&gt; [Command])] export_command = [ (&#34;name&#34;, macro) ] declmacro :: [Argument] -&gt; [Decl] declmacro = .">
 
 
 <meta itemprop="datePublished" content="2017-12-23T00:04:55&#43;09:00" />
@@ -64,17 +43,7 @@ module Commands where import Claire macro :: Env -&gt; Argument -&gt; [Judgement
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Proof Assistantを作る・マクロ編 その6"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-今回はClaireのマクロ機能について説明します。
-マクロ記述言語 Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。
-Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。
-Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。
-マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。
-マクロの実装 マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。
-マクロ定義モジュール 定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。
-module Commands where import Claire macro :: Env -&gt; Argument -&gt; [Judgement] -&gt; [Command] macro = ... export_command :: [(String, Env -&gt; Argument -&gt; [Judgement] -&gt; [Command])] export_command = [ (&#34;name&#34;, macro) ] declmacro :: [Argument] -&gt; [Decl] declmacro = ... export_decl :: [(String, [Argument] -&gt; [Decl])] export_decl = [ (&#34;name&#34;, declmacro) ] これを使いたいときは、ClaireのファイルにHs_fileを記述します。"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 23日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  今回はClaireのマクロ機能について説明します。 マクロ記述言語   Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。  Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。  Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。  マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。 マクロの実装   マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。 マクロ定義モジュール   定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。 module Commands where import Claire macro :: Env -&gt; Argument -&gt; [Judgement] -&gt; [Command] macro = ... export_command :: [(String, Env -&gt; Argument -&gt; [Judgement] -&gt; [Command])] export_command = [ (&#34;name&#34;, macro) ] declmacro :: [Argument] -&gt; [Decl] declmacro = ."/>
 
 
   </head>
@@ -103,153 +72,219 @@ module Commands where import Claire macro :: Env -&gt; Argument -&gt; [Judgement
       <time datetime="2017-12-23 12:04">2017-12-23</time>
       <h1>Proof Assistantを作る・マクロ編 その6</h1>
     </header>
-    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 23日目の記事です。</strong></p>
-
-<hr />
-
-<p>Proof Assistant 「Claire」の実装について説明していきます。</p>
-
-<p>リポジトリはこちら: <a href="https://github.com/myuon/claire" title="myuon/claire">myuon/claire</a></p>
-
-<p>今回はClaireのマクロ機能について説明します。</p>
-
-<h1 id="マクロ記述言語">マクロ記述言語</h1>
-
-<p>Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。</p>
-
-<p>Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。</p>
-
-<p>Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。</p>
-
-<p>マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。</p>
-
-<h1 id="マクロの実装">マクロの実装</h1>
-
-<p>マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。</p>
-
-<h2 id="マクロ定義モジュール">マクロ定義モジュール</h2>
-
-<p>定義は適当なHaskellのモジュールとして記述します。
-export_command, export_declに定義したマクロを列挙します。</p>
+    <section>
+<p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 23日目の記事です。</strong>
+</p>
+<hr>
+<p>
+Proof Assistant 「Claire」の実装について説明していきます。
+</p>
+<p>
+リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a>
+</p>
+<p>
+今回はClaireのマクロ機能について説明します。
+</p>
+<h1 id="headline-1">
+マクロ記述言語
+</h1>
+<p>
+Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。
+</p>
+<p>
+Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。
+</p>
+<p>
+Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。
+</p>
+<p>
+マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。
+</p>
+<h1 id="headline-2">
+マクロの実装
+</h1>
+<p>
+マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。
+</p>
+<h2 id="headline-3">
+マクロ定義モジュール
+</h2>
+<p>
+定義は適当なHaskellのモジュールとして記述します。
+export_command, export_declに定義したマクロを列挙します。
+</p>
+<div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">module</span> <span class="nn">Commands</span> <span class="kr">where</span>
 
   <span class="kr">import</span> <span class="nn">Claire</span>
 
-  <span class="nf">macro</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
-  <span class="nf">macro</span> <span class="ow">=</span> <span class="o">...</span>
+  <span class="n">macro</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
+  <span class="n">macro</span> <span class="ow">=</span> <span class="o">...</span>
 
-  <span class="nf">export_command</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">])]</span>
-  <span class="nf">export_command</span> <span class="ow">=</span>
-    <span class="p">[</span> <span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nf">macro</span><span class="p">)</span>
+  <span class="n">export_command</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">])]</span>
+  <span class="n">export_command</span> <span class="ow">=</span>
+    <span class="p">[</span> <span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="n">macro</span><span class="p">)</span>
     <span class="p">]</span>
 
-  <span class="nf">declmacro</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span>
-  <span class="nf">declmacro</span> <span class="ow">=</span> <span class="o">...</span>
+  <span class="n">declmacro</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span>
+  <span class="n">declmacro</span> <span class="ow">=</span> <span class="o">...</span>
 
-  <span class="nf">export_decl</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">])]</span>
-  <span class="nf">export_decl</span> <span class="ow">=</span>
-    <span class="p">[</span> <span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="nf">declmacro</span><span class="p">)</span>
+  <span class="n">export_decl</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">])]</span>
+  <span class="n">export_decl</span> <span class="ow">=</span>
+    <span class="p">[</span> <span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="n">declmacro</span><span class="p">)</span>
     <span class="p">]</span></code></pre></div>
-<p>これを使いたいときは、ClaireのファイルにHs_fileを記述します。</p>
+</div>
+<p>
+これを使いたいときは、ClaireのファイルにHs_fileを記述します。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  Hs_file &#34;lib/Commands.hs&#34;</code></pre></div>
-<p>原始的ですね。</p>
-
-<p>ちなみに上のArgumentって何かというと、マクロに来る可能性のある引数を全部まとめた型ですね。</p>
+</div>
+<p>
+原始的ですね。
+</p>
+<p>
+ちなみに上のArgumentって何かというと、マクロに来る可能性のある引数を全部まとめた型ですね。
+</p>
+<div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Argument</span>
     <span class="ow">=</span> <span class="kt">ArgEmpty</span>
     <span class="o">|</span> <span class="kt">ArgPreds</span> <span class="p">[</span><span class="kt">Predicate</span><span class="p">]</span>
     <span class="o">|</span> <span class="kt">ArgTerms</span> <span class="p">[</span><span class="kt">Term</span><span class="p">]</span>
     <span class="o">|</span> <span class="kt">ArgTyped</span> <span class="kt">Ident</span> <span class="kt">Type</span>
     <span class="o">|</span> <span class="kt">ArgIdents</span> <span class="p">[(</span><span class="kt">Ident</span><span class="p">,</span><span class="kt">Pairs</span><span class="p">)]</span></code></pre></div>
-<p>定義はこうなっていて、パーサーの定義は次です。</p>
+</div>
+<p>
+定義はこうなっていて、パーサーの定義は次です。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  Argument :: { Argument }
     : {- empty -}				{ ArgEmpty }
     | &#39;p[&#39; Predicates &#39;]&#39;  		{ ArgPreds $2 }
     | &#39;n[&#39; ident &#39;:&#39; Type &#39;]&#39;  	 	{ ArgTyped $2 $4 }
     | &#39;t[&#39; Terms &#39;]&#39;  	 		{ ArgTerms $2 }
     | &#39;i[&#39; IdentPairs &#39;]&#39;  		{ ArgIdents $2 }</code></pre></div>
-<p>まぁなんてひどい！
-これ使うときは、例えば <code>newcommand p[(x,y) =&gt; P(x), Q]</code> みたいに書くので大変uglyなんですがこれはcontext-dependentなパーサーを書きたくなかったがゆえのものです。</p>
-
-<p>実際つらいので察してほしい。</p>
-
-<h2 id="マクロの実装-1">マクロの実装</h2>
-
-<p>実装にはこのHaskellファイルを読みだして実行するということをしないといけないので<a href="https://www.stackage.org/package/hint" title="hint">hint</a>というパッケージを使ってGHCをinterpreterとして呼び出して実行します。</p>
-
-<p><a href="https://github.com/myuon/claire/blob/master/src/Claire/Checker.hs" title="Claire.Checker">Claire.Checker</a></p>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">HsFile</span> <span class="nf">file</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-        <span class="nf">r</span> <span class="ow">&lt;-</span> <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">runInterpreter</span> <span class="o">$</span> <span class="kr">do</span>
-          <span class="nf">loadModules</span> <span class="p">[</span><span class="nf">file</span><span class="p">]</span>
-          <span class="nf">setTopLevelModules</span> <span class="p">[</span><span class="nf">takeBaseName</span> <span class="nf">file</span><span class="p">]</span>
-          <span class="nf">ds</span> <span class="ow">&lt;-</span> <span class="nf">interpret</span> <span class="s">&#34;export_decl&#34;</span> <span class="p">(</span><span class="nf">as</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">])])</span>
-          <span class="nf">cs</span> <span class="ow">&lt;-</span> <span class="nf">interpret</span> <span class="s">&#34;export_command&#34;</span> <span class="p">(</span><span class="nf">as</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">])])</span>
-          <span class="nf">return</span> <span class="o">$</span> <span class="p">(</span><span class="nf">ds</span><span class="p">,</span><span class="nf">cs</span><span class="p">)</span>
-        <span class="kr">case</span> <span class="nf">r</span> <span class="kr">of</span>
-          <span class="kt">Left</span> <span class="nf">err</span> <span class="ow">-&gt;</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;HsFile&#34;</span> <span class="p">(</span><span class="nf">toException</span> <span class="o">$</span> <span class="kt">HsFileLoadError</span> <span class="nf">err</span><span class="p">)</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span>
-          <span class="kt">Right</span> <span class="p">(</span><span class="nf">ds</span><span class="p">,</span><span class="nf">cs</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="nf">lift</span> <span class="o">$</span> <span class="nf">modify</span> <span class="o">$</span> <span class="nf">\env</span> <span class="ow">-&gt;</span> <span class="nf">env</span>
-            <span class="p">{</span> <span class="nf">newdecls</span> <span class="ow">=</span> <span class="kt">M</span><span class="o">.</span><span class="nf">union</span> <span class="p">(</span><span class="kt">M</span><span class="o">.</span><span class="nf">fromList</span> <span class="nf">ds</span><span class="p">)</span> <span class="p">(</span><span class="nf">newdecls</span> <span class="nf">env</span><span class="p">)</span>
-            <span class="p">,</span> <span class="nf">newcommands</span> <span class="ow">=</span> <span class="kt">M</span><span class="o">.</span><span class="nf">union</span> <span class="p">(</span><span class="kt">M</span><span class="o">.</span><span class="nf">fromList</span> <span class="nf">cs</span><span class="p">)</span> <span class="p">(</span><span class="nf">newcommands</span> <span class="nf">env</span><span class="p">)</span>
+</div>
+<p>
+まぁなんてひどい！
+これ使うときは、例えば <code>newcommand p[(x,y) =&gt; P(x), Q]</code> みたいに書くので大変uglyなんですがこれはcontext-dependentなパーサーを書きたくなかったがゆえのものです。
+</p>
+<p>
+実際つらいので察してほしい。
+</p>
+<h2 id="headline-4">
+マクロの実装
+</h2>
+<p>
+実装にはこのHaskellファイルを読みだして実行するということをしないといけないので<a href="https://www.stackage.org/package/hint">hint</a>というパッケージを使ってGHCをinterpreterとして呼び出して実行します。
+</p>
+<p>
+<a href="https://github.com/myuon/claire/blob/master/src/Claire/Checker.hs">Claire.Checker</a>
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">HsFile</span> <span class="n">file</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="n">r</span> <span class="ow">&lt;-</span> <span class="n">liftIO</span> <span class="o">$</span> <span class="n">runInterpreter</span> <span class="o">$</span> <span class="kr">do</span>
+          <span class="n">loadModules</span> <span class="p">[</span><span class="n">file</span><span class="p">]</span>
+          <span class="n">setTopLevelModules</span> <span class="p">[</span><span class="n">takeBaseName</span> <span class="n">file</span><span class="p">]</span>
+          <span class="n">ds</span> <span class="ow">&lt;-</span> <span class="n">interpret</span> <span class="s">&#34;export_decl&#34;</span> <span class="p">(</span><span class="n">as</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">])])</span>
+          <span class="n">cs</span> <span class="ow">&lt;-</span> <span class="n">interpret</span> <span class="s">&#34;export_command&#34;</span> <span class="p">(</span><span class="n">as</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">])])</span>
+          <span class="n">return</span> <span class="o">$</span> <span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">cs</span><span class="p">)</span>
+        <span class="kr">case</span> <span class="n">r</span> <span class="kr">of</span>
+          <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;HsFile&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">HsFileLoadError</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+          <span class="kt">Right</span> <span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">cs</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">modify</span> <span class="o">$</span> <span class="nf">\</span><span class="n">env</span> <span class="ow">-&gt;</span> <span class="n">env</span>
+            <span class="p">{</span> <span class="n">newdecls</span> <span class="ow">=</span> <span class="kt">M</span><span class="o">.</span><span class="n">union</span> <span class="p">(</span><span class="kt">M</span><span class="o">.</span><span class="n">fromList</span> <span class="n">ds</span><span class="p">)</span> <span class="p">(</span><span class="n">newdecls</span> <span class="n">env</span><span class="p">)</span>
+            <span class="p">,</span> <span class="n">newcommands</span> <span class="ow">=</span> <span class="kt">M</span><span class="o">.</span><span class="n">union</span> <span class="p">(</span><span class="kt">M</span><span class="o">.</span><span class="n">fromList</span> <span class="n">cs</span><span class="p">)</span> <span class="p">(</span><span class="n">newcommands</span> <span class="n">env</span><span class="p">)</span>
             <span class="p">}</span></code></pre></div>
-<p>HsFileが来たらそれを読み込み、export_declとexport_command部分を評価して環境に突っ込みます。</p>
+</div>
+<p>
+HsFileが来たらそれを読み込み、export_declとexport_command部分を評価して環境に突っ込みます。
+</p>
+<p>
+ちなみに呼び出し部分はこう。
+</p>
+<p>
+それぞれ、対応するproofcheckerステートマシンを呼ぶだけなので簡単ですね。
+</p>
+<h3 id="headline-5">
+NewCommand
+</h3>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">NewCommand</span> <span class="n">com</span> <span class="n">args</span> <span class="o">|</span> <span class="kt">M</span><span class="o">.</span><span class="n">member</span> <span class="n">com</span> <span class="p">(</span><span class="n">newcommands</span> <span class="n">env</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
+        <span class="n">r</span> <span class="ow">&lt;-</span> <span class="n">liftIO</span> <span class="o">$</span> <span class="n">try</span> <span class="o">$</span> <span class="n">execStateT</span> <span class="p">(</span><span class="n">comrunner</span> <span class="n">env</span> <span class="p">((</span><span class="n">newcommands</span> <span class="n">env</span> <span class="kt">M</span><span class="o">.!</span> <span class="n">com</span><span class="p">)</span> <span class="n">env</span> <span class="n">args</span> <span class="n">js</span><span class="p">))</span> <span class="n">js</span>
+        <span class="kr">case</span> <span class="n">r</span> <span class="kr">of</span>
+          <span class="kt">Right</span> <span class="n">js&#39;</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">put</span> <span class="n">js&#39;</span>
+          <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="n">com</span> <span class="n">err</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+      <span class="kt">NewCommand</span> <span class="n">com</span> <span class="n">args</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="n">com</span> <span class="p">(</span><span class="n">toException</span> <span class="kt">NoSuchCommand</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
+</div>
+<h3 id="headline-6">
+NewDecl
+</h3>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">NewDecl</span> <span class="n">dec</span> <span class="n">args</span> <span class="o">|</span> <span class="kt">M</span><span class="o">.</span><span class="n">member</span> <span class="n">dec</span> <span class="p">(</span><span class="n">newdecls</span> <span class="n">env</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="n">r</span> <span class="ow">&lt;-</span> <span class="n">liftIO</span> <span class="o">$</span> <span class="n">try</span> <span class="o">$</span> <span class="n">execStateT</span> <span class="p">(</span><span class="n">declrunner</span> <span class="p">((</span><span class="n">newdecls</span> <span class="n">env</span> <span class="kt">M</span><span class="o">.!</span> <span class="n">dec</span><span class="p">)</span> <span class="n">args</span><span class="p">))</span> <span class="n">env</span>
+        <span class="kr">case</span> <span class="n">r</span> <span class="kr">of</span>
+          <span class="kt">Right</span> <span class="n">env&#39;</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">put</span> <span class="n">env&#39;</span>
+          <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="n">dec</span> <span class="n">err</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+      <span class="kt">NewDecl</span> <span class="n">dec</span> <span class="n">args</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="n">dec</span> <span class="p">(</span><span class="n">toException</span> <span class="kt">NoSuchDecl</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
+</div>
+<h1 id="headline-7">
+標準ライブラリのマクロ
+</h1>
+<p>
+さて、実際にどんなマクロを例えば定義しているのかを見ていきます。
+</p>
+<p>
+<a href="https://github.com/myuon/claire/blob/master/lib/Commands.hs">lib/Commands.hs</a> 読んででもまぁいいんですけれども一応。
+</p>
+<h2 id="headline-8">
+defer
+</h2>
+<p>
+これは実はコマンド構文木を生成するのでは書けないので組み込みコマンドなんですが、Isabelleのdeferと同じく現在注目しているゴールを一番最後に回すコマンドです。
+</p>
+<p>
+ゴールがたくさんある場合に、「さきにこっちのsubgoal示したいんだけど」って時に使います。
+</p>
+<h2 id="headline-9">
+assumption
+</h2>
+<p>
+現在フォーカスしているゴールで、命題のいずれかが仮定のいずれかに一致している時にそれを証明するコマンドです。
+</p>
+<p>
+要は前回の最後に言った <code>P,Q |- R,P</code> のときに一発で証明してくれるやつです。
+</p>
+<p>
+大変便利(っていうかこれがないのがキツイんだけど)なのでよく使います。
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">onlyL</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Rule</span><span class="p">]</span>
+  <span class="n">onlyL</span> <span class="n">i</span> <span class="n">n</span> <span class="ow">=</span> <span class="n">concat</span> <span class="o">$</span> <span class="n">replicate</span> <span class="n">i</span> <span class="p">[</span><span class="kt">WL</span><span class="p">]</span> <span class="o">++</span> <span class="n">replicate</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">[</span><span class="kt">PL</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">WL</span><span class="p">]</span>
 
-<p>ちなみに呼び出し部分はこう。</p>
+  <span class="n">onlyR</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Rule</span><span class="p">]</span>
+  <span class="n">onlyR</span> <span class="n">i</span> <span class="n">n</span> <span class="ow">=</span> <span class="n">concat</span> <span class="o">$</span> <span class="n">replicate</span> <span class="n">i</span> <span class="p">[</span><span class="kt">WR</span><span class="p">]</span> <span class="o">++</span> <span class="n">replicate</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">[</span><span class="kt">PR</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">WR</span><span class="p">]</span>
 
-<p>それぞれ、対応するproofcheckerステートマシンを呼ぶだけなので簡単ですね。</p>
-
-<h3 id="newcommand">NewCommand</h3>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">NewCommand</span> <span class="nf">com</span> <span class="nf">args</span> <span class="o">|</span> <span class="kt">M</span><span class="o">.</span><span class="nf">member</span> <span class="nf">com</span> <span class="p">(</span><span class="nf">newcommands</span> <span class="nf">env</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-        <span class="nf">js</span> <span class="ow">&lt;-</span> <span class="nf">lift</span> <span class="nf">get</span>
-        <span class="nf">r</span> <span class="ow">&lt;-</span> <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">try</span> <span class="o">$</span> <span class="nf">execStateT</span> <span class="p">(</span><span class="nf">comrunner</span> <span class="nf">env</span> <span class="p">((</span><span class="nf">newcommands</span> <span class="nf">env</span> <span class="kt">M</span><span class="o">.!</span> <span class="nf">com</span><span class="p">)</span> <span class="nf">env</span> <span class="nf">args</span> <span class="nf">js</span><span class="p">))</span> <span class="nf">js</span>
-        <span class="kr">case</span> <span class="nf">r</span> <span class="kr">of</span>
-          <span class="kt">Right</span> <span class="nf">js&#39;</span> <span class="ow">-&gt;</span> <span class="nf">lift</span> <span class="o">$</span> <span class="nf">put</span> <span class="nf">js&#39;</span>
-          <span class="kt">Left</span> <span class="nf">err</span> <span class="ow">-&gt;</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="nf">com</span> <span class="nf">err</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span>
-      <span class="kt">NewCommand</span> <span class="nf">com</span> <span class="nf">args</span> <span class="ow">-&gt;</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="nf">com</span> <span class="p">(</span><span class="nf">toException</span> <span class="kt">NoSuchCommand</span><span class="p">)</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
-<h3 id="newdecl">NewDecl</h3>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">NewDecl</span> <span class="nf">dec</span> <span class="nf">args</span> <span class="o">|</span> <span class="kt">M</span><span class="o">.</span><span class="nf">member</span> <span class="nf">dec</span> <span class="p">(</span><span class="nf">newdecls</span> <span class="nf">env</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-        <span class="nf">r</span> <span class="ow">&lt;-</span> <span class="nf">liftIO</span> <span class="o">$</span> <span class="nf">try</span> <span class="o">$</span> <span class="nf">execStateT</span> <span class="p">(</span><span class="nf">declrunner</span> <span class="p">((</span><span class="nf">newdecls</span> <span class="nf">env</span> <span class="kt">M</span><span class="o">.!</span> <span class="nf">dec</span><span class="p">)</span> <span class="nf">args</span><span class="p">))</span> <span class="nf">env</span>
-        <span class="kr">case</span> <span class="nf">r</span> <span class="kr">of</span>
-          <span class="kt">Right</span> <span class="nf">env&#39;</span> <span class="ow">-&gt;</span> <span class="nf">lift</span> <span class="o">$</span> <span class="nf">put</span> <span class="nf">env&#39;</span>
-          <span class="kt">Left</span> <span class="nf">err</span> <span class="ow">-&gt;</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="nf">dec</span> <span class="nf">err</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span>
-      <span class="kt">NewDecl</span> <span class="nf">dec</span> <span class="nf">args</span> <span class="ow">-&gt;</span> <span class="nf">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="nf">dec</span> <span class="p">(</span><span class="nf">toException</span> <span class="kt">NoSuchDecl</span><span class="p">)</span> <span class="p">(</span><span class="nf">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
-<h1 id="標準ライブラリのマクロ">標準ライブラリのマクロ</h1>
-
-<p>さて、実際にどんなマクロを例えば定義しているのかを見ていきます。</p>
-
-<p><a href="https://github.com/myuon/claire/blob/master/lib/Commands.hs" title="lib/Commands.hs">lib/Commands.hs</a> 読んででもまぁいいんですけれども一応。</p>
-
-<h2 id="defer">defer</h2>
-
-<p>これは実はコマンド構文木を生成するのでは書けないので組み込みコマンドなんですが、Isabelleのdeferと同じく現在注目しているゴールを一番最後に回すコマンドです。</p>
-
-<p>ゴールがたくさんある場合に、「さきにこっちのsubgoal示したいんだけど」って時に使います。</p>
-
-<h2 id="assumption">assumption</h2>
-
-<p>現在フォーカスしているゴールで、命題のいずれかが仮定のいずれかに一致している時にそれを証明するコマンドです。</p>
-
-<p>要は前回の最後に言った <code>P,Q |- R,P</code> のときに一発で証明してくれるやつです。</p>
-
-<p>大変便利(っていうかこれがないのがキツイんだけど)なのでよく使います。</p>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">onlyL</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Rule</span><span class="p">]</span>
-  <span class="nf">onlyL</span> <span class="nf">i</span> <span class="nf">n</span> <span class="ow">=</span> <span class="nf">concat</span> <span class="o">$</span> <span class="nf">replicate</span> <span class="nf">i</span> <span class="p">[</span><span class="kt">WL</span><span class="p">]</span> <span class="o">++</span> <span class="nf">replicate</span> <span class="p">(</span><span class="nf">n</span><span class="o">-</span><span class="nf">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">[</span><span class="kt">PL</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">WL</span><span class="p">]</span>
-
-  <span class="nf">onlyR</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Rule</span><span class="p">]</span>
-  <span class="nf">onlyR</span> <span class="nf">i</span> <span class="nf">n</span> <span class="ow">=</span> <span class="nf">concat</span> <span class="o">$</span> <span class="nf">replicate</span> <span class="nf">i</span> <span class="p">[</span><span class="kt">WR</span><span class="p">]</span> <span class="o">++</span> <span class="nf">replicate</span> <span class="p">(</span><span class="nf">n</span><span class="o">-</span><span class="nf">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">[</span><span class="kt">PR</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">WR</span><span class="p">]</span>
-
-  <span class="nf">assumption</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
-  <span class="nf">assumption</span> <span class="nf">env</span> <span class="kt">ArgEmpty</span> <span class="p">(</span><span class="nf">js</span><span class="o">@</span><span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="nf">props</span><span class="kt">:</span><span class="kr">_</span><span class="p">))</span> <span class="ow">=</span> <span class="kr">case</span> <span class="nf">findIndex</span> <span class="p">(`</span><span class="nf">elem</span><span class="p">`</span> <span class="nf">toList</span> <span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kr">of</span>
-    <span class="kt">Nothing</span> <span class="ow">-&gt;</span> <span class="nf">throwM</span> <span class="o">$</span> <span class="kt">CannotSolve</span> <span class="nf">js</span>
-    <span class="kt">Just</span> <span class="nf">i</span> <span class="ow">-&gt;</span>
-      <span class="kr">let</span> <span class="kt">Just</span> <span class="nf">j</span> <span class="ow">=</span> <span class="nf">elemIndex</span> <span class="p">(</span><span class="nf">toList</span> <span class="nf">props</span> <span class="o">!!</span> <span class="nf">i</span><span class="p">)</span> <span class="p">(</span><span class="nf">toList</span> <span class="nf">assms</span><span class="p">)</span>
-      <span class="kr">in</span> <span class="nf">return</span> <span class="o">$</span> <span class="kt">Apply</span> <span class="o">$</span> <span class="nf">onlyR</span> <span class="nf">i</span> <span class="p">(</span><span class="nf">length</span> <span class="nf">props</span><span class="p">)</span> <span class="o">++</span> <span class="nf">onlyL</span> <span class="nf">j</span> <span class="p">(</span><span class="nf">length</span> <span class="nf">assms</span><span class="p">)</span> <span class="o">++</span> <span class="p">[</span><span class="kt">I</span><span class="p">]</span>
-  <span class="nf">assumption</span> <span class="nf">env</span> <span class="nf">arg</span> <span class="kr">_</span> <span class="ow">=</span> <span class="nf">throwM</span> <span class="o">$</span> <span class="kt">WrongArgument</span> <span class="nf">arg</span></code></pre></div>
-<p>実装は、Judgementの中の形を見てPL,WL,PR,WRをいい感じに組み合わせたコマンド列を返します。</p>
-
-<h2 id="implyr-thm-a-b">implyR (thm:a ==> b)?</h2>
-
-<p>implyRは <code>thm: a ==&gt; b</code> を受け取って <code>assms |- b, props</code> を <code>assms |- a, props</code> に変形します。
-引数を省略した場合は <code>assms, a ==&gt; b |- b, props</code> を <code>assms |- a, props</code> に変形します。</p>
+  <span class="n">assumption</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
+  <span class="n">assumption</span> <span class="n">env</span> <span class="kt">ArgEmpty</span> <span class="p">(</span><span class="n">js</span><span class="o">@</span><span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="n">props</span><span class="kt">:</span><span class="kr">_</span><span class="p">))</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">findIndex</span> <span class="p">(`</span><span class="n">elem</span><span class="p">`</span> <span class="n">toList</span> <span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kr">of</span>
+    <span class="kt">Nothing</span> <span class="ow">-&gt;</span> <span class="n">throwM</span> <span class="o">$</span> <span class="kt">CannotSolve</span> <span class="n">js</span>
+    <span class="kt">Just</span> <span class="n">i</span> <span class="ow">-&gt;</span>
+      <span class="kr">let</span> <span class="kt">Just</span> <span class="n">j</span> <span class="ow">=</span> <span class="n">elemIndex</span> <span class="p">(</span><span class="n">toList</span> <span class="n">props</span> <span class="o">!!</span> <span class="n">i</span><span class="p">)</span> <span class="p">(</span><span class="n">toList</span> <span class="n">assms</span><span class="p">)</span>
+      <span class="kr">in</span> <span class="n">return</span> <span class="o">$</span> <span class="kt">Apply</span> <span class="o">$</span> <span class="n">onlyR</span> <span class="n">i</span> <span class="p">(</span><span class="n">length</span> <span class="n">props</span><span class="p">)</span> <span class="o">++</span> <span class="n">onlyL</span> <span class="n">j</span> <span class="p">(</span><span class="n">length</span> <span class="n">assms</span><span class="p">)</span> <span class="o">++</span> <span class="p">[</span><span class="kt">I</span><span class="p">]</span>
+  <span class="n">assumption</span> <span class="n">env</span> <span class="n">arg</span> <span class="kr">_</span> <span class="ow">=</span> <span class="n">throwM</span> <span class="o">$</span> <span class="kt">WrongArgument</span> <span class="n">arg</span></code></pre></div>
+</div>
+<p>
+実装は、Judgementの中の形を見てPL,WL,PR,WRをいい感じに組み合わせたコマンド列を返します。
+</p>
+<h2 id="headline-10">
+implyR (thm:a ==&gt; b)?
+</h2>
+<p>
+implyRは <code>thm: a ==&gt; b</code> を受け取って <code>assms |- b, props</code> を <code>assms |- a, props</code> に変形します。
+引数を省略した場合は <code>assms, a ==&gt; b |- b, props</code> を <code>assms |- a, props</code> に変形します。
+</p>
+<div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="cm">{-| implyR
 </span><span class="cm">  thm: a ==&gt; b
 </span><span class="cm">  goal: assms |- b, props
@@ -266,29 +301,39 @@ export_command, export_declに定義したマクロを列挙します。</p>
 </span><span class="cm">  apply (PR 1, WR)
 </span><span class="cm">    assms |- a, props
 </span><span class="cm">  -}</span>
-  <span class="nf">implyR</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
-  <span class="nf">implyR</span> <span class="nf">env</span> <span class="p">(</span><span class="kt">ArgIdents</span> <span class="p">[(</span><span class="nf">i</span><span class="p">,</span><span class="nf">ps</span><span class="p">)])</span> <span class="nf">js</span> <span class="ow">=</span> <span class="kt">Use</span> <span class="nf">i</span> <span class="nf">ps</span> <span class="kt">:</span> <span class="nf">implyR</span> <span class="nf">env</span> <span class="kt">ArgEmpty</span> <span class="nf">js</span>
-  <span class="nf">implyR</span> <span class="nf">env</span> <span class="kt">ArgEmpty</span> <span class="kr">_</span> <span class="ow">=</span> <span class="nf">coms</span> <span class="kr">where</span>
-    <span class="nf">coms</span> <span class="ow">=</span>
+  <span class="n">implyR</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
+  <span class="n">implyR</span> <span class="n">env</span> <span class="p">(</span><span class="kt">ArgIdents</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="n">ps</span><span class="p">)])</span> <span class="n">js</span> <span class="ow">=</span> <span class="kt">Use</span> <span class="n">i</span> <span class="n">ps</span> <span class="kt">:</span> <span class="n">implyR</span> <span class="n">env</span> <span class="kt">ArgEmpty</span> <span class="n">js</span>
+  <span class="n">implyR</span> <span class="n">env</span> <span class="kt">ArgEmpty</span> <span class="kr">_</span> <span class="ow">=</span> <span class="n">coms</span> <span class="kr">where</span>
+    <span class="n">coms</span> <span class="ow">=</span>
       <span class="p">[</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">ImpL</span><span class="p">]</span>
       <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;defer&#34;</span> <span class="kt">ArgEmpty</span>
       <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;assumption&#34;</span> <span class="kt">ArgEmpty</span>
       <span class="p">,</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">PR</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">WR</span><span class="p">]</span>
       <span class="p">]</span>
-  <span class="nf">implyR</span> <span class="nf">env</span> <span class="nf">arg</span> <span class="kr">_</span> <span class="ow">=</span> <span class="nf">throwM</span> <span class="o">$</span> <span class="kt">WrongArgument</span> <span class="nf">arg</span></code></pre></div>
-<p>コメントのところ見てもらうとわかるんじゃないですかね。</p>
-
-<h2 id="implyl-thm-a-b">implyL (thm:a ==> b)?</h2>
-
-<p>implyRと逆で <code>assms, a |- props</code> を <code>assms, b |- props</code> に変えます。</p>
-
-<p>実装略</p>
-
-<h2 id="genr">genR</h2>
-
-<p><code>assms |- P(a), props</code> を <code>assms |- (Forall a. P(a)), props</code> に変えます。</p>
-
-<p>たまに便利かもしれない(ほんまか)</p>
+  <span class="n">implyR</span> <span class="n">env</span> <span class="n">arg</span> <span class="kr">_</span> <span class="ow">=</span> <span class="n">throwM</span> <span class="o">$</span> <span class="kt">WrongArgument</span> <span class="n">arg</span></code></pre></div>
+</div>
+<p>
+コメントのところ見てもらうとわかるんじゃないですかね。
+</p>
+<h2 id="headline-11">
+implyL (thm:a ==&gt; b)?
+</h2>
+<p>
+implyRと逆で <code>assms, a |- props</code> を <code>assms, b |- props</code> に変えます。
+</p>
+<p>
+実装略
+</p>
+<h2 id="headline-12">
+genR
+</h2>
+<p>
+<code>assms |- P(a), props</code> を <code>assms |- (Forall a. P(a)), props</code> に変えます。
+</p>
+<p>
+たまに便利かもしれない(ほんまか)
+</p>
+<div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="cm">{-| genR
 </span><span class="cm">  goal: assms |- P(a), props
 </span><span class="cm">  apply Cut [Forall a. P(a)]
@@ -305,27 +350,36 @@ export_command, export_declに定義したマクロを列挙します。</p>
 </span><span class="cm">  apply (PR 1, WR)
 </span><span class="cm">    assms, |- Forall a. P(a), props
 </span><span class="cm">  -}</span>
-  <span class="nf">genR</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
-  <span class="nf">genR</span> <span class="nf">env</span> <span class="p">(</span><span class="kt">ArgIdents</span> <span class="p">[(</span><span class="nf">i</span><span class="p">,</span><span class="kt">[]</span><span class="p">)])</span> <span class="p">(</span><span class="nf">js</span><span class="o">@</span><span class="p">(</span><span class="kt">Judgement</span> <span class="kr">_</span> <span class="p">(</span><span class="nf">p</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span><span class="kt">:</span><span class="kr">_</span><span class="p">))</span> <span class="ow">=</span> <span class="nf">coms</span> <span class="kr">where</span>
-    <span class="nf">coms</span> <span class="ow">=</span>
-      <span class="p">[</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">Cut</span> <span class="o">$</span> <span class="kt">Forall</span> <span class="nf">i</span> <span class="nf">p</span><span class="p">]</span>
+  <span class="n">genR</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
+  <span class="n">genR</span> <span class="n">env</span> <span class="p">(</span><span class="kt">ArgIdents</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="kt">[]</span><span class="p">)])</span> <span class="p">(</span><span class="n">js</span><span class="o">@</span><span class="p">(</span><span class="kt">Judgement</span> <span class="kr">_</span> <span class="p">(</span><span class="n">p</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span><span class="kt">:</span><span class="kr">_</span><span class="p">))</span> <span class="ow">=</span> <span class="n">coms</span> <span class="kr">where</span>
+    <span class="n">coms</span> <span class="ow">=</span>
+      <span class="p">[</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">Cut</span> <span class="o">$</span> <span class="kt">Forall</span> <span class="n">i</span> <span class="n">p</span><span class="p">]</span>
       <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;defer&#34;</span> <span class="kt">ArgEmpty</span>
-      <span class="p">,</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">ForallL</span> <span class="p">(</span><span class="kt">Var</span> <span class="nf">i</span><span class="p">)]</span>
+      <span class="p">,</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">ForallL</span> <span class="p">(</span><span class="kt">Var</span> <span class="n">i</span><span class="p">)]</span>
       <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;assumption&#34;</span> <span class="kt">ArgEmpty</span>
       <span class="p">,</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">PR</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">WR</span><span class="p">]</span>
       <span class="p">]</span>
-  <span class="nf">genR</span> <span class="nf">env</span> <span class="nf">arg</span> <span class="kr">_</span> <span class="ow">=</span> <span class="nf">throwM</span> <span class="o">$</span> <span class="kt">WrongArgument</span> <span class="nf">arg</span></code></pre></div>
-<h2 id="genl">genL</h2>
-
-<p><code>assms, P(a) |- props</code> を <code>assms, Forall a. P(a) |- props</code> に変えます。</p>
-
-<p>実装略。</p>
-
-<h2 id="absr">absR</h2>
-
-<p><code>assms, a |- b, props</code> を <code>assms |- a ==&gt; b, props</code> に変えます。</p>
-
-<p>要は==>のelimination ruleなのですが、適用したい補題の仮定がならばの形になっている時なんかに便利ですね。</p>
+  <span class="n">genR</span> <span class="n">env</span> <span class="n">arg</span> <span class="kr">_</span> <span class="ow">=</span> <span class="n">throwM</span> <span class="o">$</span> <span class="kt">WrongArgument</span> <span class="n">arg</span></code></pre></div>
+</div>
+<h2 id="headline-13">
+genL
+</h2>
+<p>
+<code>assms, P(a) |- props</code> を <code>assms, Forall a. P(a) |- props</code> に変えます。
+</p>
+<p>
+実装略。
+</p>
+<h2 id="headline-14">
+absR
+</h2>
+<p>
+<code>assms, a |- b, props</code> を <code>assms |- a ==&gt; b, props</code> に変えます。
+</p>
+<p>
+要は==&gt;のelimination ruleなのですが、適用したい補題の仮定がならばの形になっている時なんかに便利ですね。
+</p>
+<div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="cm">{-| absR
 </span><span class="cm">  goal: assms, a |- b, props
 </span><span class="cm">  apply Cut [a ==&gt; b]
@@ -344,35 +398,49 @@ export_command, export_declに定義したマクロを列挙します。</p>
 </span><span class="cm">    assms |- a ==&gt; b, props
 </span><span class="cm">  -}</span>
 
-  <span class="nf">absL</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
-  <span class="nf">absL</span> <span class="nf">env</span> <span class="kt">ArgEmpty</span> <span class="p">(</span><span class="nf">js</span><span class="o">@</span><span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="nf">a</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span> <span class="p">(</span><span class="nf">b</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span><span class="kt">:</span><span class="kr">_</span><span class="p">))</span> <span class="ow">=</span>
-    <span class="p">[</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">Cut</span> <span class="o">$</span> <span class="nf">a</span> <span class="kt">:==&gt;:</span> <span class="nf">b</span><span class="p">]</span>
+  <span class="n">absL</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
+  <span class="n">absL</span> <span class="n">env</span> <span class="kt">ArgEmpty</span> <span class="p">(</span><span class="n">js</span><span class="o">@</span><span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="n">a</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span> <span class="p">(</span><span class="n">b</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span><span class="kt">:</span><span class="kr">_</span><span class="p">))</span> <span class="ow">=</span>
+    <span class="p">[</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">Cut</span> <span class="o">$</span> <span class="n">a</span> <span class="kt">:==&gt;:</span> <span class="n">b</span><span class="p">]</span>
     <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;defer&#34;</span> <span class="kt">ArgEmpty</span>
     <span class="p">,</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">ImpL</span><span class="p">]</span>
     <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;assumption&#34;</span> <span class="kt">ArgEmpty</span>
     <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;assumption&#34;</span> <span class="kt">ArgEmpty</span>
     <span class="p">,</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">PR</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">WR</span><span class="p">,</span> <span class="kt">WL</span><span class="p">]</span>
     <span class="p">]</span></code></pre></div>
-<h2 id="decl-definition">decl definition</h2>
-
-<p>これはdeclに対するマクロです。</p>
-
-<p><code>definition (name :: type) body</code> とかくと <code>constant name :: type; axiom name_def body</code> が宣言されます。</p>
-
-<p>Isabelleのdefinitionをまぁパクった感じなんですが、constantとかaxiomとか一々かくのやってらんねーよという感じなので定義してあります。</p>
-
-<p>まぁsyntaxがひどいのでどっこいですが。</p>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">definition</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span>
-  <span class="nf">definition</span> <span class="p">[</span><span class="kt">ArgTyped</span> <span class="nf">i</span> <span class="nf">typ</span><span class="p">,</span> <span class="kt">ArgPreds</span> <span class="p">[</span><span class="kt">PredFml</span> <span class="nf">body</span><span class="p">]]</span> <span class="ow">=</span>
-    <span class="p">[</span> <span class="kt">ConstD</span> <span class="nf">i</span> <span class="nf">typ</span>
-    <span class="p">,</span> <span class="kt">AxiomD</span> <span class="p">(</span><span class="nf">i</span> <span class="o">++</span> <span class="s">&#34;_def&#34;</span><span class="p">)</span> <span class="nf">body</span>
+</div>
+<h2 id="headline-15">
+decl definition
+</h2>
+<p>
+これはdeclに対するマクロです。
+</p>
+<p>
+<code>definition (name :: type) body</code> とかくと <code>constant name :: type; axiom name_def body</code> が宣言されます。
+</p>
+<p>
+Isabelleのdefinitionをまぁパクった感じなんですが、constantとかaxiomとか一々かくのやってらんねーよという感じなので定義してあります。
+</p>
+<p>
+まぁsyntaxがひどいのでどっこいですが。
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">definition</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span>
+  <span class="n">definition</span> <span class="p">[</span><span class="kt">ArgTyped</span> <span class="n">i</span> <span class="n">typ</span><span class="p">,</span> <span class="kt">ArgPreds</span> <span class="p">[</span><span class="kt">PredFml</span> <span class="n">body</span><span class="p">]]</span> <span class="ow">=</span>
+    <span class="p">[</span> <span class="kt">ConstD</span> <span class="n">i</span> <span class="n">typ</span>
+    <span class="p">,</span> <span class="kt">AxiomD</span> <span class="p">(</span><span class="n">i</span> <span class="o">++</span> <span class="s">&#34;_def&#34;</span><span class="p">)</span> <span class="n">body</span>
     <span class="p">]</span>
-  <span class="nf">definition</span> <span class="nf">arg</span> <span class="ow">=</span> <span class="nf">throwM</span> <span class="o">$</span> <span class="kt">WrongArguments</span> <span class="nf">arg</span></code></pre></div>
-<h1 id="いざ証明">いざ証明</h1>
-
-<p>さて色々マクロを定義してみたので、実際に使ってみましょう。</p>
-
-<p>前回と同じCurryを証明してみます。</p>
+  <span class="n">definition</span> <span class="n">arg</span> <span class="ow">=</span> <span class="n">throwM</span> <span class="o">$</span> <span class="kt">WrongArguments</span> <span class="n">arg</span></code></pre></div>
+</div>
+<h1 id="headline-16">
+いざ証明
+</h1>
+<p>
+さて色々マクロを定義してみたので、実際に使ってみましょう。
+</p>
+<p>
+前回と同じCurryを証明してみます。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  =========================
   === Welcome to Claire ===
   =========================
@@ -380,9 +448,14 @@ export_command, export_declに定義したマクロを列挙します。</p>
   decl&gt;Hs_file &#34;lib/Commands.hs&#34;
   decl&gt;theorem Curry: (P ==&gt; Q ==&gt; R) ==&gt; (P /\ Q) ==&gt; R
   [] |- [(Pred &#34;P&#34; [] :==&gt;: (Pred &#34;Q&#34; [] :==&gt;: Pred &#34;R&#34; [])) :==&gt;: ((Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; []) :==&gt;: Pred &#34;R&#34; [])]</code></pre></div>
-<p>まず、最初にHs_fileで上で定義したコマンドを読み込みます。割と時間がかかります。</p>
-
-<p>最初は前回と同じようにならばをバラしたりします。</p>
+</div>
+<p>
+まず、最初にHs_fileで上で定義したコマンドを読み込みます。割と時間がかかります。
+</p>
+<p>
+最初は前回と同じようにならばをバラしたりします。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  command&gt;apply ImpR
   [Pred &#34;P&#34; [] :==&gt;: (Pred &#34;Q&#34; [] :==&gt;: Pred &#34;R&#34; [])] |- [(Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; []) :==&gt;: Pred &#34;R&#34; []]
   command&gt;apply ImpR
@@ -392,23 +465,44 @@ export_command, export_declに定義したマクロを列挙します。</p>
   command&gt;apply ImpL
   [Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; []] |- [Pred &#34;P&#34; [],Pred &#34;R&#34; []]
   [Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; [],Pred &#34;Q&#34; [] :==&gt;: Pred &#34;R&#34; []] |- [Pred &#34;R&#34; []]</code></pre></div>
-<p>まぁここまでは同じですね。</p>
-
-<p>最初のゴールは左辺がかつなので、これもバラします。</p>
+</div>
+<p>
+まぁここまでは同じですね。
+</p>
+<p>
+最初のゴールは左辺がかつなので、これもバラします。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  command&gt;apply AndL1
   [Pred &#34;P&#34; []] |- [Pred &#34;P&#34; [],Pred &#34;R&#34; []]
   [Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; [],Pred &#34;Q&#34; [] :==&gt;: Pred &#34;R&#34; []] |- [Pred &#34;R&#34; []]</code></pre></div>
-<p>ここで、最初のゴールの命題と仮定は同じものを含むので、assumptionコマンドが使えます。</p>
+</div>
+<p>
+ここで、最初のゴールの命題と仮定は同じものを含むので、assumptionコマンドが使えます。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  command&gt;assumption
   [Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; [],Pred &#34;Q&#34; [] :==&gt;: Pred &#34;R&#34; []] |- [Pred &#34;R&#34; []]</code></pre></div>
-<p>ゴールが1つに減りました。このゴールは仮定に <code>Q ==&gt; R</code> を、命題に <code>R</code> を含むので、implyRを使って命題を <code>Q</code> に変形します。</p>
+</div>
+<p>
+ゴールが1つに減りました。このゴールは仮定に <code>Q ==&gt; R</code> を、命題に <code>R</code> を含むので、implyRを使って命題を <code>Q</code> に変形します。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  command&gt;implyR
   [Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; []] |- [Pred &#34;Q&#34; []]</code></pre></div>
-<p>あとはかつをバラしてassumptionです。</p>
+</div>
+<p>
+あとはかつをバラしてassumptionです。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  command&gt;apply AndL2
   [Pred &#34;Q&#34; []] |- [Pred &#34;Q&#34; []]
   command&gt;apply I</code></pre></div>
-<p>証明はまとめると次のようになります。</p>
+</div>
+<p>
+証明はまとめると次のようになります。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  proof
     apply (ImpR, ImpR, PL 1, ImpL)
     apply AndL1
@@ -416,26 +510,38 @@ export_command, export_declに定義したマクロを列挙します。</p>
     implyR
     apply (AndL2, I)
   qed</code></pre></div>
-<p>前回の証明と比べて、そこまで行数が減っているわけではないのであんまり変わんねーじゃんと思うかもしれませんが、
-実際は証明の書きやすさは天と地ほどの差があります。</p>
-
-<p>今回定義したいくつかのコマンドのおかげで、より人間的な直観に近いゴールの変形が可能になったので随分証明も書きやすくなりました。</p>
-
-<p>(というか、実際はこういう証明を書きながら「あ、こんなコマンドがあると便利だな」で追加するので書きやすくなるのは当たり前といえば当たり前ですが)</p>
-
-<h1 id="まとめ">まとめ</h1>
-
-<p>今回導入したマクロは、応用的な話ではありますが実際に定理証明に使うならないとこのくらいはできないと話にならないので是非実装したい機能でした。</p>
-
-<p>それらしく導入できたのはよかったかなと思います。</p>
-
-<p>さて、これを触ってみると分かりますがHs_fileは死ぬほど遅いです。まぁGHCを実行時に呼び出してHaskellファイルのコンパイルとかしてるんで遅いに決まっているのですが、これはインタープリターでゴリ押したのが悪いですね。</p>
-
-<p>実用できるProof Assistantを作るならマクロ記述言語をちゃんと用意することは必須でしょう。</p>
-
-<p>今回でClaireの説明もおしまいです。明日はProof Assistant実装を振り返って、だったり今後の改良点だったりの話をします。</p>
-
-<p>お疲れ様でした。</p>
+</div>
+<p>
+前回の証明と比べて、そこまで行数が減っているわけではないのであんまり変わんねーじゃんと思うかもしれませんが、
+実際は証明の書きやすさは天と地ほどの差があります。
+</p>
+<p>
+今回定義したいくつかのコマンドのおかげで、より人間的な直観に近いゴールの変形が可能になったので随分証明も書きやすくなりました。
+</p>
+<p>
+(というか、実際はこういう証明を書きながら「あ、こんなコマンドがあると便利だな」で追加するので書きやすくなるのは当たり前といえば当たり前ですが)
+</p>
+<h1 id="headline-17">
+まとめ
+</h1>
+<p>
+今回導入したマクロは、応用的な話ではありますが実際に定理証明に使うならないとこのくらいはできないと話にならないので是非実装したい機能でした。
+</p>
+<p>
+それらしく導入できたのはよかったかなと思います。
+</p>
+<p>
+さて、これを触ってみると分かりますがHs_fileは死ぬほど遅いです。まぁGHCを実行時に呼び出してHaskellファイルのコンパイルとかしてるんで遅いに決まっているのですが、これはインタープリターでゴリ押したのが悪いですね。
+</p>
+<p>
+実用できるProof Assistantを作るならマクロ記述言語をちゃんと用意することは必須でしょう。
+</p>
+<p>
+今回でClaireの説明もおしまいです。明日はProof Assistant実装を振り返って、だったり今後の改良点だったりの話をします。
+</p>
+<p>
+お疲れ様でした。
+</p>
 </section>
     <footer>
       <hr>

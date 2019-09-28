@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,40 +22,15 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Proof Assistantを作る・理論編 その2" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 17日目の記事です。
-昨日に引き続き、Proof Assistantを作る話をしていきます。
-今日は実際にこの後作っていくProof Assistant固有の話をしていきます。
-Claire言語とその設計 唐突ですがこれから作るProof Assistantを「Claire1」と呼ぶことにします。
-リポジトリ: myuon/claire
-Claireは実際には複数の言語の組み合わせでできています:
- FOL: Pure logicとしてはfirst-order logicを採用します。 LK: Proof SystemとしてはLK(Sequent Calculus)を採用します Claire: Proof Assistant Claireの証明記述用の言語の名前です コマンド記述言語(コマンド定義マクロ): コマンド記述言語はコマンド名からLKの規則の列を生成するものです。今回はHaskellで記述できるようにします。 HOLライブラリ: Isabelleと同じく、HOLをライブラリとして実装することが出来ます。することができるというだけでかなり大変なのでしませんが。  LKについて Proof Systemとして、Sequent Calculus LKを採用します。定義はwikipediaのページでも見るといいんじゃないでしょうか。
-The system LK - Wikipedia
-今回LKを採用した理由として、natural deductionに比べると推論規則を適用した時のゴールの変形の選択肢が少ない(規則を適用する時に必要な情報が少ない)ことがあります。 というか、natural deductionは命題変数の数を減らすelimination ruleを多く含みますがelimination ruleはゴールに対して適用する、つまり下から上に読むと新たな変数を導入することになるので曖昧さが出やすいです。
-それに比べるとSequent Calculusは(仮定とゴールを上手く用意することで)ruleが基本的にintro ruleばかりなので曖昧さが出にくいので、コマンドを適用して証明を書くのには便利かなと思って採用しました。
-あとLK触れたことないのでちょっと触ってみたかった的なアレもあります(こっちの理由のほうが大きいかもしれない)。
-LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。
- judgementは Pn,P(n-1)..P1 |- Q1,Q2..Qm の形(PやQはfirst-order logicの論理式)。左側を仮定、右側を命題(propositions)という。 仮定は「全てがなりたつ」 命題は「いずれかが成り立つ」の意味になる 仮定は右から、命題は左から順番に読んでいく(まぁこれは記法の問題なのでどちらでもよいが) 論理結合子に対する規則は、それが左辺に現れる場合と右辺に現れる場合とあることに注意。例えばAndの規則はAndL1, AndL2, AndRの3つ。 LKは古典的(背理法が使える)である。(注:命題の数を常に1つだけに制限すると直観主義になる) (例) AndLの規則により B |- Qs ==&gt; And(A,B) |- Qs がわかる。これは、「Bの下でQ1." />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 17日目の記事です。   昨日に引き続き、Proof Assistantを作る話をしていきます。  今日は実際にこの後作っていくProof Assistant固有の話をしていきます。 Claire言語とその設計   唐突ですがこれから作るProof Assistantを「Claire1」と呼ぶことにします。  リポジトリ: myuon/claire  Claireは実際には複数の言語の組み合わせでできています:    FOL: Pure logicとしてはfirst-order logicを採用します。    LK: Proof SystemとしてはLK(Sequent Calculus)を採用します    Claire: Proof Assistant Claireの証明記述用の言語の名前です    コマンド記述言語(コマンド定義マクロ): コマンド記述言語はコマンド名からLKの規則の列を生成するものです。今回はHaskellで記述できるようにします。    HOLライブラリ: Isabelleと同じく、HOLをライブラリとして実装することが出来ます。することができるというだけでかなり大変なのでしませんが。 LKについて     Proof Systemとして、Sequent Calculus LKを採用します。定義はwikipediaのページでも見るといいんじゃないでしょうか。  The system LK - Wikipedia  今回LKを採用した理由として、natural deductionに比べると推論規則を適用した時のゴールの変形の選択肢が少ない(規則を適用する時に必要な情報が少ない)ことがあります。 というか、natural deductionは命題変数の数を減らすelimination ruleを多く含みますがelimination ruleはゴールに対して適用する、つまり下から上に読むと新たな変数を導入することになるので曖昧さが出やすいです。  それに比べるとSequent Calculusは(仮定とゴールを上手く用意することで)ruleが基本的にintro ruleばかりなので曖昧さが出にくいので、コマンドを適用して証明を書くのには便利かなと思って採用しました。  あとLK触れたことないのでちょっと触ってみたかった的なアレもあります(こっちの理由のほうが大きいかもしれない)。  LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。    judgementは Pn,P(n-1)." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-theory-2/" />
-<meta property="article:published_time" content="2017-12-17T00:17:12&#43;09:00"/>
-<meta property="article:modified_time" content="2017-12-17T00:17:12&#43;09:00"/>
-
+<meta property="article:published_time" content="2017-12-17T00:17:12+09:00" />
+<meta property="article:modified_time" content="2017-12-17T00:17:12+09:00" />
 
 
 <meta itemprop="name" content="Proof Assistantを作る・理論編 その2">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 17日目の記事です。
-昨日に引き続き、Proof Assistantを作る話をしていきます。
-今日は実際にこの後作っていくProof Assistant固有の話をしていきます。
-Claire言語とその設計 唐突ですがこれから作るProof Assistantを「Claire1」と呼ぶことにします。
-リポジトリ: myuon/claire
-Claireは実際には複数の言語の組み合わせでできています:
- FOL: Pure logicとしてはfirst-order logicを採用します。 LK: Proof SystemとしてはLK(Sequent Calculus)を採用します Claire: Proof Assistant Claireの証明記述用の言語の名前です コマンド記述言語(コマンド定義マクロ): コマンド記述言語はコマンド名からLKの規則の列を生成するものです。今回はHaskellで記述できるようにします。 HOLライブラリ: Isabelleと同じく、HOLをライブラリとして実装することが出来ます。することができるというだけでかなり大変なのでしませんが。  LKについて Proof Systemとして、Sequent Calculus LKを採用します。定義はwikipediaのページでも見るといいんじゃないでしょうか。
-The system LK - Wikipedia
-今回LKを採用した理由として、natural deductionに比べると推論規則を適用した時のゴールの変形の選択肢が少ない(規則を適用する時に必要な情報が少ない)ことがあります。 というか、natural deductionは命題変数の数を減らすelimination ruleを多く含みますがelimination ruleはゴールに対して適用する、つまり下から上に読むと新たな変数を導入することになるので曖昧さが出やすいです。
-それに比べるとSequent Calculusは(仮定とゴールを上手く用意することで)ruleが基本的にintro ruleばかりなので曖昧さが出にくいので、コマンドを適用して証明を書くのには便利かなと思って採用しました。
-あとLK触れたことないのでちょっと触ってみたかった的なアレもあります(こっちの理由のほうが大きいかもしれない)。
-LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。
- judgementは Pn,P(n-1)..P1 |- Q1,Q2..Qm の形(PやQはfirst-order logicの論理式)。左側を仮定、右側を命題(propositions)という。 仮定は「全てがなりたつ」 命題は「いずれかが成り立つ」の意味になる 仮定は右から、命題は左から順番に読んでいく(まぁこれは記法の問題なのでどちらでもよいが) 論理結合子に対する規則は、それが左辺に現れる場合と右辺に現れる場合とあることに注意。例えばAndの規則はAndL1, AndL2, AndRの3つ。 LKは古典的(背理法が使える)である。(注:命題の数を常に1つだけに制限すると直観主義になる) (例) AndLの規則により B |- Qs ==&gt; And(A,B) |- Qs がわかる。これは、「Bの下でQ1.">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 17日目の記事です。   昨日に引き続き、Proof Assistantを作る話をしていきます。  今日は実際にこの後作っていくProof Assistant固有の話をしていきます。 Claire言語とその設計   唐突ですがこれから作るProof Assistantを「Claire1」と呼ぶことにします。  リポジトリ: myuon/claire  Claireは実際には複数の言語の組み合わせでできています:    FOL: Pure logicとしてはfirst-order logicを採用します。    LK: Proof SystemとしてはLK(Sequent Calculus)を採用します    Claire: Proof Assistant Claireの証明記述用の言語の名前です    コマンド記述言語(コマンド定義マクロ): コマンド記述言語はコマンド名からLKの規則の列を生成するものです。今回はHaskellで記述できるようにします。    HOLライブラリ: Isabelleと同じく、HOLをライブラリとして実装することが出来ます。することができるというだけでかなり大変なのでしませんが。 LKについて     Proof Systemとして、Sequent Calculus LKを採用します。定義はwikipediaのページでも見るといいんじゃないでしょうか。  The system LK - Wikipedia  今回LKを採用した理由として、natural deductionに比べると推論規則を適用した時のゴールの変形の選択肢が少ない(規則を適用する時に必要な情報が少ない)ことがあります。 というか、natural deductionは命題変数の数を減らすelimination ruleを多く含みますがelimination ruleはゴールに対して適用する、つまり下から上に読むと新たな変数を導入することになるので曖昧さが出やすいです。  それに比べるとSequent Calculusは(仮定とゴールを上手く用意することで)ruleが基本的にintro ruleばかりなので曖昧さが出にくいので、コマンドを適用して証明を書くのには便利かなと思って採用しました。  あとLK触れたことないのでちょっと触ってみたかった的なアレもあります(こっちの理由のほうが大きいかもしれない)。  LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。    judgementは Pn,P(n-1).">
 
 
 <meta itemprop="datePublished" content="2017-12-17T00:17:12&#43;09:00" />
@@ -68,19 +43,7 @@ LKについてそこまで説明をするつもりはありませんが、次の
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Proof Assistantを作る・理論編 その2"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 17日目の記事です。
-昨日に引き続き、Proof Assistantを作る話をしていきます。
-今日は実際にこの後作っていくProof Assistant固有の話をしていきます。
-Claire言語とその設計 唐突ですがこれから作るProof Assistantを「Claire1」と呼ぶことにします。
-リポジトリ: myuon/claire
-Claireは実際には複数の言語の組み合わせでできています:
- FOL: Pure logicとしてはfirst-order logicを採用します。 LK: Proof SystemとしてはLK(Sequent Calculus)を採用します Claire: Proof Assistant Claireの証明記述用の言語の名前です コマンド記述言語(コマンド定義マクロ): コマンド記述言語はコマンド名からLKの規則の列を生成するものです。今回はHaskellで記述できるようにします。 HOLライブラリ: Isabelleと同じく、HOLをライブラリとして実装することが出来ます。することができるというだけでかなり大変なのでしませんが。  LKについて Proof Systemとして、Sequent Calculus LKを採用します。定義はwikipediaのページでも見るといいんじゃないでしょうか。
-The system LK - Wikipedia
-今回LKを採用した理由として、natural deductionに比べると推論規則を適用した時のゴールの変形の選択肢が少ない(規則を適用する時に必要な情報が少ない)ことがあります。 というか、natural deductionは命題変数の数を減らすelimination ruleを多く含みますがelimination ruleはゴールに対して適用する、つまり下から上に読むと新たな変数を導入することになるので曖昧さが出やすいです。
-それに比べるとSequent Calculusは(仮定とゴールを上手く用意することで)ruleが基本的にintro ruleばかりなので曖昧さが出にくいので、コマンドを適用して証明を書くのには便利かなと思って採用しました。
-あとLK触れたことないのでちょっと触ってみたかった的なアレもあります(こっちの理由のほうが大きいかもしれない)。
-LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。
- judgementは Pn,P(n-1)..P1 |- Q1,Q2..Qm の形(PやQはfirst-order logicの論理式)。左側を仮定、右側を命題(propositions)という。 仮定は「全てがなりたつ」 命題は「いずれかが成り立つ」の意味になる 仮定は右から、命題は左から順番に読んでいく(まぁこれは記法の問題なのでどちらでもよいが) 論理結合子に対する規則は、それが左辺に現れる場合と右辺に現れる場合とあることに注意。例えばAndの規則はAndL1, AndL2, AndRの3つ。 LKは古典的(背理法が使える)である。(注:命題の数を常に1つだけに制限すると直観主義になる) (例) AndLの規則により B |- Qs ==&gt; And(A,B) |- Qs がわかる。これは、「Bの下でQ1."/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 17日目の記事です。   昨日に引き続き、Proof Assistantを作る話をしていきます。  今日は実際にこの後作っていくProof Assistant固有の話をしていきます。 Claire言語とその設計   唐突ですがこれから作るProof Assistantを「Claire1」と呼ぶことにします。  リポジトリ: myuon/claire  Claireは実際には複数の言語の組み合わせでできています:    FOL: Pure logicとしてはfirst-order logicを採用します。    LK: Proof SystemとしてはLK(Sequent Calculus)を採用します    Claire: Proof Assistant Claireの証明記述用の言語の名前です    コマンド記述言語(コマンド定義マクロ): コマンド記述言語はコマンド名からLKの規則の列を生成するものです。今回はHaskellで記述できるようにします。    HOLライブラリ: Isabelleと同じく、HOLをライブラリとして実装することが出来ます。することができるというだけでかなり大変なのでしませんが。 LKについて     Proof Systemとして、Sequent Calculus LKを採用します。定義はwikipediaのページでも見るといいんじゃないでしょうか。  The system LK - Wikipedia  今回LKを採用した理由として、natural deductionに比べると推論規則を適用した時のゴールの変形の選択肢が少ない(規則を適用する時に必要な情報が少ない)ことがあります。 というか、natural deductionは命題変数の数を減らすelimination ruleを多く含みますがelimination ruleはゴールに対して適用する、つまり下から上に読むと新たな変数を導入することになるので曖昧さが出やすいです。  それに比べるとSequent Calculusは(仮定とゴールを上手く用意することで)ruleが基本的にintro ruleばかりなので曖昧さが出にくいので、コマンドを適用して証明を書くのには便利かなと思って採用しました。  あとLK触れたことないのでちょっと触ってみたかった的なアレもあります(こっちの理由のほうが大きいかもしれない)。  LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。    judgementは Pn,P(n-1)."/>
 
 
   </head>
@@ -109,95 +72,196 @@ LKについてそこまで説明をするつもりはありませんが、次の
       <time datetime="2017-12-17 12:17">2017-12-17</time>
       <h1>Proof Assistantを作る・理論編 その2</h1>
     </header>
-    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 17日目の記事です。</strong></p>
-
-<hr />
-
-<p>昨日に引き続き、Proof Assistantを作る話をしていきます。</p>
-
-<p>今日は実際にこの後作っていくProof Assistant固有の話をしていきます。</p>
-
-<h1 id="claire言語とその設計">Claire言語とその設計</h1>
-
-<p>唐突ですがこれから作るProof Assistantを「Claire<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>」と呼ぶことにします。</p>
-
-<p>リポジトリ: <a href="https://github.com/myuon/claire" title="myuon/claire">myuon/claire</a></p>
-
-<p>Claireは実際には複数の言語の組み合わせでできています:</p>
-
+    <section>
+<p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 17日目の記事です。</strong>
+</p>
+<hr>
+<p>
+昨日に引き続き、Proof Assistantを作る話をしていきます。
+</p>
+<p>
+今日は実際にこの後作っていくProof Assistant固有の話をしていきます。
+</p>
+<h1 id="headline-1">
+Claire言語とその設計
+</h1>
+<p>
+唐突ですがこれから作るProof Assistantを「Claire<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>」と呼ぶことにします。
+</p>
+<p>
+リポジトリ: <a href="https://github.com/myuon/claire">myuon/claire</a>
+</p>
+<p>
+Claireは実際には複数の言語の組み合わせでできています:
+</p>
 <ul>
-<li>FOL: Pure logicとしてはfirst-order logicを採用します。</li>
-<li>LK: Proof SystemとしてはLK(Sequent Calculus)を採用します</li>
-<li>Claire: Proof Assistant Claireの証明記述用の言語の名前です</li>
-<li>コマンド記述言語(コマンド定義マクロ): コマンド記述言語はコマンド名からLKの規則の列を生成するものです。今回はHaskellで記述できるようにします。</li>
-<li>HOLライブラリ: Isabelleと同じく、HOLをライブラリとして実装することが出来ます。することができるというだけでかなり大変なのでしませんが。</li>
+<li>
+<p>
+FOL: Pure logicとしてはfirst-order logicを採用します。
+</p>
+</li>
+<li>
+<p>
+LK: Proof SystemとしてはLK(Sequent Calculus)を採用します
+</p>
+</li>
+<li>
+<p>
+Claire: Proof Assistant Claireの証明記述用の言語の名前です
+</p>
+</li>
+<li>
+<p>
+コマンド記述言語(コマンド定義マクロ): コマンド記述言語はコマンド名からLKの規則の列を生成するものです。今回はHaskellで記述できるようにします。
+</p>
+</li>
+<li>
+<p>
+HOLライブラリ: Isabelleと同じく、HOLをライブラリとして実装することが出来ます。することができるというだけでかなり大変なのでしませんが。
+</p>
+<h2 id="headline-2">
+LKについて
+</h2>
+</li>
 </ul>
-
-<h2 id="lkについて">LKについて</h2>
-
-<p>Proof Systemとして、Sequent Calculus LKを採用します。定義はwikipediaのページでも見るといいんじゃないでしょうか。</p>
-
-<p><a href="https://en.wikipedia.org/wiki/Sequent_calculus#The_system_LK" title="The system LK - Wikipedia">The system LK - Wikipedia</a></p>
-
-<p>今回LKを採用した理由として、natural deductionに比べると推論規則を適用した時のゴールの変形の選択肢が少ない(規則を適用する時に必要な情報が少ない)ことがあります。
-というか、natural deductionは命題変数の数を減らすelimination ruleを多く含みますがelimination ruleはゴールに対して適用する、つまり下から上に読むと新たな変数を導入することになるので曖昧さが出やすいです。</p>
-
-<p>それに比べるとSequent Calculusは(仮定とゴールを上手く用意することで)ruleが基本的にintro ruleばかりなので曖昧さが出にくいので、コマンドを適用して証明を書くのには便利かなと思って採用しました。</p>
-
-<p>あとLK触れたことないのでちょっと触ってみたかった的なアレもあります(こっちの理由のほうが大きいかもしれない)。</p>
-
-<p>LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。</p>
-
+<p>
+Proof Systemとして、Sequent Calculus LKを採用します。定義はwikipediaのページでも見るといいんじゃないでしょうか。
+</p>
+<p>
+<a href="https://en.wikipedia.org/wiki/Sequent_calculus#The_system_LK">The system LK - Wikipedia</a>
+</p>
+<p>
+今回LKを採用した理由として、natural deductionに比べると推論規則を適用した時のゴールの変形の選択肢が少ない(規則を適用する時に必要な情報が少ない)ことがあります。
+というか、natural deductionは命題変数の数を減らすelimination ruleを多く含みますがelimination ruleはゴールに対して適用する、つまり下から上に読むと新たな変数を導入することになるので曖昧さが出やすいです。
+</p>
+<p>
+それに比べるとSequent Calculusは(仮定とゴールを上手く用意することで)ruleが基本的にintro ruleばかりなので曖昧さが出にくいので、コマンドを適用して証明を書くのには便利かなと思って採用しました。
+</p>
+<p>
+あとLK触れたことないのでちょっと触ってみたかった的なアレもあります(こっちの理由のほうが大きいかもしれない)。
+</p>
+<p>
+LKについてそこまで説明をするつもりはありませんが、次のようなことをおさえておいてください。
+</p>
 <ul>
-<li>judgementは <code>Pn,P(n-1)..P1 |- Q1,Q2..Qm</code> の形(PやQはfirst-order logicの論理式)。左側を仮定、右側を命題(propositions)という。</li>
-<li>仮定は「全てがなりたつ」 命題は「いずれかが成り立つ」の意味になる</li>
-<li>仮定は右から、命題は左から順番に読んでいく(まぁこれは記法の問題なのでどちらでもよいが)</li>
-<li>論理結合子に対する規則は、それが左辺に現れる場合と右辺に現れる場合とあることに注意。例えばAndの規則はAndL1, AndL2, AndRの3つ。</li>
-<li>LKは古典的(背理法が使える)である。(注:命題の数を常に1つだけに制限すると直観主義になる)</li>
-<li>(例) AndLの規則により <code>B |- Qs ==&gt; And(A,B) |- Qs</code> がわかる。これは、「Bの下でQ1..Qmのいずれかが成り立つならばAかつBの元でもQ1..Qmのいずれかが成り立つ」という風に読むとよい。</li>
-<li>(例) ImpLの規則により <code>|- A,Qs ==&gt; B |- Qs ==&gt; Imp(A,B) |- Qs</code> がわかる。これは、「AならばB」が「not AまたはB」と同値であることを使うと、「AまたはQsのいずれかが成り立ち、BのもとでQsのいずれかが成り立つならば、(not AまたはB)のもとではQsのいずれかが成り立つ」と読める。</li>
+<li>
+<p>
+judgementは <code>Pn,P(n-1)..P1 |- Q1,Q2..Qm</code> の形(PやQはfirst-order logicの論理式)。左側を仮定、右側を命題(propositions)という。
+</p>
+</li>
+<li>
+<p>
+仮定は「全てがなりたつ」 命題は「いずれかが成り立つ」の意味になる
+</p>
+</li>
+<li>
+<p>
+仮定は右から、命題は左から順番に読んでいく(まぁこれは記法の問題なのでどちらでもよいが)
+</p>
+</li>
+<li>
+<p>
+論理結合子に対する規則は、それが左辺に現れる場合と右辺に現れる場合とあることに注意。例えばAndの規則はAndL1, AndL2, AndRの3つ。
+</p>
+</li>
+<li>
+<p>
+LKは古典的(背理法が使える)である。(注:命題の数を常に1つだけに制限すると直観主義になる)
+</p>
+</li>
+<li>
+<p>
+(例) AndLの規則により <code>B |- Qs ==&gt; And(A,B) |- Qs</code> がわかる。これは、「Bの下でQ1..Qmのいずれかが成り立つならばAかつBの元でもQ1..Qmのいずれかが成り立つ」という風に読むとよい。
+</p>
+</li>
+<li>
+<p>
+(例) ImpLの規則により <code>|- A,Qs ==&gt; B |- Qs ==&gt; Imp(A,B) |- Qs</code> がわかる。これは、「AならばB」が「not AまたはB」と同値であることを使うと、「AまたはQsのいずれかが成り立ち、BのもとでQsのいずれかが成り立つならば、(not AまたはB)のもとではQsのいずれかが成り立つ」と読める。
+</p>
+</li>
 </ul>
-
-<p>まぁ意味がちゃんとわからなくとも、「LKはこういう(ゴールを変形してゆく)ルールからなります」「LKは"いい感じの"systemなので証明が書けます」くらいのノリでもいいです。</p>
-
-<h2 id="claireのコマンドについて">Claireのコマンドについて</h2>
-
-<p>Claireは(基本的には)コマンドを適用して、ゴールをどんどん変形していく感じになります。</p>
-
-<p>ところでゴールへの変形というのは(当然)自由にやっていいわけではなく、基本的に適用できるルールはLKのルールだけです。
-しかしそうすると例えば「すでに示した定理を再利用する」みたいなコマンドもないので大変不便です。</p>
-
-<p>「すでに示した定理を新たに仮定に追加するコマンド use」を使ってよいかというのは、useを使って得られた証明図から、useを使わずに同じ論理式を示す証明図があることから保証されます。</p>
-
-<p>まぁこういう感じで、アグレッシブに(LKのルール以外の方法で)ゴールを書き換えるコマンドを実装してもよいかどうかはその都度考える必要がありますので要注意です。</p>
-
-<h1 id="実装にあたって">実装にあたって</h1>
-
-<p>さて次回からはいよいよHaskellコードの解説になります。</p>
-
-<p>色々誤解があるといけないので事前に諸注意(言い訳)を述べておきます。</p>
-
+<p>
+まぁ意味がちゃんとわからなくとも、「LKはこういう(ゴールを変形してゆく)ルールからなります」「LKは&#34;いい感じの&#34;systemなので証明が書けます」くらいのノリでもいいです。
+</p>
+<h2 id="headline-3">
+Claireのコマンドについて
+</h2>
+<p>
+Claireは(基本的には)コマンドを適用して、ゴールをどんどん変形していく感じになります。
+</p>
+<p>
+ところでゴールへの変形というのは(当然)自由にやっていいわけではなく、基本的に適用できるルールはLKのルールだけです。
+しかしそうすると例えば「すでに示した定理を再利用する」みたいなコマンドもないので大変不便です。
+</p>
+<p>
+「すでに示した定理を新たに仮定に追加するコマンド use」を使ってよいかというのは、useを使って得られた証明図から、useを使わずに同じ論理式を示す証明図があることから保証されます。
+</p>
+<p>
+まぁこういう感じで、アグレッシブに(LKのルール以外の方法で)ゴールを書き換えるコマンドを実装してもよいかどうかはその都度考える必要がありますので要注意です。
+</p>
+<h1 id="headline-4">
+実装にあたって
+</h1>
+<p>
+さて次回からはいよいよHaskellコードの解説になります。
+</p>
+<p>
+色々誤解があるといけないので事前に諸注意(言い訳)を述べておきます。
+</p>
 <ul>
-<li>Proof Assitantとして特に独自性があるわけではない(基本的にはIsabelleの下位互換、jEditを使わなくてよいところだけが唯一の利点)</li>
-<li>proverは実装しない(証明を生成する便利コマンドの類はいくつか実装します)</li>
-<li>unifierは実装しない(曖昧さのある論理式の適用とか、subtermをいい感じに探して適用みたいな器用なことはできません)</li>
-<li>マクロで定義されたコマンドのsyntaxがひどい(context-dependentなparser書くのつらそうだからやりたくなかった)</li>
-<li>標準ライブラリとしてHOLを提供といいつつHigher-order logic自体は実装できてない(全部やるとつらすぎる)</li>
-<li>洒落にならないくらい遅い(真面目な実装をサボりHaskellのインタープリターを実行時に呼び出すという荒業をしているため)</li>
+<li>
+<p>
+Proof Assitantとして特に独自性があるわけではない(基本的にはIsabelleの下位互換、jEditを使わなくてよいところだけが唯一の利点)
+</p>
+</li>
+<li>
+<p>
+proverは実装しない(証明を生成する便利コマンドの類はいくつか実装します)
+</p>
+</li>
+<li>
+<p>
+unifierは実装しない(曖昧さのある論理式の適用とか、subtermをいい感じに探して適用みたいな器用なことはできません)
+</p>
+</li>
+<li>
+<p>
+マクロで定義されたコマンドのsyntaxがひどい(context-dependentなparser書くのつらそうだからやりたくなかった)
+</p>
+</li>
+<li>
+<p>
+標準ライブラリとしてHOLを提供といいつつHigher-order logic自体は実装できてない(全部やるとつらすぎる)
+</p>
+</li>
+<li>
+<p>
+洒落にならないくらい遅い(真面目な実装をサボりHaskellのインタープリターを実行時に呼び出すという荒業をしているため)
+</p>
+</li>
 </ul>
-
-<p>まぁそれでもコードは意外と面白い感じになっていると思います(希望的観測)。</p>
-
-<h1 id="まとめ">まとめ</h1>
-
-<p>というわけでまた明日。</p>
+<p>
+まぁそれでもコードは意外と面白い感じになっていると思います(希望的観測)。
+</p>
+<h1 id="headline-5">
+まとめ
+</h1>
+<p>
+というわけでまた明日。
+</p>
 <div class="footnotes">
-
-<hr />
-
-<ol>
-<li id="fn:1">読みなんて適当でいいんですが個人的にはクレールと読んでいます。Isabelleがフランスの女性名らしいので同じくフランスの女性名から選びました。 <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-</ol>
+<hr class="footnotes-separatator">
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>
+読みなんて適当でいいんですが個人的にはクレールと読んでいます。Isabelleがフランスの女性名らしいので同じくフランスの女性名から選びました。
+</p>
+</div>
+</div>
+</div>
 </div>
 </section>
     <footer>

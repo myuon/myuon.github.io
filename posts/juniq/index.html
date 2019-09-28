@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -50,9 +50,8 @@ Live2D SDKリリースライセンス: https://www.live2d.com/ja/products/releas
 // https://github.com/myuon/juniQ/blob/master/viewer/src/index.ts#L42 class AudioVolume { processor: ScriptProcessorNode; volume: number; clipLevel: number; averaging: number; clipping: boolean; lastClip: number; clipLag: number; constructor(audioContext: AudioContext, clipLevel = 0." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/juniq/" />
-<meta property="article:published_time" content="2018-12-25T20:25:54&#43;09:00"/>
-<meta property="article:modified_time" content="2018-12-25T20:25:54&#43;09:00"/>
-
+<meta property="article:published_time" content="2018-12-25T20:25:54+09:00" />
+<meta property="article:modified_time" content="2018-12-25T20:25:54+09:00" />
 
 
 <meta itemprop="name" content="バーチャル美少女定理証明士を支える技術">
@@ -241,10 +240,10 @@ Live2D SDKリリースライセンス: https://www.live2d.com/ja/products/releas
     <span class="p">});</span>
 
     <span class="c1">// 長さで割る
-</span><span class="c1"></span>    <span class="kd">let</span> <span class="nx">rms</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span><span class="nx">sum</span> <span class="err">/ buf.length);</span>
+</span><span class="c1"></span>    <span class="kd">let</span> <span class="nx">rms</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span><span class="nx">sum</span> <span class="o">/</span> <span class="nx">buf</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
 
     <span class="c1">// あまり急激に大きくならないように補正
-</span><span class="c1"></span>    <span class="k">this</span><span class="p">.</span><span class="nx">volume</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">rms</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">volume</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">averaging</span> <span class="err">/ 2);</span>
+</span><span class="c1"></span>    <span class="k">this</span><span class="p">.</span><span class="nx">volume</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">rms</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">volume</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">averaging</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
   <span class="p">};</span>
 
   <span class="nx">checkClipping</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
@@ -343,12 +342,12 @@ Live2D SDKリリースライセンス: https://www.live2d.com/ja/products/releas
 <ul>
 <li>あらかじめ、顔のパーツの3D座標を調べておく(目の中心とか輪郭の中心とか)</li>
 <li>顔のパーツの座標から対応する2D座標を持ってくる</li>
-<li>solvePnPで解く(2Dと3Dの対応点から回転ベクトルを求めたりするやつ; OpenCVにある)</li>
-</ul>
+
+<li><p>solvePnPで解く(2Dと3Dの対応点から回転ベクトルを求めたりするやつ; OpenCVにある)</p>
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># https://github.com/myuon/juniQ/blob/master/server/src/recognizer.py#L9</span>
 <span class="n">K</span> <span class="o">=</span> <span class="p">[</span><span class="mf">6.5308391993466671e+002</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.1950000000000000e+002</span><span class="p">,</span>
-     <span class="mf">0.0</span><span class="p">,</span> <span class="mf">6.5308391993466671e+002</span><span class="p">,</span> <span class="mf">2.3950000000000000e+002</span><span class="p">,</span>
-     <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+ <span class="mf">0.0</span><span class="p">,</span> <span class="mf">6.5308391993466671e+002</span><span class="p">,</span> <span class="mf">2.3950000000000000e+002</span><span class="p">,</span>
+ <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
 <span class="n">D</span> <span class="o">=</span> <span class="p">[</span><span class="mf">7.0834633684407095e-002</span><span class="p">,</span> <span class="mf">6.9140193737175351e-002</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.3073460323689292e+000</span><span class="p">]</span>
 
 <span class="n">cam_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">K</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
@@ -357,57 +356,59 @@ Live2D SDKリリースライセンス: https://www.live2d.com/ja/products/releas
 <span class="c1"># 顔の3D座標とかそういうやつ</span>
 <span class="c1"># どこかからもらってきたやつと職人による手作業でチューニングされてる</span>
 <span class="n">object_pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">([</span>
-  <span class="p">[</span><span class="mf">6.825897</span><span class="p">,</span> <span class="mf">6.760612</span><span class="p">,</span> <span class="mf">4.402142</span><span class="p">],</span> <span class="c1"># 17</span>
-  <span class="p">[</span><span class="mf">1.330353</span><span class="p">,</span> <span class="mf">7.122144</span><span class="p">,</span> <span class="mf">6.903745</span><span class="p">],</span> <span class="c1"># 21</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">1.330353</span><span class="p">,</span> <span class="mf">7.122144</span><span class="p">,</span> <span class="mf">6.903745</span><span class="p">],</span> <span class="c1"># 22</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">6.825897</span><span class="p">,</span> <span class="mf">6.760612</span><span class="p">,</span> <span class="mf">4.402142</span><span class="p">],</span> <span class="c1"># 26</span>
-  <span class="p">[</span><span class="mf">5.311432</span><span class="p">,</span> <span class="mf">5.485328</span><span class="p">,</span> <span class="mf">3.987654</span><span class="p">],</span> <span class="c1"># 36</span>
-  <span class="p">[</span><span class="mf">1.789930</span><span class="p">,</span> <span class="mf">5.393625</span><span class="p">,</span> <span class="mf">4.413414</span><span class="p">],</span> <span class="c1"># 39</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">1.789930</span><span class="p">,</span> <span class="mf">5.393625</span><span class="p">,</span> <span class="mf">4.413414</span><span class="p">],</span> <span class="c1"># 42</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">5.311432</span><span class="p">,</span> <span class="mf">5.485328</span><span class="p">,</span> <span class="mf">3.987654</span><span class="p">],</span> <span class="c1"># 45</span>
-  <span class="p">[</span><span class="mf">2.005628</span><span class="p">,</span> <span class="mf">1.409845</span><span class="p">,</span> <span class="mf">6.165652</span><span class="p">],</span> <span class="c1"># 31</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">2.005628</span><span class="p">,</span> <span class="mf">1.409845</span><span class="p">,</span> <span class="mf">6.165652</span><span class="p">],</span> <span class="c1"># 35</span>
-  <span class="p">[</span><span class="mf">2.774015</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.080775</span><span class="p">,</span> <span class="mf">5.048531</span><span class="p">],</span> <span class="c1"># 48</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">2.774015</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.080775</span><span class="p">,</span> <span class="mf">5.048531</span><span class="p">],</span> <span class="c1"># 54</span>
-  <span class="p">[</span><span class="mf">0.000000</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.116408</span><span class="p">,</span> <span class="mf">6.097667</span><span class="p">],</span> <span class="c1"># 57</span>
-  <span class="p">[</span><span class="mf">0.000000</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.415691</span><span class="p">,</span> <span class="mf">4.070434</span><span class="p">]</span> <span class="c1"># 8</span>
-  <span class="p">])</span>
+<span class="p">[</span><span class="mf">6.825897</span><span class="p">,</span> <span class="mf">6.760612</span><span class="p">,</span> <span class="mf">4.402142</span><span class="p">],</span> <span class="c1"># 17</span>
+<span class="p">[</span><span class="mf">1.330353</span><span class="p">,</span> <span class="mf">7.122144</span><span class="p">,</span> <span class="mf">6.903745</span><span class="p">],</span> <span class="c1"># 21</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">1.330353</span><span class="p">,</span> <span class="mf">7.122144</span><span class="p">,</span> <span class="mf">6.903745</span><span class="p">],</span> <span class="c1"># 22</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">6.825897</span><span class="p">,</span> <span class="mf">6.760612</span><span class="p">,</span> <span class="mf">4.402142</span><span class="p">],</span> <span class="c1"># 26</span>
+<span class="p">[</span><span class="mf">5.311432</span><span class="p">,</span> <span class="mf">5.485328</span><span class="p">,</span> <span class="mf">3.987654</span><span class="p">],</span> <span class="c1"># 36</span>
+<span class="p">[</span><span class="mf">1.789930</span><span class="p">,</span> <span class="mf">5.393625</span><span class="p">,</span> <span class="mf">4.413414</span><span class="p">],</span> <span class="c1"># 39</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">1.789930</span><span class="p">,</span> <span class="mf">5.393625</span><span class="p">,</span> <span class="mf">4.413414</span><span class="p">],</span> <span class="c1"># 42</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">5.311432</span><span class="p">,</span> <span class="mf">5.485328</span><span class="p">,</span> <span class="mf">3.987654</span><span class="p">],</span> <span class="c1"># 45</span>
+<span class="p">[</span><span class="mf">2.005628</span><span class="p">,</span> <span class="mf">1.409845</span><span class="p">,</span> <span class="mf">6.165652</span><span class="p">],</span> <span class="c1"># 31</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">2.005628</span><span class="p">,</span> <span class="mf">1.409845</span><span class="p">,</span> <span class="mf">6.165652</span><span class="p">],</span> <span class="c1"># 35</span>
+<span class="p">[</span><span class="mf">2.774015</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.080775</span><span class="p">,</span> <span class="mf">5.048531</span><span class="p">],</span> <span class="c1"># 48</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">2.774015</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.080775</span><span class="p">,</span> <span class="mf">5.048531</span><span class="p">],</span> <span class="c1"># 54</span>
+<span class="p">[</span><span class="mf">0.000000</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.116408</span><span class="p">,</span> <span class="mf">6.097667</span><span class="p">],</span> <span class="c1"># 57</span>
+<span class="p">[</span><span class="mf">0.000000</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.415691</span><span class="p">,</span> <span class="mf">4.070434</span><span class="p">]</span> <span class="c1"># 8</span>
+<span class="p">])</span>
 
 <span class="n">reproject_src</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">([</span>
-  <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
-  <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">],</span>
-  <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">],</span>
-  <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">],</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">],</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]])</span>
+<span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
+<span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">],</span>
+<span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">],</span>
+<span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">],</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">],</span>
+<span class="p">[</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]])</span>
 
 <span class="c1"># https://github.com/myuon/juniQ/blob/master/server/src/recognizer.py#L89</span>
 <span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="n">shape</span><span class="p">):</span>
-  <span class="n">image_pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">([</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">17</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">21</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">22</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">26</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">36</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">39</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">42</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">45</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">31</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">35</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">48</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">54</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">57</span><span class="p">],</span>
-    <span class="n">shape</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
-  <span class="p">])</span>
+<span class="n">image_pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">([</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">17</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">21</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">22</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">26</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">36</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">39</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">42</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">45</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">31</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">35</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">48</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">54</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">57</span><span class="p">],</span>
+<span class="n">shape</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
+<span class="p">])</span>
 
-  <span class="n">_</span><span class="p">,</span> <span class="n">rotation_vec</span><span class="p">,</span> <span class="n">translation_vec</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">solvePnP</span><span class="p">(</span><span class="n">object_pts</span><span class="p">,</span> <span class="n">image_pts</span><span class="p">,</span> <span class="n">cam_matrix</span><span class="p">,</span> <span class="n">dist_coeffs</span><span class="p">)</span>
-  <span class="n">reproject_dst</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">projectPoints</span><span class="p">(</span><span class="n">reproject_src</span><span class="p">,</span> <span class="n">rotation_vec</span><span class="p">,</span> <span class="n">translation_vec</span><span class="p">,</span> <span class="n">cam_matrix</span><span class="p">,</span> <span class="n">dist_coeffs</span><span class="p">)</span>
-  <span class="n">reproject_dst</span> <span class="o">=</span> <span class="n">reproject_dst</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-  <span class="n">rotation_mat</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Rodrigues</span><span class="p">(</span><span class="n">rotation_vec</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">rotation_vec</span><span class="p">,</span> <span class="n">translation_vec</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">solvePnP</span><span class="p">(</span><span class="n">object_pts</span><span class="p">,</span> <span class="n">image_pts</span><span class="p">,</span> <span class="n">cam_matrix</span><span class="p">,</span> <span class="n">dist_coeffs</span><span class="p">)</span>
+<span class="n">reproject_dst</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">projectPoints</span><span class="p">(</span><span class="n">reproject_src</span><span class="p">,</span> <span class="n">rotation_vec</span><span class="p">,</span> <span class="n">translation_vec</span><span class="p">,</span> <span class="n">cam_matrix</span><span class="p">,</span> <span class="n">dist_coeffs</span><span class="p">)</span>
+<span class="n">reproject_dst</span> <span class="o">=</span> <span class="n">reproject_dst</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">rotation_mat</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Rodrigues</span><span class="p">(</span><span class="n">rotation_vec</span><span class="p">)</span>
 
-  <span class="k">return</span> <span class="n">reproject_dst</span><span class="p">,</span> <span class="n">rotation_mat</span><span class="p">,</span> <span class="n">rotation_vec</span><span class="p">,</span> <span class="n">translation_vec</span></code></pre></div>
+<span class="k">return</span> <span class="n">reproject_dst</span><span class="p">,</span> <span class="n">rotation_mat</span><span class="p">,</span> <span class="n">rotation_vec</span><span class="p">,</span> <span class="n">translation_vec</span></code></pre></div></li>
+</ul>
+
 <p>詳しくはOpenCVのsolvePnPとかで調べると良いと思う。</p>
 
 <p>これで回転行列とかが得られるので、顔の回転角度は次で計算する(ちなみにここで得られた行列は「カメラ」基準なことに注意。顔の行列は別に計算が必要)。</p>

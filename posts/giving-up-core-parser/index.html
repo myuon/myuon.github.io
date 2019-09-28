@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -42,9 +42,8 @@ GHC Coreにはworker/wrapper変換という有名な最適化が入っている�
 次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/giving-up-core-parser/" />
-<meta property="article:published_time" content="2019-05-21T23:25:02&#43;09:00"/>
-<meta property="article:modified_time" content="2019-05-21T23:25:02&#43;09:00"/>
-
+<meta property="article:published_time" content="2019-05-21T23:25:02+09:00" />
+<meta property="article:modified_time" content="2019-05-21T23:25:02+09:00" />
 
 
 <meta itemprop="name" content="GHC Coreのパーサー書いてたけど諦めた">
@@ -155,8 +154,8 @@ GHC Coreにはworker/wrapper変換という有名な最適化が入っている�
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">foobar</span> <span class="ow">::</span> <span class="kt">Type</span>
 <span class="p">[</span><span class="kt">GblId</span><span class="p">,</span>
  <span class="kt">Str</span><span class="o">=&lt;</span><span class="kt">S</span><span class="p">,</span><span class="kt">U</span><span class="o">&gt;</span><span class="p">,</span>
- <span class="kt">Unf</span><span class="ow">=</span><span class="kt">Unf</span><span class="p">{</span><span class="o">...</span><span class="err">なんやらかんやら</span><span class="p">,</span> <span class="kt">Guidance</span><span class="ow">=</span><span class="kt">ALWAYS_IF</span><span class="p">(</span><span class="nf">arity</span><span class="ow">=</span><span class="mi">0</span><span class="p">,</span><span class="nf">unsat_ok</span><span class="ow">=</span><span class="kt">True</span><span class="p">,</span><span class="nf">boring_ok</span><span class="ow">=</span><span class="kt">True</span><span class="p">)</span>
-         <span class="kt">Tmpl</span><span class="ow">=</span> <span class="nf">piyo</span> <span class="p">`</span><span class="nf">cast</span><span class="p">`</span> <span class="o">..</span><span class="p">}]</span>
+ <span class="kt">Unf</span><span class="ow">=</span><span class="kt">Unf</span><span class="p">{</span><span class="o">...</span><span class="err">なんやらかんやら</span><span class="p">,</span> <span class="kt">Guidance</span><span class="ow">=</span><span class="kt">ALWAYS_IF</span><span class="p">(</span><span class="n">arity</span><span class="ow">=</span><span class="mi">0</span><span class="p">,</span><span class="n">unsat_ok</span><span class="ow">=</span><span class="kt">True</span><span class="p">,</span><span class="n">boring_ok</span><span class="ow">=</span><span class="kt">True</span><span class="p">)</span>
+         <span class="kt">Tmpl</span><span class="ow">=</span> <span class="n">piyo</span> <span class="p">`</span><span class="n">cast</span><span class="p">`</span> <span class="o">..</span><span class="p">}]</span>
 <span class="nf">foobar</span> <span class="ow">=</span> <span class="o">...</span></code></pre></div>
 <p>当然こんなものを埋め込まれてもHaskellのコードとしてはvalidでないため、ここで専用のパーサーを書かなければいけないこともほぼ確定である。idinfoだけ剥がしてexpressionは組み込みのを使う手もあるがそれも後述の理由により多分上手く行かない。</p>
 
