@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,34 +22,15 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Proof Assistantを作る・実装編 その2" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-LK proofchecker ルールの適用 LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
-例として次のルールを考えます。
-Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。
-LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
-Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
-data Rule = I | Cut Formula -- CutはFormulaを引数に取る ... チェッカー Claire.Checker
-newGoal :: Formula -&gt; [Judgement] newGoal fml = [Judgement [] (return fml)] judge :: [Rule] -&gt; [Judgement] -&gt; Either (Rule, [Judgement]) [Judgement] judge rs js = foldl (\m r -&gt; m &gt;&gt;= go r) (Right js) rs where go I (Judgement assms props : js) | length assms == 1 &amp;&amp; assms == props = Right js go (Cut fml) (Judgement assms props : js) = Right $ Judgement assms (fml:props) : Judgement (fml:assms) props : js go AndL1 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fa:assms) props : js go AndL2 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fb:assms) props : js go AndR (Judgement assms ((fa :/\: fb):props) : js) = Right $ Judgement assms (fa:props) : Judgement assms (fb:props) : js go OrL (Judgement ((fa :\/: fb):assms) props : js) = Right $ Judgement (fa:assms) props : Judgement (fb:assms) props : js go OrR1 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fa:props) : js go OrR2 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fb:props) : js go ImpL (Judgement ((fa :==&gt;: fb):assms) props : js) = Right $ Judgement assms (fa:props) : Judgement (fb:assms) props : js go ImpR (Judgement assms ((fa :==&gt;: fb):props) : js) = Right $ Judgement (fa:assms) (fb:props) : js go BottomL (Judgement (Bottom:assms) props : js) = Right js go TopR (Judgement assms (Top:props) : js) = Right js go (ForallL t) (Judgement (Forall x fml:assms) props : js) = Right $ Judgement (substTerm x t fml:assms) props : js go (ForallR y) (Judgement assms (Forall x fml:props) : js) = Right $ Judgement assms (substTerm x (Var y) fml:props) : js go (ExistL y) (Judgement (Exist x fml:assms) props : js) = Right $ Judgement (substTerm x (Var y) fml:assms) props : js go (ExistR t) (Judgement assms (Exist x fml:props) : js) = Right $ Judgement assms (substTerm x t fml:props) : js go WL (Judgement (_:assms) props : js) = Right $ Judgement assms props : js go WR (Judgement assms (_:props) : js) = Right $ Judgement assms props : js go CL (Judgement (fml:assms) props : js) = Right $ Judgement (fml:fml:assms) props : js go CR (Judgement assms (fml:props) : js) = Right $ Judgement assms (fml:fml:props) : js go (PL k) (Judgement assms props : js) | k &lt; length assms = Right $ Judgement (assms !" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 19日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。  例として次のルールを考えます。 Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ   このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。  LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。 Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ   このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。 data Rule = I | Cut Formula -- CutはFormulaを引数に取る ...  チェッカー   Claire." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-2/" />
-<meta property="article:published_time" content="2017-12-19T00:00:24&#43;09:00"/>
-<meta property="article:modified_time" content="2017-12-19T00:00:24&#43;09:00"/>
-
+<meta property="article:published_time" content="2017-12-19T00:00:24+09:00" />
+<meta property="article:modified_time" content="2017-12-19T00:00:24+09:00" />
 
 
 <meta itemprop="name" content="Proof Assistantを作る・実装編 その2">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-LK proofchecker ルールの適用 LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
-例として次のルールを考えます。
-Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。
-LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
-Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
-data Rule = I | Cut Formula -- CutはFormulaを引数に取る ... チェッカー Claire.Checker
-newGoal :: Formula -&gt; [Judgement] newGoal fml = [Judgement [] (return fml)] judge :: [Rule] -&gt; [Judgement] -&gt; Either (Rule, [Judgement]) [Judgement] judge rs js = foldl (\m r -&gt; m &gt;&gt;= go r) (Right js) rs where go I (Judgement assms props : js) | length assms == 1 &amp;&amp; assms == props = Right js go (Cut fml) (Judgement assms props : js) = Right $ Judgement assms (fml:props) : Judgement (fml:assms) props : js go AndL1 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fa:assms) props : js go AndL2 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fb:assms) props : js go AndR (Judgement assms ((fa :/\: fb):props) : js) = Right $ Judgement assms (fa:props) : Judgement assms (fb:props) : js go OrL (Judgement ((fa :\/: fb):assms) props : js) = Right $ Judgement (fa:assms) props : Judgement (fb:assms) props : js go OrR1 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fa:props) : js go OrR2 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fb:props) : js go ImpL (Judgement ((fa :==&gt;: fb):assms) props : js) = Right $ Judgement assms (fa:props) : Judgement (fb:assms) props : js go ImpR (Judgement assms ((fa :==&gt;: fb):props) : js) = Right $ Judgement (fa:assms) (fb:props) : js go BottomL (Judgement (Bottom:assms) props : js) = Right js go TopR (Judgement assms (Top:props) : js) = Right js go (ForallL t) (Judgement (Forall x fml:assms) props : js) = Right $ Judgement (substTerm x t fml:assms) props : js go (ForallR y) (Judgement assms (Forall x fml:props) : js) = Right $ Judgement assms (substTerm x (Var y) fml:props) : js go (ExistL y) (Judgement (Exist x fml:assms) props : js) = Right $ Judgement (substTerm x (Var y) fml:assms) props : js go (ExistR t) (Judgement assms (Exist x fml:props) : js) = Right $ Judgement assms (substTerm x t fml:props) : js go WL (Judgement (_:assms) props : js) = Right $ Judgement assms props : js go WR (Judgement assms (_:props) : js) = Right $ Judgement assms props : js go CL (Judgement (fml:assms) props : js) = Right $ Judgement (fml:fml:assms) props : js go CR (Judgement assms (fml:props) : js) = Right $ Judgement assms (fml:fml:props) : js go (PL k) (Judgement assms props : js) | k &lt; length assms = Right $ Judgement (assms !">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 19日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。  例として次のルールを考えます。 Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ   このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。  LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。 Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ   このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。 data Rule = I | Cut Formula -- CutはFormulaを引数に取る ...  チェッカー   Claire.">
 
 
 <meta itemprop="datePublished" content="2017-12-19T00:00:24&#43;09:00" />
@@ -62,16 +43,7 @@ newGoal :: Formula -&gt; [Judgement] newGoal fml = [Judgement [] (return fml)] j
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Proof Assistantを作る・実装編 その2"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
-Proof Assistant 「Claire」の実装について説明していきます。
-リポジトリはこちら: myuon/claire
-LK proofchecker ルールの適用 LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
-例として次のルールを考えます。
-Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。
-LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
-Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
-data Rule = I | Cut Formula -- CutはFormulaを引数に取る ... チェッカー Claire.Checker
-newGoal :: Formula -&gt; [Judgement] newGoal fml = [Judgement [] (return fml)] judge :: [Rule] -&gt; [Judgement] -&gt; Either (Rule, [Judgement]) [Judgement] judge rs js = foldl (\m r -&gt; m &gt;&gt;= go r) (Right js) rs where go I (Judgement assms props : js) | length assms == 1 &amp;&amp; assms == props = Right js go (Cut fml) (Judgement assms props : js) = Right $ Judgement assms (fml:props) : Judgement (fml:assms) props : js go AndL1 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fa:assms) props : js go AndL2 (Judgement ((fa :/\: fb):assms) props : js) = Right $ Judgement (fb:assms) props : js go AndR (Judgement assms ((fa :/\: fb):props) : js) = Right $ Judgement assms (fa:props) : Judgement assms (fb:props) : js go OrL (Judgement ((fa :\/: fb):assms) props : js) = Right $ Judgement (fa:assms) props : Judgement (fb:assms) props : js go OrR1 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fa:props) : js go OrR2 (Judgement assms ((fa :\/: fb):props) : js) = Right $ Judgement assms (fb:props) : js go ImpL (Judgement ((fa :==&gt;: fb):assms) props : js) = Right $ Judgement assms (fa:props) : Judgement (fb:assms) props : js go ImpR (Judgement assms ((fa :==&gt;: fb):props) : js) = Right $ Judgement (fa:assms) (fb:props) : js go BottomL (Judgement (Bottom:assms) props : js) = Right js go TopR (Judgement assms (Top:props) : js) = Right js go (ForallL t) (Judgement (Forall x fml:assms) props : js) = Right $ Judgement (substTerm x t fml:assms) props : js go (ForallR y) (Judgement assms (Forall x fml:props) : js) = Right $ Judgement assms (substTerm x (Var y) fml:props) : js go (ExistL y) (Judgement (Exist x fml:assms) props : js) = Right $ Judgement (substTerm x (Var y) fml:assms) props : js go (ExistR t) (Judgement assms (Exist x fml:props) : js) = Right $ Judgement assms (substTerm x t fml:props) : js go WL (Judgement (_:assms) props : js) = Right $ Judgement assms props : js go WR (Judgement assms (_:props) : js) = Right $ Judgement assms props : js go CL (Judgement (fml:assms) props : js) = Right $ Judgement (fml:fml:assms) props : js go CR (Judgement assms (fml:props) : js) = Right $ Judgement assms (fml:fml:props) : js go (PL k) (Judgement assms props : js) | k &lt; length assms = Right $ Judgement (assms !"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 19日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。  例として次のルールを考えます。 Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ   このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。  LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。 Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ   このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。 data Rule = I | Cut Formula -- CutはFormulaを引数に取る ...  チェッカー   Claire."/>
 
 
   </head>
@@ -100,128 +72,206 @@ newGoal :: Formula -&gt; [Judgement] newGoal fml = [Judgement [] (return fml)] j
       <time datetime="2017-12-19 12:00">2017-12-19</time>
       <h1>Proof Assistantを作る・実装編 その2</h1>
     </header>
-    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 19日目の記事です。</strong></p>
-
-<hr />
-
-<p>Proof Assistant 「Claire」の実装について説明していきます。</p>
-
-<p>リポジトリはこちら: <a href="https://github.com/myuon/claire" title="myuon/claire">myuon/claire</a></p>
-
-<h1 id="lk-proofchecker">LK proofchecker</h1>
-
-<h2 id="ルールの適用">ルールの適用</h2>
-
-<p>LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。</p>
-
-<p>例として次のルールを考えます。</p>
+    <section>
+<p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 19日目の記事です。</strong>
+</p>
+<hr>
+<p>
+Proof Assistant 「Claire」の実装について説明していきます。
+</p>
+<p>
+リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a>
+</p>
+<h1 id="headline-1">
+LK proofchecker
+</h1>
+<h2 id="headline-2">
+ルールの適用
+</h2>
+<p>
+LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
+</p>
+<p>
+例として次のルールを考えます。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  Γ,A |- Δ
   ----------- (AndL1)
   Γ,A∧B |- Δ</code></pre></div>
-<p>このようなルールは下から上に向かって適用します。ので、 <code>Γ,A∧B |- Δ</code> のJudgementを <code>Γ,A |- Δ</code> に変換します。</p>
-
-<p>LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。</p>
+</div>
+<p>
+このようなルールは下から上に向かって適用します。ので、 <code>Γ,A∧B |- Δ</code> のJudgementを <code>Γ,A |- Δ</code> に変換します。
+</p>
+<p>
+LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  Γ |- Δ,A    A,Γ |- Δ
   -------------------- (Cut)
          Γ |- Δ</code></pre></div>
-<p>このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。</p>
+</div>
+<p>
+このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
+</p>
+<div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Rule</span>
     <span class="ow">=</span> <span class="kt">I</span>
     <span class="o">|</span> <span class="kt">Cut</span> <span class="kt">Formula</span>    <span class="c1">-- CutはFormulaを引数に取る</span>
     <span class="o">...</span></code></pre></div>
-<h2 id="チェッカー">チェッカー</h2>
+</div>
+<h2 id="headline-3">
+チェッカー
+</h2>
+<p>
+<a href="https://github.com/myuon/claire/blob/master/src/Claire/Checker.hs">Claire.Checker</a>
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">newGoal</span> <span class="ow">::</span> <span class="kt">Formula</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span>
+  <span class="n">newGoal</span> <span class="n">fml</span> <span class="ow">=</span> <span class="p">[</span><span class="kt">Judgement</span> <span class="kt">[]</span> <span class="p">(</span><span class="n">return</span> <span class="n">fml</span><span class="p">)]</span>
 
-<p><a href="https://github.com/myuon/claire/blob/master/src/Claire/Checker.hs" title="Claire.Checker">Claire.Checker</a></p>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="nf">newGoal</span> <span class="ow">::</span> <span class="kt">Formula</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span>
-  <span class="nf">newGoal</span> <span class="nf">fml</span> <span class="ow">=</span> <span class="p">[</span><span class="kt">Judgement</span> <span class="kt">[]</span> <span class="p">(</span><span class="nf">return</span> <span class="nf">fml</span><span class="p">)]</span>
+  <span class="n">judge</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Rule</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">Either</span> <span class="p">(</span><span class="kt">Rule</span><span class="p">,</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">])</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span>
+  <span class="n">judge</span> <span class="n">rs</span> <span class="n">js</span> <span class="ow">=</span> <span class="n">foldl</span> <span class="p">(</span><span class="nf">\</span><span class="n">m</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="n">m</span> <span class="o">&gt;&gt;=</span> <span class="n">go</span> <span class="n">r</span><span class="p">)</span> <span class="p">(</span><span class="kt">Right</span> <span class="n">js</span><span class="p">)</span> <span class="n">rs</span> <span class="kr">where</span>
+    <span class="n">go</span> <span class="kt">I</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="o">|</span> <span class="n">length</span> <span class="n">assms</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">assms</span> <span class="o">==</span> <span class="n">props</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="p">(</span><span class="kt">Cut</span> <span class="n">fml</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="n">fml</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">fml</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">AndL1</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">((</span><span class="n">fa</span> <span class="kt">:/\:</span> <span class="n">fb</span><span class="p">)</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">fa</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">AndL2</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">((</span><span class="n">fa</span> <span class="kt">:/\:</span> <span class="n">fb</span><span class="p">)</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">fb</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">AndR</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">((</span><span class="n">fa</span> <span class="kt">:/\:</span> <span class="n">fb</span><span class="p">)</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="n">fa</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="n">fb</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">OrL</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">((</span><span class="n">fa</span> <span class="kt">:\/:</span> <span class="n">fb</span><span class="p">)</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">fa</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">fb</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">OrR1</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">((</span><span class="n">fa</span> <span class="kt">:\/:</span> <span class="n">fb</span><span class="p">)</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="n">fa</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">OrR2</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">((</span><span class="n">fa</span> <span class="kt">:\/:</span> <span class="n">fb</span><span class="p">)</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="n">fb</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">ImpL</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">((</span><span class="n">fa</span> <span class="kt">:==&gt;:</span> <span class="n">fb</span><span class="p">)</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="n">fa</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">fb</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">ImpR</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">((</span><span class="n">fa</span> <span class="kt">:==&gt;:</span> <span class="n">fb</span><span class="p">)</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">fa</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="p">(</span><span class="n">fb</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">BottomL</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="kt">Bottom:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">TopR</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="kt">Top:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="p">(</span><span class="kt">ForallL</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="kt">Forall</span> <span class="n">x</span> <span class="n">fml</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">substTerm</span> <span class="n">x</span> <span class="n">t</span> <span class="n">fml</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="p">(</span><span class="kt">ForallR</span> <span class="n">y</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="kt">Forall</span> <span class="n">x</span> <span class="n">fml</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="n">substTerm</span> <span class="n">x</span> <span class="p">(</span><span class="kt">Var</span> <span class="n">y</span><span class="p">)</span> <span class="n">fml</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="p">(</span><span class="kt">ExistL</span> <span class="n">y</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="kt">Exist</span> <span class="n">x</span> <span class="n">fml</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">substTerm</span> <span class="n">x</span> <span class="p">(</span><span class="kt">Var</span> <span class="n">y</span><span class="p">)</span> <span class="n">fml</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="p">(</span><span class="kt">ExistR</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="kt">Exist</span> <span class="n">x</span> <span class="n">fml</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="n">substTerm</span> <span class="n">x</span> <span class="n">t</span> <span class="n">fml</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span>
 
-  <span class="nf">judge</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Rule</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">Either</span> <span class="p">(</span><span class="kt">Rule</span><span class="p">,</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">])</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span>
-  <span class="nf">judge</span> <span class="nf">rs</span> <span class="nf">js</span> <span class="ow">=</span> <span class="nf">foldl</span> <span class="p">(</span><span class="nf">\m</span> <span class="nf">r</span> <span class="ow">-&gt;</span> <span class="nf">m</span> <span class="o">&gt;&gt;=</span> <span class="nf">go</span> <span class="nf">r</span><span class="p">)</span> <span class="p">(</span><span class="kt">Right</span> <span class="nf">js</span><span class="p">)</span> <span class="nf">rs</span> <span class="kr">where</span>
-    <span class="nf">go</span> <span class="kt">I</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="o">|</span> <span class="nf">length</span> <span class="nf">assms</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nf">assms</span> <span class="o">==</span> <span class="nf">props</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="p">(</span><span class="kt">Cut</span> <span class="nf">fml</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="nf">fml</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">fml</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">AndL1</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">((</span><span class="nf">fa</span> <span class="kt">:/\:</span> <span class="nf">fb</span><span class="p">)</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">fa</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">AndL2</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">((</span><span class="nf">fa</span> <span class="kt">:/\:</span> <span class="nf">fb</span><span class="p">)</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">fb</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">AndR</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">((</span><span class="nf">fa</span> <span class="kt">:/\:</span> <span class="nf">fb</span><span class="p">)</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="nf">fa</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="nf">fb</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">OrL</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">((</span><span class="nf">fa</span> <span class="kt">:\/:</span> <span class="nf">fb</span><span class="p">)</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">fa</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">fb</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">OrR1</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">((</span><span class="nf">fa</span> <span class="kt">:\/:</span> <span class="nf">fb</span><span class="p">)</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="nf">fa</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">OrR2</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">((</span><span class="nf">fa</span> <span class="kt">:\/:</span> <span class="nf">fb</span><span class="p">)</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="nf">fb</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">ImpL</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">((</span><span class="nf">fa</span> <span class="kt">:==&gt;:</span> <span class="nf">fb</span><span class="p">)</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="nf">fa</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">fb</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">ImpR</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">((</span><span class="nf">fa</span> <span class="kt">:==&gt;:</span> <span class="nf">fb</span><span class="p">)</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">fa</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="p">(</span><span class="nf">fb</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">BottomL</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="kt">Bottom:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">TopR</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="kt">Top:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="p">(</span><span class="kt">ForallL</span> <span class="nf">t</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="kt">Forall</span> <span class="nf">x</span> <span class="nf">fml</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">substTerm</span> <span class="nf">x</span> <span class="nf">t</span> <span class="nf">fml</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="p">(</span><span class="kt">ForallR</span> <span class="nf">y</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="kt">Forall</span> <span class="nf">x</span> <span class="nf">fml</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="nf">substTerm</span> <span class="nf">x</span> <span class="p">(</span><span class="kt">Var</span> <span class="nf">y</span><span class="p">)</span> <span class="nf">fml</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="p">(</span><span class="kt">ExistL</span> <span class="nf">y</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="kt">Exist</span> <span class="nf">x</span> <span class="nf">fml</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">substTerm</span> <span class="nf">x</span> <span class="p">(</span><span class="kt">Var</span> <span class="nf">y</span><span class="p">)</span> <span class="nf">fml</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="p">(</span><span class="kt">ExistR</span> <span class="nf">t</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="kt">Exist</span> <span class="nf">x</span> <span class="nf">fml</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="nf">substTerm</span> <span class="nf">x</span> <span class="nf">t</span> <span class="nf">fml</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span>
+    <span class="n">go</span> <span class="kt">WL</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="kr">_</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="n">assms</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">WR</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="kr">_</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="n">assms</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">CL</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="n">fml</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">fml</span><span class="kt">:</span><span class="n">fml</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="kt">CR</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="n">fml</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="n">fml</span><span class="kt">:</span><span class="n">fml</span><span class="kt">:</span><span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="p">(</span><span class="kt">PL</span> <span class="n">k</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="o">|</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">assms</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">assms</span> <span class="o">!!</span> <span class="n">k</span> <span class="kt">:</span> <span class="n">deleteAt</span> <span class="n">k</span> <span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
+    <span class="n">go</span> <span class="p">(</span><span class="kt">PR</span> <span class="n">k</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="o">|</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">length</span> <span class="n">props</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="n">assms</span> <span class="p">(</span><span class="n">props</span> <span class="o">!!</span> <span class="n">k</span> <span class="kt">:</span> <span class="n">deleteAt</span> <span class="n">k</span> <span class="n">props</span><span class="p">)</span> <span class="kt">:</span> <span class="n">js</span>
 
-    <span class="nf">go</span> <span class="kt">WL</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="kr">_</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="nf">assms</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">WR</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="kr">_</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="nf">assms</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">CL</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="nf">fml</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">fml</span><span class="kt">:</span><span class="nf">fml</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="kt">CR</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="nf">fml</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="nf">fml</span><span class="kt">:</span><span class="nf">fml</span><span class="kt">:</span><span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="p">(</span><span class="kt">PL</span> <span class="nf">k</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="o">|</span> <span class="nf">k</span> <span class="o">&lt;</span> <span class="nf">length</span> <span class="nf">assms</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">assms</span> <span class="o">!!</span> <span class="nf">k</span> <span class="kt">:</span> <span class="nf">deleteAt</span> <span class="nf">k</span> <span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span>
-    <span class="nf">go</span> <span class="p">(</span><span class="kt">PR</span> <span class="nf">k</span><span class="p">)</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="nf">assms</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="o">|</span> <span class="nf">k</span> <span class="o">&lt;</span> <span class="nf">length</span> <span class="nf">props</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="nf">assms</span> <span class="p">(</span><span class="nf">props</span> <span class="o">!!</span> <span class="nf">k</span> <span class="kt">:</span> <span class="nf">deleteAt</span> <span class="nf">k</span> <span class="nf">props</span><span class="p">)</span> <span class="kt">:</span> <span class="nf">js</span>
+    <span class="n">go</span> <span class="n">r</span> <span class="n">js</span> <span class="ow">=</span> <span class="kt">Left</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">js</span><span class="p">)</span>
 
-    <span class="nf">go</span> <span class="nf">r</span> <span class="nf">js</span> <span class="ow">=</span> <span class="kt">Left</span> <span class="p">(</span><span class="nf">r</span><span class="p">,</span><span class="nf">js</span><span class="p">)</span>
-
-    <span class="nf">deleteAt</span> <span class="nf">k</span> <span class="nf">xs</span> <span class="ow">=</span> <span class="nf">take</span> <span class="nf">k</span> <span class="nf">xs</span> <span class="o">++</span> <span class="nf">drop</span> <span class="p">(</span><span class="nf">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="nf">xs</span></code></pre></div>
-<p>証明の際に「ゴール」になるのはJudgementですが、一般にゴールは複数扱えるほうが都合がいいのでJudgementのリストをゴールとして考えることにします。</p>
-
-<p>newGoalは論理式Aをゴール <code>[[] |- A]</code> へ変換します。
-judgeがルールの列を現在のゴールに適用してゆく関数です。これは一般に失敗する場合があることに注意します。</p>
-
-<p>さきほど説明したAndL1の部分を見てみると</p>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">    <span class="nf">go</span> <span class="kt">AndL1</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">((</span><span class="nf">fa</span> <span class="kt">:/\:</span> <span class="nf">fb</span><span class="p">)</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="nf">fa</span><span class="kt">:</span><span class="nf">assms</span><span class="p">)</span> <span class="nf">props</span> <span class="kt">:</span> <span class="nf">js</span></code></pre></div>
-<p>となっていて、確かに先のルールをそのままコードに起こした形になっています。</p>
-
-<h2 id="実行">実行</h2>
-
-<p>judge関数を動かしてみます。</p>
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="o">&gt;</span> <span class="nf">judge</span> <span class="p">[</span><span class="kt">I</span><span class="p">]</span> <span class="p">[</span><span class="kt">Judgement</span> <span class="p">[</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span><span class="p">]</span> <span class="p">[</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span><span class="p">]]</span>
+    <span class="n">deleteAt</span> <span class="n">k</span> <span class="n">xs</span> <span class="ow">=</span> <span class="n">take</span> <span class="n">k</span> <span class="n">xs</span> <span class="o">++</span> <span class="n">drop</span> <span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="n">xs</span></code></pre></div>
+</div>
+<p>
+証明の際に「ゴール」になるのはJudgementですが、一般にゴールは複数扱えるほうが都合がいいのでJudgementのリストをゴールとして考えることにします。
+</p>
+<p>
+newGoalは論理式Aをゴール <code>[[] |- A]</code> へ変換します。
+judgeがルールの列を現在のゴールに適用してゆく関数です。これは一般に失敗する場合があることに注意します。
+</p>
+<p>
+さきほど説明したAndL1の部分を見てみると
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">    <span class="n">go</span> <span class="kt">AndL1</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">((</span><span class="n">fa</span> <span class="kt">:/\:</span> <span class="n">fb</span><span class="p">)</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">fa</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span></code></pre></div>
+</div>
+<p>
+となっていて、確かに先のルールをそのままコードに起こした形になっています。
+</p>
+<h2 id="headline-4">
+実行
+</h2>
+<p>
+judge関数を動かしてみます。
+</p>
+<div class="src src-haskell">
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="o">&gt;</span> <span class="n">judge</span> <span class="p">[</span><span class="kt">I</span><span class="p">]</span> <span class="p">[</span><span class="kt">Judgement</span> <span class="p">[</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span><span class="p">]</span> <span class="p">[</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span><span class="p">]]</span>
   <span class="kt">Right</span> <span class="kt">[]</span>
 
-  <span class="o">&gt;</span> <span class="nf">judge</span> <span class="p">[</span><span class="kt">I</span><span class="p">]</span> <span class="p">[</span><span class="kt">Judgement</span> <span class="kt">[]</span> <span class="p">[</span><span class="kt">Pred</span> <span class="s">&#34;p&#34;</span> <span class="kt">[]</span><span class="p">]]</span>
+  <span class="o">&gt;</span> <span class="n">judge</span> <span class="p">[</span><span class="kt">I</span><span class="p">]</span> <span class="p">[</span><span class="kt">Judgement</span> <span class="kt">[]</span> <span class="p">[</span><span class="kt">Pred</span> <span class="s">&#34;p&#34;</span> <span class="kt">[]</span><span class="p">]]</span>
   <span class="kt">Left</span> <span class="o">...</span>
 
-  <span class="o">&gt;</span> <span class="nf">judge</span> <span class="p">[</span><span class="kt">AndL1</span><span class="p">]</span> <span class="p">[</span><span class="kt">Judgement</span> <span class="p">[</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span> <span class="kt">:/\:</span> <span class="kt">Pred</span> <span class="s">&#34;b&#34;</span> <span class="kt">[]</span><span class="p">]</span> <span class="kt">[]</span><span class="p">]</span>
+  <span class="o">&gt;</span> <span class="n">judge</span> <span class="p">[</span><span class="kt">AndL1</span><span class="p">]</span> <span class="p">[</span><span class="kt">Judgement</span> <span class="p">[</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span> <span class="kt">:/\:</span> <span class="kt">Pred</span> <span class="s">&#34;b&#34;</span> <span class="kt">[]</span><span class="p">]</span> <span class="kt">[]</span><span class="p">]</span>
   <span class="kt">Right</span> <span class="p">[</span><span class="kt">Judgement</span> <span class="p">[</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span><span class="p">]</span> <span class="kt">[]</span><span class="p">]</span></code></pre></div>
-<p>ところでJudgementのリストはゴールを表していたので、judgeの実行結果が空リストになったらゴールが全て解消されたことを表すので証明終了です。</p>
-
-<h1 id="claire-proofchecker">Claire proofchecker</h1>
-
-<p>というわけで、今までのことを踏まえるとClaireの証明の流れは次のようになります。</p>
-
+</div>
+<p>
+ところでJudgementのリストはゴールを表していたので、judgeの実行結果が空リストになったらゴールが全て解消されたことを表すので証明終了です。
+</p>
+<h1 id="headline-5">
+Claire proofchecker
+</h1>
+<p>
+というわけで、今までのことを踏まえるとClaireの証明の流れは次のようになります。
+</p>
 <ol>
-<li>論理式Pが(示したい命題として)入力される</li>
-<li>ゴールが <code>[] |- P</code> の形になる</li>
-<li>ルールの列 rs を入力する</li>
-<li><code>judge rs ([] |- P)</code> を実行する</li>
-<li>全てのゴールが解消されたら証明完了と表示する ゴールが残っているなら2に戻る</li>
+<li>
+<p>
+論理式Pが(示したい命題として)入力される
+</p>
+</li>
+<li>
+<p>
+ゴールが <code>[] |- P</code> の形になる
+</p>
+</li>
+<li>
+<p>
+ルールの列 rs を入力する
+</p>
+</li>
+<li>
+<p>
+<code>judge rs ([] |- P)</code> を実行する
+</p>
+</li>
+<li>
+<p>
+全てのゴールが解消されたら証明完了と表示する ゴールが残っているなら2に戻る
+</p>
+</li>
 </ol>
-
-<p>さてところでルールの列を入力する方法について、普通ならばこれは証明ファイルに <code>apply rs; apply rs'</code> みたいなのを読み取ってrsを適用し、rs'を適用し、みたいな感じでcheckerを走らせます。
-が、一方でClaireはインタラクティブシェル的なもので証明を書く仕組みも提供しています。</p>
-
-<p>なので、通常ファイルに書くような証明1行1行を読み取って動くインタラクティブシェル的なものを作ります。</p>
-
-<h2 id="インタラクティブシェル">インタラクティブシェル</h2>
-
-<p>インタラクティブシェルを作るにあたって、現在どういう状態にいるかということを考える必要があります。
-例えば次のようなフローになります。</p>
-
+<p>
+さてところでルールの列を入力する方法について、普通ならばこれは証明ファイルに <code>apply rs; apply rs&#39;</code> みたいなのを読み取ってrsを適用し、rs&#39;を適用し、みたいな感じでcheckerを走らせます。
+が、一方でClaireはインタラクティブシェル的なもので証明を書く仕組みも提供しています。
+</p>
+<p>
+なので、通常ファイルに書くような証明1行1行を読み取って動くインタラクティブシェル的なものを作ります。
+</p>
+<h2 id="headline-6">
+インタラクティブシェル
+</h2>
+<p>
+インタラクティブシェルを作るにあたって、現在どういう状態にいるかということを考える必要があります。
+例えば次のようなフローになります。
+</p>
 <ol>
-<li>Claireを起動する; declarationモードに入る</li>
-<li>(declarationモード) 論理式を入力する; proofモードに入る</li>
-<li>(proofモード) ルールの列を入力する; 証明が完了したらdeclarationモードに戻る</li>
+<li>
+<p>
+Claireを起動する; declarationモードに入る
+</p>
+</li>
+<li>
+<p>
+(declarationモード) 論理式を入力する; proofモードに入る
+</p>
+</li>
+<li>
+<p>
+(proofモード) ルールの列を入力する; 証明が完了したらdeclarationモードに戻る
+</p>
+</li>
 </ol>
-
-<p>みたいに、現在のモードによって受け付けるデータが変わるのでこの辺をいい感じにしないといけません。</p>
-
-<p>というのが次の課題になります。</p>
-
-<h1 id="まとめ">まとめ</h1>
-
-<p>というわけでLKのcheckerを書きました。
-ので、次回はインタラクティブシェルを作りつつClaire自体のproofcheckerを作ります。</p>
+<p>
+みたいに、現在のモードによって受け付けるデータが変わるのでこの辺をいい感じにしないといけません。
+</p>
+<p>
+というのが次の課題になります。
+</p>
+<h1 id="headline-7">
+まとめ
+</h1>
+<p>
+というわけでLKのcheckerを書きました。
+ので、次回はインタラクティブシェルを作りつつClaire自体のproofcheckerを作ります。
+</p>
 </section>
     <footer>
       <hr>

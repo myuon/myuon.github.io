@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,26 +22,15 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="IMPのoperational semantics その1" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 5日目の記事です。
-今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。 そしてこの記事は一人computer scienceアドベントカレンダーなのでCSらしい話題を、ということで、 IMPのoperational semanticsの話でもしようと思います。
-IMPについて IMPとはimperative languageの頭文字を取ったもので、natとboolを基本型にもつ簡単な手続き型言語です。 CSの教科書とかでよく見かけるやつです。 IMPの定義をし、そのevaluationを定めます。
-ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。 このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。
-0. States IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。
-section {* States *} type_synonym id = string type_synonym state = &#34;id ⇒ nat&#34; definition empty :: &#34;state&#34; where &#34;empty _ = 0&#34; no_syntax &#34;_maplet&#34; :: &#34;[&#39;a, &#39;a] ⇒ maplet&#34; (&#34;_ /↦/ _&#34;) fun update :: &#34;state ⇒ id ⇒ nat ⇒ state&#34; (&#34;_[_ ↦ _]&#34; [80,80,80] 80) where &#34;update st x n y = (if x = y then n else st y)&#34; sectionコマンドは証明には影響を与えないが、Sidekickにsectionとして表示されたりLaTeXに出力すると実際に節として扱われたりするもの。chapter, subsectio, subsubsectionなどもある。" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 5日目の記事です。   今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。 そしてこの記事は一人computer scienceアドベントカレンダーなのでCSらしい話題を、ということで、 IMPのoperational semanticsの話でもしようと思います。 IMPについて   IMPとはimperative languageの頭文字を取ったもので、natとboolを基本型にもつ簡単な手続き型言語です。 CSの教科書とかでよく見かけるやつです。 IMPの定義をし、そのevaluationを定めます。  ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。 このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。 0. States   IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。 section {* States *} type_synonym id = string type_synonym state = &#34;id ⇒ nat&#34; definition empty :: &#34;state&#34; where &#34;empty _ = 0&#34; no_syntax &#34;_maplet&#34; :: &#34;[&#39;a, &#39;a] ⇒ maplet&#34; (&#34;_ /↦/ _&#34;) fun update :: &#34;state ⇒ id ⇒ nat ⇒ state&#34; (&#34;_[_ ↦ _]&#34; [80,80,80] 80) where &#34;update st x n y = (if x = y then n else st y)&#34;   sectionコマンドは証明には影響を与えないが、Sidekickにsectionとして表示されたりLaTeXに出力すると実際に節として扱われたりするもの。chapter, subsectio, subsubsectionなどもある。  さて、 id で変数名を表すことにし、さらに環境を表す state を定めた。 ここでは id として string を、 state としてidを受け取ってnatを返す関数を使うことにした。(変数に格納される値は常にnatである)  Isabelleで文字列リテラルは &#39;&#39;hoge&#39;&#39; と、シングルクオート2つで囲って表現する1。  さてここではupdateというstateを更新する関数を定義しているが、その前になにやらno_syntaxという箇所がある。 これは、update関数を演算子として st [x ↦ n] のように書きたいのだが、この記法がすでにある _maplet という記法と被ってしまうため既存の記法を解除するためのものである。 このように記法が被った場合、すでにある演算子の定義を調べ(jEditならCtrlを押しながらクリックとかで定義箇所に飛べる)、それをno_syntaxやno_notationで解除することができる。 1." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day5/" />
-<meta property="article:published_time" content="2017-12-05T00:02:29&#43;09:00"/>
-<meta property="article:modified_time" content="2017-12-05T00:02:29&#43;09:00"/>
-
+<meta property="article:published_time" content="2017-12-05T00:02:29+09:00" />
+<meta property="article:modified_time" content="2017-12-05T00:02:29+09:00" />
 
 
 <meta itemprop="name" content="IMPのoperational semantics その1">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 5日目の記事です。
-今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。 そしてこの記事は一人computer scienceアドベントカレンダーなのでCSらしい話題を、ということで、 IMPのoperational semanticsの話でもしようと思います。
-IMPについて IMPとはimperative languageの頭文字を取ったもので、natとboolを基本型にもつ簡単な手続き型言語です。 CSの教科書とかでよく見かけるやつです。 IMPの定義をし、そのevaluationを定めます。
-ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。 このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。
-0. States IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。
-section {* States *} type_synonym id = string type_synonym state = &#34;id ⇒ nat&#34; definition empty :: &#34;state&#34; where &#34;empty _ = 0&#34; no_syntax &#34;_maplet&#34; :: &#34;[&#39;a, &#39;a] ⇒ maplet&#34; (&#34;_ /↦/ _&#34;) fun update :: &#34;state ⇒ id ⇒ nat ⇒ state&#34; (&#34;_[_ ↦ _]&#34; [80,80,80] 80) where &#34;update st x n y = (if x = y then n else st y)&#34; sectionコマンドは証明には影響を与えないが、Sidekickにsectionとして表示されたりLaTeXに出力すると実際に節として扱われたりするもの。chapter, subsectio, subsubsectionなどもある。">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 5日目の記事です。   今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。 そしてこの記事は一人computer scienceアドベントカレンダーなのでCSらしい話題を、ということで、 IMPのoperational semanticsの話でもしようと思います。 IMPについて   IMPとはimperative languageの頭文字を取ったもので、natとboolを基本型にもつ簡単な手続き型言語です。 CSの教科書とかでよく見かけるやつです。 IMPの定義をし、そのevaluationを定めます。  ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。 このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。 0. States   IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。 section {* States *} type_synonym id = string type_synonym state = &#34;id ⇒ nat&#34; definition empty :: &#34;state&#34; where &#34;empty _ = 0&#34; no_syntax &#34;_maplet&#34; :: &#34;[&#39;a, &#39;a] ⇒ maplet&#34; (&#34;_ /↦/ _&#34;) fun update :: &#34;state ⇒ id ⇒ nat ⇒ state&#34; (&#34;_[_ ↦ _]&#34; [80,80,80] 80) where &#34;update st x n y = (if x = y then n else st y)&#34;   sectionコマンドは証明には影響を与えないが、Sidekickにsectionとして表示されたりLaTeXに出力すると実際に節として扱われたりするもの。chapter, subsectio, subsubsectionなどもある。  さて、 id で変数名を表すことにし、さらに環境を表す state を定めた。 ここでは id として string を、 state としてidを受け取ってnatを返す関数を使うことにした。(変数に格納される値は常にnatである)  Isabelleで文字列リテラルは &#39;&#39;hoge&#39;&#39; と、シングルクオート2つで囲って表現する1。  さてここではupdateというstateを更新する関数を定義しているが、その前になにやらno_syntaxという箇所がある。 これは、update関数を演算子として st [x ↦ n] のように書きたいのだが、この記法がすでにある _maplet という記法と被ってしまうため既存の記法を解除するためのものである。 このように記法が被った場合、すでにある演算子の定義を調べ(jEditならCtrlを押しながらクリックとかで定義箇所に飛べる)、それをno_syntaxやno_notationで解除することができる。 1.">
 
 
 <meta itemprop="datePublished" content="2017-12-05T00:02:29&#43;09:00" />
@@ -54,12 +43,7 @@ section {* States *} type_synonym id = string type_synonym state = &#34;id ⇒ n
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="IMPのoperational semantics その1"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 5日目の記事です。
-今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。 そしてこの記事は一人computer scienceアドベントカレンダーなのでCSらしい話題を、ということで、 IMPのoperational semanticsの話でもしようと思います。
-IMPについて IMPとはimperative languageの頭文字を取ったもので、natとboolを基本型にもつ簡単な手続き型言語です。 CSの教科書とかでよく見かけるやつです。 IMPの定義をし、そのevaluationを定めます。
-ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。 このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。
-0. States IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。
-section {* States *} type_synonym id = string type_synonym state = &#34;id ⇒ nat&#34; definition empty :: &#34;state&#34; where &#34;empty _ = 0&#34; no_syntax &#34;_maplet&#34; :: &#34;[&#39;a, &#39;a] ⇒ maplet&#34; (&#34;_ /↦/ _&#34;) fun update :: &#34;state ⇒ id ⇒ nat ⇒ state&#34; (&#34;_[_ ↦ _]&#34; [80,80,80] 80) where &#34;update st x n y = (if x = y then n else st y)&#34; sectionコマンドは証明には影響を与えないが、Sidekickにsectionとして表示されたりLaTeXに出力すると実際に節として扱われたりするもの。chapter, subsectio, subsubsectionなどもある。"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 5日目の記事です。   今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。 そしてこの記事は一人computer scienceアドベントカレンダーなのでCSらしい話題を、ということで、 IMPのoperational semanticsの話でもしようと思います。 IMPについて   IMPとはimperative languageの頭文字を取ったもので、natとboolを基本型にもつ簡単な手続き型言語です。 CSの教科書とかでよく見かけるやつです。 IMPの定義をし、そのevaluationを定めます。  ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。 このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。 0. States   IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。 section {* States *} type_synonym id = string type_synonym state = &#34;id ⇒ nat&#34; definition empty :: &#34;state&#34; where &#34;empty _ = 0&#34; no_syntax &#34;_maplet&#34; :: &#34;[&#39;a, &#39;a] ⇒ maplet&#34; (&#34;_ /↦/ _&#34;) fun update :: &#34;state ⇒ id ⇒ nat ⇒ state&#34; (&#34;_[_ ↦ _]&#34; [80,80,80] 80) where &#34;update st x n y = (if x = y then n else st y)&#34;   sectionコマンドは証明には影響を与えないが、Sidekickにsectionとして表示されたりLaTeXに出力すると実際に節として扱われたりするもの。chapter, subsectio, subsubsectionなどもある。  さて、 id で変数名を表すことにし、さらに環境を表す state を定めた。 ここでは id として string を、 state としてidを受け取ってnatを返す関数を使うことにした。(変数に格納される値は常にnatである)  Isabelleで文字列リテラルは &#39;&#39;hoge&#39;&#39; と、シングルクオート2つで囲って表現する1。  さてここではupdateというstateを更新する関数を定義しているが、その前になにやらno_syntaxという箇所がある。 これは、update関数を演算子として st [x ↦ n] のように書きたいのだが、この記法がすでにある _maplet という記法と被ってしまうため既存の記法を解除するためのものである。 このように記法が被った場合、すでにある演算子の定義を調べ(jEditならCtrlを押しながらクリックとかで定義箇所に飛べる)、それをno_syntaxやno_notationで解除することができる。 1."/>
 
 
   </head>
@@ -88,26 +72,35 @@ section {* States *} type_synonym id = string type_synonym state = &#34;id ⇒ n
       <time datetime="2017-12-05 12:02">2017-12-05</time>
       <h1>IMPのoperational semantics その1</h1>
     </header>
-    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 5日目の記事です。</strong></p>
-
-<hr />
-
-<p>今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。
+    <section>
+<p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 5日目の記事です。</strong>
+</p>
+<hr>
+<p>
+今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。
 そしてこの記事は一人computer scienceアドベントカレンダーなのでCSらしい話題を、ということで、
-IMPのoperational semanticsの話でもしようと思います。</p>
-
-<h1 id="impについて">IMPについて</h1>
-
-<p>IMPとはimperative languageの頭文字を取ったもので、natとboolを基本型にもつ簡単な手続き型言語です。
+IMPのoperational semanticsの話でもしようと思います。
+</p>
+<h1 id="headline-1">
+IMPについて
+</h1>
+<p>
+IMPとはimperative languageの頭文字を取ったもので、natとboolを基本型にもつ簡単な手続き型言語です。
 CSの教科書とかでよく見かけるやつです。
-IMPの定義をし、そのevaluationを定めます。</p>
-
-<p>ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。
-このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。</p>
-
-<h1 id="0-states">0. States</h1>
-
-<p>IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。</p>
+IMPの定義をし、そのevaluationを定めます。
+</p>
+<p>
+ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。
+このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。
+</p>
+<h1 id="headline-2">
+0. States
+</h1>
+<p>
+IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  section {* States *}
 
   type_synonym id = string
@@ -121,33 +114,48 @@ IMPの定義をし、そのevaluationを定めます。</p>
 
   fun update :: &#34;state ⇒ id ⇒ nat ⇒ state&#34; (&#34;_[_ ↦ _]&#34; [80,80,80] 80) where
     &#34;update st x n y = (if x = y then n else st y)&#34;</code></pre></div>
-<p>sectionコマンドは証明には影響を与えないが、Sidekickにsectionとして表示されたりLaTeXに出力すると実際に節として扱われたりするもの。chapter, subsectio, subsubsectionなどもある。</p>
-
-<p>さて、 <code>id</code> で変数名を表すことにし、さらに環境を表す <code>state</code> を定めた。
-ここでは <code>id</code> として <code>string</code> を、 <code>state</code> としてidを受け取ってnatを返す関数を使うことにした。(変数に格納される値は常にnatである)</p>
-
-<p>Isabelleで文字列リテラルは <code>''hoge''</code> と、シングルクオート2つで囲って表現する<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>。</p>
-
-<p>さてここではupdateというstateを更新する関数を定義しているが、その前になにやらno_syntaxという箇所がある。
+</div>
+<p>
+sectionコマンドは証明には影響を与えないが、Sidekickにsectionとして表示されたりLaTeXに出力すると実際に節として扱われたりするもの。chapter, subsectio, subsubsectionなどもある。
+</p>
+<p>
+さて、 <code>id</code> で変数名を表すことにし、さらに環境を表す <code>state</code> を定めた。
+ここでは <code>id</code> として <code>string</code> を、 <code>state</code> としてidを受け取ってnatを返す関数を使うことにした。(変数に格納される値は常にnatである)
+</p>
+<p>
+Isabelleで文字列リテラルは <code>&#39;&#39;hoge&#39;&#39;</code> と、シングルクオート2つで囲って表現する<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>。
+</p>
+<p>
+さてここではupdateというstateを更新する関数を定義しているが、その前になにやらno_syntaxという箇所がある。
 これは、update関数を演算子として <code>st [x ↦ n]</code> のように書きたいのだが、この記法がすでにある <code>_maplet</code> という記法と被ってしまうため既存の記法を解除するためのものである。
-このように記法が被った場合、すでにある演算子の定義を調べ(jEditならCtrlを押しながらクリックとかで定義箇所に飛べる)、それをno_syntaxやno_notationで解除することができる。</p>
-
-<h1 id="1-arithmetic-and-boolean-expression">1. Arithmetic and Boolean Expression</h1>
-
-<p>さて、arithmetic expressionとboolean expressionを定義しよう。</p>
-
-<p>arithmetic expressionはnat型のtermで、数値リテラル、(nat型の)変数、あるいはaexp同士の和・差・積のいずれか。
-boolean expressionはbool型のtermで、true、false、aexp同士の比較、bexpのかつや否定をとったもののいずれか。</p>
+このように記法が被った場合、すでにある演算子の定義を調べ(jEditならCtrlを押しながらクリックとかで定義箇所に飛べる)、それをno_syntaxやno_notationで解除することができる。
+</p>
+<h1 id="headline-3">
+1. Arithmetic and Boolean Expression
+</h1>
+<p>
+さて、arithmetic expressionとboolean expressionを定義しよう。
+</p>
+<p>
+arithmetic expressionはnat型のtermで、数値リテラル、(nat型の)変数、あるいはaexp同士の和・差・積のいずれか。
+boolean expressionはbool型のtermで、true、false、aexp同士の比較、bexpのかつや否定をとったもののいずれか。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  section {* Arithmetic and Boolean Expressions *}
 
   subsection {* Syntax *}
 
   datatype aexp = ANum nat | AId id | APlus aexp aexp | AMinus aexp aexp | AMult aexp aexp
   datatype bexp = BTrue | BFalse | BEq aexp aexp | BLeq aexp aexp | BAnd bexp bexp | BNot bexp</code></pre></div>
-<h1 id="2-evaluation-of-aexp-bexp">2. Evaluation of AExp, BExp</h1>
-
-<p>さてaexp, bexpのevaluationを定義しよう。
-aexp, bexpの評価は常に可能(常に有限ステップで停止する関数がかける)ので大人しくfunで関数として定義することにする。</p>
+</div>
+<h1 id="headline-4">
+2. Evaluation of AExp, BExp
+</h1>
+<p>
+さてaexp, bexpのevaluationを定義しよう。
+aexp, bexpの評価は常に可能(常に有限ステップで停止する関数がかける)ので大人しくfunで関数として定義することにする。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  subsection {* Evaluation *}
 
   fun aeval :: &#34;state ⇒ aexp ⇒ nat&#34; where
@@ -167,23 +175,35 @@ aexp, bexpの評価は常に可能(常に有限ステップで停止する関数
 
   fun bool_to_bexp :: &#34;bool ⇒ bexp&#34; where
     &#34;bool_to_bexp b = (if b then BTrue else BFalse)&#34;</code></pre></div>
-<p>aeval, bevalともに評価を行う際に変数の値を参照したりする可能性があるのでstateを引数として渡している。
-ついでに <code>bool_to_bexp</code> を定義しておいた。後で使う。</p>
-
-<h1 id="まとめ">まとめ</h1>
-
-<p>(今回は準備回なのであんまり何もしてないけど)Stateの定義をし、aexp/bexpを定めその評価を行う関数を定義した。</p>
-
-<p>明日はcommandを定義します。</p>
-
-<h1 id="footnotes">Footnotes</h1>
+</div>
+<p>
+aeval, bevalともに評価を行う際に変数の値を参照したりする可能性があるのでstateを引数として渡している。
+ついでに <code class="verbatim">bool_to_bexp</code> を定義しておいた。後で使う。
+</p>
+<h1 id="headline-5">
+まとめ
+</h1>
+<p>
+(今回は準備回なのであんまり何もしてないけど)Stateの定義をし、aexp/bexpを定めその評価を行う関数を定義した。
+</p>
+<p>
+明日はcommandを定義します。
+</p>
+<h1 id="headline-6">
+Footnotes
+</h1>
 <div class="footnotes">
-
-<hr />
-
-<ol>
-<li id="fn:1">ダブルクオーテーションが取られてしまっているので致し方ないのだろうけどなんとかなんない？って思う(なんともならない) <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-</ol>
+<hr class="footnotes-separatator">
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>
+ダブルクオーテーションが取られてしまっているので致し方ないのだろうけどなんとかなんない？って思う(なんともならない)
+</p>
+</div>
+</div>
+</div>
 </div>
 </section>
     <footer>

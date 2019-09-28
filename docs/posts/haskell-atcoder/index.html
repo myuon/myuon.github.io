@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -27,9 +27,8 @@
  環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。  Strict拡張がない BangPatterns拡張はある 環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない  文字列  基本はData.ByteString.Chan8 Stringは死んでも使わない(遅いので) Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない  リスト  リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く)) 添字アクセスと結合は死んでもしない 遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと) 累積和はscan系を使うといいよ  Vector: 基本はData.Vector.Unboxed  BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難 push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが) Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る 便利なAPI: create, unfoldrN 注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)  データ構造  その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど) Data.Set: priority queueの実装が面倒な場合 Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合  再帰の実装  単なるループはfoldl&#39;, 早期リターンが必要ならfoldr 雑に再帰したいときはControl.Monad.Fix.fixを使っても良い Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと  GHC最適化系:  繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される) タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全 datatypeのフィールドも正格にしておくこと コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない  パフォーマンス:  実行時間はC&#43;&#43;やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い) メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)   入力  上にも書いたようにByteStringで読み込む 「n個の数値の読み出し」とかはVectorでササッと書く  例 例: a1 ." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/haskell-atcoder/" />
-<meta property="article:published_time" content="2019-04-28T16:44:29&#43;09:00"/>
-<meta property="article:modified_time" content="2019-04-28T16:44:29&#43;09:00"/>
-
+<meta property="article:published_time" content="2019-04-28T16:44:29+09:00" />
+<meta property="article:modified_time" content="2019-04-28T16:44:29+09:00" />
 
 
 <meta itemprop="name" content="Haskellで解くAtCoder">
@@ -164,9 +163,9 @@
 <span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.ByteString.Char8</span> <span class="k">as</span> <span class="n">B</span>
 
 <span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
-  <span class="kr">let</span> <span class="nf">readInt</span> <span class="ow">=</span> <span class="nf">fmap</span> <span class="p">(</span><span class="nf">second</span> <span class="kt">B</span><span class="o">.</span><span class="nf">tail</span><span class="p">)</span> <span class="o">.</span> <span class="kt">B</span><span class="o">.</span><span class="nf">readInt</span>
+  <span class="kr">let</span> <span class="n">readInt</span> <span class="ow">=</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">second</span> <span class="kt">B</span><span class="o">.</span><span class="n">tail</span><span class="p">)</span> <span class="o">.</span> <span class="kt">B</span><span class="o">.</span><span class="n">readInt</span>
  
-  <span class="nf">as</span> <span class="ow">&lt;-</span> <span class="kt">VU</span><span class="o">.</span><span class="nf">unfoldrN</span> <span class="nf">n</span> <span class="nf">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="nf">getLine</span></code></pre></div>
+  <span class="n">as</span> <span class="ow">&lt;-</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="n">n</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span></code></pre></div>
 <p><code>readInt</code>によって数値の読み出しとスペースを読み飛ばすという操作を行い、これを<code>unfoldrN</code>で繰り返すだけ</p>
 
 <p>例: <code>A B</code> を読み取り</p>
@@ -174,9 +173,9 @@
 <span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.ByteString.Char8</span> <span class="k">as</span> <span class="n">B</span>
 
 <span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
-  <span class="kr">let</span> <span class="nf">readInt</span> <span class="ow">=</span> <span class="nf">fmap</span> <span class="p">(</span><span class="nf">second</span> <span class="kt">B</span><span class="o">.</span><span class="nf">tail</span><span class="p">)</span> <span class="o">.</span> <span class="kt">B</span><span class="o">.</span><span class="nf">readInt</span>
+  <span class="kr">let</span> <span class="n">readInt</span> <span class="ow">=</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">second</span> <span class="kt">B</span><span class="o">.</span><span class="n">tail</span><span class="p">)</span> <span class="o">.</span> <span class="kt">B</span><span class="o">.</span><span class="n">readInt</span>
  
-  <span class="p">(</span><span class="nf">a</span><span class="p">,</span><span class="nf">b</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="p">(</span><span class="nf">\vec</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="nf">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">0</span><span class="p">,</span> <span class="nf">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">1</span><span class="p">))</span> <span class="o">.</span> <span class="kt">VU</span><span class="o">.</span><span class="nf">unfoldrN</span> <span class="mi">2</span> <span class="nf">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="nf">getLine</span></code></pre></div>
+  <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="p">(</span><span class="nf">\</span><span class="n">vec</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">1</span><span class="p">))</span> <span class="o">.</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="mi">2</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span></code></pre></div>
 <p>上と同じように長さ2のvectorを作りこれを手で分解する(Vectorのままにして添字アクセスしてもいい)</p>
 
 <p>例: <code>A1 B1\nA2 B2\n ... An Bn</code> を読み取り(縦に並んでいる場合)</p>
@@ -184,10 +183,10 @@
 <span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.ByteString.Char8</span> <span class="k">as</span> <span class="n">B</span>
 
 <span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
-  <span class="kr">let</span> <span class="nf">readInt</span> <span class="ow">=</span> <span class="nf">fmap</span> <span class="p">(</span><span class="nf">second</span> <span class="kt">B</span><span class="o">.</span><span class="nf">tail</span><span class="p">)</span> <span class="o">.</span> <span class="kt">B</span><span class="o">.</span><span class="nf">readInt</span>
+  <span class="kr">let</span> <span class="n">readInt</span> <span class="ow">=</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">second</span> <span class="kt">B</span><span class="o">.</span><span class="n">tail</span><span class="p">)</span> <span class="o">.</span> <span class="kt">B</span><span class="o">.</span><span class="n">readInt</span>
  
-  <span class="nf">abs</span> <span class="ow">&lt;-</span>
-    <span class="kt">VU</span><span class="o">.</span><span class="nf">replicateM</span> <span class="nf">n</span> <span class="o">$</span> <span class="p">(</span><span class="nf">\vec</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="nf">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">0</span><span class="p">,</span> <span class="nf">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">1</span><span class="p">))</span> <span class="o">.</span> <span class="kt">VU</span><span class="o">.</span><span class="nf">unfoldrN</span> <span class="mi">2</span> <span class="nf">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="nf">getLine</span></code></pre></div>
+  <span class="n">abs</span> <span class="ow">&lt;-</span>
+    <span class="kt">VU</span><span class="o">.</span><span class="n">replicateM</span> <span class="n">n</span> <span class="o">$</span> <span class="p">(</span><span class="nf">\</span><span class="n">vec</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">1</span><span class="p">))</span> <span class="o">.</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="mi">2</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span></code></pre></div>
 <p>上でやったのを<code>replicateM</code>で増やせばOK</p>
 
 <h2 id="vector">Vector</h2>

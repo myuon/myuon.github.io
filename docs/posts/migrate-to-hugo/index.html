@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,38 +22,15 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="HakyllからHugoに移行した" />
-<meta property="og:description" content="移行理由 前はHakyll&#43;pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。
-手順諸々 導入 hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。 各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。
-hugo serve --watch --buildDrafts でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。
-テーマ Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。 hugo new theme [テーマ名] で必要なファイル群が themes にできるのであとは Templates にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。
-まぁ変に汎用性とか気にしなければ簡単、だと思う。
-コードのsyntax highlight config.tomlに
-pygmentscodefences = true pygmentsstyle = &#34;manni&#34; と書いた。 pygmentscodefencesはmarkdownで ```lang みたいに書けるようにするやつだけど、org-modeのcode blockもありがたいことに対応してくれてたのでそのまま色がついた。
-カラースキームはPygmentsの公式サイトから色々試してしっくり来るやつを探すと良さそう。
-syntax highlight関係のデザイン pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。 それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。
-TOC 困ったことにorg-modeだとtocが表示されないバグがあるらしく1、調べたらテンプレートだけでTOCを作る方法があったのでそれをパクった。 リストを作ってCSSでheadingに応じて右にずらしているだけだけど。
-semantic-uiの読み込み このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。 と言っても git submodule add URL directory とかして管理するだけだけど。 公開するときとローカルビルドするときのどちらも必要になるのでどちらもsubmoduleに追加する必要がある。 それと、URLはgit@...じゃなくてhttps:... じゃないとだめらしい。(一度怒られた)
-hard line breaks これはやり方がわからない。 orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(&lt;br&gt; に)してほしい。 #&#43;OPTIONS: \n:t 相当のやつ。markdownは対応しているみたいだけど…。" />
+<meta property="og:description" content=" 移行理由   前はHakyll&#43;pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。 手順諸々  導入   hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。 各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。  hugo serve --watch --buildDrafts でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。 テーマ   Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。 hugo new theme [テーマ名] で必要なファイル群が themes にできるのであとは Templates にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。  まぁ変に汎用性とか気にしなければ簡単、だと思う。 コードのsyntax highlight   config.tomlに pygmentscodefences = true pygmentsstyle = &#34;manni&#34;   と書いた。 pygmentscodefencesはmarkdownで ```lang みたいに書けるようにするやつだけど、org-modeのcode blockもありがたいことに対応してくれてたのでそのまま色がついた。  カラースキームはPygmentsの公式サイトから色々試してしっくり来るやつを探すと良さそう。 syntax highlight関係のデザイン   pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。 それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。 TOC   困ったことにorg-modeだとtocが表示されないバグがあるらしく1、調べたらテンプレートだけでTOCを作る方法があったのでそれをパクった。 リストを作ってCSSでheadingに応じて右にずらしているだけだけど。 semantic-uiの読み込み   このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。 と言っても git submodule add URL directory とかして管理するだけだけど。 公開するときとローカルビルドするときのどちらも必要になるのでどちらもsubmoduleに追加する必要がある。 それと、URLはgit@…じゃなくてhttps:… じゃないとだめらしい。(一度怒られた) hard line breaks   これはやり方がわからない。 orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(&lt;br&gt; に)してほしい。 #&#43;OPTIONS: \n:t 相当のやつ。markdownは対応しているみたいだけど…。  一度pandocでhard line breaks入れるフィルターを通すとかすると良いのかもしれないけど強引すぎるからやりたくはない。 hugoが対応してくれるのを待つしかないのかな〜。 1  2017-11-10現在。最近報告されたらしいのでそのうち直ると思う。     " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/migrate-to-hugo/" />
-<meta property="article:published_time" content="2017-11-10T02:37:31&#43;09:00"/>
-<meta property="article:modified_time" content="2017-11-10T02:37:31&#43;09:00"/>
-
+<meta property="article:published_time" content="2017-11-10T02:37:31+09:00" />
+<meta property="article:modified_time" content="2017-11-10T02:37:31+09:00" />
 
 
 <meta itemprop="name" content="HakyllからHugoに移行した">
-<meta itemprop="description" content="移行理由 前はHakyll&#43;pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。
-手順諸々 導入 hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。 各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。
-hugo serve --watch --buildDrafts でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。
-テーマ Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。 hugo new theme [テーマ名] で必要なファイル群が themes にできるのであとは Templates にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。
-まぁ変に汎用性とか気にしなければ簡単、だと思う。
-コードのsyntax highlight config.tomlに
-pygmentscodefences = true pygmentsstyle = &#34;manni&#34; と書いた。 pygmentscodefencesはmarkdownで ```lang みたいに書けるようにするやつだけど、org-modeのcode blockもありがたいことに対応してくれてたのでそのまま色がついた。
-カラースキームはPygmentsの公式サイトから色々試してしっくり来るやつを探すと良さそう。
-syntax highlight関係のデザイン pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。 それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。
-TOC 困ったことにorg-modeだとtocが表示されないバグがあるらしく1、調べたらテンプレートだけでTOCを作る方法があったのでそれをパクった。 リストを作ってCSSでheadingに応じて右にずらしているだけだけど。
-semantic-uiの読み込み このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。 と言っても git submodule add URL directory とかして管理するだけだけど。 公開するときとローカルビルドするときのどちらも必要になるのでどちらもsubmoduleに追加する必要がある。 それと、URLはgit@...じゃなくてhttps:... じゃないとだめらしい。(一度怒られた)
-hard line breaks これはやり方がわからない。 orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(&lt;br&gt; に)してほしい。 #&#43;OPTIONS: \n:t 相当のやつ。markdownは対応しているみたいだけど…。">
+<meta itemprop="description" content=" 移行理由   前はHakyll&#43;pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。 手順諸々  導入   hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。 各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。  hugo serve --watch --buildDrafts でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。 テーマ   Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。 hugo new theme [テーマ名] で必要なファイル群が themes にできるのであとは Templates にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。  まぁ変に汎用性とか気にしなければ簡単、だと思う。 コードのsyntax highlight   config.tomlに pygmentscodefences = true pygmentsstyle = &#34;manni&#34;   と書いた。 pygmentscodefencesはmarkdownで ```lang みたいに書けるようにするやつだけど、org-modeのcode blockもありがたいことに対応してくれてたのでそのまま色がついた。  カラースキームはPygmentsの公式サイトから色々試してしっくり来るやつを探すと良さそう。 syntax highlight関係のデザイン   pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。 それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。 TOC   困ったことにorg-modeだとtocが表示されないバグがあるらしく1、調べたらテンプレートだけでTOCを作る方法があったのでそれをパクった。 リストを作ってCSSでheadingに応じて右にずらしているだけだけど。 semantic-uiの読み込み   このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。 と言っても git submodule add URL directory とかして管理するだけだけど。 公開するときとローカルビルドするときのどちらも必要になるのでどちらもsubmoduleに追加する必要がある。 それと、URLはgit@…じゃなくてhttps:… じゃないとだめらしい。(一度怒られた) hard line breaks   これはやり方がわからない。 orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(&lt;br&gt; に)してほしい。 #&#43;OPTIONS: \n:t 相当のやつ。markdownは対応しているみたいだけど…。  一度pandocでhard line breaks入れるフィルターを通すとかすると良いのかもしれないけど強引すぎるからやりたくはない。 hugoが対応してくれるのを待つしかないのかな〜。 1  2017-11-10現在。最近報告されたらしいのでそのうち直ると思う。     ">
 
 
 <meta itemprop="datePublished" content="2017-11-10T02:37:31&#43;09:00" />
@@ -66,18 +43,7 @@ hard line breaks これはやり方がわからない。 orgで書いた時に�
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="HakyllからHugoに移行した"/>
-<meta name="twitter:description" content="移行理由 前はHakyll&#43;pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。
-手順諸々 導入 hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。 各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。
-hugo serve --watch --buildDrafts でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。
-テーマ Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。 hugo new theme [テーマ名] で必要なファイル群が themes にできるのであとは Templates にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。
-まぁ変に汎用性とか気にしなければ簡単、だと思う。
-コードのsyntax highlight config.tomlに
-pygmentscodefences = true pygmentsstyle = &#34;manni&#34; と書いた。 pygmentscodefencesはmarkdownで ```lang みたいに書けるようにするやつだけど、org-modeのcode blockもありがたいことに対応してくれてたのでそのまま色がついた。
-カラースキームはPygmentsの公式サイトから色々試してしっくり来るやつを探すと良さそう。
-syntax highlight関係のデザイン pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。 それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。
-TOC 困ったことにorg-modeだとtocが表示されないバグがあるらしく1、調べたらテンプレートだけでTOCを作る方法があったのでそれをパクった。 リストを作ってCSSでheadingに応じて右にずらしているだけだけど。
-semantic-uiの読み込み このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。 と言っても git submodule add URL directory とかして管理するだけだけど。 公開するときとローカルビルドするときのどちらも必要になるのでどちらもsubmoduleに追加する必要がある。 それと、URLはgit@...じゃなくてhttps:... じゃないとだめらしい。(一度怒られた)
-hard line breaks これはやり方がわからない。 orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(&lt;br&gt; に)してほしい。 #&#43;OPTIONS: \n:t 相当のやつ。markdownは対応しているみたいだけど…。"/>
+<meta name="twitter:description" content=" 移行理由   前はHakyll&#43;pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。 手順諸々  導入   hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。 各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。  hugo serve --watch --buildDrafts でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。 テーマ   Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。 hugo new theme [テーマ名] で必要なファイル群が themes にできるのであとは Templates にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。  まぁ変に汎用性とか気にしなければ簡単、だと思う。 コードのsyntax highlight   config.tomlに pygmentscodefences = true pygmentsstyle = &#34;manni&#34;   と書いた。 pygmentscodefencesはmarkdownで ```lang みたいに書けるようにするやつだけど、org-modeのcode blockもありがたいことに対応してくれてたのでそのまま色がついた。  カラースキームはPygmentsの公式サイトから色々試してしっくり来るやつを探すと良さそう。 syntax highlight関係のデザイン   pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。 それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。 TOC   困ったことにorg-modeだとtocが表示されないバグがあるらしく1、調べたらテンプレートだけでTOCを作る方法があったのでそれをパクった。 リストを作ってCSSでheadingに応じて右にずらしているだけだけど。 semantic-uiの読み込み   このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。 と言っても git submodule add URL directory とかして管理するだけだけど。 公開するときとローカルビルドするときのどちらも必要になるのでどちらもsubmoduleに追加する必要がある。 それと、URLはgit@…じゃなくてhttps:… じゃないとだめらしい。(一度怒られた) hard line breaks   これはやり方がわからない。 orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(&lt;br&gt; に)してほしい。 #&#43;OPTIONS: \n:t 相当のやつ。markdownは対応しているみたいだけど…。  一度pandocでhard line breaks入れるフィルターを通すとかすると良いのかもしれないけど強引すぎるからやりたくはない。 hugoが対応してくれるのを待つしかないのかな〜。 1  2017-11-10現在。最近報告されたらしいのでそのうち直ると思う。     "/>
 
 
   </head>
@@ -106,68 +72,100 @@ hard line breaks これはやり方がわからない。 orgで書いた時に�
       <time datetime="2017-11-10 02:37">2017-11-10</time>
       <h1>HakyllからHugoに移行した</h1>
     </header>
-    <section><h1 id="移行理由">移行理由</h1>
-
-<p>前はHakyll+pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(<code>こういうの</code>)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。
-困ってたところに<a href="https://gohugo.io/" title="hugo">hugo</a>というのを教えてもらったのでそれに移行することにした。</p>
-
-<h1 id="手順諸々">手順諸々</h1>
-
-<h2 id="導入">導入</h2>
-
-<p>hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。
-各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。</p>
-
-<p><code>hugo serve --watch --buildDrafts</code> でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。</p>
-
-<h2 id="テーマ">テーマ</h2>
-
-<p>Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。
- <code>hugo new theme [テーマ名]</code> で必要なファイル群が <code>themes</code> にできるのであとは <a href="https://gohugo.io/templates/" title="Templates">Templates</a> にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。</p>
-
-<p>まぁ変に汎用性とか気にしなければ簡単、だと思う。</p>
-
-<h2 id="コードのsyntax-highlight">コードのsyntax highlight</h2>
-
-<p>config.tomlに</p>
+    <section>
+<h1 id="headline-1">
+移行理由
+</h1>
+<p>
+前はHakyll+pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(<code class="verbatim">こういうの</code>)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。
+困ってたところに<a href="https://gohugo.io/">hugo</a>というのを教えてもらったのでそれに移行することにした。
+</p>
+<h1 id="headline-2">
+手順諸々
+</h1>
+<h2 id="headline-3">
+導入
+</h2>
+<p>
+hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。
+各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。
+</p>
+<p>
+<code class="verbatim">hugo serve --watch --buildDrafts</code> でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。
+</p>
+<h2 id="headline-4">
+テーマ
+</h2>
+<p>
+Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。
+<code class="verbatim">hugo new theme [テーマ名]</code> で必要なファイル群が <code class="verbatim">themes</code> にできるのであとは <a href="https://gohugo.io/templates/">Templates</a> にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。
+</p>
+<p>
+まぁ変に汎用性とか気にしなければ簡単、だと思う。
+</p>
+<h2 id="headline-5">
+コードのsyntax highlight
+</h2>
+<p>
+config.tomlに
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  pygmentscodefences = true
   pygmentsstyle = &#34;manni&#34;</code></pre></div>
-<p>と書いた。
-pygmentscodefencesはmarkdownで <code>```lang</code> みたいに書けるようにするやつだけど、org-modeのcode blockもありがたいことに対応してくれてたのでそのまま色がついた。</p>
-
-<p>カラースキームは<a href="http://pygments.org/demo/" title="Pygmentsの公式サイト">Pygmentsの公式サイト</a>から色々試してしっくり来るやつを探すと良さそう。</p>
-
-<h3 id="syntax-highlight関係のデザイン">syntax highlight関係のデザイン</h3>
-
-<p>pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。
-それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。</p>
-
-<h2 id="toc">TOC</h2>
-
-<p>困ったことにorg-modeだとtocが表示されないバグがあるらしく<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>、調べたら<a href="https://github.com/gohugoio/hugo/issues/1778#issuecomment-313895910" title="テンプレートだけでTOCを作る方法があった">テンプレートだけでTOCを作る方法があった</a>のでそれをパクった。
-リストを作ってCSSでheadingに応じて右にずらしているだけだけど。</p>
-
-<h2 id="semantic-uiの読み込み">semantic-uiの読み込み</h2>
-
-<p>このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。
-と言っても <code>git submodule add URL directory</code> とかして管理するだけだけど。
+</div>
+<p>
+と書いた。
+pygmentscodefencesはmarkdownで <code class="verbatim">```lang</code> みたいに書けるようにするやつだけど、org-modeのcode blockもありがたいことに対応してくれてたのでそのまま色がついた。
+</p>
+<p>
+カラースキームは<a href="http://pygments.org/demo/">Pygmentsの公式サイト</a>から色々試してしっくり来るやつを探すと良さそう。
+</p>
+<h3 id="headline-6">
+syntax highlight関係のデザイン
+</h3>
+<p>
+pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。
+それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。
+</p>
+<h2 id="headline-7">
+TOC
+</h2>
+<p>
+困ったことにorg-modeだとtocが表示されないバグがあるらしく<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>、調べたら<a href="https://github.com/gohugoio/hugo/issues/1778#issuecomment-313895910">テンプレートだけでTOCを作る方法があった</a>のでそれをパクった。
+リストを作ってCSSでheadingに応じて右にずらしているだけだけど。
+</p>
+<h2 id="headline-8">
+semantic-uiの読み込み
+</h2>
+<p>
+このブログではsemantic-uiをcssフレームワークとして使っていて、できればそれらのファイルを自分のリポジトリに含めてcommitするのは避けたかったのでsubmoduleで頑張った。
+と言っても <code class="verbatim">git submodule add URL directory</code> とかして管理するだけだけど。
 公開するときとローカルビルドするときのどちらも必要になるのでどちらもsubmoduleに追加する必要がある。
-それと、URLはgit@...じゃなくてhttps:... じゃないとだめらしい。(一度怒られた)</p>
-
-<h2 id="hard-line-breaks">hard line breaks</h2>
-
-<p>これはやり方がわからない。
-orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(<code>&lt;br&gt;</code> に)してほしい。 <code>#+OPTIONS: \n:t</code> 相当のやつ。markdownは対応しているみたいだけど…。</p>
-
-<p>一度pandocでhard line breaks入れるフィルターを通すとかすると良いのかもしれないけど強引すぎるからやりたくはない。
-hugoが対応してくれるのを待つしかないのかな〜。</p>
+それと、URLはgit@…じゃなくてhttps:… じゃないとだめらしい。(一度怒られた)
+</p>
+<h2 id="headline-9">
+hard line breaks
+</h2>
+<p>
+これはやり方がわからない。
+orgで書いた時に、パラグラフ中の改行はHTMLで強制改行に(<code class="verbatim">&lt;br&gt;</code> に)してほしい。 <code class="verbatim">#+OPTIONS: \n:t</code> 相当のやつ。markdownは対応しているみたいだけど…。
+</p>
+<p>
+一度pandocでhard line breaks入れるフィルターを通すとかすると良いのかもしれないけど強引すぎるからやりたくはない。
+hugoが対応してくれるのを待つしかないのかな〜。
+</p>
 <div class="footnotes">
-
-<hr />
-
-<ol>
-<li id="fn:1">2017-11-10現在。最近報告されたらしいのでそのうち直ると思う。 <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-</ol>
+<hr class="footnotes-separatator">
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>
+2017-11-10現在。最近報告されたらしいのでそのうち直ると思う。
+</p>
+</div>
+</div>
+</div>
 </div>
 </section>
     <footer>

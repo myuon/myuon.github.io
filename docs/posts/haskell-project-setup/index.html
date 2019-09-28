@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,50 +22,15 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Haskellプロジェクトを始めるにあたって" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 15日目の記事です。
-Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)
-今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。 どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。
-ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。
-開発環境構築 このセクションは初回のみです。
-Haskellのインストール stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。
-linux系なら公式ドキュメントを見ながら次のようにするといいと思います。
-$ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall $ stack setup # GHC(コンパイラ)を入れる stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。
-エディタ  emacsの人: intero spacemacsの人: haskell layer IntelliJ IDEAの人: intellij-haskell  を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。
-プロジェクトセットアップ stack new [2017/12/16追記]
-どうやらstackのデフォルトテンプレートであるnew-templateがいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に stack new [プロジェクトの名前] とすれば同じものが得られます1。
-[/追記]
-さてHaskellでプロジェクトを始めます。
-$ stack new [プロジェクトの名前] simple-hpack simple-hpackというのはテンプレートの名前です。ここではhpackというツールを使っています(私が普段から使っているので)。
-(以下昔話なので読まなくてもいいです) さて少しだけ説明をすると、stackという便利ツールが登場する前はみんなcabalというビルドツールを使っていました。cabalはcabalファイルの情報を読み込んでビルドをするのですが、cabalファイルはちょっと面倒な部分があったのでこれをもっと簡単に書けるようにするためにhpackというツールが最近登場しました。 hpackはpackage.yamlをcabalファイルに変換するツールですが、今はstackが公式にhpackをサポートしたので、プロジェクトでpackage.yamlに必要な情報を書くとそれがhpackによってcabalファイルに変換されてcabalによるビルドが走るというところまで全てstackが面倒を見てくれます。
-正直好みですが個人的にはhpackの方が楽なのでこれを使うためにここではsimple-hpackのテンプレートを指定しています。
-また、以下の説明は全てhpackのpackage.yaml前提です。cabalファイルはまた少し違うので対応表で各自調べてください。
-configuration stack newが終わると必要なファイル群と stack.yaml と package." />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 15日目の記事です。   Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)  今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。 どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。  ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。 開発環境構築   このセクションは初回のみです。 Haskellのインストール   stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。  linux系なら公式ドキュメントを見ながら次のようにするといいと思います。 $ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall $ stack setup # GHC(コンパイラ)を入れる   stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。 エディタ     emacsの人: intero    spacemacsの人: haskell layer    IntelliJ IDEAの人: intellij-haskell    を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。 プロジェクトセットアップ  stack new   [2017/12/16追記]  どうやらstackのデフォルトテンプレートであるnew-templateがいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に stack new [プロジェクトの名前] とすれば同じものが得られます1。 configuration   stack newが終わると必要なファイル群と stack." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/haskell-project-setup/" />
-<meta property="article:published_time" content="2017-12-15T00:04:21&#43;09:00"/>
-<meta property="article:modified_time" content="2017-12-15T00:04:21&#43;09:00"/>
-
+<meta property="article:published_time" content="2017-12-15T00:04:21+09:00" />
+<meta property="article:modified_time" content="2017-12-15T00:04:21+09:00" />
 
 
 <meta itemprop="name" content="Haskellプロジェクトを始めるにあたって">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 15日目の記事です。
-Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)
-今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。 どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。
-ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。
-開発環境構築 このセクションは初回のみです。
-Haskellのインストール stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。
-linux系なら公式ドキュメントを見ながら次のようにするといいと思います。
-$ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall $ stack setup # GHC(コンパイラ)を入れる stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。
-エディタ  emacsの人: intero spacemacsの人: haskell layer IntelliJ IDEAの人: intellij-haskell  を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。
-プロジェクトセットアップ stack new [2017/12/16追記]
-どうやらstackのデフォルトテンプレートであるnew-templateがいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に stack new [プロジェクトの名前] とすれば同じものが得られます1。
-[/追記]
-さてHaskellでプロジェクトを始めます。
-$ stack new [プロジェクトの名前] simple-hpack simple-hpackというのはテンプレートの名前です。ここではhpackというツールを使っています(私が普段から使っているので)。
-(以下昔話なので読まなくてもいいです) さて少しだけ説明をすると、stackという便利ツールが登場する前はみんなcabalというビルドツールを使っていました。cabalはcabalファイルの情報を読み込んでビルドをするのですが、cabalファイルはちょっと面倒な部分があったのでこれをもっと簡単に書けるようにするためにhpackというツールが最近登場しました。 hpackはpackage.yamlをcabalファイルに変換するツールですが、今はstackが公式にhpackをサポートしたので、プロジェクトでpackage.yamlに必要な情報を書くとそれがhpackによってcabalファイルに変換されてcabalによるビルドが走るというところまで全てstackが面倒を見てくれます。
-正直好みですが個人的にはhpackの方が楽なのでこれを使うためにここではsimple-hpackのテンプレートを指定しています。
-また、以下の説明は全てhpackのpackage.yaml前提です。cabalファイルはまた少し違うので対応表で各自調べてください。
-configuration stack newが終わると必要なファイル群と stack.yaml と package.">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 15日目の記事です。   Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)  今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。 どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。  ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。 開発環境構築   このセクションは初回のみです。 Haskellのインストール   stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。  linux系なら公式ドキュメントを見ながら次のようにするといいと思います。 $ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall $ stack setup # GHC(コンパイラ)を入れる   stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。 エディタ     emacsの人: intero    spacemacsの人: haskell layer    IntelliJ IDEAの人: intellij-haskell    を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。 プロジェクトセットアップ  stack new   [2017/12/16追記]  どうやらstackのデフォルトテンプレートであるnew-templateがいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に stack new [プロジェクトの名前] とすれば同じものが得られます1。 configuration   stack newが終わると必要なファイル群と stack.">
 
 
 <meta itemprop="datePublished" content="2017-12-15T00:04:21&#43;09:00" />
@@ -78,24 +43,7 @@ configuration stack newが終わると必要なファイル群と stack.yaml と
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Haskellプロジェクトを始めるにあたって"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 15日目の記事です。
-Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)
-今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。 どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。
-ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。
-開発環境構築 このセクションは初回のみです。
-Haskellのインストール stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。
-linux系なら公式ドキュメントを見ながら次のようにするといいと思います。
-$ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall $ stack setup # GHC(コンパイラ)を入れる stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。
-エディタ  emacsの人: intero spacemacsの人: haskell layer IntelliJ IDEAの人: intellij-haskell  を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。
-プロジェクトセットアップ stack new [2017/12/16追記]
-どうやらstackのデフォルトテンプレートであるnew-templateがいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に stack new [プロジェクトの名前] とすれば同じものが得られます1。
-[/追記]
-さてHaskellでプロジェクトを始めます。
-$ stack new [プロジェクトの名前] simple-hpack simple-hpackというのはテンプレートの名前です。ここではhpackというツールを使っています(私が普段から使っているので)。
-(以下昔話なので読まなくてもいいです) さて少しだけ説明をすると、stackという便利ツールが登場する前はみんなcabalというビルドツールを使っていました。cabalはcabalファイルの情報を読み込んでビルドをするのですが、cabalファイルはちょっと面倒な部分があったのでこれをもっと簡単に書けるようにするためにhpackというツールが最近登場しました。 hpackはpackage.yamlをcabalファイルに変換するツールですが、今はstackが公式にhpackをサポートしたので、プロジェクトでpackage.yamlに必要な情報を書くとそれがhpackによってcabalファイルに変換されてcabalによるビルドが走るというところまで全てstackが面倒を見てくれます。
-正直好みですが個人的にはhpackの方が楽なのでこれを使うためにここではsimple-hpackのテンプレートを指定しています。
-また、以下の説明は全てhpackのpackage.yaml前提です。cabalファイルはまた少し違うので対応表で各自調べてください。
-configuration stack newが終わると必要なファイル群と stack.yaml と package."/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 15日目の記事です。   Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)  今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。 どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。  ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。 開発環境構築   このセクションは初回のみです。 Haskellのインストール   stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。  linux系なら公式ドキュメントを見ながら次のようにするといいと思います。 $ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall $ stack setup # GHC(コンパイラ)を入れる   stackを入れてから stack setup でコンパイラが入るのでのんびり待ちます。 ~/.local/bin/ にパスを通しておきます。 エディタ     emacsの人: intero    spacemacsの人: haskell layer    IntelliJ IDEAの人: intellij-haskell    を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。 プロジェクトセットアップ  stack new   [2017/12/16追記]  どうやらstackのデフォルトテンプレートであるnew-templateがいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に stack new [プロジェクトの名前] とすれば同じものが得られます1。 configuration   stack newが終わると必要なファイル群と stack."/>
 
 
   </head>
@@ -124,76 +72,103 @@ configuration stack newが終わると必要なファイル群と stack.yaml と
       <time datetime="2017-12-15 12:04">2017-12-15</time>
       <h1>Haskellプロジェクトを始めるにあたって</h1>
     </header>
-    <section><p><strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs" title="一人Computer Scienceアドベントカレンダー">一人Computer Scienceアドベントカレンダー</a> 15日目の記事です。</strong></p>
-
-<hr />
-
-<p>Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)</p>
-
-<p>今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。
-どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。</p>
-
-<p>ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。</p>
-
-<h1 id="開発環境構築">開発環境構築</h1>
-
-<p>このセクションは初回のみです。</p>
-
-<h2 id="haskellのインストール">Haskellのインストール</h2>
-
-<p>stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。</p>
-
-<p>linux系なら<a href="https://docs.haskellstack.org/en/stable/README/" title="公式ドキュメント">公式ドキュメント</a>を見ながら次のようにするといいと思います。</p>
+    <section>
+<p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 15日目の記事です。</strong>
+</p>
+<hr>
+<p>
+Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)
+</p>
+<p>
+今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。
+どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。
+</p>
+<p>
+ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。
+</p>
+<h1 id="headline-1">
+開発環境構築
+</h1>
+<p>
+このセクションは初回のみです。
+</p>
+<h2 id="headline-2">
+Haskellのインストール
+</h2>
+<p>
+stackはプロジェクトを管理するツールっていうのかな？まぁビルドツールになったりパッケージマネージャーになったりghcを管理するのに使ったりなんかまぁそういうツールです(なんて言えばいいんだろう)。
+</p>
+<p>
+linux系なら<a href="https://docs.haskellstack.org/en/stable/README/">公式ドキュメント</a>を見ながら次のようにするといいと思います。
+</p>
+<div class="src src-sh">
 <div class="highlight"><pre class="chroma"><code class="language-sh" data-lang="sh">  $ curl -sSL https://get.haskellstack.org/ <span class="p">|</span> sh
   <span class="c1"># stackのinstall</span>
 
   $ stack setup
   <span class="c1"># GHC(コンパイラ)を入れる</span></code></pre></div>
-<p>stackを入れてから <code>stack setup</code> でコンパイラが入るのでのんびり待ちます。
- <code>~/.local/bin/</code> にパスを通しておきます。</p>
-
-<h2 id="エディタ">エディタ</h2>
-
+</div>
+<p>
+stackを入れてから <code>stack setup</code> でコンパイラが入るのでのんびり待ちます。
+<code class="verbatim">~/.local/bin/</code> にパスを通しておきます。
+</p>
+<h2 id="headline-3">
+エディタ
+</h2>
 <ul>
-<li>emacsの人: <a href="https://commercialhaskell.github.io/intero/" title="intero">intero</a></li>
-<li>spacemacsの人: <a href="https://github.com/syl20bnr/spacemacs/tree/master/layers/%252Blang/haskell" title="haskell layer">haskell layer</a></li>
-<li>IntelliJ IDEAの人: <a href="https://github.com/rikvdkleij/intellij-haskell" title="intellij-haskell">intellij-haskell</a></li>
+<li>
+<p>
+emacsの人: <a href="https://commercialhaskell.github.io/intero/">intero</a>
+</p>
+</li>
+<li>
+<p>
+spacemacsの人: <a href="https://github.com/syl20bnr/spacemacs/tree/master/layers/%252Blang/haskell">haskell layer</a>
+</p>
+</li>
+<li>
+<p>
+IntelliJ IDEAの人: <a href="https://github.com/rikvdkleij/intellij-haskell">intellij-haskell</a>
+</p>
+</li>
 </ul>
-
-<p>を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。</p>
-
-<h1 id="プロジェクトセットアップ">プロジェクトセットアップ</h1>
-
-<h2 id="stack-new">stack new</h2>
-
-<p><strong>[2017/12/16追記]</strong></p>
-
-<p>どうやらstackのデフォルトテンプレートである<a href="https://github.com/commercialhaskell/stack-templates/blob/master/new-template.hsfiles" title="new-template">new-template</a>がいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に <code>stack new [プロジェクトの名前]</code> とすれば同じものが得られます<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>。</p>
-
-<p><strong>[/追記]</strong></p>
-
-<p>さてHaskellでプロジェクトを始めます。</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">  $ stack new <span class="o">[</span>プロジェクトの名前<span class="o">]</span> simple-hpack</code></pre></div>
-<p>simple-hpackというのはテンプレートの名前です。ここではhpackというツールを使っています(私が普段から使っているので)。</p>
-
-<p>(以下昔話なので読まなくてもいいです) さて少しだけ説明をすると、stackという便利ツールが登場する前はみんなcabalというビルドツールを使っていました。cabalはcabalファイルの情報を読み込んでビルドをするのですが、cabalファイルはちょっと面倒な部分があったのでこれをもっと簡単に書けるようにするためにhpackというツールが最近登場しました。
-hpackはpackage.yamlをcabalファイルに変換するツールですが、今はstackが公式にhpackをサポートしたので、プロジェクトでpackage.yamlに必要な情報を書くとそれがhpackによってcabalファイルに変換されてcabalによるビルドが走るというところまで全てstackが面倒を見てくれます。</p>
-
-<p>正直好みですが個人的にはhpackの方が楽なのでこれを使うためにここではsimple-hpackのテンプレートを指定しています。</p>
-
-<p>また、以下の説明は全てhpackのpackage.yaml前提です。cabalファイルはまた少し違うので<a href="https://github.com/sol/hpack" title="対応表">対応表</a>で各自調べてください。</p>
-
-<h2 id="configuration">configuration</h2>
-
-<p>stack newが終わると必要なファイル群と <code>stack.yaml</code> と <code>package.yaml</code> が出来ます。
-ここでpackage.yamlを適当に編集します(しなくても問題ないです)。</p>
+<p>
+を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。
+</p>
+<h1 id="headline-4">
+プロジェクトセットアップ
+</h1>
+<h2 id="headline-5">
+stack new
+</h2>
+<p>
+<strong>[2017/12/16追記]</strong>
+</p>
+<p>
+どうやらstackのデフォルトテンプレートである<a href="https://github.com/commercialhaskell/stack-templates/blob/master/new-template.hsfiles">new-template</a>がいつの間にやらhpackを使うように変わったようです。なので、以下のsimple-hpackは不要で普通に <code>stack new [プロジェクトの名前]</code> とすれば同じものが得られます<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>。
+</p>
+<h2 id="headline-6">
+configuration
+</h2>
+<p>
+stack newが終わると必要なファイル群と <code>stack.yaml</code> と <code>package.yaml</code> が出来ます。
+ここでpackage.yamlを適当に編集します(しなくても問題ないです)。
+</p>
+<div class="src src-shell">
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">  $ stack build</code></pre></div>
-<p>でビルドできればOKです。</p>
-
-<h2 id="git-init">git init</h2>
-
-<p>そして私はこのタイミングでgit関連のあれこれをします。
-gitignore生成には<a href="https://github.com/simonwhitaker/gibo" title="gibo">gibo</a>を、git強化に<a href="https://github.com/nvie/gitflow" title="git-flow">git-flow</a>を使っています。</p>
+</div>
+<p>
+でビルドできればOKです。
+</p>
+<h2 id="headline-7">
+git init
+</h2>
+<p>
+そして私はこのタイミングでgit関連のあれこれをします。
+gitignore生成には<a href="https://github.com/simonwhitaker/gibo">gibo</a>を、git強化に<a href="https://github.com/nvie/gitflow">git-flow</a>を使っています。
+</p>
+<div class="src src-shell">
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">  $ gibo Haskell &gt; .gitignore
   <span class="c1"># .gitignore を作る</span>
 
@@ -203,51 +178,81 @@ gitignore生成には<a href="https://github.com/simonwhitaker/gibo" title="gibo
   $ git init <span class="o">&amp;&amp;</span> git add . <span class="o">&amp;&amp;</span> git commit -m <span class="s1">&#39;initial commit&#39;</span>
 
   $ git flow init</code></pre></div>
-<h1 id="そして開発へ">そして開発へ</h1>
-
-<p>以下は必要になった時に必要になった項目を随時行います。</p>
-
-<h2 id="パッケージの追加">パッケージの追加</h2>
-
-<p>パッケージを追加したいときはpackage.yamlのdependenciesに追加します。
-バージョンの指定とかできますが別にしなくていいです。</p>
+</div>
+<h1 id="headline-8">
+そして開発へ
+</h1>
+<p>
+以下は必要になった時に必要になった項目を随時行います。
+</p>
+<h2 id="headline-9">
+パッケージの追加
+</h2>
+<p>
+パッケージを追加したいときはpackage.yamlのdependenciesに追加します。
+バージョンの指定とかできますが別にしなくていいです。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  dependencies:
     - base
     - lens
     - mtl
     ...</code></pre></div>
-<h2 id="hackageのパッケージの追加">hackageのパッケージの追加</h2>
-
-<p>上のやり方で上手く行くのはパッケージがstackage(Haskellのパッケージを各バージョンごとに登録しとくところ)にある場合だけです。
-hackageにパッケージがある場合はstack.yamlのextra-depsに <strong>バージョンまで含めて</strong> 書きます。</p>
+</div>
+<h2 id="headline-10">
+hackageのパッケージの追加
+</h2>
+<p>
+上のやり方で上手く行くのはパッケージがstackage(Haskellのパッケージを各バージョンごとに登録しとくところ)にある場合だけです。
+hackageにパッケージがある場合はstack.yamlのextra-depsに <strong>バージョンまで含めて</strong> 書きます。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  extra-deps:
   - package-1.2.3.4
   ...</code></pre></div>
-<p>といっても、これが必要な場合はstack buildした時点でstackがこういう風に書けって教えてくれるので、それをコピペするだけでいいです。</p>
-
-<h2 id="githubのパッケージの追加">githubのパッケージの追加</h2>
-
-<p>例えばgithubにしかパッケージがない場合も同じくstack.yamlのextra-depsに追加します(<a href="https://docs.haskellstack.org/en/stable/yaml_configuration/#git-and-mercurial-repos" title="参照">参照</a>)。</p>
+</div>
+<p>
+といっても、これが必要な場合はstack buildした時点でstackがこういう風に書けって教えてくれるので、それをコピペするだけでいいです。
+</p>
+<h2 id="headline-11">
+githubのパッケージの追加
+</h2>
+<p>
+例えばgithubにしかパッケージがない場合も同じくstack.yamlのextra-depsに追加します(<a href="https://docs.haskellstack.org/en/stable/yaml_configuration/#git-and-mercurial-repos">参照</a>)。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  extra-eps:
   - git: git@github.com:hoge/piyo.git
     commit: commitID</code></pre></div>
-<h2 id="default-extensions">default-extensions</h2>
-
-<p>よく使うGHC拡張はpackage.yamlのdefault-extensionsに書いておきます。</p>
+</div>
+<h2 id="headline-12">
+default-extensions
+</h2>
+<p>
+よく使うGHC拡張はpackage.yamlのdefault-extensionsに書いておきます。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  default-extensions:
   - Strict
   - LambdaCase
   - GADTs
   - TemplateHaskell
   ...</code></pre></div>
-<p>まぁこの辺はお好みで。</p>
-
-<h2 id="テスト">テスト</h2>
-
-<p>好きなものを使えばいいと思います。
-私は<a href="https://www.stackage.org/package/tasty" title="tasty">tasty</a>をよく使います。tastyは<a href="https://www.stackage.org/package/tasty-hunit" title="tasty-hunit">tasty-hunit</a>や<a href="https://www.stackage.org/package/tasty-quickcheck" title="tasty-quickcheck">tasty-quickcheck</a>なんかがあるので色んなテストのかき方が出来たり<a href="https://www.stackage.org/package/tasty-discover" title="tasty-discover">tasty-discover</a>でテストを自動で検出して走らせたりできるので便利です。</p>
-
-<p>package.yamlに</p>
+</div>
+<p>
+まぁこの辺はお好みで。
+</p>
+<h2 id="headline-13">
+テスト
+</h2>
+<p>
+好きなものを使えばいいと思います。
+私は<a href="https://www.stackage.org/package/tasty">tasty</a>をよく使います。tastyは<a href="https://www.stackage.org/package/tasty-hunit">tasty-hunit</a>や<a href="https://www.stackage.org/package/tasty-quickcheck">tasty-quickcheck</a>なんかがあるので色んなテストのかき方が出来たり<a href="https://www.stackage.org/package/tasty-discover">tasty-discover</a>でテストを自動で検出して走らせたりできるので便利です。
+</p>
+<p>
+package.yamlに
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  tests:
     hoge-test:
       source-dirs: test
@@ -256,59 +261,121 @@ hackageにパッケージがある場合はstack.yamlのextra-depsに <strong>�
       - base
       - hoge
       - tasty</code></pre></div>
-<p>みたいにして書いて、 <code>test/Driver.hs</code> に</p>
+</div>
+<p>
+みたいにして書いて、 <code>test/Driver.hs</code> に
+</p>
+<div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="cm">{-#
 </span><span class="cm">    OPTIONS_GHC -F
 </span><span class="cm">    -pgmF tasty-discover
 </span><span class="cm">    -optF --tree-display
 </span><span class="cm">  #-}</span></code></pre></div>
-<p>と書くと使えます。 <code>stack test</code> であとは勝手にテストが走ります。便利。</p>
-
-<h2 id="stackの参照するresolverのバージョンを上げる">stackの参照するresolverのバージョンを上げる</h2>
-
-<p>stackはresolverで指定されたsnapshotを常に参照します(globalでもlocalでも)。
-しばらく開発しているとこれが古くなったりするので、例えば</p>
+</div>
+<p>
+と書くと使えます。 <code>stack test</code> であとは勝手にテストが走ります。便利。
+</p>
+<h2 id="headline-14">
+stackの参照するresolverのバージョンを上げる
+</h2>
+<p>
+stackはresolverで指定されたsnapshotを常に参照します(globalでもlocalでも)。
+しばらく開発しているとこれが古くなったりするので、例えば
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  $ stack config set resolver lts</code></pre></div>
-<p>とかするとltsの最新版にあげてくれます。</p>
-
-<h2 id="リソースファイルを含める">リソースファイルを含める</h2>
-
-<p>(例えば)executableなパッケージで実行には特定のリソースファイルが必要とします。
-こういう場合はpackage.yamlのdata-filesに書きます。</p>
+</div>
+<p>
+とかするとltsの最新版にあげてくれます。
+</p>
+<h2 id="headline-15">
+リソースファイルを含める
+</h2>
+<p>
+(例えば)executableなパッケージで実行には特定のリソースファイルが必要とします。
+こういう場合はpackage.yamlのdata-filesに書きます。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  data-files:
   - resources/hoge.txt</code></pre></div>
-<p>ところでこのパッケージが <code>testpackage</code> という名前だった場合、</p>
+</div>
+<p>
+ところでこのパッケージが <code>testpackage</code> という名前だった場合、
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  library:
     other-modules:
     - Paths_testpackage</code></pre></div>
-<p>と書いておくと、</p>
+</div>
+<p>
+と書いておくと、
+</p>
+<div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">import</span> <span class="nn">Paths_testpackage</span>
 
   <span class="c1">-- data-filesに書いたファイル名からそのファイルのパスを得るには次の関数を使う</span>
   <span class="c1">-- getDataFileName :: FilePath -&gt; IO FilePath</span></code></pre></div>
-<p>みたいなことが出来ます(<a href="https://www.haskell.org/cabal/users-guide/developing-packages.html#accessing-data-files-from-package-code" title="参照">参照</a>)。</p>
-
-<h2 id="executableをmain-hs以外から実行する">executableをMain.hs以外から実行する</h2>
-
-<p>executableでMain.hs以外から実行しようとすると怒られるかもしれませんが <code>-main-is</code> オプションで回避できます。</p>
+</div>
+<p>
+みたいなことが出来ます(<a href="https://www.haskell.org/cabal/users-guide/developing-packages.html#accessing-data-files-from-package-code">参照</a>)。
+</p>
+<h2 id="headline-16">
+executableをMain.hs以外から実行する
+</h2>
+<p>
+executableでMain.hs以外から実行しようとすると怒られるかもしれませんが <code>-main-is</code> オプションで回避できます。
+</p>
+<div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  executables:
     hoge:
       source-dirs:
       - app
       main: Run.hs
       ghc-options: -main-is Run</code></pre></div>
-<h1 id="おわりに">おわりに</h1>
-
-<p>果たしてこういう記事が求められていたのだろうか、よくわからない(違う気がする)。</p>
-
-<p>こういうのも書いてほしいっていう要望があれば追加するので言ってください。</p>
+</div>
+<h1 id="headline-17">
+おわりに
+</h1>
+<p>
+果たしてこういう記事が求められていたのだろうか、よくわからない(違う気がする)。
+</p>
+<p>
+こういうのも書いてほしいっていう要望があれば追加するので言ってください。
+</p>
 <div class="footnotes">
-
-<hr />
-
-<ol>
-<li id="fn:1">cabalファイルを捨てたいという気持ちはまぁわかるけれどいきなりツールの使い方が変わってしまう大きな変更を入れてしまうのはどうなんだ感もありますね。せめてupgradeするときにリリースノートを表示するとかして欲しいところ。 <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-</ol>
+<hr class="footnotes-separatator">
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>
+cabalファイルを捨てたいという気持ちはまぁわかるけれどいきなりツールの使い方が変わってしまう大きな変更を入れてしまうのはどうなんだ感もありますね。せめてupgradeするときにリリースノートを表示するとかして欲しいところ。
+</p>
+<p>
+<strong>[/追記]</strong>
+</p>
+<p>
+さてHaskellでプロジェクトを始めます。
+</p>
+<div class="src src-shell">
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">  $ stack new <span class="o">[</span>プロジェクトの名前<span class="o">]</span> simple-hpack</code></pre></div>
+</div>
+<p>
+simple-hpackというのはテンプレートの名前です。ここではhpackというツールを使っています(私が普段から使っているので)。
+</p>
+<p>
+(以下昔話なので読まなくてもいいです) さて少しだけ説明をすると、stackという便利ツールが登場する前はみんなcabalというビルドツールを使っていました。cabalはcabalファイルの情報を読み込んでビルドをするのですが、cabalファイルはちょっと面倒な部分があったのでこれをもっと簡単に書けるようにするためにhpackというツールが最近登場しました。
+hpackはpackage.yamlをcabalファイルに変換するツールですが、今はstackが公式にhpackをサポートしたので、プロジェクトでpackage.yamlに必要な情報を書くとそれがhpackによってcabalファイルに変換されてcabalによるビルドが走るというところまで全てstackが面倒を見てくれます。
+</p>
+<p>
+正直好みですが個人的にはhpackの方が楽なのでこれを使うためにここではsimple-hpackのテンプレートを指定しています。
+</p>
+<p>
+また、以下の説明は全てhpackのpackage.yaml前提です。cabalファイルはまた少し違うので<a href="https://github.com/sol/hpack">対応表</a>で各自調べてください。
+</p>
+</div>
+</div>
+</div>
 </div>
 </section>
     <footer>

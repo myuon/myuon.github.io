@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,20 +22,15 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="GHC拡張一覧を眺める" />
-<meta property="og:description" content="GHC-8.2.2のGHC拡張を眺めます。
- 10. GHC Language Features User&#39;s Guideの該当セクション 7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い  上から順に見ていって後から関連するものとかを再編します。
-GHC拡張一覧  AllowAmbiguousTypes 型変数が全て決定していないものを通すようにする (個人的)非推奨1 Arrows arrow notationを使えるようにする FRPする人なんかは使う ApplicativeDo do-notationがApplicativeに対しても使えるようになる 個人的には嫌い BangPatterns 関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする BinaryLiterals バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない CApiFFI FFI関連; 使ったことない ConstrainedClassMethods 型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ) ConstraintKinds Constraintというカインドが使えるようになる CPP Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる DataKinds データ型の宣言をカインドの宣言へ昇格する DefaultSignatures 型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる DeriveAnyClass defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう DeriveDataTypeable deriving Data ってかける DeriveFunctor deriving Functor ってかける DeriveFoldable deriving Foldable ってかける DeriveGeneric deriving Generic ってかける DeriveLift deriving Lift ってかける LiftはTHのこれで、値をsyntactic expressionに変換できるようにするやつ DeriveTraversable deriving Traversable ってかける DerivingStrategies derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ DisambiguateRecordFields \k -&gt; k {hoge = x} におけるkのような、推論可能だが曖昧なレコード名を許す EmptyCase case x of {} ってかける Void型を扱う時なんかに使える EmptyDataDecls data Empty のようなコンストラクタを持たない型の宣言を許す ExistentialQuantification exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい ExplicitForall 型宣言のimplicitな全称量化をexplicitにかけるようにする id : forall a." />
+<meta property="og:description" content="GHC-8.2.2のGHC拡張を眺めます。    10. GHC Language Features User&#39;s Guideの該当セクション    7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い    上から順に見ていって後から関連するものとかを再編します。 GHC拡張一覧    AllowAmbiguousTypes    型変数が全て決定していないものを通すようにする (個人的)非推奨1   Arrows    arrow notationを使えるようにする FRPする人なんかは使う   ApplicativeDo    do-notationがApplicativeに対しても使えるようになる 個人的には嫌い   BangPatterns    関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする   BinaryLiterals    バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない   CApiFFI    FFI関連; 使ったことない   ConstrainedClassMethods    型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ)   ConstraintKinds    Constraintというカインドが使えるようになる   CPP    Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる   DataKinds    データ型の宣言をカインドの宣言へ昇格する   DefaultSignatures    型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる   DeriveAnyClass    defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう   DeriveDataTypeable    deriving Data ってかける   DeriveFunctor    deriving Functor ってかける   DeriveFoldable    deriving Foldable ってかける   DeriveGeneric    deriving Generic ってかける   DeriveLift    deriving Lift ってかける LiftはTHのこれで、値をsyntactic expressionに変換できるようにするやつ   DeriveTraversable    deriving Traversable ってかける   DerivingStrategies    derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ   DisambiguateRecordFields    \k -&gt; k {hoge = x} におけるkのような、推論可能だが曖昧なレコード名を許す   EmptyCase    case x of {} ってかける Void型を扱う時なんかに使える   EmptyDataDecls    data Empty のようなコンストラクタを持たない型の宣言を許す   ExistentialQuantification    exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい   ExplicitForall    型宣言のimplicitな全称量化をexplicitにかけるようにする id : forall a." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/ghc-exts/" />
-<meta property="article:published_time" content="2018-01-13T00:38:01&#43;09:00"/>
-<meta property="article:modified_time" content="2018-01-13T00:38:01&#43;09:00"/>
-
+<meta property="article:published_time" content="2018-01-13T00:38:01+09:00" />
+<meta property="article:modified_time" content="2018-01-13T00:38:01+09:00" />
 
 
 <meta itemprop="name" content="GHC拡張一覧を眺める">
-<meta itemprop="description" content="GHC-8.2.2のGHC拡張を眺めます。
- 10. GHC Language Features User&#39;s Guideの該当セクション 7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い  上から順に見ていって後から関連するものとかを再編します。
-GHC拡張一覧  AllowAmbiguousTypes 型変数が全て決定していないものを通すようにする (個人的)非推奨1 Arrows arrow notationを使えるようにする FRPする人なんかは使う ApplicativeDo do-notationがApplicativeに対しても使えるようになる 個人的には嫌い BangPatterns 関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする BinaryLiterals バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない CApiFFI FFI関連; 使ったことない ConstrainedClassMethods 型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ) ConstraintKinds Constraintというカインドが使えるようになる CPP Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる DataKinds データ型の宣言をカインドの宣言へ昇格する DefaultSignatures 型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる DeriveAnyClass defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう DeriveDataTypeable deriving Data ってかける DeriveFunctor deriving Functor ってかける DeriveFoldable deriving Foldable ってかける DeriveGeneric deriving Generic ってかける DeriveLift deriving Lift ってかける LiftはTHのこれで、値をsyntactic expressionに変換できるようにするやつ DeriveTraversable deriving Traversable ってかける DerivingStrategies derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ DisambiguateRecordFields \k -&gt; k {hoge = x} におけるkのような、推論可能だが曖昧なレコード名を許す EmptyCase case x of {} ってかける Void型を扱う時なんかに使える EmptyDataDecls data Empty のようなコンストラクタを持たない型の宣言を許す ExistentialQuantification exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい ExplicitForall 型宣言のimplicitな全称量化をexplicitにかけるようにする id : forall a.">
+<meta itemprop="description" content="GHC-8.2.2のGHC拡張を眺めます。    10. GHC Language Features User&#39;s Guideの該当セクション    7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い    上から順に見ていって後から関連するものとかを再編します。 GHC拡張一覧    AllowAmbiguousTypes    型変数が全て決定していないものを通すようにする (個人的)非推奨1   Arrows    arrow notationを使えるようにする FRPする人なんかは使う   ApplicativeDo    do-notationがApplicativeに対しても使えるようになる 個人的には嫌い   BangPatterns    関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする   BinaryLiterals    バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない   CApiFFI    FFI関連; 使ったことない   ConstrainedClassMethods    型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ)   ConstraintKinds    Constraintというカインドが使えるようになる   CPP    Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる   DataKinds    データ型の宣言をカインドの宣言へ昇格する   DefaultSignatures    型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる   DeriveAnyClass    defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう   DeriveDataTypeable    deriving Data ってかける   DeriveFunctor    deriving Functor ってかける   DeriveFoldable    deriving Foldable ってかける   DeriveGeneric    deriving Generic ってかける   DeriveLift    deriving Lift ってかける LiftはTHのこれで、値をsyntactic expressionに変換できるようにするやつ   DeriveTraversable    deriving Traversable ってかける   DerivingStrategies    derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ   DisambiguateRecordFields    \k -&gt; k {hoge = x} におけるkのような、推論可能だが曖昧なレコード名を許す   EmptyCase    case x of {} ってかける Void型を扱う時なんかに使える   EmptyDataDecls    data Empty のようなコンストラクタを持たない型の宣言を許す   ExistentialQuantification    exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい   ExplicitForall    型宣言のimplicitな全称量化をexplicitにかけるようにする id : forall a.">
 
 
 <meta itemprop="datePublished" content="2018-01-13T00:38:01&#43;09:00" />
@@ -48,9 +43,7 @@ GHC拡張一覧  AllowAmbiguousTypes 型変数が全て決定していないも�
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="GHC拡張一覧を眺める"/>
-<meta name="twitter:description" content="GHC-8.2.2のGHC拡張を眺めます。
- 10. GHC Language Features User&#39;s Guideの該当セクション 7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い  上から順に見ていって後から関連するものとかを再編します。
-GHC拡張一覧  AllowAmbiguousTypes 型変数が全て決定していないものを通すようにする (個人的)非推奨1 Arrows arrow notationを使えるようにする FRPする人なんかは使う ApplicativeDo do-notationがApplicativeに対しても使えるようになる 個人的には嫌い BangPatterns 関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする BinaryLiterals バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない CApiFFI FFI関連; 使ったことない ConstrainedClassMethods 型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ) ConstraintKinds Constraintというカインドが使えるようになる CPP Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる DataKinds データ型の宣言をカインドの宣言へ昇格する DefaultSignatures 型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる DeriveAnyClass defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう DeriveDataTypeable deriving Data ってかける DeriveFunctor deriving Functor ってかける DeriveFoldable deriving Foldable ってかける DeriveGeneric deriving Generic ってかける DeriveLift deriving Lift ってかける LiftはTHのこれで、値をsyntactic expressionに変換できるようにするやつ DeriveTraversable deriving Traversable ってかける DerivingStrategies derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ DisambiguateRecordFields \k -&gt; k {hoge = x} におけるkのような、推論可能だが曖昧なレコード名を許す EmptyCase case x of {} ってかける Void型を扱う時なんかに使える EmptyDataDecls data Empty のようなコンストラクタを持たない型の宣言を許す ExistentialQuantification exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい ExplicitForall 型宣言のimplicitな全称量化をexplicitにかけるようにする id : forall a."/>
+<meta name="twitter:description" content="GHC-8.2.2のGHC拡張を眺めます。    10. GHC Language Features User&#39;s Guideの該当セクション    7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い    上から順に見ていって後から関連するものとかを再編します。 GHC拡張一覧    AllowAmbiguousTypes    型変数が全て決定していないものを通すようにする (個人的)非推奨1   Arrows    arrow notationを使えるようにする FRPする人なんかは使う   ApplicativeDo    do-notationがApplicativeに対しても使えるようになる 個人的には嫌い   BangPatterns    関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする   BinaryLiterals    バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない   CApiFFI    FFI関連; 使ったことない   ConstrainedClassMethods    型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ)   ConstraintKinds    Constraintというカインドが使えるようになる   CPP    Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる   DataKinds    データ型の宣言をカインドの宣言へ昇格する   DefaultSignatures    型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる   DeriveAnyClass    defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう   DeriveDataTypeable    deriving Data ってかける   DeriveFunctor    deriving Functor ってかける   DeriveFoldable    deriving Foldable ってかける   DeriveGeneric    deriving Generic ってかける   DeriveLift    deriving Lift ってかける LiftはTHのこれで、値をsyntactic expressionに変換できるようにするやつ   DeriveTraversable    deriving Traversable ってかける   DerivingStrategies    derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ   DisambiguateRecordFields    \k -&gt; k {hoge = x} におけるkのような、推論可能だが曖昧なレコード名を許す   EmptyCase    case x of {} ってかける Void型を扱う時なんかに使える   EmptyDataDecls    data Empty のようなコンストラクタを持たない型の宣言を許す   ExistentialQuantification    exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい   ExplicitForall    型宣言のimplicitな全称量化をexplicitにかけるようにする id : forall a."/>
 
 
   </head>
@@ -79,257 +72,918 @@ GHC拡張一覧  AllowAmbiguousTypes 型変数が全て決定していないも�
       <time datetime="2018-01-13 12:38">2018-01-13</time>
       <h1>GHC拡張一覧を眺める</h1>
     </header>
-    <section><p>GHC-8.2.2のGHC拡張を眺めます。</p>
-
+    <section>
+<p>
+GHC-8.2.2のGHC拡張を眺めます。
+</p>
 <ul>
-<li><a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/lang.html" title="10. GHC Language Features">10. GHC Language Features</a> User's Guideの該当セクション</li>
-<li><a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/flags.html?highlight=flag#language-options" title="7.6.12. Language options">7.6.12. Language options</a> 単に一覧が欲しいだけならここの <code>-X</code> から始まるものを見ると良い</li>
+<li>
+<p>
+<a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/lang.html">10. GHC Language Features</a> User&#39;s Guideの該当セクション
+</p>
+</li>
+<li>
+<p>
+<a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/flags.html?highlight=flag#language-options">7.6.12. Language options</a> 単に一覧が欲しいだけならここの <code>-X</code> から始まるものを見ると良い
+</p>
+</li>
 </ul>
-
-<p>上から順に見ていって後から関連するものとかを再編します。</p>
-
-<h1 id="ghc拡張一覧">GHC拡張一覧</h1>
-
+<p>
+上から順に見ていって後から関連するものとかを再編します。
+</p>
+<h1 id="headline-1">
+GHC拡張一覧
+</h1>
 <dl>
-<dt>AllowAmbiguousTypes</dt>
-<dd>型変数が全て決定していないものを通すようにする (個人的)非推奨<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></dd>
-<dt>Arrows</dt>
-<dd>arrow notationを使えるようにする FRPする人なんかは使う</dd>
-<dt>ApplicativeDo</dt>
-<dd>do-notationがApplicativeに対しても使えるようになる 個人的には嫌い</dd>
-<dt>BangPatterns</dt>
-<dd>関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする</dd>
-<dt>BinaryLiterals</dt>
-<dd>バイナリ表現が使えるようになる( <code>0b11001001</code> みたいなやつ); 使ったことない</dd>
-<dt>CApiFFI</dt>
-<dd>FFI関連; 使ったことない</dd>
-<dt>ConstrainedClassMethods</dt>
-<dd>型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ)</dd>
-<dt>ConstraintKinds</dt>
-<dd>Constraintというカインドが使えるようになる</dd>
-<dt>CPP</dt>
-<dd>Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる</dd>
-<dt>DataKinds</dt>
-<dd>データ型の宣言をカインドの宣言へ昇格する</dd>
-<dt>DefaultSignatures</dt>
-<dd>型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる</dd>
-<dt>DeriveAnyClass</dt>
-<dd>defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう</dd>
-<dt>DeriveDataTypeable</dt>
-<dd><code>deriving Data</code> ってかける</dd>
-<dt>DeriveFunctor</dt>
-<dd><code>deriving Functor</code> ってかける</dd>
-<dt>DeriveFoldable</dt>
-<dd><code>deriving Foldable</code> ってかける</dd>
-<dt>DeriveGeneric</dt>
-<dd><code>deriving Generic</code> ってかける</dd>
-<dt>DeriveLift</dt>
-<dd><code>deriving Lift</code> ってかける LiftはTHの<a href="https://hackage.haskell.org/package/template-haskell-2.4.0.1/docs/Language-Haskell-TH-Syntax.html#t:Lift" title="これ">これ</a>で、値をsyntactic expressionに変換できるようにするやつ</dd>
-<dt>DeriveTraversable</dt>
-<dd><code>deriving Traversable</code> ってかける</dd>
-<dt>DerivingStrategies</dt>
-<dd>derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ</dd>
-<dt>DisambiguateRecordFields</dt>
-<dd><code>\k -&gt; k {hoge = x}</code> におけるkのような、推論可能だが曖昧なレコード名を許す</dd>
-<dt>EmptyCase</dt>
-<dd><code>case x of {}</code> ってかける Void型を扱う時なんかに使える</dd>
-<dt>EmptyDataDecls</dt>
-<dd><code>data Empty</code> のようなコンストラクタを持たない型の宣言を許す</dd>
-<dt>ExistentialQuantification</dt>
-<dd>exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい</dd>
-<dt>ExplicitForall</dt>
-<dd>型宣言のimplicitな全称量化をexplicitにかけるようにする <code>id : forall a. a -&gt; a</code> みたいな</dd>
-<dt>ExplicitNamespace</dt>
-<dd>type operatorをimportする際に <code>import Module (type (++))</code> みたいにかけるようにする</dd>
-<dt>ExtendedDefaultRules</dt>
-<dd>型のdefaultingをより強力にするやつ GHCiも使ってる (defaultの選び方について要調査)</dd>
-<dt>FlexibleContexts</dt>
-<dd>class宣言に出現する型制約を、「クラス名に型変数を適用したやつだけ」じゃなくてもいいことにする 今すぐデフォルトONにしてほしい</dd>
-<dt>FlexibleInstances</dt>
-<dd>上のinstance宣言バージョン これも今すぐデフォルトにしてくれ</dd>
-<dt>ForeignFunctionInterface</dt>
-<dd>FFIをONにする</dd>
-<dt>FunctionalDependencies</dt>
-<dd>型クラスに <code>class C a b | a -&gt; b</code> みたいにかけるようになる これはaが決まるとbが決まるという意味で、型推論の際にinstanceの選択をある程度制御できるようになる 便利</dd>
-<dt>GADTs</dt>
-<dd>GADTをONにする 各コンストラクタの戻り値を制限できる</dd>
-<dt>GADTSyntax</dt>
-<dd><code>data ... where ...</code> とかけるようにする GADTとGADTSyntaxは分けられてるのか〜なるほど〜と思った(こなみ)</dd>
-<dt>GeneralizedNewtypeDeriving</dt>
-<dd>newtypeは中の型とisoなので中の型が満たすinstanceをnewtypeの方に自動導出する まーコンストラクタ開け閉めするだけやからな</dd>
-<dt>ImplicitParams</dt>
-<dd>implicit parameterをONにする <a href="https://www.stackage.org/lts-10.3/package/reflection-2.1.2" title="reflection">reflection</a>もよろしく</dd>
-<dt>NoImplicitPrelude</dt>
-<dd>Preludeのimplicit importをOFFにする</dd>
-<dt>ImpredicativeTypes</dt>
-<dd>「polymorphic typeの変数のインスタンス化はmonomorphic typeに限る」という制限を外す 詳しいことよくわからないけどこれ結構型推論の難しい話に足をつっこんでるような気がするのでヤバイ例とかありそう</dd>
-<dt>IncoherentInstances</dt>
-<dd>incoherentなinstance宣言を許す 非推奨</dd>
-<dt>TypeFamilyDependencies</dt>
-<dd><code>type family F a b | a -&gt; b</code> みたいにtype familyについてもdependencyをかけるようにする</dd>
-<dt>InstanceSigs</dt>
-<dd>instance宣言にtype signatureが書けるようになる 分かりやすくなるし使ってもいいんちゃうか</dd>
-<dt>KindSignatures</dt>
-<dd>data/type/class宣言とforallの変数についてkindをかけるようにする</dd>
-<dt>LambdaCase</dt>
-<dd><code>\x -&gt; case x of ...</code> を <code>\case</code> とかけるようにする 便利 オフサイドルールに注意</dd>
-<dt>LiberalTypeSynonyms</dt>
-<dd>(具体的な)型名を受け取る場所でtype synonymが来たらunfoldしてからcheckを行うようにする</dd>
-<dt>MagicHash</dt>
-<dd>identifierにhash <code>#</code> を付けられるようにする GHCではunboxed type(ラップされてないprimitive type的なやつ)にはhashを付けてあるのでそれらを扱えるようにする</dd>
-<dt>MonadComprehensions</dt>
-<dd>任意のモナドに対してリスト内包表記的なのができる do-notation使え</dd>
-<dt>MonoLocalBinds</dt>
-<dd>let-bindやwhere-bindで出現するlocal bindに制限をかける TypeFamiliesまたはGADTをONにすると自動でONになる、型推論をしやすくするために入れるらしい 詳しいことはよく知らない</dd>
-<dt>NoMonomorphismRestriction</dt>
-<dd>HM型推論でmonomorphism restriction(<a href="https://www.haskell.org/onlinereport/decls.html#sect4.5.5" title="これ">これ</a>)というのがあるらしく、これをはずす拡張 すでにデフォルトでON 型推論のよい性質を保証しなくていいから推論能力あげようぜとかではずされたのだろうか(よくわかってないけど)</dd>
-<dt>MultiParamTypeClasses</dt>
-<dd>typeclassで複数の型パラメーターが受け取れるようにする デフォルトONにしてほしい</dd>
-<dt>MultiWayIf</dt>
-<dd>ifにガードが使えるようになる caseで事足りるのであんまり要らない</dd>
-<dt>NamedFieldPuns</dt>
-<dd>recordをパターンで受け取る時に <code>r {field = field}</code> を <code>r {field}</code> のように省略できるようにする</dd>
-<dt>NamedWildCards</dt>
-<dd>名前付きwildcard(<code>_x</code>)がかけるようにする 複数出現するholeに名前をつけ、かつ一部のholeを共通化したりできる</dd>
-<dt>NegativeLiterals</dt>
-<dd>負の数のリテラルの脱糖を変える</dd>
-<dt>NPlusKPatterns</dt>
-<dd>パターンに <code>x+k</code> みたいにプラス記号が使えるようになる Haskell98では使えたけど2010でOFFになったぽい</dd>
-<dt>NullaryTypeClasses</dt>
-<dd>パラメーターを受け取らないtypeclassが使える なんか型クラスのヒエラルキーを作ってinstanceで型が属する階層をハッキリさせるんだぜ的なことをしたい人が喜びそう</dd>
-<dt>NumDecimals</dt>
-<dd><code>1.2e10</code> みたいなリテラルはFractional instanceの型と推論されるがこれをNum instanceの型と推論できるようにする</dd>
-<dt>OverloadedLabels</dt>
-<dd>identifierの先頭にhashをつけて <code>#hoge</code> を <code>fromLabel @&quot;hoge&quot;</code> と脱糖できるようにする 型レベルほげほげで超便利</dd>
-<dt>OverloadedLists</dt>
-<dd>リストリテラルをIsList instanceの型に推論されるようにする</dd>
-<dt>OverloadedStrings</dt>
-<dd>文字列リテラルをIsString instanceの型に推論されるようにする</dd>
-<dt>PackageImports</dt>
-<dd>importするときにどのパッケージからimportするかを <code>import &quot;network&quot; Network.Socket</code> みたいに指定できる 多分うっかり衝突したとき用だけど使う機会はないと思う</dd>
-<dt>ParallelListComp</dt>
-<dd>リスト内包表記でリストから元をとってくるnotationをパラレルにかけるようにする 内部ではzip的なものに変換される(これいる？)</dd>
-<dt>PartialTypeSignatures</dt>
-<dd>型の一部をワイルドカードにした状態でも(推論が可能なら)コンパイルが通るようにする</dd>
-<dt>NoPatternGuards</dt>
-<dd>パターンガードを切る Haskell98だとONになる</dd>
-<dt>PatternSynonyms</dt>
-<dd>pattern keywordにより新たなパターンが定義できるようになる 便利of便利of便利 デフォルトONはよ</dd>
-<dt>PolyKinds</dt>
-<dd>カインド推論を(デフォルトだと <code>*</code> になるところを)一般的なカインド変数を使って推論するようにする</dd>
-<dt>PostfixOperators</dt>
-<dd><code>(e !)</code> みたいにoperatorをprefix的に使えるようにするやつ</dd>
-<dt>QuasiQuotes</dt>
-<dd>準クォートが使えるようになる プログラムの一部を文字列として受け取って代わりにマクロを埋め込むみたいなやつ</dd>
-<dt>Rank2Types</dt>
-<dd>forallの出現位置が <code>-&gt;</code> の左側に来るごとにrankというのが上がるがrank2の型を許すもの <code>(forall a. hoge) -&gt; piyo</code> とかけるようになる RankNTypesがあるからdeprecatedらしいよ</dd>
-<dt>RankNTypes</dt>
-<dd>rank nの型を許す</dd>
-<dt>RebindableSyntax</dt>
-<dd>Preludeで定義されているdesugarを上書きできるようにする これで数値リテラルをNumでないものに推論させるとかできるようになる オレオレPrelude作りたい人向け</dd>
-<dt>RecordWildPuns</dt>
-<dd>recordのパターンで <code>r {f = f}</code> の代わりに <code>r {..}</code> と省略できるようにする</dd>
-<dt>RecursiveDo</dt>
-<dd>do-notationでbindをrecursiveに(左辺で束縛する名前が右辺に再び出現しても良い)できるようにする　MonadFixのinstanceが使われる</dd>
-<dt>RoleAnnotations</dt>
-<dd>GHCでは型変数が実行時の表現に影響するかどうかを調べたりするのだけどそれをユーザーが宣言できるようにする</dd>
-<dt>Safe</dt>
-<dd>このモジュールは安全で、かつ安全なモジュールしかimportしないことを宣言する</dd>
-<dt>ScopedTypeVariables</dt>
-<dd>forallで量化された変数を適当な変数に固定するような宣言を許すようにする</dd>
-<dt>StandaloneDeriving</dt>
-<dd>データ型の宣言以外の場所でderivingがかけるようにする derivingの表現力が若干上がる</dd>
-<dt>StaticPointers</dt>
-<dd>closed expressionへのstatic pointerを作れるようにする 便利なのだろうか、気になる</dd>
-<dt>StrictData</dt>
-<dd>データ型のフィールドがStrictになる</dd>
-<dt>TemplateHaskell</dt>
-<dd>マクロ</dd>
-<dt>TemplateHaskellQuotes</dt>
-<dd>THのsplice syntax(<code>$(..)</code> みたいなやつ)以外をONにする</dd>
-<dt>NoTraditionalRecordSyntax</dt>
-<dd>record syntaxを切る</dd>
-<dt>TransformListComp</dt>
-<dd>リスト内包表記にSQLぽいキーワード(group, by, using)を使った書き方ができるようにする ナニコレその2</dd>
-<dt>Trustworthy</dt>
-<dd>Safeよりちょい緩いやつ(雑)</dd>
-<dt>TupleSections</dt>
-<dd><code>(,e)</code> とかかけるようになる</dd>
-<dt>TypeFamilies</dt>
-<dd>type family, data familyが使えるようになる</dd>
-<dt>TypeInType</dt>
-<dd>kindが消滅して全部typeになる kind systemこわれる 超非推奨</dd>
-<dt>TypeOperators</dt>
-<dd>型の演算子も使えるようにする</dd>
-<dt>TypeSynonymInstances</dt>
-<dd>type synonymに対するinstanceがかけるようになる</dd>
-<dt>UnboxedTuples</dt>
-<dd><code>(# e1,e2 #)</code> みたいにunboxed typeのtupleがかけるようになる</dd>
-<dt>UnboxedSums</dt>
-<dd><code>(# e1|e2 #)</code> みたいにunboxed typeのsumがかけるようになる</dd>
-<dt>UndecidableInstances</dt>
-<dd>非推奨</dd>
-<dt>UnicodeSyntax</dt>
-<dd><code>=&gt;</code> の代わりに <code>⇒</code> とかかけるようになる</dd>
-<dt>Unsafe</dt>
-<dd>モジュールがunsafeであることを宣言</dd>
-<dt>ViewPatterns</dt>
-<dd>パターンの中で一旦関数を適用できるようにする <code>hoge (view -&gt; pat)</code> みたいにviewを適用した結果に対してパターンマッチができる</dd>
+<dt>
+AllowAmbiguousTypes
+</dt>
+<dd>
+<p>
+型変数が全て決定していないものを通すようにする (個人的)非推奨<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>
+</p>
+</dd>
+<dt>
+Arrows
+</dt>
+<dd>
+<p>
+arrow notationを使えるようにする FRPする人なんかは使う
+</p>
+</dd>
+<dt>
+ApplicativeDo
+</dt>
+<dd>
+<p>
+do-notationがApplicativeに対しても使えるようになる 個人的には嫌い
+</p>
+</dd>
+<dt>
+BangPatterns
+</dt>
+<dd>
+<p>
+関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする
+</p>
+</dd>
+<dt>
+BinaryLiterals
+</dt>
+<dd>
+<p>
+バイナリ表現が使えるようになる( <code>0b11001001</code> みたいなやつ); 使ったことない
+</p>
+</dd>
+<dt>
+CApiFFI
+</dt>
+<dd>
+<p>
+FFI関連; 使ったことない
+</p>
+</dd>
+<dt>
+ConstrainedClassMethods
+</dt>
+<dd>
+<p>
+型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ)
+</p>
+</dd>
+<dt>
+ConstraintKinds
+</dt>
+<dd>
+<p>
+Constraintというカインドが使えるようになる
+</p>
+</dd>
+<dt>
+CPP
+</dt>
+<dd>
+<p>
+Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる
+</p>
+</dd>
+<dt>
+DataKinds
+</dt>
+<dd>
+<p>
+データ型の宣言をカインドの宣言へ昇格する
+</p>
+</dd>
+<dt>
+DefaultSignatures
+</dt>
+<dd>
+<p>
+型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる
+</p>
+</dd>
+<dt>
+DeriveAnyClass
+</dt>
+<dd>
+<p>
+defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう
+</p>
+</dd>
+<dt>
+DeriveDataTypeable
+</dt>
+<dd>
+<p>
+<code>deriving Data</code> ってかける
+</p>
+</dd>
+<dt>
+DeriveFunctor
+</dt>
+<dd>
+<p>
+<code>deriving Functor</code> ってかける
+</p>
+</dd>
+<dt>
+DeriveFoldable
+</dt>
+<dd>
+<p>
+<code>deriving Foldable</code> ってかける
+</p>
+</dd>
+<dt>
+DeriveGeneric
+</dt>
+<dd>
+<p>
+<code>deriving Generic</code> ってかける
+</p>
+</dd>
+<dt>
+DeriveLift
+</dt>
+<dd>
+<p>
+<code>deriving Lift</code> ってかける LiftはTHの<a href="https://hackage.haskell.org/package/template-haskell-2.4.0.1/docs/Language-Haskell-TH-Syntax.html#t:Lift">これ</a>で、値をsyntactic expressionに変換できるようにするやつ
+</p>
+</dd>
+<dt>
+DeriveTraversable
+</dt>
+<dd>
+<p>
+<code>deriving Traversable</code> ってかける
+</p>
+</dd>
+<dt>
+DerivingStrategies
+</dt>
+<dd>
+<p>
+derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ
+</p>
+</dd>
+<dt>
+DisambiguateRecordFields
+</dt>
+<dd>
+<p>
+<code>\k -&gt; k {hoge = x}</code> におけるkのような、推論可能だが曖昧なレコード名を許す
+</p>
+</dd>
+<dt>
+EmptyCase
+</dt>
+<dd>
+<p>
+<code>case x of {}</code> ってかける Void型を扱う時なんかに使える
+</p>
+</dd>
+<dt>
+EmptyDataDecls
+</dt>
+<dd>
+<p>
+<code>data Empty</code> のようなコンストラクタを持たない型の宣言を許す
+</p>
+</dd>
+<dt>
+ExistentialQuantification
+</dt>
+<dd>
+<p>
+exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい
+</p>
+</dd>
+<dt>
+ExplicitForall
+</dt>
+<dd>
+<p>
+型宣言のimplicitな全称量化をexplicitにかけるようにする <code>id : forall a. a -&gt; a</code> みたいな
+</p>
+</dd>
+<dt>
+ExplicitNamespace
+</dt>
+<dd>
+<p>
+type operatorをimportする際に <code>import Module (type (++))</code> みたいにかけるようにする
+</p>
+</dd>
+<dt>
+ExtendedDefaultRules
+</dt>
+<dd>
+<p>
+型のdefaultingをより強力にするやつ GHCiも使ってる (defaultの選び方について要調査)
+</p>
+</dd>
+<dt>
+FlexibleContexts
+</dt>
+<dd>
+<p>
+class宣言に出現する型制約を、「クラス名に型変数を適用したやつだけ」じゃなくてもいいことにする 今すぐデフォルトONにしてほしい
+</p>
+</dd>
+<dt>
+FlexibleInstances
+</dt>
+<dd>
+<p>
+上のinstance宣言バージョン これも今すぐデフォルトにしてくれ
+</p>
+</dd>
+<dt>
+ForeignFunctionInterface
+</dt>
+<dd>
+<p>
+FFIをONにする
+</p>
+</dd>
+<dt>
+FunctionalDependencies
+</dt>
+<dd>
+<p>
+型クラスに <code>class C a b | a -&gt; b</code> みたいにかけるようになる これはaが決まるとbが決まるという意味で、型推論の際にinstanceの選択をある程度制御できるようになる 便利
+</p>
+</dd>
+<dt>
+GADTs
+</dt>
+<dd>
+<p>
+GADTをONにする 各コンストラクタの戻り値を制限できる
+</p>
+</dd>
+<dt>
+GADTSyntax
+</dt>
+<dd>
+<p>
+<code>data ... where ...</code> とかけるようにする GADTとGADTSyntaxは分けられてるのか〜なるほど〜と思った(こなみ)
+</p>
+</dd>
+<dt>
+GeneralizedNewtypeDeriving
+</dt>
+<dd>
+<p>
+newtypeは中の型とisoなので中の型が満たすinstanceをnewtypeの方に自動導出する まーコンストラクタ開け閉めするだけやからな
+</p>
+</dd>
+<dt>
+ImplicitParams
+</dt>
+<dd>
+<p>
+implicit parameterをONにする <a href="https://www.stackage.org/lts-10.3/package/reflection-2.1.2">reflection</a>もよろしく
+</p>
+</dd>
+<dt>
+NoImplicitPrelude
+</dt>
+<dd>
+<p>
+Preludeのimplicit importをOFFにする
+</p>
+</dd>
+<dt>
+ImpredicativeTypes
+</dt>
+<dd>
+<p>
+「polymorphic typeの変数のインスタンス化はmonomorphic typeに限る」という制限を外す 詳しいことよくわからないけどこれ結構型推論の難しい話に足をつっこんでるような気がするのでヤバイ例とかありそう
+</p>
+</dd>
+<dt>
+IncoherentInstances
+</dt>
+<dd>
+<p>
+incoherentなinstance宣言を許す 非推奨
+</p>
+</dd>
+<dt>
+TypeFamilyDependencies
+</dt>
+<dd>
+<p>
+<code>type family F a b | a -&gt; b</code> みたいにtype familyについてもdependencyをかけるようにする
+</p>
+</dd>
+<dt>
+InstanceSigs
+</dt>
+<dd>
+<p>
+instance宣言にtype signatureが書けるようになる 分かりやすくなるし使ってもいいんちゃうか
+</p>
+</dd>
+<dt>
+KindSignatures
+</dt>
+<dd>
+<p>
+data/type/class宣言とforallの変数についてkindをかけるようにする
+</p>
+</dd>
+<dt>
+LambdaCase
+</dt>
+<dd>
+<p>
+<code>\x -&gt; case x of ...</code> を <code>\case</code> とかけるようにする 便利 オフサイドルールに注意
+</p>
+</dd>
+<dt>
+LiberalTypeSynonyms
+</dt>
+<dd>
+<p>
+(具体的な)型名を受け取る場所でtype synonymが来たらunfoldしてからcheckを行うようにする
+</p>
+</dd>
+<dt>
+MagicHash
+</dt>
+<dd>
+<p>
+identifierにhash <code>#</code> を付けられるようにする GHCではunboxed type(ラップされてないprimitive type的なやつ)にはhashを付けてあるのでそれらを扱えるようにする
+</p>
+</dd>
+<dt>
+MonadComprehensions
+</dt>
+<dd>
+<p>
+任意のモナドに対してリスト内包表記的なのができる do-notation使え
+</p>
+</dd>
+<dt>
+MonoLocalBinds
+</dt>
+<dd>
+<p>
+let-bindやwhere-bindで出現するlocal bindに制限をかける TypeFamiliesまたはGADTをONにすると自動でONになる、型推論をしやすくするために入れるらしい 詳しいことはよく知らない
+</p>
+</dd>
+<dt>
+NoMonomorphismRestriction
+</dt>
+<dd>
+<p>
+HM型推論でmonomorphism restriction(<a href="https://www.haskell.org/onlinereport/decls.html#sect4.5.5">これ</a>)というのがあるらしく、これをはずす拡張 すでにデフォルトでON 型推論のよい性質を保証しなくていいから推論能力あげようぜとかではずされたのだろうか(よくわかってないけど)
+</p>
+</dd>
+<dt>
+MultiParamTypeClasses
+</dt>
+<dd>
+<p>
+typeclassで複数の型パラメーターが受け取れるようにする デフォルトONにしてほしい
+</p>
+</dd>
+<dt>
+MultiWayIf
+</dt>
+<dd>
+<p>
+ifにガードが使えるようになる caseで事足りるのであんまり要らない
+</p>
+</dd>
+<dt>
+NamedFieldPuns
+</dt>
+<dd>
+<p>
+recordをパターンで受け取る時に <code>r {field = field}</code> を <code>r {field}</code> のように省略できるようにする
+</p>
+</dd>
+<dt>
+NamedWildCards
+</dt>
+<dd>
+<p>
+名前付きwildcard(<code>_x</code>)がかけるようにする 複数出現するholeに名前をつけ、かつ一部のholeを共通化したりできる
+</p>
+</dd>
+<dt>
+NegativeLiterals
+</dt>
+<dd>
+<p>
+負の数のリテラルの脱糖を変える
+</p>
+</dd>
+<dt>
+NPlusKPatterns
+</dt>
+<dd>
+<p>
+パターンに <code>x+k</code> みたいにプラス記号が使えるようになる Haskell98では使えたけど2010でOFFになったぽい
+</p>
+</dd>
+<dt>
+NullaryTypeClasses
+</dt>
+<dd>
+<p>
+パラメーターを受け取らないtypeclassが使える なんか型クラスのヒエラルキーを作ってinstanceで型が属する階層をハッキリさせるんだぜ的なことをしたい人が喜びそう
+</p>
+</dd>
+<dt>
+NumDecimals
+</dt>
+<dd>
+<p>
+<code>1.2e10</code> みたいなリテラルはFractional instanceの型と推論されるがこれをNum instanceの型と推論できるようにする
+</p>
+</dd>
+<dt>
+OverloadedLabels
+</dt>
+<dd>
+<p>
+identifierの先頭にhashをつけて <code>#hoge</code> を <code>fromLabel @&#34;hoge&#34;</code> と脱糖できるようにする 型レベルほげほげで超便利
+</p>
+</dd>
+<dt>
+OverloadedLists
+</dt>
+<dd>
+<p>
+リストリテラルをIsList instanceの型に推論されるようにする
+</p>
+</dd>
+<dt>
+OverloadedStrings
+</dt>
+<dd>
+<p>
+文字列リテラルをIsString instanceの型に推論されるようにする
+</p>
+</dd>
+<dt>
+PackageImports
+</dt>
+<dd>
+<p>
+importするときにどのパッケージからimportするかを <code>import &#34;network&#34; Network.Socket</code> みたいに指定できる 多分うっかり衝突したとき用だけど使う機会はないと思う
+</p>
+</dd>
+<dt>
+ParallelListComp
+</dt>
+<dd>
+<p>
+リスト内包表記でリストから元をとってくるnotationをパラレルにかけるようにする 内部ではzip的なものに変換される(これいる？)
+</p>
+</dd>
+<dt>
+PartialTypeSignatures
+</dt>
+<dd>
+<p>
+型の一部をワイルドカードにした状態でも(推論が可能なら)コンパイルが通るようにする
+</p>
+</dd>
+<dt>
+NoPatternGuards
+</dt>
+<dd>
+<p>
+パターンガードを切る Haskell98だとONになる
+</p>
+</dd>
+<dt>
+PatternSynonyms
+</dt>
+<dd>
+<p>
+pattern keywordにより新たなパターンが定義できるようになる 便利of便利of便利 デフォルトONはよ
+</p>
+</dd>
+<dt>
+PolyKinds
+</dt>
+<dd>
+<p>
+カインド推論を(デフォルトだと <code>*</code> になるところを)一般的なカインド変数を使って推論するようにする
+</p>
+</dd>
+<dt>
+PostfixOperators
+</dt>
+<dd>
+<p>
+<code>(e !)</code> みたいにoperatorをprefix的に使えるようにするやつ
+</p>
+</dd>
+<dt>
+QuasiQuotes
+</dt>
+<dd>
+<p>
+準クォートが使えるようになる プログラムの一部を文字列として受け取って代わりにマクロを埋め込むみたいなやつ
+</p>
+</dd>
+<dt>
+Rank2Types
+</dt>
+<dd>
+<p>
+forallの出現位置が <code>-&gt;</code> の左側に来るごとにrankというのが上がるがrank2の型を許すもの <code>(forall a. hoge) -&gt; piyo</code> とかけるようになる RankNTypesがあるからdeprecatedらしいよ
+</p>
+</dd>
+<dt>
+RankNTypes
+</dt>
+<dd>
+<p>
+rank nの型を許す
+</p>
+</dd>
+<dt>
+RebindableSyntax
+</dt>
+<dd>
+<p>
+Preludeで定義されているdesugarを上書きできるようにする これで数値リテラルをNumでないものに推論させるとかできるようになる オレオレPrelude作りたい人向け
+</p>
+</dd>
+<dt>
+RecordWildPuns
+</dt>
+<dd>
+<p>
+recordのパターンで <code>r {f = f}</code> の代わりに <code>r {..}</code> と省略できるようにする
+</p>
+</dd>
+<dt>
+RecursiveDo
+</dt>
+<dd>
+<p>
+do-notationでbindをrecursiveに(左辺で束縛する名前が右辺に再び出現しても良い)できるようにする　MonadFixのinstanceが使われる
+</p>
+</dd>
+<dt>
+RoleAnnotations
+</dt>
+<dd>
+<p>
+GHCでは型変数が実行時の表現に影響するかどうかを調べたりするのだけどそれをユーザーが宣言できるようにする
+</p>
+</dd>
+<dt>
+Safe
+</dt>
+<dd>
+<p>
+このモジュールは安全で、かつ安全なモジュールしかimportしないことを宣言する
+</p>
+</dd>
+<dt>
+ScopedTypeVariables
+</dt>
+<dd>
+<p>
+forallで量化された変数を適当な変数に固定するような宣言を許すようにする
+</p>
+</dd>
+<dt>
+StandaloneDeriving
+</dt>
+<dd>
+<p>
+データ型の宣言以外の場所でderivingがかけるようにする derivingの表現力が若干上がる
+</p>
+</dd>
+<dt>
+StaticPointers
+</dt>
+<dd>
+<p>
+closed expressionへのstatic pointerを作れるようにする 便利なのだろうか、気になる
+</p>
+</dd>
+<dt>
+StrictData
+</dt>
+<dd>
+<p>
+データ型のフィールドがStrictになる
+</p>
+</dd>
+<dt>
+TemplateHaskell
+</dt>
+<dd>
+<p>
+マクロ
+</p>
+</dd>
+<dt>
+TemplateHaskellQuotes
+</dt>
+<dd>
+<p>
+THのsplice syntax(<code>$(..)</code> みたいなやつ)以外をONにする
+</p>
+</dd>
+<dt>
+NoTraditionalRecordSyntax
+</dt>
+<dd>
+<p>
+record syntaxを切る
+</p>
+</dd>
+<dt>
+TransformListComp
+</dt>
+<dd>
+<p>
+リスト内包表記にSQLぽいキーワード(group, by, using)を使った書き方ができるようにする ナニコレその2
+</p>
+</dd>
+<dt>
+Trustworthy
+</dt>
+<dd>
+<p>
+Safeよりちょい緩いやつ(雑)
+</p>
+</dd>
+<dt>
+TupleSections
+</dt>
+<dd>
+<p>
+<code>(,e)</code> とかかけるようになる
+</p>
+</dd>
+<dt>
+TypeFamilies
+</dt>
+<dd>
+<p>
+type family, data familyが使えるようになる
+</p>
+</dd>
+<dt>
+TypeInType
+</dt>
+<dd>
+<p>
+kindが消滅して全部typeになる kind systemこわれる 超非推奨
+</p>
+</dd>
+<dt>
+TypeOperators
+</dt>
+<dd>
+<p>
+型の演算子も使えるようにする
+</p>
+</dd>
+<dt>
+TypeSynonymInstances
+</dt>
+<dd>
+<p>
+type synonymに対するinstanceがかけるようになる
+</p>
+</dd>
+<dt>
+UnboxedTuples
+</dt>
+<dd>
+<p>
+<code>(# e1,e2 #)</code> みたいにunboxed typeのtupleがかけるようになる
+</p>
+</dd>
+<dt>
+UnboxedSums
+</dt>
+<dd>
+<p>
+<code>(# e1|e2 #)</code> みたいにunboxed typeのsumがかけるようになる
+</p>
+</dd>
+<dt>
+UndecidableInstances
+</dt>
+<dd>
+<p>
+非推奨
+</p>
+</dd>
+<dt>
+UnicodeSyntax
+</dt>
+<dd>
+<p>
+<code>=&gt;</code> の代わりに <code>⇒</code> とかかけるようになる
+</p>
+</dd>
+<dt>
+Unsafe
+</dt>
+<dd>
+<p>
+モジュールがunsafeであることを宣言
+</p>
+</dd>
+<dt>
+ViewPatterns
+</dt>
+<dd>
+<p>
+パターンの中で一旦関数を適用できるようにする <code>hoge (view -&gt; pat)</code> みたいにviewを適用した結果に対してパターンマッチができる
+</p>
+</dd>
 </dl>
-
-<h1 id="デフォルトonにしてほしい拡張一覧">デフォルトONにしてほしい拡張一覧</h1>
-
+<h1 id="headline-2">
+デフォルトONにしてほしい拡張一覧
+</h1>
 <ul>
-<li>DeriveFunctor</li>
-<li>FlexibleInstances</li>
-<li>FlexibleContexts</li>
-<li>LambdaCase</li>
-<li>MultiWayIf</li>
-<li>TupleSections</li>
+<li>
+<p>
+DeriveFunctor
+</p>
+</li>
+<li>
+<p>
+FlexibleInstances
+</p>
+</li>
+<li>
+<p>
+FlexibleContexts
+</p>
+</li>
+<li>
+<p>
+LambdaCase
+</p>
+</li>
+<li>
+<p>
+MultiWayIf
+</p>
+</li>
+<li>
+<p>
+TupleSections
+</p>
+</li>
 </ul>
-
-<p>後方互換性を壊さず、明らかに便利で、濫用されることはなく、デフォルトONになってれば使うんだけどプラグマかくのが面倒だから使わないんだよなみたいなやつら</p>
-
-<h1 id="型レベルほげほげでなんだかんだ必要になる拡張一覧">型レベルほげほげでなんだかんだ必要になる拡張一覧</h1>
-
+<p>
+後方互換性を壊さず、明らかに便利で、濫用されることはなく、デフォルトONになってれば使うんだけどプラグマかくのが面倒だから使わないんだよなみたいなやつら
+</p>
+<h1 id="headline-3">
+型レベルほげほげでなんだかんだ必要になる拡張一覧
+</h1>
 <ul>
-<li>(AllowAmbiguousTypes: 本当は入れたくないけど諦めて結局入れる羽目になることが多い)</li>
-<li>ConstraintKinds</li>
-<li>DataKinds</li>
-<li>FlexibleContexts</li>
-<li>FlexibleInstances</li>
-<li>FunctionalDependencies</li>
-<li>GADTs</li>
-<li>KindSignatures</li>
-<li>OverloadedLabels</li>
-<li>PolyKinds</li>
-<li>RankNTypes</li>
-<li>TypeOperators</li>
+<li>
+<p>
+(AllowAmbiguousTypes: 本当は入れたくないけど諦めて結局入れる羽目になることが多い)
+</p>
+</li>
+<li>
+<p>
+ConstraintKinds
+</p>
+</li>
+<li>
+<p>
+DataKinds
+</p>
+</li>
+<li>
+<p>
+FlexibleContexts
+</p>
+</li>
+<li>
+<p>
+FlexibleInstances
+</p>
+</li>
+<li>
+<p>
+FunctionalDependencies
+</p>
+</li>
+<li>
+<p>
+GADTs
+</p>
+</li>
+<li>
+<p>
+KindSignatures
+</p>
+</li>
+<li>
+<p>
+OverloadedLabels
+</p>
+</li>
+<li>
+<p>
+PolyKinds
+</p>
+</li>
+<li>
+<p>
+RankNTypes
+</p>
+</li>
+<li>
+<p>
+TypeOperators
+</p>
+</li>
 </ul>
-
-<p>気がついたらこの辺は入れてる</p>
-
-<h1 id="個人的に-より詳しい知りたい拡張一覧">(個人的に)より詳しい知りたい拡張一覧</h1>
-
+<p>
+気がついたらこの辺は入れてる
+</p>
+<h1 id="headline-4">
+(個人的に)より詳しい知りたい拡張一覧
+</h1>
 <ul>
-<li>DerivingStrategies</li>
-<li>ExtendedDefaultRules</li>
-<li>ImpredicativeTypes</li>
-<li>MonoLocalBinds</li>
+<li>
+<p>
+DerivingStrategies
+</p>
+</li>
+<li>
+<p>
+ExtendedDefaultRules
+</p>
+</li>
+<li>
+<p>
+ImpredicativeTypes
+</p>
+</li>
+<li>
+<p>
+MonoLocalBinds
+</p>
+</li>
 </ul>
-
-<h1 id="おわりに">おわりに</h1>
-
-<p>GHC拡張全てに目を通したのは初めてだったけど意外と知ってた いくつか存在を知らないのもあったけど</p>
-
-<p>結構気になるのもあるのでユーザーガイド読んだりしたい</p>
+<h1 id="headline-5">
+おわりに
+</h1>
+<p>
+GHC拡張全てに目を通したのは初めてだったけど意外と知ってた いくつか存在を知らないのもあったけど
+</p>
+<p>
+結構気になるのもあるのでユーザーガイド読んだりしたい
+</p>
 <div class="footnotes">
-
-<hr />
-
-<ol>
-<li id="fn:1">以下でも「非推奨」というものが出てきますが、GHCが非推奨と言っているわけではなく、何が起こるかも分からず使うのはやめたほうがいいし、これが欲しくなるのは設計がおかしいことが多いのでちょっと考えたほうがいいと個人的に思うというぐらいの意味です <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-</ol>
+<hr class="footnotes-separatator">
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>
+以下でも「非推奨」というものが出てきますが、GHCが非推奨と言っているわけではなく、何が起こるかも分からず使うのはやめたほうがいいし、これが欲しくなるのは設計がおかしいことが多いのでちょっと考えたほうがいいと個人的に思うというぐらいの意味です
+</p>
+</div>
+</div>
+</div>
 </div>
 </section>
     <footer>

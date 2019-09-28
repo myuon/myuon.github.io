@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.55.6" />
+<meta name="generator" content="Hugo 0.58.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,28 +22,15 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="HakyllでBlogを作る" />
-<meta property="og:description" content="Hakyllでこのブログを作ったのでそのあれこれを
-概要 やりたいことは以下
- orgで文章をかく(大事) orgから良い感じのHTMLを生成し github pagesで公開  Hakyllのsetup 次を参考にした
- Hakyll Tutorials Hakyll, stack, Travis CI, Github でブログを管理する GitHub Pages はじめました hakyll package  stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく
-文書の変換・Hakyllの設定 プロジェクトの構造は次のようになっている
-- root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site.hs Hakyllの設定ファイル orgの変換 Hakyllは内部で文書変換にpandocを使っていて、pandocはorgに対応しているらしいので何も設定しなくても変換はできる (デフォルトの状態では posts 以下の文書ファイルが変換される)
-ただし、次の2つをやりたかったのであれこれ設定をかいた" />
+<meta property="og:description" content="Hakyllでこのブログを作ったのでそのあれこれを 概要   やりたいことは以下    orgで文章をかく(大事)    orgから良い感じのHTMLを生成し    github pagesで公開   Hakyllのsetup   次を参考にした    Hakyll Tutorials    Hakyll, stack, Travis CI, Github でブログを管理する    GitHub Pages はじめました    hakyll package    stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく 文書の変換・Hakyllの設定   プロジェクトの構造は次のようになっている - root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/hakyll-blog/" />
-<meta property="article:published_time" content="2017-08-16T22:39:48&#43;09:00"/>
-<meta property="article:modified_time" content="2017-08-16T22:39:48&#43;09:00"/>
-
+<meta property="article:published_time" content="2017-08-16T22:39:48+09:00" />
+<meta property="article:modified_time" content="2017-08-16T22:39:48+09:00" />
 
 
 <meta itemprop="name" content="HakyllでBlogを作る">
-<meta itemprop="description" content="Hakyllでこのブログを作ったのでそのあれこれを
-概要 やりたいことは以下
- orgで文章をかく(大事) orgから良い感じのHTMLを生成し github pagesで公開  Hakyllのsetup 次を参考にした
- Hakyll Tutorials Hakyll, stack, Travis CI, Github でブログを管理する GitHub Pages はじめました hakyll package  stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく
-文書の変換・Hakyllの設定 プロジェクトの構造は次のようになっている
-- root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site.hs Hakyllの設定ファイル orgの変換 Hakyllは内部で文書変換にpandocを使っていて、pandocはorgに対応しているらしいので何も設定しなくても変換はできる (デフォルトの状態では posts 以下の文書ファイルが変換される)
-ただし、次の2つをやりたかったのであれこれ設定をかいた">
+<meta itemprop="description" content="Hakyllでこのブログを作ったのでそのあれこれを 概要   やりたいことは以下    orgで文章をかく(大事)    orgから良い感じのHTMLを生成し    github pagesで公開   Hakyllのsetup   次を参考にした    Hakyll Tutorials    Hakyll, stack, Travis CI, Github でブログを管理する    GitHub Pages はじめました    hakyll package    stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく 文書の変換・Hakyllの設定   プロジェクトの構造は次のようになっている - root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site.">
 
 
 <meta itemprop="datePublished" content="2017-08-16T22:39:48&#43;09:00" />
@@ -56,13 +43,7 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="HakyllでBlogを作る"/>
-<meta name="twitter:description" content="Hakyllでこのブログを作ったのでそのあれこれを
-概要 やりたいことは以下
- orgで文章をかく(大事) orgから良い感じのHTMLを生成し github pagesで公開  Hakyllのsetup 次を参考にした
- Hakyll Tutorials Hakyll, stack, Travis CI, Github でブログを管理する GitHub Pages はじめました hakyll package  stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく
-文書の変換・Hakyllの設定 プロジェクトの構造は次のようになっている
-- root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site.hs Hakyllの設定ファイル orgの変換 Hakyllは内部で文書変換にpandocを使っていて、pandocはorgに対応しているらしいので何も設定しなくても変換はできる (デフォルトの状態では posts 以下の文書ファイルが変換される)
-ただし、次の2つをやりたかったのであれこれ設定をかいた"/>
+<meta name="twitter:description" content="Hakyllでこのブログを作ったのでそのあれこれを 概要   やりたいことは以下    orgで文章をかく(大事)    orgから良い感じのHTMLを生成し    github pagesで公開   Hakyllのsetup   次を参考にした    Hakyll Tutorials    Hakyll, stack, Travis CI, Github でブログを管理する    GitHub Pages はじめました    hakyll package    stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく 文書の変換・Hakyllの設定   プロジェクトの構造は次のようになっている - root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site."/>
 
 
   </head>
@@ -91,35 +72,72 @@
       <time datetime="2017-08-16 10:39">2017-08-16</time>
       <h1>HakyllでBlogを作る</h1>
     </header>
-    <section><p>Hakyllでこのブログを作ったのでそのあれこれを</p>
-
-<h1 id="概要">概要</h1>
-
-<p>やりたいことは以下</p>
-
+    <section>
+<p>
+Hakyllでこのブログを作ったのでそのあれこれを
+</p>
+<h1 id="headline-1">
+概要
+</h1>
+<p>
+やりたいことは以下
+</p>
 <ul>
-<li>orgで文章をかく(大事)</li>
-<li>orgから良い感じのHTMLを生成し</li>
-<li>github pagesで公開</li>
+<li>
+<p>
+orgで文章をかく(大事)
+</p>
+</li>
+<li>
+<p>
+orgから良い感じのHTMLを生成し
+</p>
+</li>
+<li>
+<p>
+github pagesで公開
+</p>
+</li>
 </ul>
-
-<h1 id="hakyllのsetup">Hakyllのsetup</h1>
-
-<p>次を参考にした</p>
-
+<h1 id="headline-2">
+Hakyllのsetup
+</h1>
+<p>
+次を参考にした
+</p>
 <ul>
-<li><a href="https://jaspervdj.be/hakyll/tutorials.html" title="Hakyll Tutorials">Hakyll Tutorials</a></li>
-<li><a href="http://335g.github.io/posts/2015-08-09-hakyll_travis.html" title="Hakyll, stack, Travis CI, Github でブログを管理する">Hakyll, stack, Travis CI, Github でブログを管理する</a></li>
-<li><a href="https://matsubara0507.github.io/posts/2016-07-07-started-github-pages.html" title="GitHub Pages はじめました">GitHub Pages はじめました</a></li>
-<li><a href="https://hackage.haskell.org/package/hakyll-4.9.8.0" title="hakyll package">hakyll package</a></li>
+<li>
+<p>
+<a href="https://jaspervdj.be/hakyll/tutorials.html">Hakyll Tutorials</a>
+</p>
+</li>
+<li>
+<p>
+<a href="http://335g.github.io/posts/2015-08-09-hakyll_travis.html">Hakyll, stack, Travis CI, Github でブログを管理する</a>
+</p>
+</li>
+<li>
+<p>
+<a href="https://matsubara0507.github.io/posts/2016-07-07-started-github-pages.html">GitHub Pages はじめました</a>
+</p>
+</li>
+<li>
+<p>
+<a href="https://hackage.haskell.org/package/hakyll-4.9.8.0">hakyll package</a>
+</p>
+</li>
 </ul>
-
-<p><code>stack</code> でパッケージを入れて、 <code>hakyll-init</code> → <code>stack build</code> → <code>stack exec site watch</code> で動かすところまでは簡単にいけた
-2番目のリンクにあるように、 <code>_site</code> をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく</p>
-
-<h1 id="文書の変換-hakyllの設定">文書の変換・Hakyllの設定</h1>
-
-<p>プロジェクトの構造は次のようになっている</p>
+<p>
+<code class="verbatim">stack</code> でパッケージを入れて、 <code class="verbatim">hakyll-init</code> → <code class="verbatim">stack build</code> → <code class="verbatim">stack exec site watch</code> で動かすところまでは簡単にいけた
+2番目のリンクにあるように、 <code class="verbatim">_site</code> をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく
+</p>
+<h1 id="headline-3">
+文書の変換・Hakyllの設定
+</h1>
+<p>
+プロジェクトの構造は次のようになっている
+</p>
+<div class="src src-txt">
 <div class="highlight"><pre class="chroma"><code class="language-txt" data-lang="txt">- root
   - _site    できたHTMLファイルが置かれる
   - _cache
@@ -128,72 +146,108 @@
 
   - posts    ここにorg or markdownで書いた記事を入れる
   - site.hs  Hakyllの設定ファイル</code></pre></div>
-<h2 id="orgの変換">orgの変換</h2>
-
-<p>Hakyllは内部で文書変換にpandocを使っていて、pandocはorgに対応しているらしいので何も設定しなくても変換はできる
-(デフォルトの状態では <code>posts</code> 以下の文書ファイルが変換される)</p>
-
-<p>ただし、次の2つをやりたかったのであれこれ設定をかいた</p>
-
+</div>
+<h2 id="headline-4">
+orgの変換
+</h2>
+<p>
+Hakyllは内部で文書変換にpandocを使っていて、pandocはorgに対応しているらしいので何も設定しなくても変換はできる
+(デフォルトの状態では <code class="verbatim">posts</code> 以下の文書ファイルが変換される)
+</p>
+<p>
+ただし、次の2つをやりたかったのであれこれ設定をかいた
+</p>
 <ol>
-<li>文章中の改行は強制改行</li>
-<li>toc(目次)の表示</li>
-<li>syntax highlightを有効にする</li>
+<li>
+<p>
+文章中の改行は強制改行
+</p>
+</li>
+<li>
+<p>
+toc(目次)の表示
+</p>
+</li>
+<li>
+<p>
+syntax highlightを有効にする
+</p>
+<h3 id="headline-5">
+改行
+</h3>
+</li>
 </ol>
-
-<h3 id="改行">改行</h3>
-
-<p>org-modeでは、パラグラフ中で強制改行したい場合は <code>\\</code> を行末に置くことになっているので、orgを変換する時にそれを噛ませるようにした
-markdownではmarkdown optionsに <code>hard_line_break</code> というのがあるのでそれで読みこめばいいんだけど、orgにはそんなものはなかったので <code>SoftBreak</code> を無理やり <code>LineBreak</code> に変換するという強引な方法をとっている。
-これでいつでも求めるHTMLが得られるかは不明。今のところは困ってない。</p>
-
-<h3 id="toc">TOC</h3>
-
-<p>pandocのオプションをつければいけるらしい</p>
-
-<h3 id="syntax-highlight">syntax highlight</h3>
-
-<p>これもオプションで指定すると、 <code>code</code> タグ内の適当なキーワードに適切なclassが付与されるので、色を自分でcssで指定した</p>
-
-<h3 id="コード">コード</h3>
-
+<p>
+org-modeでは、パラグラフ中で強制改行したい場合は <code class="verbatim">\\</code> を行末に置くことになっているので、orgを変換する時にそれを噛ませるようにした
+markdownではmarkdown optionsに <code class="verbatim">hard_line_break</code> というのがあるのでそれで読みこめばいいんだけど、orgにはそんなものはなかったので <code class="verbatim">SoftBreak</code> を無理やり <code class="verbatim">LineBreak</code> に変換するという強引な方法をとっている。
+これでいつでも求めるHTMLが得られるかは不明。今のところは困ってない。
+</p>
+<h3 id="headline-6">
+TOC
+</h3>
+<p>
+pandocのオプションをつければいけるらしい
+</p>
+<h3 id="headline-7">
+syntax highlight
+</h3>
+<p>
+これもオプションで指定すると、 <code class="verbatim">code</code> タグ内の適当なキーワードに適切なclassが付与されるので、色を自分でcssで指定した
+</p>
+<h3 id="headline-8">
+コード
+</h3>
 <ul>
-<li><a href="https://github.com/myuon/myuon.github.io/blob/33394539926ee03fecc72906b39b4f0318b5b559/blog/site.hs" title="site.hs">site.hs</a></li>
+<li>
+<p>
+<a href="https://github.com/myuon/myuon.github.io/blob/33394539926ee03fecc72906b39b4f0318b5b559/blog/site.hs">site.hs</a>
+</p>
+</li>
 </ul>
+<div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="p">(</span><span class="err">略</span><span class="p">)</span>
-	  <span class="kr">let</span> <span class="nf">hardLineBreaks</span> <span class="ow">::</span> <span class="kt">Inline</span> <span class="ow">-&gt;</span> <span class="kt">Inline</span>
-	      <span class="nf">hardLineBreaks</span> <span class="kt">SoftBreak</span> <span class="ow">=</span> <span class="kt">LineBreak</span>
-	      <span class="nf">hardLineBreaks</span> <span class="nf">k</span> <span class="ow">=</span> <span class="nf">k</span>
+	  <span class="kr">let</span> <span class="n">hardLineBreaks</span> <span class="ow">::</span> <span class="kt">Inline</span> <span class="ow">-&gt;</span> <span class="kt">Inline</span>
+	      <span class="n">hardLineBreaks</span> <span class="kt">SoftBreak</span> <span class="ow">=</span> <span class="kt">LineBreak</span>
+	      <span class="n">hardLineBreaks</span> <span class="n">k</span> <span class="ow">=</span> <span class="n">k</span>
 
-	  <span class="kr">let</span> <span class="nf">ropt</span> <span class="ow">=</span> <span class="nf">def</span>
-	  <span class="kr">let</span> <span class="nf">wopt</span> <span class="ow">=</span> <span class="nf">def</span>
-		<span class="p">{</span> <span class="nf">writerTableOfContents</span> <span class="ow">=</span> <span class="kt">True</span>
-		<span class="p">,</span> <span class="nf">writerSectionDivs</span> <span class="ow">=</span> <span class="kt">True</span>
-		<span class="p">,</span> <span class="nf">writerTemplate</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="s">&#34;$if(toc)$</span><span class="se">\n</span><span class="s">$toc$</span><span class="se">\n</span><span class="s">$endif$</span><span class="se">\n</span><span class="s">$body$&#34;</span>
-		<span class="p">,</span> <span class="nf">writerWrapText</span> <span class="ow">=</span> <span class="kt">WrapPreserve</span>
-		<span class="p">,</span> <span class="nf">writerHighlight</span> <span class="ow">=</span> <span class="kt">True</span>
+	  <span class="kr">let</span> <span class="n">ropt</span> <span class="ow">=</span> <span class="n">def</span>
+	  <span class="kr">let</span> <span class="n">wopt</span> <span class="ow">=</span> <span class="n">def</span>
+		<span class="p">{</span> <span class="n">writerTableOfContents</span> <span class="ow">=</span> <span class="kt">True</span>
+		<span class="p">,</span> <span class="n">writerSectionDivs</span> <span class="ow">=</span> <span class="kt">True</span>
+		<span class="p">,</span> <span class="n">writerTemplate</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="s">&#34;$if(toc)$</span><span class="se">\n</span><span class="s">$toc$</span><span class="se">\n</span><span class="s">$endif$</span><span class="se">\n</span><span class="s">$body$&#34;</span>
+		<span class="p">,</span> <span class="n">writerWrapText</span> <span class="ow">=</span> <span class="kt">WrapPreserve</span>
+		<span class="p">,</span> <span class="n">writerHighlight</span> <span class="ow">=</span> <span class="kt">True</span>
 		<span class="p">}</span>
-
-	  <span class="nf">compile</span> <span class="o">$</span> <span class="nf">pandocCompilerWithTransform</span> <span class="nf">ropt</span> <span class="nf">wopt</span> <span class="p">(</span><span class="nf">walk</span> <span class="nf">hardLineBreaks</span><span class="p">)</span>
-	      <span class="o">&gt;&gt;=</span> <span class="nf">loadAndApplyTemplate</span> <span class="s">&#34;templates/post.html&#34;</span>    <span class="nf">postCtx</span>
-	      <span class="o">&gt;&gt;=</span> <span class="nf">loadAndApplyTemplate</span> <span class="s">&#34;templates/default.html&#34;</span> <span class="nf">postCtx</span>
-	      <span class="o">&gt;&gt;=</span> <span class="nf">relativizeUrls</span></code></pre></div>
-<p>ここの <code>pandocCompilerWithTransform ...</code> がそれ。</p>
-
-<h2 id="デザイン">デザイン</h2>
-
-<p>Hakyllのテーマにはあまりまともなものがなく、例えばJekyllのテーマをHakyll用に変換するのは<a href="https://matsubara0507.github.io/posts/2016-10-24-changed-design.html" title="かなり大変そう">かなり大変そう</a>なのでやりたくなかった。
-ので、デザインは自力で何とかすることにした。</p>
-
-<p><a href="https://semantic-ui.com/" title="semantic-ui">semantic-ui</a>というCSSフレームワークを使った。
-この上でテンプレートHTMLを適当に改造し適当にCSSを書くことでそれらしいデザインにした。</p>
-
-<p>まぁひとまずこれで。</p>
-
-<h2 id="コメント機能">コメント機能</h2>
-
-<p>ブログなのでコメント機能は欲しいなということで、<a href="https://disqus.com/" title="disqus">disqus</a>を入れてみた(このページの一番下に表示されてる)
-海外のブログでは割とよく見るやつ</p>
+        
+	  <span class="n">compile</span> <span class="o">$</span> <span class="n">pandocCompilerWithTransform</span> <span class="n">ropt</span> <span class="n">wopt</span> <span class="p">(</span><span class="n">walk</span> <span class="n">hardLineBreaks</span><span class="p">)</span>
+	      <span class="o">&gt;&gt;=</span> <span class="n">loadAndApplyTemplate</span> <span class="s">&#34;templates/post.html&#34;</span>    <span class="n">postCtx</span>
+	      <span class="o">&gt;&gt;=</span> <span class="n">loadAndApplyTemplate</span> <span class="s">&#34;templates/default.html&#34;</span> <span class="n">postCtx</span>
+	      <span class="o">&gt;&gt;=</span> <span class="n">relativizeUrls</span></code></pre></div>
+</div>
+<p>
+ここの <code class="verbatim">pandocCompilerWithTransform ...</code> がそれ。
+</p>
+<h2 id="headline-9">
+デザイン
+</h2>
+<p>
+Hakyllのテーマにはあまりまともなものがなく、例えばJekyllのテーマをHakyll用に変換するのは<a href="https://matsubara0507.github.io/posts/2016-10-24-changed-design.html">かなり大変そう</a>なのでやりたくなかった。
+ので、デザインは自力で何とかすることにした。
+</p>
+<p>
+<a href="https://semantic-ui.com/">semantic-ui</a>というCSSフレームワークを使った。
+この上でテンプレートHTMLを適当に改造し適当にCSSを書くことでそれらしいデザインにした。
+</p>
+<p>
+まぁひとまずこれで。
+</p>
+<h2 id="headline-10">
+コメント機能
+</h2>
+<p>
+ブログなのでコメント機能は欲しいなということで、<a href="https://disqus.com/">disqus</a>を入れてみた(このページの一番下に表示されてる)
+海外のブログでは割とよく見るやつ
+</p>
 </section>
     <footer>
       <hr>
