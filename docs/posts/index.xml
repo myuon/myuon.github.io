@@ -5,10 +5,26 @@
     <description>Recent content in Posts on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sun, 16 Jun 2019 14:26:31 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 28 Sep 2019 17:15:06 +0900</lastBuildDate>
     
       <atom:link href="https://myuon.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+      <item>
+        <title>Genericなデータマッパーを書いた</title>
+        <link>https://myuon.github.io/posts/database-generic-mapper/</link>
+        <pubDate>Sat, 28 Sep 2019 17:15:06 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/database-generic-mapper/</guid>
+        <description>まだライブラリとしては公開してませんが
+背景 Haskell でサーバーサイドを書いてみようと思い立って色々やっていたところ、ORM 的なものが欲しい気持ちになってきた。 業界では persistent がデファクト感あるが、思ったほど細かいところに手が届かない(？)上にドキュメントが全然なくて使う気がなくなったので自分なりに解決策を考えた結果 database-generic-mapper というパッケージを作るに至った。
+(実際のところ私は全然 persistent の全容を把握していない、そもそもドキュメントがないので把握のしようがない)
+ていうか Generic Programming なるものを初めてやったけど普通に便利だった。TH より簡単で使いやすいのでアイデア次第で色々できそうではある(今更〜〜〜〜)。
+database-generic-mapper database と銘打ってるが実体はただの record mapper 的な何かである。
+特徴:
+ Generic インスタンスなレコードと値の列を mapping してくれるやつ(DB にデータを保存することを考えると mapping するレコードは Generic インスタンスになっていると仮定しても良いだろうという感じで) TH なし 実際のデータのマッピングはライブラリ側の型クラスを使っているので自分で型を定義してインスタンスを書けば挙動はカスタマイズ可能 私は一応 MySQL で使ってるが特に DB 依存はない気がする(ただしマッピングされる先の型はライブラリ側で定義されてるものから選ぶ必要はある) 本当に誰でも思いつきそうな仕組みなので絶対すでに作られてるでしょって思って調べたけど見つからなかった…何でみんな TH するんだ…レコード定義したくないのか…  使い方 適当なデータ型を定義する。制約を書きたいときは幽霊型に載せる(これは attribute として後で文字列のリストとして取得可能)
+mapper は (:-) だけは特別扱いしていて、 a :- xs を後で (a,[String]) の型に mapping する(:-ではないときは、 (a,[])に mapping する)
+data Sample = Sample { key :: VarChar 20 :- &amp;#39;[&amp;#34;PRIMARY KEY&amp;#34;], -- 制約書きたいときは (:-) を使う name :: BigInt :- &amp;#39;[&amp;#34;NOT NULL&amp;#34;], single :: String } deriving (Eq, Show, Generic) -- レコードのフィールドは全て次の型クラスのインスタンスである必要がある -- SQLValuesはStringやIntなどのunion class SQLField a where fieldType :: a -&amp;gt; String encode :: a -&amp;gt; SQLValue decode :: SQLValue -&amp;gt; a MySQL で使う都合上、 VarChar (s :: Nat) や BigInt を定義しているがこれらはインスタンスを導出するためのただの newtype wrapper である(実体は Text や Int64 など)</description>
+      </item>
     
       <item>
         <title>Pipeline Resolverを使ったAppSync Authorizerパターン</title>

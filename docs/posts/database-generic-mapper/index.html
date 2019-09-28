@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genericなデータマッパーを書いた - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.58.3" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="Genericなデータマッパーを書いた" />
+<meta property="og:description" content="まだライブラリとしては公開してませんが
+背景 Haskell でサーバーサイドを書いてみようと思い立って色々やっていたところ、ORM 的なものが欲しい気持ちになってきた。 業界では persistent がデファクト感あるが、思ったほど細かいところに手が届かない(？)上にドキュメントが全然なくて使う気がなくなったので自分なりに解決策を考えた結果 database-generic-mapper というパッケージを作るに至った。
+(実際のところ私は全然 persistent の全容を把握していない、そもそもドキュメントがないので把握のしようがない)
+ていうか Generic Programming なるものを初めてやったけど普通に便利だった。TH より簡単で使いやすいのでアイデア次第で色々できそうではある(今更〜〜〜〜)。
+database-generic-mapper database と銘打ってるが実体はただの record mapper 的な何かである。
+特徴:
+ Generic インスタンスなレコードと値の列を mapping してくれるやつ(DB にデータを保存することを考えると mapping するレコードは Generic インスタンスになっていると仮定しても良いだろうという感じで) TH なし 実際のデータのマッピングはライブラリ側の型クラスを使っているので自分で型を定義してインスタンスを書けば挙動はカスタマイズ可能 私は一応 MySQL で使ってるが特に DB 依存はない気がする(ただしマッピングされる先の型はライブラリ側で定義されてるものから選ぶ必要はある) 本当に誰でも思いつきそうな仕組みなので絶対すでに作られてるでしょって思って調べたけど見つからなかった…何でみんな TH するんだ…レコード定義したくないのか…  使い方 適当なデータ型を定義する。制約を書きたいときは幽霊型に載せる(これは attribute として後で文字列のリストとして取得可能)
+mapper は (:-) だけは特別扱いしていて、 a :- xs を後で (a,[String]) の型に mapping する(:-ではないときは、 (a,[])に mapping する)
+data Sample = Sample { key :: VarChar 20 :- &#39;[&#34;PRIMARY KEY&#34;], -- 制約書きたいときは (:-) を使う name :: BigInt :- &#39;[&#34;NOT NULL&#34;], single :: String } deriving (Eq, Show, Generic) -- レコードのフィールドは全て次の型クラスのインスタンスである必要がある -- SQLValuesはStringやIntなどのunion class SQLField a where fieldType :: a -&gt; String encode :: a -&gt; SQLValue decode :: SQLValue -&gt; a MySQL で使う都合上、 VarChar (s :: Nat) や BigInt を定義しているがこれらはインスタンスを導出するためのただの newtype wrapper である(実体は Text や Int64 など)" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/database-generic-mapper/" />
+<meta property="article:published_time" content="2019-09-28T17:15:06+09:00" />
+<meta property="article:modified_time" content="2019-09-28T17:15:06+09:00" />
+
+
+<meta itemprop="name" content="Genericなデータマッパーを書いた">
+<meta itemprop="description" content="まだライブラリとしては公開してませんが
+背景 Haskell でサーバーサイドを書いてみようと思い立って色々やっていたところ、ORM 的なものが欲しい気持ちになってきた。 業界では persistent がデファクト感あるが、思ったほど細かいところに手が届かない(？)上にドキュメントが全然なくて使う気がなくなったので自分なりに解決策を考えた結果 database-generic-mapper というパッケージを作るに至った。
+(実際のところ私は全然 persistent の全容を把握していない、そもそもドキュメントがないので把握のしようがない)
+ていうか Generic Programming なるものを初めてやったけど普通に便利だった。TH より簡単で使いやすいのでアイデア次第で色々できそうではある(今更〜〜〜〜)。
+database-generic-mapper database と銘打ってるが実体はただの record mapper 的な何かである。
+特徴:
+ Generic インスタンスなレコードと値の列を mapping してくれるやつ(DB にデータを保存することを考えると mapping するレコードは Generic インスタンスになっていると仮定しても良いだろうという感じで) TH なし 実際のデータのマッピングはライブラリ側の型クラスを使っているので自分で型を定義してインスタンスを書けば挙動はカスタマイズ可能 私は一応 MySQL で使ってるが特に DB 依存はない気がする(ただしマッピングされる先の型はライブラリ側で定義されてるものから選ぶ必要はある) 本当に誰でも思いつきそうな仕組みなので絶対すでに作られてるでしょって思って調べたけど見つからなかった…何でみんな TH するんだ…レコード定義したくないのか…  使い方 適当なデータ型を定義する。制約を書きたいときは幽霊型に載せる(これは attribute として後で文字列のリストとして取得可能)
+mapper は (:-) だけは特別扱いしていて、 a :- xs を後で (a,[String]) の型に mapping する(:-ではないときは、 (a,[])に mapping する)
+data Sample = Sample { key :: VarChar 20 :- &#39;[&#34;PRIMARY KEY&#34;], -- 制約書きたいときは (:-) を使う name :: BigInt :- &#39;[&#34;NOT NULL&#34;], single :: String } deriving (Eq, Show, Generic) -- レコードのフィールドは全て次の型クラスのインスタンスである必要がある -- SQLValuesはStringやIntなどのunion class SQLField a where fieldType :: a -&gt; String encode :: a -&gt; SQLValue decode :: SQLValue -&gt; a MySQL で使う都合上、 VarChar (s :: Nat) や BigInt を定義しているがこれらはインスタンスを導出するためのただの newtype wrapper である(実体は Text や Int64 など)">
+
+
+<meta itemprop="datePublished" content="2019-09-28T17:15:06&#43;09:00" />
+<meta itemprop="dateModified" content="2019-09-28T17:15:06&#43;09:00" />
+<meta itemprop="wordCount" content="1028">
+
+
+
+<meta itemprop="keywords" content="haskell," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Genericなデータマッパーを書いた"/>
+<meta name="twitter:description" content="まだライブラリとしては公開してませんが
+背景 Haskell でサーバーサイドを書いてみようと思い立って色々やっていたところ、ORM 的なものが欲しい気持ちになってきた。 業界では persistent がデファクト感あるが、思ったほど細かいところに手が届かない(？)上にドキュメントが全然なくて使う気がなくなったので自分なりに解決策を考えた結果 database-generic-mapper というパッケージを作るに至った。
+(実際のところ私は全然 persistent の全容を把握していない、そもそもドキュメントがないので把握のしようがない)
+ていうか Generic Programming なるものを初めてやったけど普通に便利だった。TH より簡単で使いやすいのでアイデア次第で色々できそうではある(今更〜〜〜〜)。
+database-generic-mapper database と銘打ってるが実体はただの record mapper 的な何かである。
+特徴:
+ Generic インスタンスなレコードと値の列を mapping してくれるやつ(DB にデータを保存することを考えると mapping するレコードは Generic インスタンスになっていると仮定しても良いだろうという感じで) TH なし 実際のデータのマッピングはライブラリ側の型クラスを使っているので自分で型を定義してインスタンスを書けば挙動はカスタマイズ可能 私は一応 MySQL で使ってるが特に DB 依存はない気がする(ただしマッピングされる先の型はライブラリ側で定義されてるものから選ぶ必要はある) 本当に誰でも思いつきそうな仕組みなので絶対すでに作られてるでしょって思って調べたけど見つからなかった…何でみんな TH するんだ…レコード定義したくないのか…  使い方 適当なデータ型を定義する。制約を書きたいときは幽霊型に載せる(これは attribute として後で文字列のリストとして取得可能)
+mapper は (:-) だけは特別扱いしていて、 a :- xs を後で (a,[String]) の型に mapping する(:-ではないときは、 (a,[])に mapping する)
+data Sample = Sample { key :: VarChar 20 :- &#39;[&#34;PRIMARY KEY&#34;], -- 制約書きたいときは (:-) を使う name :: BigInt :- &#39;[&#34;NOT NULL&#34;], single :: String } deriving (Eq, Show, Generic) -- レコードのフィールドは全て次の型クラスのインスタンスである必要がある -- SQLValuesはStringやIntなどのunion class SQLField a where fieldType :: a -&gt; String encode :: a -&gt; SQLValue decode :: SQLValue -&gt; a MySQL で使う都合上、 VarChar (s :: Nat) や BigInt を定義しているがこれらはインスタンスを導出するためのただの newtype wrapper である(実体は Text や Int64 など)"/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2019-09-28 05:15">2019-09-28</time>
+      <h1>Genericなデータマッパーを書いた</h1>
+    </header>
+    <section>
+
+<p>まだライブラリとしては公開してませんが</p>
+
+<h2 id="背景">背景</h2>
+
+<p>Haskell でサーバーサイドを書いてみようと思い立って色々やっていたところ、ORM 的なものが欲しい気持ちになってきた。
+業界では persistent がデファクト感あるが、思ったほど細かいところに手が届かない(？)上にドキュメントが全然なくて使う気がなくなったので自分なりに解決策を考えた結果 database-generic-mapper というパッケージを作るに至った。</p>
+
+<p>(実際のところ私は全然 persistent の全容を把握していない、そもそもドキュメントがないので把握のしようがない)</p>
+
+<p>ていうか Generic Programming なるものを初めてやったけど普通に便利だった。TH より簡単で使いやすいのでアイデア次第で色々できそうではある(今更〜〜〜〜)。</p>
+
+<h2 id="database-generic-mapper">database-generic-mapper</h2>
+
+<p>database と銘打ってるが実体はただの record mapper 的な何かである。</p>
+
+<p>特徴:</p>
+
+<ul>
+<li>Generic インスタンスなレコードと値の列を mapping してくれるやつ(DB にデータを保存することを考えると mapping するレコードは Generic インスタンスになっていると仮定しても良いだろうという感じで)</li>
+<li>TH なし</li>
+<li>実際のデータのマッピングはライブラリ側の型クラスを使っているので自分で型を定義してインスタンスを書けば挙動はカスタマイズ可能</li>
+<li>私は一応 MySQL で使ってるが特に DB 依存はない気がする(ただしマッピングされる先の型はライブラリ側で定義されてるものから選ぶ必要はある)</li>
+<li>本当に誰でも思いつきそうな仕組みなので絶対すでに作られてるでしょって思って調べたけど見つからなかった…何でみんな TH するんだ…レコード定義したくないのか…</li>
+</ul>
+
+<h3 id="使い方">使い方</h3>
+
+<p>適当なデータ型を定義する。制約を書きたいときは幽霊型に載せる(これは attribute として後で文字列のリストとして取得可能)</p>
+
+<p>mapper は <code>(:-)</code> だけは特別扱いしていて、 <code>a :- xs</code> を後で <code>(a,[String])</code> の型に mapping する(<code>:-</code>ではないときは、 <code>(a,[])</code>に mapping する)</p>
+<div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="kr">data</span> <span class="kt">Sample</span> <span class="ow">=</span> <span class="kt">Sample</span> <span class="p">{</span>
+  <span class="n">key</span> <span class="ow">::</span> <span class="kt">VarChar</span> <span class="mi">20</span> <span class="kt">:-</span> <span class="kt">&#39;[&#34;PRIMARY KEY&#34;]</span><span class="p">,</span>  <span class="c1">-- 制約書きたいときは (:-) を使う</span>
+  <span class="n">name</span> <span class="ow">::</span> <span class="kt">BigInt</span> <span class="kt">:-</span> <span class="kt">&#39;[&#34;NOT NULL&#34;]</span><span class="p">,</span>
+  <span class="n">single</span> <span class="ow">::</span> <span class="kt">String</span>
+<span class="p">}</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">,</span> <span class="kt">Generic</span><span class="p">)</span>
+
+<span class="c1">-- レコードのフィールドは全て次の型クラスのインスタンスである必要がある</span>
+<span class="c1">-- SQLValuesはStringやIntなどのunion</span>
+<span class="kr">class</span> <span class="kt">SQLField</span> <span class="n">a</span> <span class="kr">where</span>
+  <span class="n">fieldType</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
+  <span class="n">encode</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">SQLValue</span>
+  <span class="n">decode</span> <span class="ow">::</span> <span class="kt">SQLValue</span> <span class="ow">-&gt;</span> <span class="n">a</span></code></pre></div>
+<p>MySQL で使う都合上、 <code>VarChar (s :: Nat)</code> や <code>BigInt</code> を定義しているがこれらはインスタンスを導出するためのただの newtype wrapper である(実体は Text や Int64 など)</p>
+
+<h4 id="recordtypeof">recordTypeOf</h4>
+
+<p>レコードの情報を取りたいときは <code>recordTypeOf</code> を使う(これは CREATE TABLE のクエリを作るときに使ってる)</p>
+<div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="nf">recordTypeOf</span> <span class="kt">Sample</span><span class="p">{}</span>
+<span class="cm">{-
+</span><span class="cm">  ==  ( &#34;Sample&#34;
+</span><span class="cm">      , M.fromList
+</span><span class="cm">        [ (&#34;key&#34;   , (&#34;varchar(20)&#34;, [&#34;PRIMARY KEY&#34;]))
+</span><span class="cm">        , (&#34;name&#34;  , (&#34;bigint&#34;, [&#34;NOT NULL&#34;]))
+</span><span class="cm">        , (&#34;single&#34;, (&#34;text&#34;, []))
+</span><span class="cm">        ]
+</span><span class="cm">      )
+</span><span class="cm">-}</span></code></pre></div>
+<h4 id="maptosqlvalues">mapToSQLValues</h4>
+
+<p>レコードを column とデータの組に mapping するときは <code>mapToSQLValues</code> を使う</p>
+<div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="nf">mapToSQLValues</span> <span class="p">(</span><span class="kt">Sample</span> <span class="p">(</span><span class="kt">Field</span> <span class="o">$</span> <span class="kt">VarChar</span> <span class="s">&#34;foo&#34;</span><span class="p">)</span> <span class="p">(</span><span class="kt">Field</span> <span class="o">$</span> <span class="kt">BigInt</span> <span class="mi">100</span><span class="p">)</span> <span class="s">&#34;bar&#34;</span><span class="p">)</span>
+<span class="cm">{-
+</span><span class="cm">  ==  [ (&#34;key&#34;   , SQLVarChar &#34;foo&#34;)
+</span><span class="cm">      , (&#34;name&#34;  , SQLBigInt 100)
+</span><span class="cm">      , (&#34;single&#34;, SQLText &#34;bar&#34;)
+</span><span class="cm">      ]
+</span><span class="cm">-}</span></code></pre></div>
+<h4 id="mapfromsqlvalues">mapFromSQLValues</h4>
+
+<p>逆に column の名前とデータの Map からデータを復元するときは <code>mapFromSQLValues</code> を使う</p>
+<div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="nf">mapFromSQLValues</span>
+  <span class="kt">Sample</span><span class="p">{}</span>
+  <span class="p">(</span> <span class="kt">M</span><span class="o">.</span><span class="n">fromList</span>
+    <span class="p">[</span> <span class="p">(</span><span class="s">&#34;key&#34;</span>   <span class="p">,</span> <span class="kt">SQLVarChar</span> <span class="s">&#34;foo&#34;</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s">&#34;name&#34;</span>  <span class="p">,</span> <span class="kt">SQLBigInt</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s">&#34;single&#34;</span><span class="p">,</span> <span class="kt">SQLText</span> <span class="s">&#34;bar&#34;</span><span class="p">)</span>
+    <span class="p">]</span>
+  <span class="p">)</span>
+<span class="cm">{-
+</span><span class="cm">  == (Sample (Field $ VarChar &#34;foo&#34;) (Field $ BigInt 100) &#34;bar&#34;)
+</span><span class="cm">-}</span></code></pre></div>
+<p>第一引数にレコードをもらってくるが、これは型を固定するためだけではなく、デフォルト値を与えるためにも使える(第二引数に key がないときは第一引数のレコードから値を拾ってくる)</p>
+<div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="nf">mapFromSQLValues</span>
+    <span class="kt">Sample</span> <span class="p">{</span><span class="n">key</span> <span class="ow">=</span> <span class="kt">Field</span> <span class="o">$</span> <span class="kt">VarChar</span> <span class="s">&#34;def&#34;</span><span class="p">,</span> <span class="n">name</span> <span class="ow">=</span> <span class="kt">Field</span> <span class="o">$</span> <span class="kt">BigInt</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)}</span>
+    <span class="p">(</span><span class="kt">M</span><span class="o">.</span><span class="n">fromList</span> <span class="p">[(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="kt">SQLBigInt</span> <span class="mi">100</span><span class="p">),</span> <span class="p">(</span><span class="s">&#34;single&#34;</span><span class="p">,</span> <span class="kt">SQLText</span> <span class="s">&#34;bar&#34;</span><span class="p">)])</span>
+<span class="cm">{-
+</span><span class="cm">  == (Sample (Field $ VarChar &#34;def&#34;) (Field $ BigInt 100) &#34;bar&#34;)
+</span><span class="cm">-}</span></code></pre></div>
+<h3 id="注意点">注意点</h3>
+
+<p>1 つ懸念事項があるとすると、このパッケージでは <code>Sample{}</code> のように穴開きのデータを有効活用することを念頭に置いて作っているので(そうでないとフィールドに値を埋めないといけないからかなりめんどくさいことになる)、StrictData 拡張を入れた正格レコードだと実行時エラーで動かないみたいになってしまうと思う。</p>
+
+<p>特に、上のデフォルト値をレコードから引いてくるという実装は NULL な値への対応として入れているものなので(DB 側の NULL を積極的に使うことは想定していないので、値が取れなかったときのために一応デフォルト値は欲しいでしょみたいな感じで入れてある)、レコード全部 Maybe で包むみたいなことはしたくないな〜というわがままによりこうなっているという都合はある。ここはもうちょっと考えたほうがいいかもしれない。</p>
+
+<h2 id="サーバー側のコード例">サーバー側のコード例</h2>
+
+<p>こういう感じでやりますみたいな</p>
+<div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="c1">-- ドメインでの定義</span>
+<span class="kr">data</span> <span class="kt">Entity</span> <span class="ow">=</span> <span class="kt">Entity</span>
+  <span class="p">{</span> <span class="n">id</span> <span class="ow">::</span> <span class="kt">Text</span>
+  <span class="p">,</span> <span class="n">createdAt</span> <span class="ow">::</span> <span class="kt">Int</span>
+  <span class="p">,</span> <span class="o">...</span> <span class="p">}</span>
+
+<span class="c1">-- リポジトリの実装での定義</span>
+<span class="kr">data</span> <span class="kt">EntityRecord</span> <span class="ow">=</span> <span class="kt">EntityRecord</span>
+  <span class="p">{</span> <span class="n">id</span> <span class="ow">::</span> <span class="kt">VarChar</span> <span class="mi">26</span> <span class="kt">:-</span> <span class="kt">&#39;[&#34;PRIMARY KEY&#34;]</span>
+  <span class="p">,</span> <span class="n">createdAt</span> <span class="ow">::</span> <span class="kt">BigInt</span> <span class="kt">:-</span> <span class="kt">&#39;[&#34;NOT NULL&#34;]</span>
+  <span class="p">,</span> <span class="o">...</span> <span class="p">}</span>
+
+<span class="nf">fromModel</span> <span class="ow">::</span> <span class="kt">Entity</span> <span class="ow">-&gt;</span> <span class="kt">EntityRecord</span>
+<span class="nf">fromModel</span> <span class="ow">=</span> <span class="o">...</span>
+
+<span class="nf">toModel</span> <span class="ow">::</span> <span class="kt">EntityRecord</span> <span class="ow">-&gt;</span> <span class="kt">Entity</span>
+<span class="nf">toModel</span> <span class="ow">=</span> <span class="o">...</span>
+
+<span class="c1">-- List</span>
+<span class="nf">list</span> <span class="ow">::</span> <span class="kt">AppM</span> <span class="p">[</span><span class="kt">Entity</span><span class="p">]</span>
+<span class="nf">list</span> <span class="ow">=</span> <span class="n">runSQL</span> <span class="o">$</span> <span class="nf">\</span><span class="n">conn</span> <span class="ow">-&gt;</span> <span class="n">liftIO</span> <span class="o">$</span> <span class="kr">do</span>
+  <span class="n">result</span> <span class="ow">&lt;-</span> <span class="kt">SQL</span><span class="o">.</span><span class="n">query_</span> <span class="n">conn</span> <span class="s">&#34;SELECT * FROM `entity`&#34;</span>
+  <span class="n">return</span> <span class="o">$</span> <span class="n">map</span> <span class="p">(</span><span class="n">toModel</span> <span class="o">.</span> <span class="n">mapFromSQLValues</span><span class="p">)</span> <span class="n">result</span>
+
+<span class="c1">-- Create</span>
+<span class="nf">create</span> <span class="ow">::</span> <span class="kt">CreateInput</span> <span class="ow">-&gt;</span> <span class="kt">AppM</span> <span class="nb">()</span>
+<span class="nf">create</span> <span class="n">input</span> <span class="ow">=</span> <span class="n">runSQL</span> <span class="o">$</span> <span class="nf">\</span><span class="n">conn</span> <span class="ow">-&gt;</span> <span class="n">liftIO</span> <span class="o">$</span>
+  <span class="kt">SQL</span><span class="o">.</span><span class="n">execute</span> <span class="n">conn</span> <span class="s">&#34;INSERT INTO `entity` VALUE (?)&#34;</span> <span class="p">(</span><span class="kt">SQL</span><span class="o">.</span><span class="kt">Only</span> <span class="o">$</span> <span class="kt">SQL</span><span class="o">.</span><span class="kt">VaArgs</span> <span class="o">$</span> <span class="n">mapToSQLValues</span> <span class="o">$</span> <span class="n">fromModel</span> <span class="n">input</span><span class="p">)</span></code></pre></div>
+<h2 id="コード-incomplete">コード(incomplete)</h2>
+
+<p>最後にコードを載せるが、適当にそれらしい箇所を切り貼りしてきただけなので適当に補って読んでください。リポジトリにもコードあるけど明日には消滅してるかもしれない。</p>
+
+<p><a href="https://github.com/provenian/api-server/blob/34810dbd39a5a38507ffc679bf3a5a91c8705b08/database-generic-mapper/src/Database/Generics/Mapper.hs">リポジトリ</a></p>
+
+<p>あと実装は死ぬほど雑なのでちゃんと使いたいときはちゃんと定義等してください(雑)</p>
+<div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="kr">class</span> <span class="kt">SQLField</span> <span class="n">a</span> <span class="kr">where</span>
+  <span class="n">fieldType</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
+  <span class="n">encode</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">SQLValue</span>
+  <span class="n">decode</span> <span class="ow">::</span> <span class="kt">SQLValue</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+
+<span class="kr">newtype</span> <span class="kt">VarChar</span> <span class="p">(</span><span class="n">length</span> <span class="ow">::</span> <span class="kt">Nat</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">VarChar</span> <span class="p">{</span> <span class="n">getVarChar</span> <span class="ow">::</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span> <span class="p">}</span>
+  <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">)</span>
+
+<span class="kr">instance</span> <span class="kt">KnownNat</span> <span class="n">n</span> <span class="ow">=&gt;</span> <span class="kt">SQLField</span> <span class="p">(</span><span class="kt">VarChar</span> <span class="n">n</span><span class="p">)</span> <span class="kr">where</span>
+  <span class="n">fieldType</span> <span class="p">(</span><span class="kr">_</span> <span class="ow">::</span> <span class="kt">VarChar</span> <span class="n">n</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&#34;varchar(&#34;</span> <span class="o">++</span> <span class="n">show</span> <span class="p">(</span><span class="n">natVal</span> <span class="p">(</span><span class="kt">Proxy</span> <span class="ow">::</span> <span class="kt">Proxy</span> <span class="n">n</span><span class="p">))</span> <span class="o">++</span> <span class="s">&#34;)&#34;</span>
+  <span class="n">encode</span> <span class="ow">=</span> <span class="kt">SQLVarChar</span> <span class="o">.</span> <span class="n">getVarChar</span>
+  <span class="n">decode</span> <span class="ow">=</span> <span class="kt">VarChar</span> <span class="o">.</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="kt">SQLVarChar</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span>
+
+<span class="kr">newtype</span> <span class="kt">BigInt</span> <span class="ow">=</span> <span class="kt">BigInt</span> <span class="p">{</span> <span class="n">getBigInt</span> <span class="ow">::</span> <span class="kt">Int64</span> <span class="p">}</span>
+  <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">)</span>
+
+<span class="kr">instance</span> <span class="kt">SQLField</span> <span class="kt">BigInt</span> <span class="kr">where</span>
+  <span class="n">fieldType</span> <span class="kr">_</span> <span class="ow">=</span> <span class="s">&#34;bigint&#34;</span>
+  <span class="n">encode</span> <span class="ow">=</span> <span class="kt">SQLBigInt</span> <span class="o">.</span> <span class="n">getBigInt</span>
+  <span class="n">decode</span> <span class="ow">=</span> <span class="kt">BigInt</span> <span class="o">.</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="kt">SQLBigInt</span> <span class="n">t</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">t</span><span class="p">)</span>
+
+<span class="kr">newtype</span> <span class="kt">Text</span> <span class="ow">=</span> <span class="kt">Text</span> <span class="p">{</span> <span class="n">getText</span> <span class="ow">::</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span> <span class="p">}</span>
+  <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">)</span>
+
+<span class="kr">instance</span> <span class="kt">SQLField</span> <span class="kt">Text</span> <span class="kr">where</span>
+  <span class="n">fieldType</span> <span class="kr">_</span> <span class="ow">=</span> <span class="s">&#34;text&#34;</span>
+  <span class="n">encode</span> <span class="ow">=</span> <span class="kt">SQLText</span> <span class="o">.</span> <span class="n">getText</span>
+  <span class="n">decode</span> <span class="ow">=</span> <span class="kt">Text</span> <span class="o">.</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="kt">SQLText</span> <span class="n">t</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">t</span><span class="p">)</span>
+
+<span class="c1">-- ...以下フィールド定義用のwrapperを定義する</span>
+
+<span class="kr">data</span> <span class="kt">SQLValue</span>
+  <span class="ow">=</span> <span class="kt">SQLBigInt</span> <span class="kt">Int64</span>
+  <span class="o">|</span> <span class="kt">SQLVarChar</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span>
+  <span class="c1">-- ...以下型の定義が並ぶ</span>
+  <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">)</span>
+
+<span class="c1">---</span>
+
+<span class="kr">data</span> <span class="p">(</span><span class="kt">:-</span><span class="p">)</span> <span class="n">a</span> <span class="p">(</span><span class="n">attrs</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Symbol</span><span class="p">])</span> <span class="ow">=</span> <span class="kt">Field</span> <span class="p">{</span> <span class="n">getField</span> <span class="ow">::</span> <span class="n">a</span> <span class="p">}</span>
+  <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">)</span>
+
+<span class="kr">class</span> <span class="kt">GMapper</span> <span class="n">f</span> <span class="kr">where</span>
+  <span class="n">grecord</span> <span class="ow">::</span> <span class="n">f</span> <span class="n">p</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">String</span><span class="p">])])</span>
+  <span class="n">gfields</span> <span class="ow">::</span> <span class="n">f</span> <span class="n">p</span> <span class="ow">-&gt;</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">String</span><span class="p">])]</span>
+  <span class="n">gfield</span> <span class="ow">::</span> <span class="n">f</span> <span class="n">p</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">String</span><span class="p">])</span>
+
+  <span class="n">gmapsTo</span> <span class="ow">::</span> <span class="n">f</span> <span class="n">p</span> <span class="ow">-&gt;</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">SQLValue</span><span class="p">)]</span>
+  <span class="n">gmapsFrom</span> <span class="ow">::</span> <span class="n">f</span> <span class="n">p</span> <span class="ow">-&gt;</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">String</span> <span class="kt">SQLValue</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">p</span>
+
+<span class="kr">class</span> <span class="kt">GSelector</span> <span class="n">f</span> <span class="kr">where</span>
+  <span class="n">gattrs</span> <span class="ow">::</span> <span class="n">f</span> <span class="n">p</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">String</span><span class="p">])</span>
+  <span class="n">gmapTo</span> <span class="ow">::</span> <span class="n">f</span> <span class="n">p</span> <span class="ow">-&gt;</span> <span class="kt">SQLValue</span>
+  <span class="n">gmapFrom</span> <span class="ow">::</span> <span class="kt">SQLValue</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">p</span>
+
+<span class="kr">instance</span> <span class="p">(</span><span class="kt">Datatype</span> <span class="n">d</span><span class="p">,</span> <span class="kt">GMapper</span> <span class="n">t</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">GMapper</span> <span class="p">(</span><span class="kt">D1</span> <span class="n">d</span> <span class="n">t</span><span class="p">)</span> <span class="kr">where</span>
+  <span class="n">grecord</span> <span class="p">(</span><span class="n">x</span> <span class="ow">::</span> <span class="kt">D1</span> <span class="n">d</span> <span class="n">t</span> <span class="n">p</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">datatypeName</span> <span class="p">(</span><span class="n">undefined</span> <span class="ow">::</span> <span class="kt">M1</span> <span class="n">_i</span> <span class="n">d</span> <span class="n">_f</span> <span class="n">_p</span><span class="p">),</span> <span class="n">gfields</span> <span class="p">(</span><span class="n">unM1</span> <span class="n">x</span><span class="p">))</span>
+
+  <span class="n">gmapsTo</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">gmapsTo</span> <span class="p">(</span><span class="n">unM1</span> <span class="n">x</span><span class="p">)</span>
+  <span class="n">gmapsFrom</span> <span class="n">r</span> <span class="ow">=</span> <span class="kt">M1</span> <span class="o">.</span> <span class="n">gmapsFrom</span> <span class="p">(</span><span class="n">unM1</span> <span class="n">r</span><span class="p">)</span>
+
+<span class="kr">instance</span> <span class="kt">GMapper</span> <span class="n">t</span> <span class="ow">=&gt;</span> <span class="kt">GMapper</span> <span class="p">(</span><span class="kt">C1</span> <span class="n">d</span> <span class="n">t</span><span class="p">)</span> <span class="kr">where</span>
+  <span class="n">gfields</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">gfields</span> <span class="o">$</span> <span class="n">unM1</span> <span class="n">x</span>
+
+  <span class="n">gmapsTo</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">gmapsTo</span> <span class="p">(</span><span class="n">unM1</span> <span class="n">x</span><span class="p">)</span>
+  <span class="n">gmapsFrom</span> <span class="n">r</span> <span class="ow">=</span> <span class="kt">M1</span> <span class="o">.</span> <span class="n">gmapsFrom</span> <span class="p">(</span><span class="n">unM1</span> <span class="n">r</span><span class="p">)</span>
+
+<span class="kr">instance</span> <span class="p">(</span><span class="kt">GMapper</span> <span class="n">r1</span><span class="p">,</span> <span class="kt">GMapper</span> <span class="n">r2</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">GMapper</span> <span class="p">(</span><span class="n">r1</span> <span class="kt">:*:</span> <span class="n">r2</span><span class="p">)</span> <span class="kr">where</span>
+  <span class="n">gfields</span> <span class="p">(</span><span class="n">r1</span> <span class="kt">:*:</span> <span class="n">r2</span><span class="p">)</span> <span class="ow">=</span> <span class="n">gfields</span> <span class="n">r1</span> <span class="o">++</span> <span class="n">gfields</span> <span class="n">r2</span>
+
+  <span class="n">gmapsTo</span> <span class="p">(</span><span class="n">r1</span> <span class="kt">:*:</span> <span class="n">r2</span><span class="p">)</span> <span class="ow">=</span> <span class="n">gmapsTo</span> <span class="n">r1</span> <span class="o">++</span> <span class="n">gmapsTo</span> <span class="n">r2</span>
+  <span class="n">gmapsFrom</span> <span class="p">(</span><span class="n">r1</span> <span class="kt">:*:</span> <span class="n">r2</span><span class="p">)</span> <span class="n">xs</span> <span class="ow">=</span> <span class="n">gmapsFrom</span> <span class="n">r1</span> <span class="n">xs</span> <span class="kt">:*:</span> <span class="n">gmapsFrom</span> <span class="n">r2</span> <span class="n">xs</span>
+
+<span class="kr">instance</span> <span class="p">(</span><span class="kt">Selector</span> <span class="n">d</span><span class="p">,</span> <span class="kt">GSelector</span> <span class="n">t</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">GMapper</span> <span class="p">(</span><span class="kt">S1</span> <span class="n">d</span> <span class="n">t</span><span class="p">)</span> <span class="kr">where</span>
+  <span class="n">gfields</span> <span class="n">r</span> <span class="ow">=</span> <span class="p">[</span><span class="n">gfield</span> <span class="n">r</span><span class="p">]</span>
+  <span class="n">gfield</span> <span class="n">s</span> <span class="ow">=</span> <span class="kr">let</span> <span class="p">(</span><span class="n">ft</span><span class="p">,</span><span class="n">attrs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">gattrs</span> <span class="p">(</span><span class="n">unM1</span> <span class="n">s</span><span class="p">)</span> <span class="kr">in</span> <span class="p">(</span><span class="n">selName</span> <span class="n">s</span><span class="p">,</span> <span class="n">ft</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
+
+  <span class="n">gmapsTo</span> <span class="n">r</span> <span class="ow">=</span> <span class="p">[(</span><span class="n">selName</span> <span class="n">r</span><span class="p">,</span> <span class="n">gmapTo</span> <span class="p">(</span><span class="n">unM1</span> <span class="n">r</span><span class="p">))]</span>
+  <span class="n">gmapsFrom</span> <span class="n">r</span> <span class="n">mp</span> <span class="ow">=</span> <span class="n">maybe</span> <span class="n">r</span> <span class="p">(</span><span class="kt">M1</span> <span class="o">.</span> <span class="n">gmapFrom</span><span class="p">)</span> <span class="p">(</span><span class="n">mp</span> <span class="kt">M</span><span class="o">.!?</span> <span class="n">selName</span> <span class="n">r</span><span class="p">)</span>
+
+<span class="kr">instance</span> <span class="p">(</span><span class="kt">Mapper</span> <span class="n">attrs</span><span class="p">,</span> <span class="kt">SQLField</span> <span class="n">t</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">GSelector</span> <span class="p">(</span><span class="kt">Rec0</span> <span class="p">(</span><span class="n">t</span> <span class="kt">:-</span> <span class="n">attrs</span><span class="p">))</span> <span class="kr">where</span>
+  <span class="n">gattrs</span> <span class="p">(</span><span class="n">x</span> <span class="ow">::</span> <span class="kt">Rec0</span> <span class="p">(</span><span class="n">t</span> <span class="kt">:-</span> <span class="n">attrs</span><span class="p">)</span> <span class="n">p</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">fieldType</span> <span class="p">(</span><span class="n">undefined</span> <span class="ow">::</span> <span class="n">t</span><span class="p">),</span> <span class="n">attrs</span> <span class="p">(</span><span class="kt">Proxy</span> <span class="ow">::</span> <span class="kt">Proxy</span> <span class="n">attrs</span><span class="p">))</span>
+  <span class="n">gmapTo</span> <span class="ow">=</span> <span class="n">encode</span> <span class="o">.</span> <span class="n">getField</span> <span class="o">.</span> <span class="n">unK1</span>
+  <span class="n">gmapFrom</span> <span class="ow">=</span> <span class="kt">K1</span> <span class="o">.</span> <span class="kt">Field</span> <span class="o">.</span> <span class="n">decode</span>
+
+<span class="kr">instance</span> <span class="cm">{-# OVERLAPS #-}</span> <span class="kt">SQLField</span> <span class="n">r</span> <span class="ow">=&gt;</span> <span class="kt">GSelector</span> <span class="p">(</span><span class="kt">Rec0</span> <span class="n">r</span><span class="p">)</span> <span class="kr">where</span>
+  <span class="n">gattrs</span> <span class="p">(</span><span class="n">x</span> <span class="ow">::</span> <span class="kt">Rec0</span> <span class="n">r</span> <span class="n">p</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">fieldType</span> <span class="p">(</span><span class="n">undefined</span> <span class="ow">::</span> <span class="n">r</span><span class="p">),</span> <span class="kt">[]</span><span class="p">)</span>
+  <span class="n">gmapTo</span> <span class="ow">=</span> <span class="n">encode</span> <span class="o">.</span> <span class="n">unK1</span>
+  <span class="n">gmapFrom</span> <span class="ow">=</span> <span class="kt">K1</span> <span class="o">.</span> <span class="n">decode</span>
+
+<span class="kr">class</span> <span class="kt">Mapper</span> <span class="n">a</span> <span class="kr">where</span>
+  <span class="n">attrs</span> <span class="ow">::</span> <span class="kt">Proxy</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">String</span><span class="p">]</span>
+
+<span class="kr">instance</span> <span class="kt">Mapper</span> <span class="kt">&#39;[]</span> <span class="kr">where</span>
+  <span class="n">attrs</span> <span class="kt">Proxy</span> <span class="ow">=</span> <span class="kt">[]</span>
+
+<span class="kr">instance</span> <span class="p">(</span><span class="kt">Mapper</span> <span class="n">xs</span><span class="p">,</span> <span class="kt">KnownSymbol</span> <span class="n">x</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Mapper</span> <span class="p">(</span><span class="n">x</span> <span class="kt">:</span> <span class="n">xs</span><span class="p">)</span> <span class="kr">where</span>
+  <span class="n">attrs</span> <span class="p">(</span><span class="kt">Proxy</span> <span class="ow">::</span> <span class="kt">Proxy</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">))</span> <span class="ow">=</span> <span class="n">symbolVal</span> <span class="p">(</span><span class="kt">Proxy</span> <span class="ow">::</span> <span class="kt">Proxy</span> <span class="n">x</span><span class="p">)</span> <span class="kt">:</span> <span class="n">attrs</span> <span class="p">(</span><span class="kt">Proxy</span> <span class="ow">::</span> <span class="kt">Proxy</span> <span class="n">xs</span><span class="p">)</span>
+
+<span class="kr">type</span> <span class="kt">RMapper</span> <span class="n">a</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Generic</span> <span class="n">a</span><span class="p">,</span> <span class="kt">GMapper</span> <span class="p">(</span><span class="kt">Rep</span> <span class="n">a</span><span class="p">))</span>
+
+<span class="nf">mapToSQLValues</span> <span class="ow">::</span> <span class="kt">RMapper</span> <span class="n">a</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">SQLValue</span><span class="p">)]</span>
+<span class="nf">mapToSQLValues</span> <span class="ow">=</span> <span class="n">gmapsTo</span> <span class="o">.</span> <span class="n">from</span>
+
+<span class="nf">mapFromSQLValues</span> <span class="ow">::</span> <span class="kt">RMapper</span> <span class="n">a</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">String</span> <span class="kt">SQLValue</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">mapFromSQLValues</span> <span class="n">r</span> <span class="ow">=</span> <span class="n">to</span> <span class="o">.</span> <span class="n">gmapsFrom</span> <span class="p">(</span><span class="n">from</span> <span class="n">r</span><span class="p">)</span>
+
+<span class="nf">recordTypeOf</span> <span class="ow">::</span> <span class="kt">RMapper</span> <span class="n">a</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">String</span> <span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">String</span><span class="p">]))</span>
+<span class="nf">recordTypeOf</span> <span class="ow">=</span>
+  <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="kt">M</span><span class="o">.</span><span class="n">fromList</span> <span class="o">$</span> <span class="n">map</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)))</span> <span class="n">y</span><span class="p">))</span>
+    <span class="o">.</span> <span class="n">grecord</span>
+    <span class="o">.</span> <span class="n">from</span></code></pre></div></section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+            
+              <a href="/tags/haskell">
+                <span>#</span>haskell</a>
+            
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2019 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
