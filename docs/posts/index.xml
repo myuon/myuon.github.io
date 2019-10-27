@@ -17,7 +17,7 @@
         <guid>https://myuon.github.io/posts/isabelle-cbc-casper-safety-proof/</guid>
         <description>日記です。
 リポジトリ: LayerXcom/cbc-casper-proof
-概要 (私は LayerX の人ではないですが)LayerX 社の人と色々あって CBC Casper というブロックチェーンのプロトコルの検証作業のお手伝いを定理証明士として行いました。
+概要 (私は LayerX の人ではないですが)LayerX 社の人と色々あって CBC Casper というブロックチェーンのプロトコルの検証作業を行いました。(主に定理証明士としてのお手伝い)
 半年くらいかかったけどやりたかった証明についにたどり着いたよという話。
 CBC Casper って何 わからん。(無知)
 何かブロックチェーンのプロトコルの名前らしい。Ethereum 財団が目をつけてるらしい。いわゆるビットコインとは違ってブロックを頑張ってマシンをぶん回してマイニングしたりしないらしい(ビットコインは PoW で CBC Casper は PoS)。
