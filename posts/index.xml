@@ -5,10 +5,31 @@
     <description>Recent content in Posts on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sat, 28 Sep 2019 17:15:06 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 27 Oct 2019 15:33:19 +0900</lastBuildDate>
     
       <atom:link href="https://myuon.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+      <item>
+        <title>IsabelleによるCBC CasperのSafetyの証明をしました</title>
+        <link>https://myuon.github.io/posts/isabelle-cbc-casper-safety-proof/</link>
+        <pubDate>Sun, 27 Oct 2019 15:33:19 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/isabelle-cbc-casper-safety-proof/</guid>
+        <description>日記です。
+リポジトリ: LayerXcom/cbc-casper-proof
+概要 (私は LayerX の人ではないですが)LayerX 社の人と色々あって CBC Casper というブロックチェーンのプロトコルの検証作業のお手伝いを定理証明士として行いました。
+半年くらいかかったけどやりたかった証明についにたどり着いたよという話。
+CBC Casper って何 わからん。(無知)
+何かブロックチェーンのプロトコルの名前らしい。Ethereum 財団が目をつけてるらしい。いわゆるビットコインとは違ってブロックを頑張ってマシンをぶん回してマイニングしたりしないらしい(ビットコインは PoW で CBC Casper は PoS)。
+詳しいことは詳しい人に聞いたほうがいいよ(真理)。
+cf: CBC Casper と形式的検証
+Isabelle で検証って何するの ブロックチェーンはコンセンサス(分散合意)アルゴリズムの一種で、みんなで合意を取りましょうみたいなやつ。コンセンサスアルゴリズムで言われる正当性というのは主に次の 2 つ。
+ Safety: 1 つの round でたかだか 1 つの値にしか合意しないこと Liveness: 必ず 1 つの値にいずれは合意できること(一生合意できないみたいな状態に陥らないこと)  実際のステートメントでは色々条件はあるがそういうのは一旦おいておいて、CBC Casper に対しては Safety は示されていて(論文があり) Liveness はまだ示されていないみたいなステータスだったはず。定理証明はどちらもされていないので、今回は簡単な(というか参考になる論文がすでにある)Safety の方を示した。
+実際の証明について 証明は基本的に論文に沿って進めた: https://github.com/cbc-casper/cbc-casper-paper
+ただし Safety Oracle の証明について、論文では clique というタイプのグラフについての性質を示すことで証明を行っているが、今回はこれを inspector(finality detector)というやつに一般化して証明を行った。
+完走した感想 ドメイン知識がないこともあってめっちゃ大変だったというのが正直なところ。アタリマエであるが、論文に書いてない行間を埋める作業や誤植・足りない仮定を追加するなどの作業はちゃんと理論側の理解がないとやはりつらい。
+一方で、今回は「理論側は別の人・定理証明は私」という分担を行ったが、そういう感じでもこういう証明の仕事を行うことは不可能ではないなという手応えを感じることが出来たのも良かった気がする。</description>
+      </item>
     
       <item>
         <title>Genericなデータマッパーを書いた</title>

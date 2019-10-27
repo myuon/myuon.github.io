@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.58.3" />
+<meta name="generator" content="Hugo 0.59.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -232,12 +232,12 @@ $util.toJson($context.result)
 <p>上のように自前でAuthorizerを入れたいということは(認可はCognito等に頼らず)サービス内で独自のトークンを発行してる場合が多いと思う。その場合、クライアントからAuthorizationヘッダーにトークンを載せる必要があるが、Amplifyのclientとかだとそれをするには手で設定をする必要がある。</p>
 
 <p>例えばaws-appsyncを使っている場合には次のようにすればよいし、</p>
-<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="k">import</span> <span class="nx">AWSAppSyncClient</span><span class="p">,</span> <span class="p">{</span> <span class="nx">AUTH_TYPE</span><span class="p">,</span> <span class="nx">createAppSyncLink</span><span class="p">,</span> <span class="nx">AWSAppSyncClientOptions</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;aws-appsync&#39;</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">ApolloLink</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;apollo-link&#39;</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">setContext</span> <span class="p">}</span> <span class="nx">from</span> <span class="s2">&#34;apollo-link-context&#34;</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">createHttpLink</span> <span class="p">}</span> <span class="nx">from</span> <span class="s2">&#34;apollo-link-http&#34;</span><span class="p">;</span>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kr">import</span> <span class="nx">AWSAppSyncClient</span><span class="p">,</span> <span class="p">{</span> <span class="nx">AUTH_TYPE</span><span class="p">,</span> <span class="nx">createAppSyncLink</span><span class="p">,</span> <span class="nx">AWSAppSyncClientOptions</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;aws-appsync&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">ApolloLink</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;apollo-link&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">setContext</span> <span class="p">}</span> <span class="nx">from</span> <span class="s2">&#34;apollo-link-context&#34;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">createHttpLink</span> <span class="p">}</span> <span class="nx">from</span> <span class="s2">&#34;apollo-link-http&#34;</span><span class="p">;</span>
 
-<span class="k">const</span> <span class="nx">AppSyncConfig</span> <span class="o">=</span> <span class="p">{</span>
+<span class="kr">const</span> <span class="nx">AppSyncConfig</span> <span class="o">=</span> <span class="p">{</span>
   <span class="nx">url</span><span class="o">:</span> <span class="nx">aws_config</span><span class="p">.</span><span class="nx">aws_appsync_graphqlEndpoint</span><span class="p">,</span>
   <span class="nx">region</span><span class="o">:</span> <span class="nx">aws_config</span><span class="p">.</span><span class="nx">aws_appsync_region</span><span class="p">,</span>
   <span class="nx">auth</span><span class="o">:</span> <span class="p">{</span>
@@ -247,7 +247,7 @@ $util.toJson($context.result)
   <span class="nx">disableOffline</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
 <span class="p">}</span> <span class="nx">as</span> <span class="nx">AWSAppSyncClientOptions</span><span class="p">;</span>
 
-<span class="k">const</span> <span class="nx">client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AWSAppSyncClient</span><span class="p">(</span><span class="nx">AppSyncConfig</span><span class="p">,</span> <span class="p">{</span>
+<span class="kr">const</span> <span class="nx">client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AWSAppSyncClient</span><span class="p">(</span><span class="nx">AppSyncConfig</span><span class="p">,</span> <span class="p">{</span>
   <span class="nx">link</span><span class="o">:</span> <span class="nx">createAppSyncLink</span><span class="p">({</span>
     <span class="p">...</span><span class="nx">AppSyncConfig</span><span class="p">,</span>
     <span class="nx">resultsFetcherLink</span><span class="o">:</span> <span class="nx">ApolloLink</span><span class="p">.</span><span class="nx">from</span><span class="p">([</span>
@@ -267,7 +267,7 @@ $util.toJson($context.result)
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">Amplify</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="nx">awsconfig</span><span class="p">);</span>
 <span class="nx">Amplify</span><span class="p">.</span><span class="nx">configure</span><span class="p">({</span>
   <span class="nx">API</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">graphql_headers</span><span class="o">:</span> <span class="kr">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">graphql_headers</span><span class="o">:</span> <span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
       <span class="k">return</span> <span class="p">{</span>
         <span class="s1">&#39;Authorization&#39;</span><span class="o">:</span> <span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span>  <span class="c1">// ここ
 </span><span class="c1"></span>      <span class="p">};</span>

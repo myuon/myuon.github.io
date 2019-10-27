@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.58.3" />
+<meta name="generator" content="Hugo 0.59.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -260,7 +260,8 @@ Live2D SDKリリースライセンス: https://www.live2d.com/ja/products/releas
     <span class="k">this</span><span class="p">.</span><span class="nx">processor</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">processor</span><span class="p">.</span><span class="nx">onaudioprocess</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
   <span class="p">};</span>
-<span class="p">}</span></code></pre></div>
+<span class="p">}</span>
+</code></pre></div>
 <h2 id="サーバーサイド-顔検出-計算">サーバーサイド(顔検出&amp;計算)</h2>
 
 <p>次の処理を行う</p>
@@ -609,7 +610,8 @@ Live2D SDKリリースライセンス: https://www.live2d.com/ja/products/releas
     <span class="nx">empty_motion</span><span class="o">:</span> <span class="s2">&#34;assets/empty_motion.json&#34;</span><span class="p">,</span>
     <span class="nx">position</span><span class="o">:</span> <span class="p">[</span><span class="mi">512</span><span class="p">,</span> <span class="mi">720</span><span class="p">],</span>
     <span class="nx">scaler</span><span class="o">:</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
-<span class="p">});</span></code></pre></div>
+<span class="p">});</span>
+</code></pre></div>
 <p>アプリケーション本体はAppクラスで記述します。モデルの読み込みとか設定とかをします。</p>
 
 <p>パスはハードコードなんやすまんなという気持ち(気持ちのみ)。</p>
@@ -652,7 +654,8 @@ Live2D SDKリリースライセンス: https://www.live2d.com/ja/products/releas
 
                 <span class="k">this</span><span class="p">.</span><span class="nx">setStageTransform</span><span class="p">();</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">onResize</span><span class="p">();</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">sendToParent</span><span class="p">();</span></code></pre></div>
+                <span class="k">this</span><span class="p">.</span><span class="nx">sendToParent</span><span class="p">();</span>
+</code></pre></div>
 <p><code>processModel</code>というのがマスクとモデルレイヤーの処理を行います。これをしとかないとうまく画面に表示されない(表示順とか表示領域がおかしくなるっぽい)</p>
 <div class="highlight"><pre class="chroma"><code class="language-ts" data-lang="ts"><span class="c1">// https://github.com/myuon/juniQ/blob/master/viewer/src/viewer.ts#L126
 </span><span class="c1"></span>    <span class="nx">processModel</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
@@ -672,7 +675,8 @@ Live2D SDKリリースライセンス: https://www.live2d.com/ja/products/releas
             <span class="kd">let</span> <span class="nx">mesh</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">getModelMeshById</span><span class="p">(</span><span class="nx">mesh_name</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">mesh</span><span class="p">);</span>
         <span class="p">}</span>
-    <span class="p">};</span></code></pre></div>
+    <span class="p">};</span>
+</code></pre></div>
 <p>実際にアニメーションとかをするのは次の処理。<code>animateByParams</code>を呼ぶとアニメーションが始まる。これを1秒に何回も呼ぶことで滑らかなアニメーションになるけど、一方でめっちゃ重くなる(当たり前や)のでもっと工夫した方がいい説ある。</p>
 <div class="highlight"><pre class="chroma"><code class="language-ts" data-lang="ts"><span class="c1">// https://github.com/myuon/juniQ/blob/master/viewer/src/viewer.ts#L173
 </span><span class="c1"></span>    <span class="nx">animateByParams</span> <span class="o">=</span> <span class="p">(</span><span class="nx">params</span><span class="o">:</span> <span class="p">{[</span><span class="nx">key</span>:<span class="kt">string</span><span class="p">]</span><span class="o">:</span> <span class="kt">string</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
@@ -690,7 +694,8 @@ Live2D SDKリリースライセンス: https://www.live2d.com/ja/products/releas
             <span class="p">});</span>
         <span class="p">};</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">animator</span><span class="p">.</span><span class="nx">getLayer</span><span class="p">(</span><span class="s1">&#39;base&#39;</span><span class="p">).</span><span class="nx">play</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">empty_animation</span><span class="p">);</span>
-    <span class="p">};</span></code></pre></div>
+    <span class="p">};</span>
+</code></pre></div>
 <p>後はまぁマウスホイールやクリックでモデルを拡大縮小したり動かしたりスライダーでパラメータ設定したりする機能があるけどどうでもいいので飛ばす。</p>
 
 <h2 id="このシステムについて">このシステムについて</h2>
