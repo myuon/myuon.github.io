@@ -1,4 +1,4 @@
-# 0. Rust入門
+# A. Rust入門
 
 TRPLを読もう
 
