@@ -16,7 +16,7 @@ https://doc.rust-lang.org/std/
 
 例として `String` に変換可能な型を取る関数を
 
-```rs
+```rust
 fn foo(t: Into<String>) {
   let s: String = t.into();
   ...
@@ -67,4 +67,18 @@ https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect
 collectメソッドは `FromIterator` traitを実装している型であればどんなものにも出来るため、これが最初の型と一致する必要はない。よって例えば `Vec<(K,V)>` を `HashMap<K,V>` に変換したければ、 `v.iter().collect()` と書くだけで良い。
 
 `collect` は型が曖昧になりやすいメソッドであるため、コンテナの型を明示して `.collect::<Vec<_>>()` と書くようにすると扱いやすい。
+
+
+## sized at compile-time: 参照, Box, Rc
+
+可変長スライス `[T]` は可変長であるため、コンパイル時にスライスの長さは決まらない。しかしRustは大きさのわからないデータをスタックに置くことは出来ない。このような理由から可変長スライス `[T]` がそのまま使われることはほとんどなく、通常は参照 `&[T]` によって間接的にデータを扱うこととなる。
+
+サイズが分からないものを扱う場合、参照を始めとしてBox, Rcなどを利用する方法がある。それぞれ次のような利点・欠点がある。
+
+- 参照: 単純な場合には扱いやすいが、lifetime parameterが出現するようになると途端にコードは煩雑になる
+- Box: ヒープにデータを置くだけで非常に使いやすいが、cloneすると中のデータが丸ごとコピーされるのでコストが高い。
+- Rc: reference count分の実行時コストがかかるがclone自体のコストは比較的低い。
+
+特にtrait objectはコンパイル時に長さが決まらないので `Box<dyn T>` などのようにして利用されることが非常に多い。これに適切なtrait境界を定めることで、「SyncとSendを備えたデータ型で、trait Tを実装したものをヒープに置いたもの」を `Box<dyn T + Sync + Send>` などと書くことが出来る。
+
 
