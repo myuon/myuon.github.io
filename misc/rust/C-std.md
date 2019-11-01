@@ -45,7 +45,7 @@ Optionのメソッドはownershipを取るものとそうでないものがあ�
 - selfを要求するもの: unwrap, map
 - &mut selfを要求するもの: take, replace, as_mut
 
-selfを要求するものは当然ムーブされてしまうが、Optionの中の値を触りたいだけのときにはtakeなどを上手く使うと良い
+例えばunwrapはselfを要求するため当然ムーブされてしまうが、Optionの中の値を取りつつ元の変数自体は残したい場合にはtakeなどを上手く使うと良い。
 
 
 ## コンテナとIterator
