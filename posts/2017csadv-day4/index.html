@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="Isabelle/HOLの基本 その3">
 <meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 4日目の記事です。   テキスト代わりのチュートリアル: prog-prove.pdf  前回はHOLと自動証明についてやりました。 今回やる4章では、Isarという新しい言語(？)について見ていきます。 4. Isar: A Language for Structured Proofs   IsabelleはIsarという、structured proofを記述するための言語を別に提供している。 これはapplyを繋げて証明をするのとは違い、構造化された証明をキーワードを組み合わせて記述する、より自然言語による証明に近い記述を可能にする言語である。  Isarのsyntaxのコアは次のようになっている(実際はもっと膨大): proof = &#39;by&#39; method | &#39;proof&#39; [method] step* &#39;qed&#39; step = &#39;fix&#39; variables | &#39;assume&#39; proposition | [&#39;from&#39; fact&#43;] (&#39;have&#39; | &#39;show&#39;) proposition proof proposition = [name :] &#34;formula&#34;  4.1 Isar by Example   初めにIsarによる証明を見せるので眺めてみよう。 lemma &#34;¬ surj (f :: &#39;a ⇒ &#39;a set)&#34; proof - assume srjf: &#34;surj f&#34; from srjf have fa: &#34;∀A.">
-
-
 <meta itemprop="datePublished" content="2017-12-04T00:39:09&#43;09:00" />
 <meta itemprop="dateModified" content="2017-12-04T00:39:09&#43;09:00" />
 <meta itemprop="wordCount" content="397">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="AdC2017,Isabelle," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Isabelle/HOLの基本 その3"/>
 <meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 4日目の記事です。   テキスト代わりのチュートリアル: prog-prove.pdf  前回はHOLと自動証明についてやりました。 今回やる4章では、Isarという新しい言語(？)について見ていきます。 4. Isar: A Language for Structured Proofs   IsabelleはIsarという、structured proofを記述するための言語を別に提供している。 これはapplyを繋げて証明をするのとは違い、構造化された証明をキーワードを組み合わせて記述する、より自然言語による証明に近い記述を可能にする言語である。  Isarのsyntaxのコアは次のようになっている(実際はもっと膨大): proof = &#39;by&#39; method | &#39;proof&#39; [method] step* &#39;qed&#39; step = &#39;fix&#39; variables | &#39;assume&#39; proposition | [&#39;from&#39; fact&#43;] (&#39;have&#39; | &#39;show&#39;) proposition proof proposition = [name :] &#34;formula&#34;  4.1 Isar by Example   初めにIsarによる証明を見せるので眺めてみよう。 lemma &#34;¬ surj (f :: &#39;a ⇒ &#39;a set)&#34; proof - assume srjf: &#34;surj f&#34; from srjf have fa: &#34;∀A."/>
@@ -84,9 +81,9 @@
 前回はHOLと自動証明についてやりました。
 今回やる4章では、Isarという新しい言語(？)について見ていきます。
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 4. Isar: A Language for Structured Proofs
-</h1>
+</h2>
 <p>
 IsabelleはIsarという、structured proofを記述するための言語を別に提供している。
 これはapplyを繋げて証明をするのとは違い、構造化された証明をキーワードを組み合わせて記述する、より自然言語による証明に近い記述を可能にする言語である。
@@ -106,9 +103,9 @@ Isarのsyntaxのコアは次のようになっている(実際はもっと膨大
 
   proposition = [name :] &#34;formula&#34;</code></pre></div>
 </div>
-<h2 id="headline-2">
+<h3 id="headline-2">
 4.1 Isar by Example
-</h2>
+</h3>
 <p>
 初めにIsarによる証明を見せるので眺めてみよう。
 </p>
@@ -128,9 +125,9 @@ assumeによって仮定を導入し、その後はfrom..have..を繰り返し�
 <p>
 また、proofの直後にはproof methodを並べて事前に何かを適用することができるが(<code>proof (rule A; simp)</code> とかけば、証明を始める前に <code>rule A; simp</code> を適用できる)何も適用したくない場合はハイフンをつけると良い。
 </p>
-<h3 id="headline-3">
+<h4 id="headline-3">
 this/then/hence/thus
-</h3>
+</h4>
 <p>
 まず、全ての命題に名前を付ける必要があるのは不便だろう。直前に示した命題は <code>this</code> という名前で参照できる。
 上の最初の部分は
@@ -188,9 +185,9 @@ this/then/hence/thus
 </p>
 </li>
 </ul>
-<h3 id="headline-4">
+<h4 id="headline-4">
 structured lemma
-</h3>
+</h4>
 <p>
 証明だけではなく補題ももう少し構造化された方法で宣言できる。
 </p>
@@ -215,12 +212,12 @@ assumes/shows は仮定と結論を述べるために使う。仮定が複数あ
 <p>
 <code>[| A; B; C |] ==&gt; D</code> を <code>assumes A and B and C / shows D</code> とかけるようになるということを覚えておけばよい。
 </p>
-<h2 id="headline-5">
+<h3 id="headline-5">
 4.2 Proof Patterns
-</h2>
-<h3 id="headline-6">
-next
 </h3>
+<h4 id="headline-6">
+next
+</h4>
 <p>
 ゴールが複数ある場合、proofのセクションをnextで区切って書く:
 </p>
@@ -237,9 +234,9 @@ next
     show P3
   qed</code></pre></div>
 </div>
-<h3 id="headline-7">
+<h4 id="headline-7">
 obtain
-</h3>
+</h4>
 <p>
 existを使った定理から一時的に変数を束縛して使用するためにobtainを使う。
 </p>
@@ -252,12 +249,12 @@ existを使った定理から一時的に変数を束縛して使用するため
 obtain…where… それ自体命題の宣言なのでこれにも証明が必要なことに注意。
 obtain以降の行では束縛したxが変数として使えるようになる。
 </p>
-<h2 id="headline-8">
+<h3 id="headline-8">
 4.3 Streamlining Proofs
-</h2>
-<h3 id="headline-9">
-pattern matching
 </h3>
+<h4 id="headline-9">
+pattern matching
+</h4>
 <p>
 宣言する命題の部分に <code>is</code> を用いて名前を付けることができる。(名前は <code>?</code> から始める必要がある)
 </p>
@@ -272,9 +269,9 @@ pattern matching
 また、showおよびlemmaの中では宣言した命題全体を <code>?thesis</code> で参照できる。
 つまり上の例では <code>?thesis</code> は <code>form1 &lt;--&gt; form2</code> のことである。
 </p>
-<h3 id="headline-10">
+<h4 id="headline-10">
 quotation
-</h3>
+</h4>
 <p>
 haveなどで示した命題は、名前をつけていなくてもクオートで囲むことで参照できる。
 </p>
@@ -283,9 +280,9 @@ haveなどで示した命題は、名前をつけていなくてもクオート�
   ...
   from `x &gt; 0` ...</code></pre></div>
 </div>
-<h3 id="headline-11">
+<h4 id="headline-11">
 moreover
-</h3>
+</h4>
 <p>
 thenなどにより直前の命題は参照できるがそれ以前の命題は参照できない。
 moreover/ultimatelyというキーワードを使うと、それまでに示された全ての命題を仮定に追加して証明ができる。
@@ -298,9 +295,9 @@ moreover/ultimatelyというキーワードを使うと、それまでに示さ�
   moreover have Pn ...
   ultimatery have ..  (* ここで、P1 .. Pnの全ての命題が仮定に追加される *)</code></pre></div>
 </div>
-<h3 id="headline-12">
+<h4 id="headline-12">
 proof block
-</h3>
+</h4>
 <p>
 証明のスコープを明示するのに <code>{}</code> で囲むことができる。
 </p>
@@ -315,12 +312,12 @@ proof block
 <p>
 複数のゴールを示す際にnextで区切る代わりにproof blockを並べることもできる。
 </p>
-<h2 id="headline-13">
+<h3 id="headline-13">
 4.4 Case Analysis and Induction
-</h2>
-<h3 id="headline-14">
-cases/inducts
 </h3>
+<h4 id="headline-14">
+cases/inducts
+</h4>
 <p>
 場合分けを行う場合、casesコマンドを用いてコンストラクタごとにゴールを分離する。
 このときIsar proofでもcaseというキーワードで場合分けを使った証明を書くことができる。
@@ -337,9 +334,9 @@ cases/inducts
 <p>
 これは帰納法を使った時も同じことが出来る。
 </p>
-<h1 id="headline-15">
+<h2 id="headline-15">
 まとめ
-</h1>
+</h2>
 <p>
 4章では証明記述言語Isarについて見ました。
 </p>

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="Isabelle/HOLの基本 その1">
 <meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 2日目の記事です。  さて今回よりIsabelle/HOL(HOLはライブラリの名前)の基本の解説をしていきます。 一応極基本的なことを最初に少し説明をしてから、あとは実践形式で実際に証明を書きながら細かい機能などの説明をしていく予定です。 説明に割くページ数とコンテンツの内容と時間的な問題で、定理証明とは何かなどは詳しく話しません。 Isabelle資料   Isabelleのお勉強のための資料をまとめておきます。    prog-prove.pdf: 公式チュートリアルの一番基本のやつ。入門するならこれだけは 必ず読みましょう 。チュートリアルは他にもトピックごとに色々あるよ！    isar-ref: 主にIsarに関するReference Manualだけど慣れてきたら参照する機会が多いと思う。    caeruiroさんのIsabelle Tutorialシリーズ: 大変貴重な日本語の入門記事。Isabelle-2009を使っているらしいのでもしかしたら古い記述もあるかもしれない。    Concrete Semantics: Isabelleでプログラミング言語のセマンティクスとかやるテキスト。前半はIsabelle入門、後半はCSのテキストみたいな構成。    AFP: Archive of Formal Proofs; Isabelleで証明されたあれこれが投稿されてる証明集みたいなサイト    Isabelleの入門の入門: 遥か昔に書いた記事; 何かの役には立つかもしれない   このシリーズの目的   prog-prove.pdfを読んでねでチュートリアルを済ませてしまっても良いのですが、まぁ読んでって言って読んでもらった試しがないので もう少し実際に証明を書きながら解説をすることで、英語が読みたくない人や雰囲気だけ知りたい人にも優しい解説シリーズになればいいかなと思っています。 ひとまずこのIsabelle/HOLの基本シリーズでは上のprog-prove.pdfに沿って話を進めていきます。  内容全部やるなら単なる翻訳になってしまうので適度にぶっ飛ばしつつ要所要所を解説していく感じにします。 定理証明全くしたことないと厳しいこともあるかもぐらいでお願いします。 はじめに. jEditについて   現在Isabelleが公式にサポートしているのはjEditのみです1。 jEditを起動し、エディター画面とアウトプットパネルが表示されていれば問題ありません。アウトプットパネルはなければ Plugins&gt;Isabelle から表示させます。  よく使うパネルを一通り説明しておきます。    Documentation: Isabelleは豊富な公式ドキュメントが用意されています。    Sidekick: 現在開いているファイルのアウトライン的なものが表示されます。    State: なんやねんこれ    Theories: 複数のファイルを開いている場合に、各ファイルのどの辺りまでcheckerが走っているかが一覧で表示されたものです。    Output: ここに情報が表示されます。証明は基本的にこのパネルを見ながら書きます。    Query: 既知の定理の検索などを行います。    Sledgehammer: 現在focusしている証明に対してsledgehammer(後述)を実行することができます。    Symbols: unicode symbolを入力するために使います。   1.">
-
-
 <meta itemprop="datePublished" content="2017-12-02T00:00:44&#43;09:00" />
 <meta itemprop="dateModified" content="2017-12-02T00:00:44&#43;09:00" />
 <meta itemprop="wordCount" content="733">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="AdC2017,Isabelle," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Isabelle/HOLの基本 その1"/>
 <meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 2日目の記事です。  さて今回よりIsabelle/HOL(HOLはライブラリの名前)の基本の解説をしていきます。 一応極基本的なことを最初に少し説明をしてから、あとは実践形式で実際に証明を書きながら細かい機能などの説明をしていく予定です。 説明に割くページ数とコンテンツの内容と時間的な問題で、定理証明とは何かなどは詳しく話しません。 Isabelle資料   Isabelleのお勉強のための資料をまとめておきます。    prog-prove.pdf: 公式チュートリアルの一番基本のやつ。入門するならこれだけは 必ず読みましょう 。チュートリアルは他にもトピックごとに色々あるよ！    isar-ref: 主にIsarに関するReference Manualだけど慣れてきたら参照する機会が多いと思う。    caeruiroさんのIsabelle Tutorialシリーズ: 大変貴重な日本語の入門記事。Isabelle-2009を使っているらしいのでもしかしたら古い記述もあるかもしれない。    Concrete Semantics: Isabelleでプログラミング言語のセマンティクスとかやるテキスト。前半はIsabelle入門、後半はCSのテキストみたいな構成。    AFP: Archive of Formal Proofs; Isabelleで証明されたあれこれが投稿されてる証明集みたいなサイト    Isabelleの入門の入門: 遥か昔に書いた記事; 何かの役には立つかもしれない   このシリーズの目的   prog-prove.pdfを読んでねでチュートリアルを済ませてしまっても良いのですが、まぁ読んでって言って読んでもらった試しがないので もう少し実際に証明を書きながら解説をすることで、英語が読みたくない人や雰囲気だけ知りたい人にも優しい解説シリーズになればいいかなと思っています。 ひとまずこのIsabelle/HOLの基本シリーズでは上のprog-prove.pdfに沿って話を進めていきます。  内容全部やるなら単なる翻訳になってしまうので適度にぶっ飛ばしつつ要所要所を解説していく感じにします。 定理証明全くしたことないと厳しいこともあるかもぐらいでお願いします。 はじめに. jEditについて   現在Isabelleが公式にサポートしているのはjEditのみです1。 jEditを起動し、エディター画面とアウトプットパネルが表示されていれば問題ありません。アウトプットパネルはなければ Plugins&gt;Isabelle から表示させます。  よく使うパネルを一通り説明しておきます。    Documentation: Isabelleは豊富な公式ドキュメントが用意されています。    Sidekick: 現在開いているファイルのアウトライン的なものが表示されます。    State: なんやねんこれ    Theories: 複数のファイルを開いている場合に、各ファイルのどの辺りまでcheckerが走っているかが一覧で表示されたものです。    Output: ここに情報が表示されます。証明は基本的にこのパネルを見ながら書きます。    Query: 既知の定理の検索などを行います。    Sledgehammer: 現在focusしている証明に対してsledgehammer(後述)を実行することができます。    Symbols: unicode symbolを入力するために使います。   1."/>
@@ -81,9 +78,9 @@
 一応極基本的なことを最初に少し説明をしてから、あとは実践形式で実際に証明を書きながら細かい機能などの説明をしていく予定です。
 説明に割くページ数とコンテンツの内容と時間的な問題で、定理証明とは何かなどは詳しく話しません。
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 Isabelle資料
-</h1>
+</h2>
 <p>
 Isabelleのお勉強のための資料をまとめておきます。
 </p>
@@ -119,9 +116,9 @@ Isabelleのお勉強のための資料をまとめておきます。
 </p>
 </li>
 </ul>
-<h1 id="headline-2">
+<h2 id="headline-2">
 このシリーズの目的
-</h1>
+</h2>
 <p>
 prog-prove.pdfを読んでねでチュートリアルを済ませてしまっても良いのですが、まぁ読んでって言って読んでもらった試しがないので
 もう少し実際に証明を書きながら解説をすることで、英語が読みたくない人や雰囲気だけ知りたい人にも優しい解説シリーズになればいいかなと思っています。
@@ -131,9 +128,9 @@ prog-prove.pdfを読んでねでチュートリアルを済ませてしまって
 内容全部やるなら単なる翻訳になってしまうので適度にぶっ飛ばしつつ要所要所を解説していく感じにします。
 定理証明全くしたことないと厳しいこともあるかもぐらいでお願いします。
 </p>
-<h1 id="headline-3">
+<h2 id="headline-3">
 はじめに. jEditについて
-</h1>
+</h2>
 <p>
 現在Isabelleが公式にサポートしているのはjEditのみです<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>。
 jEditを起動し、エディター画面とアウトプットパネルが表示されていれば問題ありません。アウトプットパネルはなければ <code class="verbatim">Plugins&gt;Isabelle</code> から表示させます。
@@ -183,9 +180,9 @@ Symbols: unicode symbolを入力するために使います。
 </p>
 </li>
 </ul>
-<h1 id="headline-4">
+<h2 id="headline-4">
 1. Introduction
-</h1>
+</h2>
 <p>
 HOLとはhigher-order-logicの略で、Isabelleの標準ライブラリの1つです。
 Isabelleでは組み込みのロジックの上に適当な公理系を構成したものをライブラリとして提供しており、HOLやZFC(ZFCはFOLの上のライブラリ)などがあります。
@@ -194,15 +191,15 @@ Isabelleでは組み込みのロジックの上に適当な公理系を構成し
 最初はHOLから入るのが良いでしょう。ZFC上で形式化とかしたい人はZFCとか使うのもいいと思います。
 また、変数の名前の付け替えなどをいい感じにアレする<sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup>Nominalという考え方もあり、それを使ったNominal HOLなんかもサードパーティライブラリとして開発されています。
 </p>
-<h1 id="headline-5">
+<h2 id="headline-5">
 2. Programming and Proving
-</h1>
-<h2 id="headline-6">
-2.1 Basics
 </h2>
-<h3 id="headline-7">
-型とか
+<h3 id="headline-6">
+2.1 Basics
 </h3>
+<h4 id="headline-7">
+型とか
+</h4>
 <p>
 HOLはsimply-typedなlanguageにlogicを組み込んだみたいなやつ
 </p>
@@ -256,9 +253,9 @@ judgement: <code>|- Fm : Typ</code> みたいな形のjudgementを扱う。型�
 <p>
 最後に、HOLではなくてIsabelle側の特殊な論理記号としてuniversal quantifier <code>⋀</code> (大きい∧)と implication <code>==&gt;</code> があって、これはHOLのロジックとは別物でIsabelle組み込みのコマンドといい感じに組み合わさって動いたりするやつ。多分使ってたらわかる。
 </p>
-<h3 id="headline-8">
+<h4 id="headline-8">
 theoryの宣言
-</h3>
+</h4>
 <p>
 Isabelleのファイルは <code class="verbatim">.thy</code> という拡張子で保存し、1ファイルに1つのtheory(モジュール的なもの)を基本とする。
 </p>
@@ -271,15 +268,15 @@ Isabelleのファイルは <code class="verbatim">.thy</code> という拡張子
 </div>
 <p>
 <code class="verbatim">theory</code> の後にはファイル名と同じ名前を書く。
-<code class="verbatim">imports Main</code> は <code class="verbatim">Main</code> というtheoryを読み込むことを表す。
-<code class="verbatim">begin ... end</code> の間に証明を書く。
+ <code class="verbatim">imports Main</code> は <code class="verbatim">Main</code> というtheoryを読み込むことを表す。
+ <code class="verbatim">begin ... end</code> の間に証明を書く。
 </p>
-<h2 id="headline-9">
+<h3 id="headline-9">
 2.2 Types bool,nat,list
-</h2>
-<h3 id="headline-10">
-datatype
 </h3>
+<h4 id="headline-10">
+datatype
+</h4>
 <p>
 bool, nat, listは
 </p>
@@ -292,9 +289,9 @@ bool, nat, listは
 で定義できる。(組み込みの型はZeroを0とかくなどのnotationの違いはある)
 ここで、1つの「Isabelleの項」はスペースを含む場合に必ずダブルクオーテーションで囲まないといけないことに注意。
 </p>
-<h3 id="headline-11">
+<h4 id="headline-11">
 function
-</h3>
+</h4>
 <p>
 例えばadd関数はパターンマッチを使って
 </p>
@@ -320,9 +317,9 @@ functionでもダブルクオーテーションに注意。
 <p>
 とかやる。
 </p>
-<h3 id="headline-12">
+<h4 id="headline-12">
 写経
-</h3>
+</h4>
 <p>
 pdfに載ってるtheory of listを写経したらこうなる:
 </p>
@@ -348,9 +345,9 @@ pdfに載ってるtheory of listを写経したらこうなる:
 
   end</code></pre></div>
 </div>
-<h3 id="headline-13">
+<h4 id="headline-13">
 定理証明界のfizzbuzz
-</h3>
+</h4>
 <p>
 さて定理証明界のfizzbuzzこと<sup class="footnote-reference"><a id="footnote-reference-3" href="#footnote-3">3</a></sup>リストが2回reverseすると元に戻るという定理を示そう。
 まずはステートメントを述べる。
@@ -360,7 +357,7 @@ pdfに載ってるtheory of listを写経したらこうなる:
 </div>
 <p>
 theoremかlemmaに続けてformulaを書くと定理として認識される。(theorem, lemmaに違いはない)
-<code>rev_rev:</code> と書いておくと名前がついて示したあとで使えるようになるけど省略しても良い。
+ <code>rev_rev:</code> と書いておくと名前がついて示したあとで使えるようになるけど省略しても良い。
 </p>
 <p>
 さてこれをxsについての帰納法で示したいので次のようにしよう。
@@ -378,9 +375,9 @@ theoremかlemmaに続けてformulaを書くと定理として認識される。(
 <p>
 さてゴール1は自動で証明されてゴール2が残った。このゴールはいきなり示すのは難しいので、いくつか補題を置いてがんばることにする。
 </p>
-<h3 id="headline-14">
+<h4 id="headline-14">
 最初の補題
-</h3>
+</h4>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma rev_app [simp]: &#34;rev (app xs ys) = app (rev ys) (rev xs)&#34;</code></pre></div>
 </div>
@@ -398,9 +395,9 @@ theoremかlemmaに続けてformulaを書くと定理として認識される。(
 またゴールが2つ表示されるけれど、これはautoコマンドでIsabelle頼む〜ってやるとまたしても上手く行かない。
 さらに補題が必要そうなので補題をおく。
 </p>
-<h3 id="headline-15">
+<h4 id="headline-15">
 次の補題
-</h3>
+</h4>
 <p>
 必要な補題をじゃんじゃんおいて示そう。
 </p>
@@ -420,7 +417,7 @@ theoremかlemmaに続けてformulaを書くと定理として認識される。(
 </p>
 <p>
 さて、この2つの補題を使うとさっきの <code class="verbatim">rev_app</code> が示せるようになる。
-<code class="verbatim">[simp]</code> アトリビュートをつけた補題が自動的にautoコマンドで使われるのでさっきはダメだった証明が今度は上手く行くようになる。
+ <code class="verbatim">[simp]</code> アトリビュートをつけた補題が自動的にautoコマンドで使われるのでさっきはダメだった証明が今度は上手く行くようになる。
 </p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma rev_app [simp]: &#34;rev (app xs ys) = app (rev ys) (rev xs)&#34;
@@ -437,28 +434,28 @@ theoremかlemmaに続けてformulaを書くと定理として認識される。(
   apply auto
   done</code></pre></div>
 </div>
-<h2 id="headline-16">
+<h3 id="headline-16">
 2.3 Type and Function Definitions
-</h2>
-<h3 id="headline-17">
-type synonym
 </h3>
+<h4 id="headline-17">
+type synonym
+</h4>
 <p>
 型のエイリアスには <code>type_synonym</code> を使う。
 </p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  type_synonym string = &#34;char list&#34;</code></pre></div>
 </div>
-<h3 id="headline-18">
+<h4 id="headline-18">
 datatype
-</h3>
+</h4>
 <p>
 データ型の宣言には <code>datatype</code> を使うことはすでに見た。
 datatypeで宣言すると、そのデータに関する構造帰納法が自動生成される。上でも自作のlist型に対してinductionコマンドを使っていたが、そのときには生成された構造帰納法を使って式を変形していた。
 </p>
-<h3 id="headline-19">
+<h4 id="headline-19">
 definition
-</h3>
+</h4>
 <p>
 定義をするにはdefinitionを使う。
 これはrecursiveでないfunctionの定義に使う。
@@ -470,9 +467,9 @@ definition
 <p>
 funと違ってこちらはsimpなどを使っても勝手に展開されない。 <code>sq n</code> を <code>n * n</code> に変形したいときは自動生成された定理 <code>sq_def</code> を使う。
 </p>
-<h3 id="headline-20">
+<h4 id="headline-20">
 abbreviations
-</h3>
+</h4>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  abbreviation sq&#39; :: &#34;nat =&gt; nat&#34; where
     &#34;sq&#39; n == n * n&#34;</code></pre></div>
@@ -481,9 +478,9 @@ abbreviations
 abbreviationはdefinitionみたいなものだけど中が勝手に展開される。 <code>sq&#39;_def</code> は自動生成されない(必要ないので)。
 abbreviationはdefinitionと違って <code>=</code> ではなく <code>==</code> (または <code>\&lt;equiv&gt;</code>) を使うことに注意。
 </p>
-<h2 id="headline-21">
+<h3 id="headline-21">
 2.4 Induction Heuristics
-</h2>
+</h3>
 <p>
 帰納法をするときにある変数を任意にとりたいことがある。
 例えば
@@ -515,9 +512,9 @@ abbreviationはdefinitionと違って <code>=</code> ではなく <code>==</code
 <p>
 たまに使うテクなので覚えておくと良いと思う。
 </p>
-<h2 id="headline-22">
+<h3 id="headline-22">
 2.5 Simplification
-</h2>
+</h3>
 <p>
 simplificationはsimpコマンドによって行う。autoコマンドを使った時は自動で行われる。
 simplificationは <code class="verbatim">[simp]</code> アトリビュートをつけた定理を
@@ -537,9 +534,9 @@ simplificationは <code class="verbatim">[simp]</code> アトリビュートを�
 <p>
 という感じでやる。
 </p>
-<h3 id="headline-23">
+<h4 id="headline-23">
 simpコマンド
-</h3>
+</h4>
 <p>
 また、 <code class="verbatim">[simp]</code> はつけていないけれどsimpコマンドを行う時に使う定理を追加することができる。
 </p>
@@ -554,9 +551,9 @@ simpコマンド
 後でも述べるが、autoコマンドはゴールが複数ある時に全てのゴールに対して変形を行う。
 simpを全てのゴールに対して行う <code class="verbatim">simp_all</code> コマンドもある。
 </p>
-<h3 id="headline-24">
+<h4 id="headline-24">
 case splitting
-</h3>
+</h4>
 <p>
 次のように、caseによる場合分けをする必要がある定理を示したいとする。
 </p>
@@ -572,9 +569,9 @@ case splitting
 <p>
 のようにできる。
 </p>
-<h1 id="headline-25">
+<h2 id="headline-25">
 まとめ的な
-</h1>
+</h2>
 <p>
 2章では簡単に型や関数などの主にプログラミング言語的な側面を中心にみていき、さらに簡単な証明も書いてみました。
 3章ではよりIsabelleそのものに踏み込んだ内容になります。

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="Isabelle/HOLの基本 その2">
 <meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 3日目の記事です。   テキスト代わりのチュートリアル: prog-prove.pdf  前回は導入と型・関数・証明について学びました。 今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。 3. Logic and Proof Beyond Equality  3.1 Formulas   HOLのformulaの定義は次: form ::= True | False | term = term | ¬ form | form ∧ form | form ∨ form | form --&gt; form | ∀x. form | ∃x. form   termはラムダ式とifとかcaseとかletとかそのへん 3.2 Sets   &#39;a のsetを &#39;a set とかく。次のようなnotationが定義されている。    {} , {e1,e2,e3}    e ∈ A , A ⊆ B    A ∪ B , A ∩ B , A − B, − A    {x | P}    HOLのsetはかなり便利なので積極的に使っていこう。 3.">
-
-
 <meta itemprop="datePublished" content="2017-12-03T00:01:48&#43;09:00" />
 <meta itemprop="dateModified" content="2017-12-03T00:01:48&#43;09:00" />
 <meta itemprop="wordCount" content="430">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="AdC2017,Isabelle," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Isabelle/HOLの基本 その2"/>
 <meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 3日目の記事です。   テキスト代わりのチュートリアル: prog-prove.pdf  前回は導入と型・関数・証明について学びました。 今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。 3. Logic and Proof Beyond Equality  3.1 Formulas   HOLのformulaの定義は次: form ::= True | False | term = term | ¬ form | form ∧ form | form ∨ form | form --&gt; form | ∀x. form | ∃x. form   termはラムダ式とifとかcaseとかletとかそのへん 3.2 Sets   &#39;a のsetを &#39;a set とかく。次のようなnotationが定義されている。    {} , {e1,e2,e3}    e ∈ A , A ⊆ B    A ∪ B , A ∩ B , A − B, − A    {x | P}    HOLのsetはかなり便利なので積極的に使っていこう。 3."/>
@@ -84,12 +81,12 @@
 前回は導入と型・関数・証明について学びました。
 今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 3. Logic and Proof Beyond Equality
-</h1>
-<h2 id="headline-2">
-3.1 Formulas
 </h2>
+<h3 id="headline-2">
+3.1 Formulas
+</h3>
 <p>
 HOLのformulaの定義は次: 
 </p>
@@ -101,9 +98,9 @@ HOLのformulaの定義は次:
 <p>
 termはラムダ式とifとかcaseとかletとかそのへん
 </p>
-<h2 id="headline-3">
+<h3 id="headline-3">
 3.2 Sets
-</h2>
+</h3>
 <p>
 <code>&#39;a</code> のsetを <code>&#39;a set</code> とかく。次のようなnotationが定義されている。
 </p>
@@ -132,9 +129,9 @@ termはラムダ式とifとかcaseとかletとかそのへん
 <p>
 HOLのsetはかなり便利なので積極的に使っていこう。
 </p>
-<h2 id="headline-4">
+<h3 id="headline-4">
 3.3 Proof Automation
-</h2>
+</h3>
 <p>
 proof assistantを用いた証明というのは程度の差はあれコンピューターの力を借りて証明を進めるのであるが、
 Isabelleはその点では大変強力な証明の自動化ツールを揃えていると言える。
@@ -145,9 +142,9 @@ Isabelleはその点では大変強力な証明の自動化ツールを揃えて
 <p>
 以下ではその他の重要な証明コマンドや、Isabelleをやるにあたって最も重要と思われるsledgehammerについても触れる。
 </p>
-<h4 id="headline-5">
+<h5 id="headline-5">
 simpとauto
-</h4>
+</h5>
 <p>
 さてsimpとautoの2つのproof methodはすでに見た。
 このセクションではより強力な自動証明や証明ツールをみていく。
@@ -167,9 +164,9 @@ simpとauto
 </p>
 </li>
 </ul>
-<h4 id="headline-6">
+<h5 id="headline-6">
 fastforce
-</h4>
+</h5>
 <p>
 autoより強力なproof methodにfastforceがある:
 </p>
@@ -181,9 +178,9 @@ autoより強力なproof methodにfastforceがある:
 これはquantifierが複雑なのでautoでは証明できない。
 fastforceは失敗することもあり、また最初のゴールに対してしか作用しない。fastforceは複雑なlogicに弱いがequality reasoningに強い。
 </p>
-<h4 id="headline-7">
+<h5 id="headline-7">
 blast
-</h4>
+</h5>
 <p>
 さらに複雑なゴールを示せるproof methodにblastがある。
 </p>
@@ -194,9 +191,9 @@ blast
 <p>
 blastも失敗することもあり、logic,setに強いがequality reasoningに弱い。
 </p>
-<h4 id="headline-8">
+<h5 id="headline-8">
 sledgehammer
-</h4>
+</h5>
 <p>
 sledgehammerはproof searchを行うコマンドである。
 これは現在証明可能な定理とblast,auto,simpなどのproof methodを組み合わせて現在のゴールを解消するような証明を自動生成するツールである。
@@ -218,9 +215,9 @@ sledgehammerはproof searchを行うコマンドである。
 sledgehammerはいくつかのsolverをそれぞれ回して証明を探索するので、いくつかの証明が得られることもあれば難しい命題の場合には全て諦めてしまうこともある。
 sledgehammerが <code>metis</code> を含む証明を提案した場合、metisは与えられた補題だけからゴールを解消するためのコマンドであり、現実的な時間で応答が返らないこともあることに注意。
 </p>
-<h4 id="headline-9">
+<h5 id="headline-9">
 arithmetic
-</h4>
+</h5>
 <p>
 arithmetic formula (変数、数値、 <code>+,-,=,&lt;</code>)の解消には <code>arith</code> を使う。
 </p>
@@ -232,25 +229,25 @@ arithmetic formula (変数、数値、 <code>+,-,=,&lt;</code>)の解消には <
 簡単なarithmetic formulaならautoやsimpでも解ける可能性はある。
 また、arithは整数や実数が対象でもよい。
 </p>
-<h4 id="headline-10">
+<h5 id="headline-10">
 try
-</h4>
+</h5>
 <p>
 全てのproof methodを試すなら <code>try</code> コマンドを使う。あるいは <code>try0</code> というより簡単なものを使っても良い。
 </p>
-<h2 id="headline-11">
+<h3 id="headline-11">
 3.4 Single Step Proofs
-</h2>
-<h4 id="headline-12">
+</h3>
+<h5 id="headline-12">
 rule
-</h4>
+</h5>
 <p>
 導入規則を適用するruleというコマンドがある。
 ruleは定理を1つ受け取ってそれをintroルールとして現在のゴールに適用する。いくつかのintro ruleはすでに知っているので省略できることもある。
 </p>
-<h4 id="headline-13">
+<h5 id="headline-13">
 OF/of
-</h4>
+</h5>
 <p>
 定理が <code>A ==&gt; B</code> の形の時(ここでのimplicationは <code>==&gt;</code> であって <code>--&gt;</code> ではないことに注意。後者は単なるHOLのlogical connectiveだが前者はIsabelleで特別な意味を持つ)、 <code>A</code> に何かを適用したいときはOFを使う:
 例えば <code>r: A ==&gt; B</code> かつ <code>s: A</code> のとき、 <code>r [OF s]</code> は <code>B</code> という定理を表す。
@@ -275,9 +272,9 @@ OF/ofは複数適用する場合はスペース区切りで横に並べる。1�
   thm conjI[OF refl[of a] refl[of b]]
   (* は、 a=a /\ b=b という定理になる *)</code></pre></div>
 </div>
-<h4 id="headline-14">
+<h5 id="headline-14">
 intro/dest modifier
-</h4>
+</h5>
 <p>
 fastforce,blast,autoに対して、modifier <code>intro, dest</code> が用意されている。
 </p>
@@ -293,12 +290,12 @@ dest: <code>blast dest: [thm]</code> などとすることで、 <code>A ==&gt; 
 </p>
 </li>
 </ul>
-<h2 id="headline-15">
+<h3 id="headline-15">
 3.5 Inductive Definitions
-</h2>
-<h4 id="headline-16">
+</h3>
+<h5 id="headline-16">
 inductive predicate
-</h4>
+</h5>
 <p>
 inductive predicateをinductiveキーワードを使って定義できる。
 </p>
@@ -310,9 +307,9 @@ inductive predicateをinductiveキーワードを使って定義できる。
 <p>
 は、 <code>ev n = True</code> とnが偶数であることが同値であるような述語を表す。
 </p>
-<h4 id="headline-17">
+<h5 id="headline-17">
 cases/induct
-</h4>
+</h5>
 <p>
 inductiveで定義した述語に対する場合分けや構造帰納法などが自動で生成される。
 上のようにevenを定めた場合、例えばjEditのQueryパネルに <code>name:even</code> と入力することで <code>even.cases</code> や <code>even.induct</code> などの定理が自動で生成されていることがわかるだろう。
@@ -324,9 +321,9 @@ inductiveで定義した述語に対する場合分けや構造帰納法など�
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma &#34;even m ==&gt; P m&#34;
   apply (induction m rule: even.induct)</code></pre></div>
 </div>
-<h1 id="headline-18">
+<h2 id="headline-18">
 まとめ
-</h1>
+</h2>
 <p>
 3章ではHOLについて、自動証明について、最後にinductive definitionについて触れた。
 </p>

@@ -26,7 +26,8 @@ RustでgRPC Rustでサーバー側の処理を書く。
 まず、上にも書いたようにprotoをRustコードに変換するgRPCコンパイラのRustプラグインが必要になる。これにはprotobuf-codegenとgrpcio-compilerを使うといいよってあった。
 # インストール $ cargo install protobuf-codegen grpcio-compiler # コンパイル $ protoc --rust_out=. --grpc_out=. --plugin=protoc-gen-grpc=`which grpc_rust_plugin` example.proto これによって生成されたRustモジュールを読み込んで使うことになるけど、それにはgrpc-rsを使った(grpc-rustというのもあるけどこっちは触ってない)。
 サーバー側のプログラムはこんな感じで書くと良い。
-コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。</description>
+コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。
+Node.jsでgRPC Node.</description>
       </item>
     
   </channel>

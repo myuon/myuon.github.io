@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="Nominal Isabelleとラムダ計算 その3">
 <meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 12日目の記事です。   前回はCRの証明の途中までやったので続きです。 内容多めですが今回で頑張って終わらせます。 confluenceへ (cont.)  coherent lemmas   parallel betaのcoherent lemmaを示す。 証明は基本的に場合分けやるだけなので省略するとして、まぁ常識的なことが成り立つよねという補題である。(説明の放棄) lemma elim_pb_var: &#34;Var x ⇒β N ⟹ N = Var x&#34; lemma elim_pb_abs: assumes &#34;lam [x]. M ⇒β N&#39;&#34; &#34;x ♯ N&#39;&#34; obtains N where &#34;M ⇒β N&#34; &#34;N&#39; = lam [x]. N&#34; lemma elim_pb_app: assumes &#34;M1 $ M2 ⇒β N&#34; obtains N1 N2 where &#34;N = N1 $ N2&#34; &#34;M1 ⇒β N1&#34; &#34;M2 ⇒β N2&#34; | x P P&#39; L where &#34;M1 = lam[x].">
-
-
 <meta itemprop="datePublished" content="2017-12-12T00:05:37&#43;09:00" />
 <meta itemprop="dateModified" content="2017-12-12T00:05:37&#43;09:00" />
 <meta itemprop="wordCount" content="965">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="AdC2017,Isabelle,計算機科学,ラムダ計算," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Nominal Isabelleとラムダ計算 その3"/>
 <meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 12日目の記事です。   前回はCRの証明の途中までやったので続きです。 内容多めですが今回で頑張って終わらせます。 confluenceへ (cont.)  coherent lemmas   parallel betaのcoherent lemmaを示す。 証明は基本的に場合分けやるだけなので省略するとして、まぁ常識的なことが成り立つよねという補題である。(説明の放棄) lemma elim_pb_var: &#34;Var x ⇒β N ⟹ N = Var x&#34; lemma elim_pb_abs: assumes &#34;lam [x]. M ⇒β N&#39;&#34; &#34;x ♯ N&#39;&#34; obtains N where &#34;M ⇒β N&#34; &#34;N&#39; = lam [x]. N&#34; lemma elim_pb_app: assumes &#34;M1 $ M2 ⇒β N&#34; obtains N1 N2 where &#34;N = N1 $ N2&#34; &#34;M1 ⇒β N1&#34; &#34;M2 ⇒β N2&#34; | x P P&#39; L where &#34;M1 = lam[x]."/>
@@ -81,12 +78,12 @@
 前回はCRの証明の途中までやったので続きです。
 内容多めですが今回で頑張って終わらせます。
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 confluenceへ (cont.)
-</h1>
-<h2 id="headline-2">
-coherent lemmas
 </h2>
+<h3 id="headline-2">
+coherent lemmas
+</h3>
 <p>
 parallel betaのcoherent lemmaを示す。
 証明は基本的に場合分けやるだけなので省略するとして、まぁ常識的なことが成り立つよねという補題である。(説明の放棄)
@@ -112,9 +109,9 @@ parallel betaのcoherent lemmaを示す。
     obtains N1 N2 where &#34;N = (lam [x]. N1) $ N2&#34; &#34;M1 ⇒β N1&#34; &#34;M2 ⇒β N2&#34;
     | N1 N2 where &#34;N = N1[x ::= N2]&#34; &#34;M1 ⇒β N1&#34; &#34;M2 ⇒β N2&#34;</code></pre></div>
 </div>
-<h2 id="headline-3">
+<h3 id="headline-3">
 par_to_star
-</h2>
+</h3>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma pb_subst: &#34;⟦ t1 ⇒β s1; t2 ⇒β s2 ⟧ ⟹ t1 [x ::= t2] ⇒β s1 [x ::= s2]&#34;
   apply (nominal_induct avoiding: x t2 s2 rule: par_beta.strong_induct, auto)
@@ -140,9 +137,9 @@ pb_substは、parallel betaがsubstitutionに対しても成り立つよね、�
 このときに示しておいたcoherent lemmaを使う。
 (IMPの時にも述べた気がするが、このようなcoherent lemmaをその場で示すのはgoalが不必要な具体化と複雑化している関係で困難なので補題を置いたほうがはるかに簡単だと思う)
 </p>
-<h2 id="headline-4">
+<h3 id="headline-4">
 star_existence
-</h2>
+</h3>
 <p>
 次に、bstarが常に存在する(どんなラムダ項に対してもbstarの行き先が存在する)ことを言う。
 </p>
@@ -205,12 +202,12 @@ lambda_non_abs_caseは、要はラムダ項Mに対して、 <code>nonabs M</code
 <p>
 場合分けだけなので簡単だけど結構準備が大変。
 </p>
-<h2 id="headline-5">
+<h3 id="headline-5">
 confluence
-</h2>
-<h3 id="headline-6">
-par_confluent
 </h3>
+<h4 id="headline-6">
+par_confluent
+</h4>
 <p>
 欲しい性質は全て言えたので、ようやくconfluenceの証明に移る。
 </p>
@@ -230,9 +227,9 @@ par_confluent
 まずparallel betaの1stepがconfluentなこと。
 これは示したpar_to_starとstar_existにより分かる。
 </p>
-<h3 id="headline-7">
+<h4 id="headline-7">
 long_parallel_beta
-</h3>
+</h4>
 <p>
 次にlong_parallel_betaというのを定める。
 まぁpar_betaのrefl-trans closure取るだけなので。
@@ -254,9 +251,9 @@ long_parallel_beta
     apply (rule rtranclp_trans, simp, rule r_into_rtranclp, simp add: one_to_par)
   done</code></pre></div>
 </div>
-<h3 id="headline-8">
+<h4 id="headline-8">
 Church-Rosser
-</h3>
+</h4>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma CR:
     assumes &#34;t ⟶β t1&#34; &#34;t ⟶β t2&#34;
@@ -314,9 +311,9 @@ confluentはよく菱形の図で表現されるが、これは片方が長く�
 <p>
 というわけで以上により、Church-Rosserが成り立つ。
 </p>
-<h1 id="headline-9">
+<h2 id="headline-9">
 まとめ
-</h1>
+</h2>
 <p>
 結構大変だったけれど一応CRが示せたのでよかった。
 説明があまりに雑すぎて伝わる気がしないし、Isabelleでの証明の説明をしつつラムダ計算の解説もしては流石にキツイということが分かった。

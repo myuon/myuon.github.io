@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="HaskellでDIする">
 <meta itemprop="description" content="DI   DIの重要性はここ数年で急速に高まってきている。 依存性が注入されたりとかそういうことはどうでもよくて、設計と実装を分けたい、人類はそれだけのために色々と工夫をこらし最終的にたどり着いたのがDIであったのだろう。  Haskellでも設計と実装を分けるためにDIしたいというのは自然な流れである。  ここでは型も含めて設計が実装に依存してはいけないということを要求する。 例えば設計でMySqlConnection、みたいな型が出現することも分離できていないので禁止とする。 問題点   設計を定義するときには他の言語ではインターフェイスなどの仕組みが使われることが多い。 Haskellには型システムという仕組みがあるのでこれがインターフェイス相当の機能として紹介される場合がある。  しかし型システムはインターフェイスとは違い、型を固定する仕組みがない。型クラス TypeClass a のインスタンスの値が x:TypeClass a =&gt; a と y:TypeClass a =&gt; a のように2つ与えられたとしても、xとyが同じ型である保証はないし、これが同じ型であることを強制するためにはxとyを同時に作って常に同時に運ぶ必要がある。  というわけでインターフェイスを使うと型が固定できないのでDIしようとすると困ったことになる、と私はずっと思っていた。 存在型とreflection   型を固定する仕組みは実はどうにかすることができて、要は存在型を使って data Trapped = forall a. TypeClass a =&gt; Trapped a とやると型を外から見えないように隠蔽することができる。  存在型は中を開いたときにもともと何が入っていたかはわからなくなるが、設計ではそれを意識する必要がないはずなので特に問題がない。  さらに、いわゆるDIコンテナ的な仕組みでは生成したオブジェクトを必要なところに注入してくれるという機能があることが多いが、実はこれと同じこともHaskellではできる。  reflectionというパッケージがあり、これはconfigデータを外から与えるためによく使用される。 Given a =&gt; ... なる型をもつプログラムは given と書くといつでも好きなタイミングで外から挿入されたaの値を取り出すことができる。  同じ型に対しては1つの値しか注入できないが、実際にDIするときは利用する型は1つだけなので問題がない。  というわけでこれでHaskellでもDIできそう！ということが分かる。 Loggerの例   例えばLoggerを作る例を考える。 設計  class Logger a where writeLog :: a -&gt; String -&gt; IO ()   ロガーは文字列を受け取って何かするというインターフェイスを実装した型のことであろう。ここでの a に、具体的なLogger型が挿入される。 data SomeLogger = forall a.">
-
-
 <meta itemprop="datePublished" content="2018-07-06T05:51:00-07:00" />
 <meta itemprop="dateModified" content="2018-07-06T05:51:00-07:00" />
 <meta itemprop="wordCount" content="175">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="Haskell," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="HaskellでDIする"/>
 <meta name="twitter:description" content="DI   DIの重要性はここ数年で急速に高まってきている。 依存性が注入されたりとかそういうことはどうでもよくて、設計と実装を分けたい、人類はそれだけのために色々と工夫をこらし最終的にたどり着いたのがDIであったのだろう。  Haskellでも設計と実装を分けるためにDIしたいというのは自然な流れである。  ここでは型も含めて設計が実装に依存してはいけないということを要求する。 例えば設計でMySqlConnection、みたいな型が出現することも分離できていないので禁止とする。 問題点   設計を定義するときには他の言語ではインターフェイスなどの仕組みが使われることが多い。 Haskellには型システムという仕組みがあるのでこれがインターフェイス相当の機能として紹介される場合がある。  しかし型システムはインターフェイスとは違い、型を固定する仕組みがない。型クラス TypeClass a のインスタンスの値が x:TypeClass a =&gt; a と y:TypeClass a =&gt; a のように2つ与えられたとしても、xとyが同じ型である保証はないし、これが同じ型であることを強制するためにはxとyを同時に作って常に同時に運ぶ必要がある。  というわけでインターフェイスを使うと型が固定できないのでDIしようとすると困ったことになる、と私はずっと思っていた。 存在型とreflection   型を固定する仕組みは実はどうにかすることができて、要は存在型を使って data Trapped = forall a. TypeClass a =&gt; Trapped a とやると型を外から見えないように隠蔽することができる。  存在型は中を開いたときにもともと何が入っていたかはわからなくなるが、設計ではそれを意識する必要がないはずなので特に問題がない。  さらに、いわゆるDIコンテナ的な仕組みでは生成したオブジェクトを必要なところに注入してくれるという機能があることが多いが、実はこれと同じこともHaskellではできる。  reflectionというパッケージがあり、これはconfigデータを外から与えるためによく使用される。 Given a =&gt; ... なる型をもつプログラムは given と書くといつでも好きなタイミングで外から挿入されたaの値を取り出すことができる。  同じ型に対しては1つの値しか注入できないが、実際にDIするときは利用する型は1つだけなので問題がない。  というわけでこれでHaskellでもDIできそう！ということが分かる。 Loggerの例   例えばLoggerを作る例を考える。 設計  class Logger a where writeLog :: a -&gt; String -&gt; IO ()   ロガーは文字列を受け取って何かするというインターフェイスを実装した型のことであろう。ここでの a に、具体的なLogger型が挿入される。 data SomeLogger = forall a."/>
@@ -73,9 +70,9 @@
       <h1>HaskellでDIする</h1>
     </header>
     <section>
-<h1 id="headline-1">
+<h2 id="headline-1">
 DI
-</h1>
+</h2>
 <p>
 DIの重要性はここ数年で急速に高まってきている。
 依存性が注入されたりとかそういうことはどうでもよくて、設計と実装を分けたい、人類はそれだけのために色々と工夫をこらし最終的にたどり着いたのがDIであったのだろう。
@@ -87,9 +84,9 @@ Haskellでも設計と実装を分けるためにDIしたいというのは自�
 ここでは型も含めて設計が実装に依存してはいけないということを要求する。
 例えば設計でMySqlConnection、みたいな型が出現することも分離できていないので禁止とする。
 </p>
-<h2 id="headline-2">
+<h3 id="headline-2">
 問題点
-</h2>
+</h3>
 <p>
 設計を定義するときには他の言語ではインターフェイスなどの仕組みが使われることが多い。
 Haskellには型システムという仕組みがあるのでこれがインターフェイス相当の機能として紹介される場合がある。
@@ -100,9 +97,9 @@ Haskellには型システムという仕組みがあるのでこれがインタ�
 <p>
 というわけでインターフェイスを使うと型が固定できないのでDIしようとすると困ったことになる、と私はずっと思っていた。
 </p>
-<h2 id="headline-3">
+<h3 id="headline-3">
 存在型とreflection
-</h2>
+</h3>
 <p>
 型を固定する仕組みは実はどうにかすることができて、要は存在型を使って <code>data Trapped = forall a. TypeClass a =&gt; Trapped a</code> とやると型を外から見えないように隠蔽することができる。
 </p>
@@ -121,15 +118,15 @@ Haskellには型システムという仕組みがあるのでこれがインタ�
 <p>
 というわけでこれでHaskellでもDIできそう！ということが分かる。
 </p>
-<h1 id="headline-4">
+<h2 id="headline-4">
 Loggerの例
-</h1>
+</h2>
 <p>
 例えばLoggerを作る例を考える。
 </p>
-<h2 id="headline-5">
+<h3 id="headline-5">
 設計
-</h2>
+</h3>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">class</span> <span class="kt">Logger</span> <span class="n">a</span> <span class="kr">where</span>
     <span class="n">writeLog</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span></code></pre></div>
@@ -156,9 +153,9 @@ Loggerの例
 <p>
 reflectionのAPIを専用関数としてラップしたものを用意しておく。この辺は好み(巷のDIコンテナのノリに合わせた)。
 </p>
-<h2 id="headline-6">
+<h3 id="headline-6">
 実装
-</h2>
+</h3>
 <p>
 実装をエイヤって与える。
 </p>
@@ -174,32 +171,32 @@ reflectionのAPIを専用関数としてラップしたものを用意してお�
 <p>
 せやなという感じ。
 </p>
-<h2 id="headline-7">
+<h3 id="headline-7">
 使うとき
-</h2>
+</h3>
 <p>
 ロガーを使いたいときは次のようにすれば良い。
 </p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">something</span> <span class="ow">::</span> <span class="kt">UseLogger</span> <span class="ow">=&gt;</span> <span class="o">...</span>
   <span class="n">something</span> <span class="ow">=</span> <span class="kr">do</span>
-    <span class="n">writeLog</span> <span class="n">useLogger</span> <span class="s">&#34;write to log!&#34;</span></code></pre></div>
+    <span class="n">writeLog</span> <span class="n">useLogger</span> <span class="s">&#34;</span><span class="s">write to log!</span><span class="s">&#34;</span></code></pre></div>
 </div>
 <p>
 <code>UseLogger =&gt;</code> の中では <code>useLogger</code> を使うことができてロガーを使うことができる。ここではロガーの具体的な型には言及しなくてもよいところが大事。
 </p>
-<h2 id="headline-8">
+<h3 id="headline-8">
 注入
-</h2>
+</h3>
 <p>
 注入したいときは <code>give StdoutLoggerImpl.newLogger $ ...</code> ってやる。
 </p>
 <p>
 アプリケーションの一番外側のレイヤーでやればよい。
 </p>
-<h1 id="headline-9">
+<h2 id="headline-9">
 DIを用いたアプリでの例
-</h1>
+</h2>
 <p>
 「ロガーは分かったがアプリケーションのノリがわからん」という人もいるかもしれないので具体的なアプリケーションの例も示しておく。
 </p>
@@ -212,9 +209,9 @@ DIを用いたアプリでの例
 <p>
 実際はサーバーとしては動かないしところどころ実装が雑なところがあるがまぁノリは察せられると思う。
 </p>
-<h1 id="headline-10">
+<h2 id="headline-10">
 この手法について
-</h1>
+</h2>
 <p>
 多分Someﾅﾝﾄｶの型を作るところとかがボイラープレートだらけなのでそのへんだけはもうちょっと色々提供してあげてもいいと思う。
 例えば上のnewLoggerで間違えて <code>StdoutLoggerImpl</code> を提供した場合、これをgiveしようとするとエラーになるがそういうときのエラーメッセージはあまり親切ではないと思う。
@@ -225,9 +222,9 @@ DIを用いたアプリでの例
 <p>
 誰か使ってみて感想を教えてほしい。
 </p>
-<h1 id="headline-11">
+<h2 id="headline-11">
 おわりに
-</h1>
+</h2>
 <p>
 「あれ、そういえばこうやったらHaskellでもDIできるな？」って思ってやってみたら思いの外ほぼ完全にDIコンテナのノリになりまじかよって思ったので個人的には比較的満足している出来です。
 </p>

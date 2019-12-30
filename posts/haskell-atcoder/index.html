@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -24,7 +24,7 @@
 <meta property="og:title" content="Haskellで解くAtCoder" />
 <meta property="og:description" content="最近HaskellでAtCoderの問題を解いたりしているのでごく基本的な知見をまとめておく。
 テクニック集 多くは割と色んな人がすでに言っていることではある。また、想定解法を正しく実装すれば以下のようなことを守らなくても時間内に収まるだろうが、GHCは最適化が効かなければ10倍遅くなる言語であるので普段から守っておくに越したことはないと思う。
- 環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。  Strict拡張がない BangPatterns拡張はある 環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない  文字列  基本はData.ByteString.Chan8 Stringは死んでも使わない(遅いので) Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない  リスト  リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く)) 添字アクセスと結合は死んでもしない 遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと) 累積和はscan系を使うといいよ  Vector: 基本はData.Vector.Unboxed  BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難 push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが) Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る 便利なAPI: create, unfoldrN 注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)  データ構造  その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど) Data.Set: priority queueの実装が面倒な場合 Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合  再帰の実装  単なるループはfoldl&#39;, 早期リターンが必要ならfoldr 雑に再帰したいときはControl.Monad.Fix.fixを使っても良い Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと  GHC最適化系:  繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される) タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全 datatypeのフィールドも正格にしておくこと コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない  パフォーマンス:  実行時間はC&#43;&#43;やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い) メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)   入力  上にも書いたようにByteStringで読み込む 「n個の数値の読み出し」とかはVectorでササッと書く  例 例: a1 ." />
+ 環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。  Strict拡張がない BangPatterns拡張はある 環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない   文字列  基本はData.ByteString.Chan8 Stringは死んでも使わない(遅いので) Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない   リスト  リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く)) 添字アクセスと結合は死んでもしない 遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと) 累積和はscan系を使うといいよ   Vector: 基本はData.Vector.Unboxed  BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難 push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが) Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る 便利なAPI: create, unfoldrN 注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)   データ構造  その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど) Data.Set: priority queueの実装が面倒な場合 Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合   再帰の実装  単なるループはfoldl&#39;, 早期リターンが必要ならfoldr 雑に再帰したいときはControl.Monad.Fix.fixを使っても良い Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと   GHC最適化系:  繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される) タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全 datatypeのフィールドも正格にしておくこと コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない   パフォーマンス:  実行時間はC&#43;&#43;やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い) メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)    入力  上にも書いたようにByteStringで読み込む 「n個の数値の読み出し」とかはVectorでササッと書く  例 例: a1 ." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/haskell-atcoder/" />
 <meta property="article:published_time" content="2019-04-28T16:44:29+09:00" />
@@ -34,9 +34,7 @@
 <meta itemprop="name" content="Haskellで解くAtCoder">
 <meta itemprop="description" content="最近HaskellでAtCoderの問題を解いたりしているのでごく基本的な知見をまとめておく。
 テクニック集 多くは割と色んな人がすでに言っていることではある。また、想定解法を正しく実装すれば以下のようなことを守らなくても時間内に収まるだろうが、GHCは最適化が効かなければ10倍遅くなる言語であるので普段から守っておくに越したことはないと思う。
- 環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。  Strict拡張がない BangPatterns拡張はある 環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない  文字列  基本はData.ByteString.Chan8 Stringは死んでも使わない(遅いので) Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない  リスト  リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く)) 添字アクセスと結合は死んでもしない 遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと) 累積和はscan系を使うといいよ  Vector: 基本はData.Vector.Unboxed  BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難 push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが) Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る 便利なAPI: create, unfoldrN 注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)  データ構造  その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど) Data.Set: priority queueの実装が面倒な場合 Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合  再帰の実装  単なるループはfoldl&#39;, 早期リターンが必要ならfoldr 雑に再帰したいときはControl.Monad.Fix.fixを使っても良い Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと  GHC最適化系:  繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される) タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全 datatypeのフィールドも正格にしておくこと コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない  パフォーマンス:  実行時間はC&#43;&#43;やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い) メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)   入力  上にも書いたようにByteStringで読み込む 「n個の数値の読み出し」とかはVectorでササッと書く  例 例: a1 .">
-
-
+ 環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。  Strict拡張がない BangPatterns拡張はある 環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない   文字列  基本はData.ByteString.Chan8 Stringは死んでも使わない(遅いので) Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない   リスト  リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く)) 添字アクセスと結合は死んでもしない 遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと) 累積和はscan系を使うといいよ   Vector: 基本はData.Vector.Unboxed  BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難 push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが) Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る 便利なAPI: create, unfoldrN 注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)   データ構造  その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど) Data.Set: priority queueの実装が面倒な場合 Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合   再帰の実装  単なるループはfoldl&#39;, 早期リターンが必要ならfoldr 雑に再帰したいときはControl.Monad.Fix.fixを使っても良い Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと   GHC最適化系:  繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される) タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全 datatypeのフィールドも正格にしておくこと コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない   パフォーマンス:  実行時間はC&#43;&#43;やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い) メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)    入力  上にも書いたようにByteStringで読み込む 「n個の数値の読み出し」とかはVectorでササッと書く  例 例: a1 .">
 <meta itemprop="datePublished" content="2019-04-28T16:44:29&#43;09:00" />
 <meta itemprop="dateModified" content="2019-04-28T16:44:29&#43;09:00" />
 <meta itemprop="wordCount" content="270">
@@ -44,12 +42,11 @@
 
 
 <meta itemprop="keywords" content="Haskell," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Haskellで解くAtCoder"/>
 <meta name="twitter:description" content="最近HaskellでAtCoderの問題を解いたりしているのでごく基本的な知見をまとめておく。
 テクニック集 多くは割と色んな人がすでに言っていることではある。また、想定解法を正しく実装すれば以下のようなことを守らなくても時間内に収まるだろうが、GHCは最適化が効かなければ10倍遅くなる言語であるので普段から守っておくに越したことはないと思う。
- 環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。  Strict拡張がない BangPatterns拡張はある 環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない  文字列  基本はData.ByteString.Chan8 Stringは死んでも使わない(遅いので) Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない  リスト  リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く)) 添字アクセスと結合は死んでもしない 遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと) 累積和はscan系を使うといいよ  Vector: 基本はData.Vector.Unboxed  BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難 push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが) Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る 便利なAPI: create, unfoldrN 注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)  データ構造  その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど) Data.Set: priority queueの実装が面倒な場合 Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合  再帰の実装  単なるループはfoldl&#39;, 早期リターンが必要ならfoldr 雑に再帰したいときはControl.Monad.Fix.fixを使っても良い Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと  GHC最適化系:  繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される) タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全 datatypeのフィールドも正格にしておくこと コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない  パフォーマンス:  実行時間はC&#43;&#43;やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い) メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)   入力  上にも書いたようにByteStringで読み込む 「n個の数値の読み出し」とかはVectorでササッと書く  例 例: a1 ."/>
+ 環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。  Strict拡張がない BangPatterns拡張はある 環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない   文字列  基本はData.ByteString.Chan8 Stringは死んでも使わない(遅いので) Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない   リスト  リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く)) 添字アクセスと結合は死んでもしない 遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと) 累積和はscan系を使うといいよ   Vector: 基本はData.Vector.Unboxed  BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難 push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが) Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る 便利なAPI: create, unfoldrN 注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)   データ構造  その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど) Data.Set: priority queueの実装が面倒な場合 Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合   再帰の実装  単なるループはfoldl&#39;, 早期リターンが必要ならfoldr 雑に再帰したいときはControl.Monad.Fix.fixを使っても良い Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと   GHC最適化系:  繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される) タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全 datatypeのフィールドも正格にしておくこと コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない   パフォーマンス:  実行時間はC&#43;&#43;やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い) メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)    入力  上にも書いたようにByteStringで読み込む 「n個の数値の読み出し」とかはVectorでササッと書く  例 例: a1 ."/>
 
 
   </head>
@@ -78,86 +75,77 @@
       <time datetime="2019-04-28 04:44">2019-04-28</time>
       <h1>Haskellで解くAtCoder</h1>
     </header>
-    <section>
-
-<p>最近HaskellでAtCoderの問題を解いたりしているのでごく基本的な知見をまとめておく。</p>
-
-<h1 id="テクニック集">テクニック集</h1>
-
+    <section><p>最近HaskellでAtCoderの問題を解いたりしているのでごく基本的な知見をまとめておく。</p>
+<h1 id="heading">テクニック集</h1>
 <p>多くは割と色んな人がすでに言っていることではある。また、想定解法を正しく実装すれば以下のようなことを守らなくても時間内に収まるだろうが、GHCは最適化が効かなければ10倍遅くなる言語であるので普段から守っておくに越したことはないと思う。</p>
-
 <ul>
 <li>環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。
-
 <ul>
 <li>Strict拡張がない</li>
 <li>BangPatterns拡張はある</li>
 <li>環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない</li>
-</ul></li>
+</ul>
+</li>
 <li>文字列
-
 <ul>
 <li>基本は<a href="http://hackage.haskell.org/package/bytestring-0.10.8.2/docs/Data-ByteString-Char8.html">Data.ByteString.Chan8</a></li>
 <li>Stringは死んでも使わない(遅いので)</li>
 <li>Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない</li>
-</ul></li>
+</ul>
+</li>
 <li>リスト
-
 <ul>
 <li>リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く))</li>
 <li>添字アクセスと結合は死んでもしない</li>
 <li>遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと)</li>
 <li>累積和は<code>scan</code>系を使うといいよ</li>
-</ul></li>
+</ul>
+</li>
 <li>Vector: 基本は<a href="http://hackage.haskell.org/package/vector-0.12.0.2/docs/Data-Vector-Unboxed.html">Data.Vector.Unboxed</a>
-
 <ul>
 <li>BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難</li>
 <li>push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが)</li>
 <li>Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る</li>
 <li>便利なAPI: create, unfoldrN</li>
 <li>注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)</li>
-</ul></li>
+</ul>
+</li>
 <li>データ構造
-
 <ul>
 <li>その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど)</li>
 <li>Data.Set: priority queueの実装が面倒な場合</li>
 <li>Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合</li>
-</ul></li>
+</ul>
+</li>
 <li>再帰の実装
-
 <ul>
 <li>単なるループは<code>foldl'</code>, 早期リターンが必要なら<code>foldr</code></li>
 <li>雑に再帰したいときは<code>Control.Monad.Fix.fix</code>を使っても良い</li>
 <li>Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと</li>
-</ul></li>
+</ul>
+</li>
 <li>GHC最適化系:
-
 <ul>
 <li>繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される)</li>
 <li>タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること</li>
 <li>リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全</li>
 <li>datatypeのフィールドも正格にしておくこと</li>
 <li>コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない</li>
-</ul></li>
+</ul>
+</li>
 <li>パフォーマンス:
-
 <ul>
 <li>実行時間はC++やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い)</li>
 <li>メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)</li>
-</ul></li>
 </ul>
-
-<h2 id="入力">入力</h2>
-
+</li>
+</ul>
+<h2 id="heading-1">入力</h2>
 <ul>
 <li>上にも書いたようにByteStringで読み込む</li>
 <li>「n個の数値の読み出し」とかはVectorでササッと書く</li>
 </ul>
-
-<h4 id="例">例</h4>
-
+<h4 id="heading-2">例</h4>
 <p>例: <code>a1 .. aN</code> を読み取り</p>
 <div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.Vector.Unboxed</span> <span class="k">as</span> <span class="n">VU</span>
 <span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.ByteString.Char8</span> <span class="k">as</span> <span class="n">B</span>
@@ -165,9 +153,8 @@
 <span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
   <span class="kr">let</span> <span class="n">readInt</span> <span class="ow">=</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">second</span> <span class="kt">B</span><span class="o">.</span><span class="n">tail</span><span class="p">)</span> <span class="o">.</span> <span class="kt">B</span><span class="o">.</span><span class="n">readInt</span>
  
-  <span class="n">as</span> <span class="ow">&lt;-</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="n">n</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span></code></pre></div>
-<p><code>readInt</code>によって数値の読み出しとスペースを読み飛ばすという操作を行い、これを<code>unfoldrN</code>で繰り返すだけ</p>
-
+  <span class="n">as</span> <span class="ow">&lt;-</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="n">n</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span>
+</code></pre></div><p><code>readInt</code>によって数値の読み出しとスペースを読み飛ばすという操作を行い、これを<code>unfoldrN</code>で繰り返すだけ</p>
 <p>例: <code>A B</code> を読み取り</p>
 <div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.Vector.Unboxed</span> <span class="k">as</span> <span class="n">VU</span>
 <span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.ByteString.Char8</span> <span class="k">as</span> <span class="n">B</span>
@@ -175,9 +162,8 @@
 <span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
   <span class="kr">let</span> <span class="n">readInt</span> <span class="ow">=</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">second</span> <span class="kt">B</span><span class="o">.</span><span class="n">tail</span><span class="p">)</span> <span class="o">.</span> <span class="kt">B</span><span class="o">.</span><span class="n">readInt</span>
  
-  <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="p">(</span><span class="nf">\</span><span class="n">vec</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">1</span><span class="p">))</span> <span class="o">.</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="mi">2</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span></code></pre></div>
-<p>上と同じように長さ2のvectorを作りこれを手で分解する(Vectorのままにして添字アクセスしてもいい)</p>
-
+  <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="p">(</span><span class="nf">\</span><span class="n">vec</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">1</span><span class="p">)</span><span class="p">)</span> <span class="o">.</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="mi">2</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span>
+</code></pre></div><p>上と同じように長さ2のvectorを作りこれを手で分解する(Vectorのままにして添字アクセスしてもいい)</p>
 <p>例: <code>A1 B1\nA2 B2\n ... An Bn</code> を読み取り(縦に並んでいる場合)</p>
 <div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.Vector.Unboxed</span> <span class="k">as</span> <span class="n">VU</span>
 <span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.ByteString.Char8</span> <span class="k">as</span> <span class="n">B</span>
@@ -186,77 +172,68 @@
   <span class="kr">let</span> <span class="n">readInt</span> <span class="ow">=</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">second</span> <span class="kt">B</span><span class="o">.</span><span class="n">tail</span><span class="p">)</span> <span class="o">.</span> <span class="kt">B</span><span class="o">.</span><span class="n">readInt</span>
  
   <span class="n">abs</span> <span class="ow">&lt;-</span>
-    <span class="kt">VU</span><span class="o">.</span><span class="n">replicateM</span> <span class="n">n</span> <span class="o">$</span> <span class="p">(</span><span class="nf">\</span><span class="n">vec</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">1</span><span class="p">))</span> <span class="o">.</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="mi">2</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span></code></pre></div>
-<p>上でやったのを<code>replicateM</code>で増やせばOK</p>
-
+    <span class="kt">VU</span><span class="o">.</span><span class="n">replicateM</span> <span class="n">n</span> <span class="o">$</span> <span class="p">(</span><span class="nf">\</span><span class="n">vec</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">1</span><span class="p">)</span><span class="p">)</span> <span class="o">.</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="mi">2</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span>
+</code></pre></div><p>上でやったのを<code>replicateM</code>で増やせばOK</p>
 <h2 id="vector">Vector</h2>
-
 <p>上にも書いたとおり、基本的にUnboxed Vectorを多用する。モジュールがいくつかあるのでどれを使えばいいかを覚えておこう。</p>
-
 <ul>
 <li><a href="http://hackage.haskell.org/package/vector-0.12.0.2/docs/Data-Vector-Unboxed.html">Data.Vector.Unboxed</a>: Unboxed Immutable Vector
-
 <ul>
 <li>freezeでUnboxed Mutable VectorからUnboxed Immutable Vectorにできる</li>
 <li>thawでUnboxed Mutable Vectorにできる</li>
-</ul></li>
+</ul>
+</li>
 <li><a href="http://hackage.haskell.org/package/vector-0.12.0.2/docs/Data-Vector-Unboxed-Mutable.html">Data.Vector.Unboxed.Mutable</a>: Unboxed Mutable Vector
-
 <ul>
 <li>上のMutable版</li>
 <li>APIは上とは全然違うのでこっちはこっちで事前に見ておく必要あり</li>
 <li>new, read, modify, writeだけ見てれば多分大体困らない</li>
-</ul></li>
+</ul>
+</li>
 <li><a href="http://hackage.haskell.org/package/vector-0.12.0.2/docs/Data-Vector.html">Data.Vector</a>: Boxed Immutable Vector
-
 <ul>
 <li>freezeでBoxed Mutable VectorからBoxed Immutable Vectorにできる</li>
 <li>thawでBoxed Mutable Vectorにできる</li>
-</ul></li>
+</ul>
+</li>
 <li><a href="http://hackage.haskell.org/package/vector-0.12.0.2/docs/Data-Vector-Mutable.html">Data.Vector.Mutable</a>: Boxed Mutable Vector
-
 <ul>
 <li>上のMutable版</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <p>Immutable同士、Mutable同士のAPIが大体同じである。</p>
-
 <h2 id="unsafe-haskell">Unsafe Haskell</h2>
-
 <p>さてAtCoderをHaskellで解いているとIOやSTが出てきて面倒と思う人もいるかもしれないが(私だけかもしれない)、Haskellには便利なunsafe関数があるのでこれらを使うことで純粋関数の手軽さを兼ね備えつつ値の破壊的な更新等を行うことが出来る。当然安全性は崩壊する。</p>
-
 <p>そんなUnsafe Haskellについてのテクニック:</p>
-
 <ul>
 <li>Unsafe Haskellは別に速くはない(IOで書いたときと同程度)</li>
 <li>unsafePerformIOではなく<a href="http://hackage.haskell.org/package/bytestring-0.10.8.2/docs/src/Data.ByteString.Internal.html#accursedUnutterablePerformIO">Data.ByteString.Internal.accursedUnutterablePerformIO</a>を使う
-
 <ul>
 <li>unsafePerformIOはIOだけで処理するのに比べかなりオーバーヘッドがあるので多用すると遅い</li>
 <li>accursedUnutterablePerformIOはunsafePerformIOをインライン化指定したもの。これによりunsafeのオーバーヘッドがなくなる</li>
-</ul></li>
+</ul>
+</li>
 <li>使い方
-
 <ul>
 <li><code>(\unsafeValue -&gt; accursedUnutterablePerformIO $ operationM unsafeValue)</code>をchainして使うのが基本、1度だけ値を受けとり、1度だけ使い、更新後の値を返す</li>
 <li>Vectorで使う場合には<code>accursedUnutterablePerformIO $ write vec i a &gt;&gt; return vec</code>するようにする</li>
 <li>referenceも保持しない、再帰するときはunsafe valueも引数に持って回ること(通常referenceを保持しておけば好きな場所で更新ができるが、unsafeValueはインライン化されて面倒なことになる)</li>
 <li>コピーは死んでも取らない(unsafeな値を不用意に2箇所以上で使うと死ぬ)</li>
 <li>replicateもしない(unsafe creationをreplicateするとメモ化されて死ぬ)</li>
-</ul></li>
+</ul>
+</li>
 <li>unsafeな値の評価タイミングには細心の注意を払うこと
-
 <ul>
 <li>特に遅延リストやタプルは外側の評価が行われても中の値が遅延されるので面倒なことになる場合がある</li>
 <li>面倒なときは全部Unboxed Vectorに入れると楽</li>
 <li>複数の操作を行うときはletをつなげて全部Bang Patternしてしまうのが楽</li>
 <li>あるいはtraceを挟めば一旦評価が行われるのでデバッグ用途に便利</li>
-</ul></li>
+</ul>
+</li>
 <li>脳内でC言語にコンパイルしてやばい操作が行われていないかを考える</li>
 <li>VectorでunsafeWriteは最後までしない方が良い(core dumpして面倒なことがあるので)</li>
 </ul>
-
 <p>正直seqやbangの有無で(実行時エラーとかではなくて)計算結果が変わるのはかなり厳しいので、絶対安全で大丈夫だという確信があるときくらいしか使えないのでおすすめは出来ない。Unsafe Haskellの安全性はC言語を遥かに下回るというのが実感である。</p>
 </section>
     <footer>
