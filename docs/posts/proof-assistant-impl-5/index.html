@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="Proof Assistantを作る・実装編 その5">
 <meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 22日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。 Environment   proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。 説明していませんでしたが一応紹介しておきます。  Claire.Env data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&gt; Argument -&gt; [Judgement] -&gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&gt; [Decl]) }   上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。  また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。  具体的には、 theorem id: a ==&gt; a proof .">
-
-
 <meta itemprop="datePublished" content="2017-12-22T00:02:50&#43;09:00" />
 <meta itemprop="dateModified" content="2017-12-22T00:02:50&#43;09:00" />
 <meta itemprop="wordCount" content="932">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="AdC2017,定理証明,Haskell," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Proof Assistantを作る・実装編 その5"/>
 <meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 22日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。 Environment   proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。 説明していませんでしたが一応紹介しておきます。  Claire.Env data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&gt; Argument -&gt; [Judgement] -&gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&gt; [Decl]) }   上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。  また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。  具体的には、 theorem id: a ==&gt; a proof ."/>
@@ -87,9 +84,9 @@ Proof Assistant 「Claire」の実装について説明していきます。
 機能まででproofcheckerのコア機能については説明しました。
 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 Environment
-</h1>
+</h2>
 <p>
 proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。
 説明していませんでしたが一応紹介しておきます。
@@ -102,9 +99,9 @@ proofcheckerは環境とよばれる状態をもっていて、ここに証明�
     <span class="ow">=</span> <span class="kt">Env</span>
     <span class="p">{</span> <span class="n">thms</span> <span class="ow">::</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">ThmIndex</span> <span class="kt">Formula</span>
     <span class="p">,</span> <span class="n">types</span> <span class="ow">::</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">Ident</span> <span class="kt">Type</span>
-    <span class="p">,</span> <span class="n">proof</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">Command</span><span class="p">,</span> <span class="kt">String</span><span class="p">)]</span>
-    <span class="p">,</span> <span class="n">newcommands</span> <span class="ow">::</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">Ident</span> <span class="p">(</span><span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">])</span>
-    <span class="p">,</span> <span class="n">newdecls</span> <span class="ow">::</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">Ident</span> <span class="p">([</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">])</span>
+    <span class="p">,</span> <span class="n">proof</span> <span class="ow">::</span> <span class="p">[</span><span class="p">(</span><span class="kt">Command</span><span class="p">,</span> <span class="kt">String</span><span class="p">)</span><span class="p">]</span>
+    <span class="p">,</span> <span class="n">newcommands</span> <span class="ow">::</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">Ident</span> <span class="p">(</span><span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span><span class="p">)</span>
+    <span class="p">,</span> <span class="n">newdecls</span> <span class="ow">::</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">Ident</span> <span class="p">(</span><span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span><span class="p">)</span>
     <span class="p">}</span></code></pre></div>
 </div>
 <p>
@@ -123,7 +120,7 @@ proofcheckerは環境とよばれる状態をもっていて、ここに証明�
   <span class="n">qed</span>
 
   <span class="c1">-- この証明の直後、Envのthmsには</span>
-  <span class="p">(</span><span class="s">&#34;id&#34;</span><span class="p">,</span> <span class="kt">Pred</span> <span class="s">&#34;?a&#34;</span> <span class="kt">[]</span> <span class="kt">:==&gt;:</span> <span class="kt">Pred</span> <span class="s">&#34;?a&#34;</span> <span class="kt">[]</span><span class="p">)</span>
+  <span class="p">(</span><span class="s">&#34;</span><span class="s">id</span><span class="s">&#34;</span><span class="p">,</span> <span class="kt">Pred</span> <span class="s">&#34;</span><span class="s">?a</span><span class="s">&#34;</span> <span class="kt">[]</span> <span class="kt">:==&gt;:</span> <span class="kt">Pred</span> <span class="s">&#34;</span><span class="s">?a</span><span class="s">&#34;</span> <span class="kt">[]</span><span class="p">)</span>
   <span class="c1">-- が追加されている</span></code></pre></div>
 </div>
 <p>
@@ -137,9 +134,9 @@ proofcheckerは環境とよばれる状態をもっていて、ここに証明�
 このgeneralize自体は、当然ながら別に必ずしも必要ではありませんが、このようにしておくことで変数の書き換えという頻繁に発生するユーザーの操作の手間を軽減できます。
 あらゆる命題にForallを付けてくださいということにしてもまぁよいのですが、aを変数とする時に <code>P(a)</code> の証明図の存在と <code>Forall a. P(a)</code> の証明図の存在はメタロジックでは同値なのでコマンドでサポートしてあげても良いでしょうということです。
 </p>
-<h1 id="headline-2">
+<h2 id="headline-2">
 Type System
-</h1>
+</h2>
 <p>
 simply-typedです。以上。
 </p>
@@ -165,9 +162,9 @@ simply-typedです。以上。
 <p>
 さらにTermについては普通にラムダ式が使えるので色んな型が来る可能性があるので、ちゃんと型チェックしないと不便そうです。
 </p>
-<h2 id="headline-3">
+<h3 id="headline-3">
 Type Definition
-</h2>
+</h3>
 <p>
 simply-typedなので型はfunction type、組み込みのprop、あとはコンスタントです。
 </p>
@@ -207,9 +204,9 @@ typecheck自体は上のようにconstant宣言した時、axiomとtheoremで命
       <span class="n">env</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span><span class="p">;</span>
       <span class="n">utyp</span> <span class="ow">&lt;-</span> <span class="n">liftIO</span> <span class="o">$</span> <span class="n">try</span> <span class="o">$</span> <span class="n">infer</span> <span class="n">env</span> <span class="n">fml</span><span class="p">;</span>
       <span class="kr">case</span> <span class="n">utyp</span> <span class="kr">of</span>
-        <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;typecheck&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="n">fml</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+        <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;</span><span class="s">typecheck</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="n">fml</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
         <span class="kt">Right</span> <span class="n">typ</span> <span class="o">|</span> <span class="n">u</span> <span class="o">==</span> <span class="n">typ</span> <span class="ow">-&gt;</span> <span class="n">k</span>
-        <span class="kt">Right</span> <span class="n">typ</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;typecheck&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="n">fml</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">UnificationFailed</span> <span class="n">u</span> <span class="n">typ</span><span class="p">))</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+        <span class="kt">Right</span> <span class="n">typ</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;</span><span class="s">typecheck</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="n">fml</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">UnificationFailed</span> <span class="n">u</span> <span class="n">typ</span><span class="p">)</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
     <span class="p">}</span>
 
     <span class="kr">case</span> <span class="n">decl</span> <span class="kr">of</span>
@@ -223,9 +220,9 @@ typecheck自体は上のようにconstant宣言した時、axiomとtheoremで命
 typechecker(type inference)自体は実装が間違ってなければ普通のHM型推論のはずです。
 Formulaの中にTermが混ざってくるみたいなsyntaxのせいで普通のラムダ計算の型推論とはちょっと違いますがまぁそのくらいですね。
 </p>
-<h1 id="headline-4">
+<h2 id="headline-4">
 Claireによる証明
-</h1>
+</h2>
 <p>
 さてここまで来るとClaireで証明を書くことが可能です。
 </p>
@@ -253,9 +250,9 @@ Claireによる証明
 (実はまだ説明していないマクロで定義されたコマンドを使っているので証明はまだ見せませんが)、例えば上のようにしてeqという述語を定義し、refl/substを公理として追加するとsymmetricityとtransitivityが証明できます。
 今の組み込みのコマンドだけで示すのはかなり大変ですが、もし興味があればやってみてください。
 </p>
-<h2 id="headline-5">
+<h3 id="headline-5">
 Proof of Curry
-</h2>
+</h3>
 <p>
 何も示さないのもちょっとアレなので、1つくらい定理を示してみます。
 </p>
@@ -413,9 +410,9 @@ Claireを起動して次のCurryを入力します。
 <p>
 いやぁ素晴らしい！ちゃんとProof Assistantとして動いてくれましたね！！
 </p>
-<h1 id="headline-6">
+<h2 id="headline-6">
 マクロへ
-</h1>
+</h2>
 <p>
 さて、Claireをちょっと触ると分かりますが(いや触らなくても分かると思いますが)コマンドが貧弱すぎて証明を書くのが非常に大変です。
 </p>
@@ -432,9 +429,9 @@ Claireを起動して次のCurryを入力します。
 というわけで、例えばこういう状況でPLやWLを適当にやってくれるコマンドなどがあると便利なので、そういうものをマクロで定義できるようにしましょう。
 というのが次の話になります。
 </p>
-<h1 id="headline-7">
+<h2 id="headline-7">
 まとめ
-</h1>
+</h2>
 <p>
 というわけで環境、型システム、それにClaireによる定理証明を行いました。
 </p>

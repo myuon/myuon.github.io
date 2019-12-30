@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="n番煎じのrecursion-scheme">
 <meta itemprop="description" content="前提になりそうなことをちょこっとPreliminariesに書いた. Recursion schemes   以下, C は適当な条件を満たすfunctor F: C -&gt; C がFixをもち, さらにそれがCofixにもなっていることを仮定する1. 以下ではこの適当な条件を満たすfunctorしか考えないものとする. catamorphism   F-algebra p: FA -&gt; A に対し, D のinitialityにより得られる射 cata(p): D -&gt; A を catamorphism とよぶ. これは in; cata(p) = fmap F cata(p); p: FD -&gt; A を満たす. anamorphism   catamorphismの双対. F-coalgebra q: A -&gt; FA に対し, D のterminalityにより得られる射 ana(q): A -&gt; D を anamorphism とよぶ. これは q; fmap F ana(q) = ana(q); out を満たす.">
-
-
 <meta itemprop="datePublished" content="2017-10-27T00:59:31&#43;09:00" />
 <meta itemprop="dateModified" content="2017-10-27T00:59:31&#43;09:00" />
 <meta itemprop="wordCount" content="1842">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="Haskell," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="n番煎じのrecursion-scheme"/>
 <meta name="twitter:description" content="前提になりそうなことをちょこっとPreliminariesに書いた. Recursion schemes   以下, C は適当な条件を満たすfunctor F: C -&gt; C がFixをもち, さらにそれがCofixにもなっていることを仮定する1. 以下ではこの適当な条件を満たすfunctorしか考えないものとする. catamorphism   F-algebra p: FA -&gt; A に対し, D のinitialityにより得られる射 cata(p): D -&gt; A を catamorphism とよぶ. これは in; cata(p) = fmap F cata(p); p: FD -&gt; A を満たす. anamorphism   catamorphismの双対. F-coalgebra q: A -&gt; FA に対し, D のterminalityにより得られる射 ana(q): A -&gt; D を anamorphism とよぶ. これは q; fmap F ana(q) = ana(q); out を満たす."/>
@@ -76,42 +73,42 @@
 <p>
 前提になりそうなことをちょこっとPreliminariesに書いた.
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 Recursion schemes
-</h1>
+</h2>
 <p>
 以下, <code class="verbatim">C</code> は適当な条件を満たすfunctor <code class="verbatim">F: C -&gt; C</code> がFixをもち, さらにそれがCofixにもなっていることを仮定する<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>.
 以下ではこの適当な条件を満たすfunctorしか考えないものとする.
 </p>
-<h2 id="headline-2">
+<h3 id="headline-2">
 catamorphism
-</h2>
+</h3>
 <p>
 F-algebra <code class="verbatim">p: FA -&gt; A</code> に対し, <code class="verbatim">D</code> のinitialityにより得られる射 <code class="verbatim">cata(p): D -&gt; A</code> を <strong>catamorphism</strong> とよぶ. これは <code>in; cata(p) = fmap F cata(p); p: FD -&gt; A</code> を満たす.
 </p>
-<h2 id="headline-3">
+<h3 id="headline-3">
 anamorphism
-</h2>
+</h3>
 <p>
 catamorphismの双対.
 F-coalgebra <code class="verbatim">q: A -&gt; FA</code> に対し, <code class="verbatim">D</code> のterminalityにより得られる射 <code class="verbatim">ana(q): A -&gt; D</code> を <strong>anamorphism</strong> とよぶ. これは <code class="verbatim">q; fmap F ana(q) = ana(q); out</code> を満たす.
 </p>
-<h2 id="headline-4">
+<h3 id="headline-4">
 hylomorphism
-</h2>
+</h3>
 <p>
 F-algebra <code class="verbatim">p: FB -&gt; B</code> と F-coalgebra <code class="verbatim">q: A -&gt; FA</code> に対し, <code>hylo(p,q) = ana(q); cata(p) : A -&gt; B</code> を <strong>hylomorphism</strong> とよぶ.
 </p>
-<h2 id="headline-5">
+<h3 id="headline-5">
 metamorphism
-</h2>
+</h3>
 <p>
 hylomorphismと合成が逆になったもの.
 F-algebra <code class="verbatim">p: FA -&gt; A</code> と F-coalgebra <code class="verbatim">q: A -&gt; FA</code> に対し, <code class="verbatim">meta(p,q) = cata(p); ana(q) : D -&gt; D</code> を <strong>metamorphism</strong> とよぶ.
 </p>
-<h2 id="headline-6">
+<h3 id="headline-6">
 paramorphism
-</h2>
+</h3>
 <p>
 morphism <code class="verbatim">t: F(D,A) -&gt; A</code> に対し, <code class="verbatim">fmap F fst; in: F(D,A) -&gt; D</code> があるので, これと合わせて <code class="verbatim">&lt;fmap F fst; in, t&gt;: F(D,A) -&gt; (D,A)</code> なるF-algebraが得られる.
 これのcatamorphismは <code class="verbatim">D -&gt; (D,A)</code> という形をしており, 次の等式を満たす.
@@ -145,16 +142,16 @@ morphism <code class="verbatim">t: F(D,A) -&gt; A</code> に対し, <code class=
 <p>
 となる. ここで, <code>para(t) = cata(&lt;fmap F fst; in, t&gt;); snd: D -&gt; A</code> を <strong>paramorphism</strong> という. これは(上でも見たとおり) <code>in; para(t) = fmap F &lt;id, para(t)&gt;; t</code> を満たす.
 </p>
-<h2 id="headline-7">
+<h3 id="headline-7">
 apomorphism
-</h2>
+</h3>
 <p>
 paramorphismの双対.
 morphism <code class="verbatim">t: A -&gt; F(D+A)</code> から得られる <code class="verbatim">apo(t): A -&gt; D</code> で, <code>apo(t); out = t; fmap [id,apo(t)]: A -&gt; FD</code> を満たす.
 </p>
-<h2 id="headline-8">
+<h3 id="headline-8">
 histomorphism
-</h2>
+</h3>
 <p>
 <code class="verbatim">Cofree(F): C -&gt; C</code> を, <code>Cofree(F)(X) = (X,F (Cofree(F)(X)))</code> を満たすようなデータとして, すなわち <code>CF(X)(K) = (X,FK)</code> のterminal coalgebraとして定める(これは別にinitial algebraになっていなくともよい<sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup>).
 </p>
@@ -174,44 +171,44 @@ catamorphismの図式から <code>in; cata(&lt;t,id&gt;; in) = fmap F (cata(&lt;
 <p>
 が成り立つことも分かる.
 </p>
-<h2 id="headline-9">
+<h3 id="headline-9">
 futumorphism
-</h2>
+</h3>
 <p>
 histomorphismの双対.
 </p>
 <p>
 <code class="verbatim">Free(F): C -&gt; C</code> を, <code class="verbatim">Free(F)(X) = X + F(Free(F)(X))</code> を満たすものとして定める. このとき <code class="verbatim">t: A -&gt; F(Free(F)(A))</code> に対して <code class="verbatim">futu(t) = left; in; ana(out; [t,id]): A -&gt; D</code> を <strong>futumorphism</strong> という.
 </p>
-<h2 id="headline-10">
+<h3 id="headline-10">
 chronomorphism
-</h2>
+</h3>
 <p>
 <code class="verbatim">t: A -&gt; F(Free(F)(A))</code> と <code class="verbatim">s: F(Cofree(F)(B)) -&gt; B</code> に対し, <code>chrono(t,s) = futu(t); histo(s): A -&gt; B</code> を <strong>chronomorphism</strong> という.
 </p>
-<h2 id="headline-11">
+<h3 id="headline-11">
 zygomorphism
-</h2>
+</h3>
 <p>
 <code class="verbatim">p: FB -&gt; B</code> と <code class="verbatim">q: F(B,A) -&gt; A</code> に対し, <code class="verbatim">&lt;fmap F fst; p, q&gt;: F(B,A) -&gt; (B,A)</code> のcatamorphismから誘導される <code>zygo(p,q) = cata(&lt;fmap F fst;p,q&gt;); snd: D -&gt; A</code> を <strong>zygomorphism</strong> という.
 これは, paramorphismの時と同様の計算により, <code>in; zygo(p,q) = fmap F &lt;cata(p); zygo(p,q)&gt;; q</code> を満たすことが分かる.
 </p>
-<h2 id="headline-12">
+<h3 id="headline-12">
 cozygomorphism
-</h2>
+</h3>
 <p>
 zygomorphismの双対.
 なぜここへ来て命名を諦めてしまったのか.
 </p>
-<h2 id="headline-13">
+<h3 id="headline-13">
 dynamorphism
-</h2>
+</h3>
 <p>
 <code class="verbatim">p: A -&gt; FA</code> と <code class="verbatim">q: F(Cofree(F)(B)) -&gt; B</code> に対し, <code>dyna(p,q) = ana(p); histo(q): A -&gt; B</code> を <strong>dynamorphism</strong> という.
 </p>
-<h1 id="headline-14">
+<h2 id="headline-14">
 List Examples
-</h1>
+</h2>
 <p>
 <code>F(X) = 1 + (T,X)</code> を例に挙げる. このinitial F-algebraを <code class="verbatim">List T</code> とかく.
 </p>
@@ -229,12 +226,12 @@ List Examples
 <p>
 とかけることに注意.
 </p>
-<h2 id="headline-15">
+<h3 id="headline-15">
 list catamorphism
-</h2>
+</h3>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">cata</span> <span class="kt">:</span> <span class="p">(</span><span class="kt">F</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">a</span>
-  <span class="n">cata</span> <span class="n">p</span> <span class="ow">=</span> <span class="n">out</span><span class="p">;</span> <span class="n">fmap</span> <span class="kt">F</span> <span class="p">(</span><span class="n">cata</span> <span class="n">p</span><span class="p">);</span> <span class="n">p</span>
+  <span class="n">cata</span> <span class="n">p</span> <span class="ow">=</span> <span class="n">out</span><span class="p">;</span> <span class="n">fmap</span> <span class="kt">F</span> <span class="p">(</span><span class="n">cata</span> <span class="n">p</span><span class="p">)</span><span class="p">;</span> <span class="n">p</span>
 
   <span class="c1">-- outを自然にパターンマッチによって書き直して整理すると,</span>
 
@@ -246,16 +243,16 @@ list catamorphism
 <p>
 となるが, これはfoldとよばれる.
 </p>
-<h2 id="headline-16">
+<h3 id="headline-16">
 list anamorphism
-</h2>
+</h3>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">ana</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
-  <span class="n">ana</span> <span class="n">q</span> <span class="ow">=</span> <span class="n">q</span><span class="p">;</span> <span class="n">fmap</span> <span class="kt">F</span> <span class="p">(</span><span class="n">ana</span> <span class="n">q</span><span class="p">);</span> <span class="kr">in</span>
+  <span class="n">ana</span> <span class="n">q</span> <span class="ow">=</span> <span class="n">q</span><span class="p">;</span> <span class="n">fmap</span> <span class="kt">F</span> <span class="p">(</span><span class="n">ana</span> <span class="n">q</span><span class="p">)</span><span class="p">;</span> <span class="kr">in</span>
 
   <span class="c1">-- ↓</span>
 
-  <span class="n">ana</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">a</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
+  <span class="n">ana</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
   <span class="n">ana</span> <span class="n">q</span> <span class="n">r</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">q</span> <span class="n">r</span> <span class="kr">of</span>
     <span class="kt">Nothing</span> <span class="ow">-&gt;</span> <span class="kt">Nil</span>
     <span class="kt">Just</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">r</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">Cons</span> <span class="n">a</span> <span class="p">(</span><span class="n">ana</span> <span class="n">q</span> <span class="n">r</span><span class="p">)</span></code></pre></div>
@@ -263,16 +260,16 @@ list anamorphism
 <p>
 となるが, これはunfoldとよばれる.
 </p>
-<h2 id="headline-17">
+<h3 id="headline-17">
 list hylomorphism
-</h2>
+</h3>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">hylo</span> <span class="kt">:</span> <span class="p">(</span><span class="kt">F</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
   <span class="n">hylo</span> <span class="n">p</span> <span class="n">q</span> <span class="ow">=</span> <span class="n">ana</span> <span class="n">q</span><span class="p">;</span> <span class="n">cata</span> <span class="n">p</span>
 
   <span class="c1">-- ↓</span>
 
-  <span class="n">hylo</span> <span class="kt">:</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">a</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
+  <span class="n">hylo</span> <span class="kt">:</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
   <span class="n">hylo</span> <span class="n">pnil</span> <span class="n">pcons</span> <span class="n">q</span> <span class="n">a</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">q</span> <span class="n">a</span> <span class="kr">of</span>
     <span class="kt">Nothing</span> <span class="ow">-&gt;</span> <span class="n">pnil</span>
     <span class="kt">Just</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">pcons</span> <span class="n">x</span> <span class="p">(</span><span class="n">hylo</span> <span class="n">pnil</span> <span class="n">pcons</span> <span class="n">q</span> <span class="n">y</span><span class="p">)</span></code></pre></div>
@@ -280,16 +277,16 @@ list hylomorphism
 <p>
 <code class="verbatim">a</code> から <code class="verbatim">b</code> の関数を, 一旦リストを作ってから畳み込むという方法で計算することができるようになる.
 </p>
-<h2 id="headline-18">
+<h3 id="headline-18">
 list metamorphism
-</h2>
+</h3>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">meta</span> <span class="kt">:</span> <span class="p">(</span><span class="kt">F</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
   <span class="n">meta</span> <span class="n">p</span> <span class="n">q</span> <span class="ow">=</span> <span class="n">cata</span> <span class="n">p</span><span class="p">;</span> <span class="n">ana</span> <span class="n">q</span>
 
   <span class="c1">-- ↓</span>
 
-  <span class="n">meta</span> <span class="kt">:</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">a</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
+  <span class="n">meta</span> <span class="kt">:</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
   <span class="n">meta</span> <span class="n">pnil</span> <span class="n">pcons</span> <span class="n">q</span> <span class="n">ts</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">ts</span> <span class="kr">of</span>
     <span class="kt">Nil</span> <span class="ow">-&gt;</span> <span class="n">ana</span> <span class="n">q</span> <span class="n">pnil</span>
     <span class="kt">Cons</span> <span class="n">t</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="n">ana</span> <span class="n">q</span> <span class="p">(</span><span class="n">pcons</span> <span class="n">t</span> <span class="n">r</span><span class="p">)</span></code></pre></div>
@@ -297,9 +294,9 @@ list metamorphism
 <p>
 何に使うんだこれ
 </p>
-<h2 id="headline-19">
+<h3 id="headline-19">
 list paramorphism
-</h2>
+</h3>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">para</span> <span class="kt">:</span> <span class="p">(</span><span class="kt">F</span><span class="p">(</span><span class="kt">List</span> <span class="n">t</span><span class="p">,</span><span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">a</span>
   <span class="n">para</span> <span class="n">t</span> <span class="ow">=</span> <span class="n">out</span><span class="p">;</span> <span class="n">fmap</span> <span class="kt">F</span> <span class="o">&lt;</span><span class="n">id</span><span class="p">,</span> <span class="n">para</span> <span class="n">t</span><span class="o">&gt;</span><span class="p">;</span> <span class="n">t</span>
@@ -314,16 +311,16 @@ list paramorphism
 <p>
 paramorphismは再帰関数のstep caseで, 再帰の値 <code class="verbatim">para tnil tcons y</code> 以外に入力だった値 <code class="verbatim">y</code> も利用できる. このとき, <code class="verbatim">tcons</code> が <code class="verbatim">y</code> を使用しないならばこのparamorphismはcatamorphismに一致する.
 </p>
-<h2 id="headline-20">
+<h3 id="headline-20">
 list apomorphism
-</h2>
+</h3>
 <div class="src src-haskell">
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">apo</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="p">(</span><span class="kt">List</span> <span class="n">t</span> <span class="o">+</span> <span class="n">a</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
-  <span class="n">apo</span> <span class="n">t</span> <span class="ow">=</span> <span class="n">t</span><span class="p">;</span> <span class="n">fmap</span> <span class="kt">F</span> <span class="p">[</span><span class="n">id</span><span class="p">,</span><span class="n">apo</span> <span class="n">t</span><span class="p">];</span> <span class="kr">in</span>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">apo</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="p">(</span><span class="kt">List</span> <span class="n">t</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
+  <span class="n">apo</span> <span class="n">t</span> <span class="ow">=</span> <span class="n">t</span><span class="p">;</span> <span class="n">fmap</span> <span class="kt">F</span> <span class="p">[</span><span class="n">id</span><span class="p">,</span><span class="n">apo</span> <span class="n">t</span><span class="p">]</span><span class="p">;</span> <span class="kr">in</span>
 
   <span class="c1">-- ↓</span>
 
-  <span class="n">apo</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">List</span> <span class="n">t</span> <span class="o">+</span> <span class="n">a</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
+  <span class="n">apo</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">List</span> <span class="n">t</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
   <span class="n">apo</span> <span class="n">t</span> <span class="n">a</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">t</span> <span class="n">a</span> <span class="kr">of</span>
     <span class="kt">Nothing</span> <span class="ow">-&gt;</span> <span class="kt">Nil</span>
     <span class="kt">Just</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="ow">-&gt;</span>
@@ -334,15 +331,15 @@ list apomorphism
 <p>
 anamorphismの拡張.
 </p>
-<h2 id="headline-21">
+<h3 id="headline-21">
 list histomorphism
-</h2>
+</h3>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Cofree</span> <span class="n">f</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">a</span> <span class="kt">:&lt;</span> <span class="n">f</span> <span class="p">(</span><span class="kt">Cofree</span> <span class="n">f</span> <span class="n">a</span><span class="p">)</span>
   <span class="c1">-- Cofree F a = a :&lt; Maybe (t,Cofree F a)</span>
 
   <span class="n">histo</span> <span class="kt">:</span> <span class="p">(</span><span class="kt">F</span> <span class="p">(</span><span class="kt">Cofree</span> <span class="kt">F</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">a</span>
-  <span class="n">histo</span> <span class="n">t</span> <span class="ow">=</span> <span class="n">cata</span><span class="p">(</span><span class="o">&lt;</span><span class="n">t</span><span class="p">,</span><span class="n">id</span><span class="o">&gt;</span><span class="p">;</span> <span class="kr">in</span><span class="p">);</span> <span class="n">out</span><span class="p">;</span> <span class="n">fst</span>
+  <span class="n">histo</span> <span class="n">t</span> <span class="ow">=</span> <span class="n">cata</span><span class="p">(</span><span class="o">&lt;</span><span class="n">t</span><span class="p">,</span><span class="n">id</span><span class="o">&gt;</span><span class="p">;</span> <span class="kr">in</span><span class="p">)</span><span class="p">;</span> <span class="n">out</span><span class="p">;</span> <span class="n">fst</span>
 
   <span class="c1">-- ↓</span>
 
@@ -353,45 +350,45 @@ list histomorphism
 <p>
 catamorphismでは直前の値しか参照できなかったのに対し, histomorphismは過去に作った全ての値が参照できるようになる. <code class="verbatim">cata</code> の第二引数に渡されている <code class="verbatim">tcons a cfa :&lt; cfa</code> の部分では, <code class="verbatim">cfa</code> がこのステップまでに得られた値で, それらを使って次の値 <code class="verbatim">tcons a cfa</code> を作り, これを <code class="verbatim">cfa</code> の先頭に追加して次の再帰のステップに進む.
 </p>
-<h2 id="headline-22">
+<h3 id="headline-22">
 list futumorphism
-</h2>
+</h3>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Free</span> <span class="n">f</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">f</span> <span class="p">(</span><span class="kt">Free</span> <span class="n">f</span> <span class="n">a</span><span class="p">)</span>
   <span class="c1">-- Free F a = a + Maybe (t, Free f a)</span>
   <span class="c1">-- Pure : a -&gt; Free f a</span>
   <span class="c1">-- Impure : f (Free f a) -&gt; Free f a</span>
 
-  <span class="n">futu</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="p">(</span><span class="kt">Free</span> <span class="kt">F</span> <span class="n">a</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
-  <span class="n">futu</span> <span class="n">t</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">left</span><span class="p">;</span> <span class="kr">in</span><span class="p">;</span> <span class="n">ana</span><span class="p">(</span><span class="n">out</span><span class="p">;</span> <span class="p">[</span><span class="n">t</span><span class="p">,</span><span class="n">id</span><span class="p">])</span>
+  <span class="n">futu</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="p">(</span><span class="kt">Free</span> <span class="kt">F</span> <span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
+  <span class="n">futu</span> <span class="n">t</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">left</span><span class="p">;</span> <span class="kr">in</span><span class="p">;</span> <span class="n">ana</span><span class="p">(</span><span class="n">out</span><span class="p">;</span> <span class="p">[</span><span class="n">t</span><span class="p">,</span><span class="n">id</span><span class="p">]</span><span class="p">)</span>
 
   <span class="c1">-- ↓</span>
 
-  <span class="n">futu</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">Free</span> <span class="kt">F</span> <span class="n">a</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
-  <span class="n">futu</span> <span class="n">t</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">ana</span> <span class="p">(</span><span class="nf">\</span><span class="n">fa</span> <span class="ow">-&gt;</span> <span class="kr">case</span> <span class="n">fa</span> <span class="kr">of</span> <span class="p">{</span> <span class="kt">Pure</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">t</span> <span class="n">a</span><span class="p">;</span> <span class="kt">Impure</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="n">k</span> <span class="p">})</span> <span class="p">(</span><span class="kt">Pure</span> <span class="n">a</span><span class="p">)</span></code></pre></div>
+  <span class="n">futu</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">Free</span> <span class="kt">F</span> <span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
+  <span class="n">futu</span> <span class="n">t</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">ana</span> <span class="p">(</span><span class="nf">\</span><span class="n">fa</span> <span class="ow">-&gt;</span> <span class="kr">case</span> <span class="n">fa</span> <span class="kr">of</span> <span class="p">{</span> <span class="kt">Pure</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">t</span> <span class="n">a</span><span class="p">;</span> <span class="kt">Impure</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="n">k</span> <span class="p">}</span><span class="p">)</span> <span class="p">(</span><span class="kt">Pure</span> <span class="n">a</span><span class="p">)</span></code></pre></div>
 </div>
 <p>
 anamorphismはlistの要素を1つずつ作って追加していたが, futumorphismでは一度に同時に複数のlistを作っていくことができるようになる.
 </p>
-<h2 id="headline-23">
+<h3 id="headline-23">
 list chronomorphism
-</h2>
+</h3>
 <div class="src src-haskell">
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">chrono</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="p">(</span><span class="kt">Free</span> <span class="kt">F</span> <span class="n">a</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">F</span> <span class="p">(</span><span class="kt">Cofree</span> <span class="kt">F</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">chrono</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="p">(</span><span class="kt">Free</span> <span class="kt">F</span> <span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">F</span> <span class="p">(</span><span class="kt">Cofree</span> <span class="kt">F</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
   <span class="n">chrono</span> <span class="n">t</span> <span class="n">s</span> <span class="ow">=</span> <span class="n">futu</span> <span class="n">t</span><span class="p">;</span> <span class="n">histo</span> <span class="n">s</span>
 
   <span class="c1">-- ↓</span>
 
-  <span class="n">chrono</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">Free</span> <span class="kt">F</span> <span class="n">a</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="ow">-&gt;</span> <span class="kt">Cofree</span> <span class="kt">F</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
-  <span class="n">chrono</span> <span class="n">t</span> <span class="n">snil</span> <span class="n">scons</span> <span class="n">a</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">hylo</span> <span class="p">(</span><span class="n">snil</span> <span class="kt">:&lt;</span> <span class="kt">Nothing</span><span class="p">)</span> <span class="p">(</span><span class="nf">\</span><span class="n">t</span> <span class="n">cfa</span> <span class="ow">-&gt;</span> <span class="n">tcons</span> <span class="n">a</span> <span class="n">cfa</span> <span class="kt">:&lt;</span> <span class="n">cfa</span><span class="p">)</span> <span class="p">(</span><span class="nf">\</span><span class="n">fa</span> <span class="ow">-&gt;</span> <span class="kr">case</span> <span class="n">fa</span> <span class="kr">of</span> <span class="p">{</span> <span class="kt">Pure</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">t</span> <span class="n">a</span><span class="p">;</span> <span class="kt">Impure</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="n">k</span> <span class="p">})</span> <span class="p">(</span><span class="kt">Pure</span> <span class="n">a</span><span class="p">)</span> <span class="kr">of</span>
+  <span class="n">chrono</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">Free</span> <span class="kt">F</span> <span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="ow">-&gt;</span> <span class="kt">Cofree</span> <span class="kt">F</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
+  <span class="n">chrono</span> <span class="n">t</span> <span class="n">snil</span> <span class="n">scons</span> <span class="n">a</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">hylo</span> <span class="p">(</span><span class="n">snil</span> <span class="kt">:&lt;</span> <span class="kt">Nothing</span><span class="p">)</span> <span class="p">(</span><span class="nf">\</span><span class="n">t</span> <span class="n">cfa</span> <span class="ow">-&gt;</span> <span class="n">tcons</span> <span class="n">a</span> <span class="n">cfa</span> <span class="kt">:&lt;</span> <span class="n">cfa</span><span class="p">)</span> <span class="p">(</span><span class="nf">\</span><span class="n">fa</span> <span class="ow">-&gt;</span> <span class="kr">case</span> <span class="n">fa</span> <span class="kr">of</span> <span class="p">{</span> <span class="kt">Pure</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">t</span> <span class="n">a</span><span class="p">;</span> <span class="kt">Impure</span> <span class="n">k</span> <span class="ow">-&gt;</span> <span class="n">k</span> <span class="p">}</span><span class="p">)</span> <span class="p">(</span><span class="kt">Pure</span> <span class="n">a</span><span class="p">)</span> <span class="kr">of</span>
     <span class="n">x</span> <span class="kt">:&lt;</span> <span class="kr">_</span> <span class="ow">-&gt;</span> <span class="n">x</span></code></pre></div>
 </div>
 <p>
 hylomorphismのように一旦Listを作ってから畳み込むが, Listを作るときと畳み込む時にそれぞれ直前の値だけでなく他の値も使えるようになる.
 </p>
-<h2 id="headline-24">
+<h3 id="headline-24">
 list zygomorphism
-</h2>
+</h3>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">zygo</span> <span class="kt">:</span> <span class="p">(</span><span class="kt">F</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">F</span> <span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">a</span>
   <span class="n">zygo</span> <span class="n">p</span> <span class="n">q</span> <span class="ow">=</span> <span class="n">cata</span> <span class="o">&lt;</span><span class="n">fmap</span> <span class="kt">F</span> <span class="n">fst</span><span class="p">;</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="o">&gt;</span><span class="p">;</span> <span class="n">snd</span>
@@ -399,69 +396,69 @@ list zygomorphism
   <span class="c1">-- ↓</span>
 
   <span class="n">zygo</span> <span class="kt">:</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">a</span>
-  <span class="n">zygo</span> <span class="n">pnil</span> <span class="n">pcons</span> <span class="n">qnil</span> <span class="n">qcons</span> <span class="n">xs</span> <span class="ow">=</span> <span class="n">snd</span> <span class="o">$</span> <span class="n">cata</span> <span class="p">(</span><span class="n">pnil</span><span class="p">,</span><span class="n">qnil</span><span class="p">)</span> <span class="p">(</span><span class="nf">\</span><span class="n">t</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">pcons</span> <span class="n">t</span> <span class="n">b</span><span class="p">,</span><span class="n">qcons</span> <span class="n">t</span> <span class="n">b</span> <span class="n">a</span><span class="p">))</span> <span class="n">xs</span></code></pre></div>
+  <span class="n">zygo</span> <span class="n">pnil</span> <span class="n">pcons</span> <span class="n">qnil</span> <span class="n">qcons</span> <span class="n">xs</span> <span class="ow">=</span> <span class="n">snd</span> <span class="o">$</span> <span class="n">cata</span> <span class="p">(</span><span class="n">pnil</span><span class="p">,</span><span class="n">qnil</span><span class="p">)</span> <span class="p">(</span><span class="nf">\</span><span class="n">t</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">pcons</span> <span class="n">t</span> <span class="n">b</span><span class="p">,</span><span class="n">qcons</span> <span class="n">t</span> <span class="n">b</span> <span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="n">xs</span></code></pre></div>
 </div>
 <p>
 畳み込みだが、実際に作る <code class="verbatim">a</code> 以外に <code class="verbatim">b</code> というデータを作って利用しながら畳み込むことができる.
 </p>
-<h2 id="headline-25">
+<h3 id="headline-25">
 list cozygomorphism
-</h2>
+</h3>
 <div class="src src-haskell">
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">cozygo</span> <span class="kt">:</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">a</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">cozygo</span> <span class="kt">:</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
   <span class="n">cozygo</span> <span class="n">p</span> <span class="n">q</span> <span class="ow">=</span> <span class="n">inR</span><span class="p">;</span> <span class="n">ana</span> <span class="p">[</span><span class="n">p</span><span class="p">;</span> <span class="n">fmap</span> <span class="kt">F</span> <span class="n">inL</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span>
 
   <span class="c1">-- ↓</span>
 
-  <span class="n">cozygo</span> <span class="kt">:</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">b</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">b</span> <span class="o">+</span> <span class="n">a</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
+  <span class="n">cozygo</span> <span class="kt">:</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">b</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">b</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">List</span> <span class="n">t</span>
   <span class="n">cozygo</span> <span class="n">p</span> <span class="n">q</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">ana</span> <span class="p">(</span><span class="nf">\</span><span class="n">ba</span> <span class="ow">-&gt;</span> <span class="kr">case</span> <span class="n">ba</span> <span class="kr">of</span>
-    <span class="p">{</span> <span class="kt">Left</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">Left</span> <span class="n">b</span><span class="p">))</span> <span class="o">&lt;$&gt;</span> <span class="n">p</span> <span class="n">b</span>
-    <span class="p">;</span> <span class="kt">Right</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">q</span> <span class="n">a</span> <span class="p">})</span> <span class="p">(</span><span class="kt">Right</span> <span class="n">a</span><span class="p">)</span></code></pre></div>
+    <span class="p">{</span> <span class="kt">Left</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">Left</span> <span class="n">b</span><span class="p">)</span><span class="p">)</span> <span class="o">&lt;$&gt;</span> <span class="n">p</span> <span class="n">b</span>
+    <span class="p">;</span> <span class="kt">Right</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">q</span> <span class="n">a</span> <span class="p">}</span><span class="p">)</span> <span class="p">(</span><span class="kt">Right</span> <span class="n">a</span><span class="p">)</span></code></pre></div>
 </div>
-<h2 id="headline-26">
+<h3 id="headline-26">
 list dynamorphism
-</h2>
+</h3>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">dyna</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">F</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">F</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
   <span class="n">dyna</span> <span class="n">p</span> <span class="n">q</span> <span class="ow">=</span> <span class="n">ana</span> <span class="n">p</span><span class="p">;</span> <span class="n">histo</span> <span class="n">q</span>
 
   <span class="c1">-- ↓</span>
 
-  <span class="n">dyna</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">a</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="ow">-&gt;</span> <span class="kt">Cofree</span> <span class="kt">F</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
+  <span class="n">dyna</span> <span class="kt">:</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">a</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="ow">-&gt;</span> <span class="kt">Cofree</span> <span class="kt">F</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
   <span class="n">dyna</span> <span class="n">p</span> <span class="n">qnil</span> <span class="n">qcons</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">histo</span> <span class="n">qnil</span> <span class="n">qcons</span> <span class="p">(</span><span class="n">ana</span> <span class="n">p</span> <span class="n">a</span><span class="p">)</span></code></pre></div>
 </div>
 <p>
 anamorphismで作ったデータに対し、その時点で作られた全てのリストの要素を使って次の値を作る関数を使って畳み込みを行う. これは <code class="verbatim">a</code> から <code class="verbatim">b</code> へ変換を行う際に, 中間データとして作ったリスト全体が再帰のstep caseで得られることを表す.
 このdynamorphismやhistomorphismは, <code class="verbatim">(forall n. (forall i &lt; n. P i) --&gt; P (n+1)) --&gt; P n</code> の形の帰納法に対応し, アルゴリズムとしては分割統治法あるいはこのdynamorphismの手法を指してDPと呼ばれる.
 </p>
-<h1 id="headline-27">
+<h2 id="headline-27">
 Preliminaries
-</h1>
-<h2 id="headline-28">
-定義
 </h2>
+<h3 id="headline-28">
+定義
+</h3>
 <p>
 <code class="verbatim">F:C -&gt; C</code> をfunctorとする.
 <strong>F-algebra</strong> とは, 対象 <code class="verbatim">A</code> と射 <code class="verbatim">m : FA -&gt; A</code> の組である. しばしば射だけでF-algebraとよぶ.
-<code class="verbatim">m: FA -&gt; A</code> から <code class="verbatim">n: FB -&gt; B</code> への <strong>F-algebraのmorphism</strong> とは, morphism <code class="verbatim">A -&gt; B</code> であって, 誘導される四角形が可換になるもののこと: <code>m; f = fmap F f; n</code>.
+ <code class="verbatim">m: FA -&gt; A</code> から <code class="verbatim">n: FB -&gt; B</code> への <strong>F-algebraのmorphism</strong> とは, morphism <code class="verbatim">A -&gt; B</code> であって, 誘導される四角形が可換になるもののこと: <code>m; f = fmap F f; n</code>.
 </p>
 <p>
 これの双対, すなわち <code class="verbatim">m&#39; : A -&gt; FA</code> を <strong>F-coalgebra</strong> とよぶ.
 </p>
-<h2 id="headline-29">
+<h3 id="headline-29">
 Lambekの定理
-</h2>
+</h3>
 <p>
 <strong>Thm (Lambek)</strong> initial F-algebraが存在すれば, 同型になる.
 </p>
 <p>
 Proof) initial F-algebraを <code class="verbatim">p : FI -&gt; I</code> とする.
 ここで, <code class="verbatim">fmap F p : FFI -&gt; FI</code> はF-algebraである.
-<code class="verbatim">p</code> のinitialityにより, F-algebra morphism <code class="verbatim">h : I -&gt; FI</code> が一意に存在して, <code>p; h = fmap F h; fmap F p</code> を満たす.
+ <code class="verbatim">p</code> のinitialityにより, F-algebra morphism <code class="verbatim">h : I -&gt; FI</code> が一意に存在して, <code>p; h = fmap F h; fmap F p</code> を満たす.
 </p>
 <p>
 さて, <code class="verbatim">h</code> が <code class="verbatim">p</code> の逆射であることを示そう.
-<code class="verbatim">h; p: I -&gt; I</code> は, <code class="verbatim">p</code> から <code class="verbatim">p</code> へのF-algebra morphismであることが次の計算によってわかる:
+ <code class="verbatim">h; p: I -&gt; I</code> は, <code class="verbatim">p</code> から <code class="verbatim">p</code> へのF-algebra morphismであることが次の計算によってわかる:
 </p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  p; (h; p) = p; h; p
@@ -481,9 +478,9 @@ Proof) initial F-algebraを <code class="verbatim">p : FI -&gt; I</code> とす�
 <p>
 以上により, <code class="verbatim">h</code> は <code class="verbatim">p</code> の逆射であり, <code class="verbatim">p</code> はiso.  //
 </p>
-<h2 id="headline-30">
+<h3 id="headline-30">
 Fix &amp; Cofix
-</h2>
+</h3>
 <p>
 <code>F(f)(x) = f x</code> のinitial F-algebraは, 存在すれば <code>D(f) = f (D(f))</code> を満たす. これはfixpointと呼ばれる.
 fixの双対をcofixと呼ぶ.
@@ -491,9 +488,9 @@ fixの双対をcofixと呼ぶ.
 <p>
 例えば, <code>f(a)(b) = 1 + (a,b)</code> のfixpoint <code class="verbatim">Fix(f)(a)</code> は <code class="verbatim">a</code> のリストである.
 </p>
-<h1 id="headline-31">
+<h2 id="headline-31">
 参考文献
-</h1>
+</h2>
 <ul>
 <li>
 <p>

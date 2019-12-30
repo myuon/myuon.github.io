@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="Namespace Haskell">
 <meta itemprop="description" content="Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。 主な機能  open import   Agdaにもある機能で、importをimport(モジュール読み込み)とopen(現在のコンテキストに名前を公開)に分割する.    import M とすると, M.func によってモジュールMの関数funcにアクセスできる    open M とすると, それを指定したブロックでMの関数を修飾子なしでアクセスできる    open import M とすると, import M; open M の意味になる(現在のHaskellのimport)    openをwhereブロック内で宣言することで、一部でしか使わないimportをあっちこっちで展開するのを防げる。 public export   現在のHaskellではモジュール宣言時に module M(..) where でexportする関数を選べる。  そして module M where は全て公開の意味になるが、これを全て非公開に変更し、モジュール内で export (..) のように宣言したもののみexportすることにする。 associated function   要は「メソッド」機能なんだけどtypeclassの関数のことをメソッドって呼ぶことがあるような気がするので名前の衝突を避けるためにここではassociated functionとよぶ.  次のような、データ型とそれに対する特別な関数定義を行うスコープを用意する。 -- 例 data List a = Nil | Cons a (List a) impl (this :: List a) where { reverse :: List a reverse = .">
-
-
 <meta itemprop="datePublished" content="2018-02-04T13:55:38&#43;09:00" />
 <meta itemprop="dateModified" content="2018-02-04T13:55:38&#43;09:00" />
 <meta itemprop="wordCount" content="135">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="Haskell," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Namespace Haskell"/>
 <meta name="twitter:description" content="Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。 主な機能  open import   Agdaにもある機能で、importをimport(モジュール読み込み)とopen(現在のコンテキストに名前を公開)に分割する.    import M とすると, M.func によってモジュールMの関数funcにアクセスできる    open M とすると, それを指定したブロックでMの関数を修飾子なしでアクセスできる    open import M とすると, import M; open M の意味になる(現在のHaskellのimport)    openをwhereブロック内で宣言することで、一部でしか使わないimportをあっちこっちで展開するのを防げる。 public export   現在のHaskellではモジュール宣言時に module M(..) where でexportする関数を選べる。  そして module M where は全て公開の意味になるが、これを全て非公開に変更し、モジュール内で export (..) のように宣言したもののみexportすることにする。 associated function   要は「メソッド」機能なんだけどtypeclassの関数のことをメソッドって呼ぶことがあるような気がするので名前の衝突を避けるためにここではassociated functionとよぶ.  次のような、データ型とそれに対する特別な関数定義を行うスコープを用意する。 -- 例 data List a = Nil | Cons a (List a) impl (this :: List a) where { reverse :: List a reverse = ."/>
@@ -76,12 +73,12 @@
 <p>
 Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 主な機能
-</h1>
-<h2 id="headline-2">
-open import
 </h2>
+<h3 id="headline-2">
+open import
+</h3>
 <p>
 Agdaにもある機能で、importをimport(モジュール読み込み)とopen(現在のコンテキストに名前を公開)に分割する.
 </p>
@@ -105,18 +102,18 @@ Agdaにもある機能で、importをimport(モジュール読み込み)とopen(
 <p>
 openをwhereブロック内で宣言することで、一部でしか使わないimportをあっちこっちで展開するのを防げる。
 </p>
-<h2 id="headline-3">
+<h3 id="headline-3">
 public export
-</h2>
+</h3>
 <p>
 現在のHaskellではモジュール宣言時に <code>module M(..) where</code> でexportする関数を選べる。
 </p>
 <p>
 そして <code>module M where</code> は全て公開の意味になるが、これを全て非公開に変更し、モジュール内で <code>export (..)</code> のように宣言したもののみexportすることにする。
 </p>
-<h2 id="headline-4">
+<h3 id="headline-4">
 associated function
-</h2>
+</h3>
 <p>
 要は「メソッド」機能なんだけどtypeclassの関数のことをメソッドって呼ぶことがあるような気がするので名前の衝突を避けるためにここではassociated functionとよぶ.
 </p>
@@ -144,9 +141,9 @@ associated function
 <p>
 現在のHaskellとの互換も考えて、 <code>open List</code> とするとメソッドは普通の関数として振る舞う(<code>this</code> の部分は第一引数になる)、などとしておくと良いかもしれない。
 </p>
-<h2 id="headline-5">
+<h3 id="headline-5">
 namespace
-</h2>
+</h3>
 <p>
 最後に新たなnamespaceを導入する機能。正直これを入れるだけでもHaskellはめちゃくちゃ書きやすくなると思うし、逆に言うと今のHaskellは1ファイルに1モジュールのみなどの厳しすぎる制限のせいで無用な苦しみを生み出していると言う他ない。
 </p>
@@ -165,9 +162,9 @@ namespaceは入れ子にできて、各namespaceはopenするか <code>Hoge.Piyo
 <p>
 要はモジュールのネストだけどHaskellとの互換を考えると新しい名前にした方がいいんではないかなと思ったりした。
 </p>
-<h1 id="headline-6">
+<h2 id="headline-6">
 お気持ち
-</h1>
+</h2>
 <p>
 という感じのものを早く導入して欲しいという気持ちがあるけど組み込むのは割と面倒そう。
 </p>

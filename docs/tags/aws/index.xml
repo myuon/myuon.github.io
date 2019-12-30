@@ -18,10 +18,11 @@
         <description>調べたけどあんまり情報がなかったので。
 AppSync Pipeline Resolver AppSyncにはPipeline Resolverというリゾルバーがあり、これによって複数のリゾルバーを指定できる、とある。
 CFnにはfunctionConfigurationを指定するといいよと書いてある。serverless-appsync-pluginだと次のように書ける。
-custom:appSync:mappingTemplates:-type:Queryfield:testPipelineQueryrequest:&amp;#39;./mapping-templates/before.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;before&amp;#34; mapping templateresponse:&amp;#39;./mapping-templates/after.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;after&amp;#34; mapping templatekind:PIPELINEfunctions:-authorizeFunction-fetchDataFunctionfunctionConfigurations:-dataSource:graphqlLambdaname:&amp;#39;authorizeFunction&amp;#39;request:&amp;#39;./mapping-templates/authorize-request.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39;-dataSource:dataTablename:&amp;#39;fetchDataFunction&amp;#39;request:&amp;#39;./mapping-templates/fetchData.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39; でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
- リゾルバーに対して指定できる処理の単位を&amp;rdquo;function&amp;rdquo;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&amp;rdquo;functionからなる&amp;rdquo; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
-before mapping template ↓ authorizeFunction request mapping template ↓ authorizeFunction本体 ↓ authorizeFunction response mapping template ↓ fetchDataFunction request mapping template ↓ fetchDataFunction本体 ↓ fetchDataFunction response mapping template ↓ after mapping template  functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。
-Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。</description>
+custom:appSync:mappingTemplates:-type:Queryfield:testPipelineQueryrequest:&amp;#39;./mapping-templates/before.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;before&amp;#34; mapping templateresponse:&amp;#39;./mapping-templates/after.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;after&amp;#34; mapping templatekind:PIPELINEfunctions:-authorizeFunction-fetchDataFunctionfunctionConfigurations:-dataSource:graphqlLambdaname:&amp;#39;authorizeFunction&amp;#39;request:&amp;#39;./mapping-templates/authorize-request.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39;-dataSource:dataTablename:&amp;#39;fetchDataFunction&amp;#39;request:&amp;#39;./mapping-templates/fetchData.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39;でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
+ リゾルバーに対して指定できる処理の単位を&amp;quot;function&amp;quot;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&amp;quot;functionからなる&amp;rdquo; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
+before mapping template ↓ authorizeFunction request mapping template ↓ authorizeFunction本体 ↓ authorizeFunction response mapping template ↓ fetchDataFunction request mapping template ↓ fetchDataFunction本体 ↓ fetchDataFunction response mapping template ↓ after mapping template functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。
+Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。
+設定例を以下に示す。</description>
       </item>
     
       <item>
@@ -32,11 +33,11 @@ Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorize
         <description>タイトルの通り。大体以下のPRの説明読めば分かる。
 https://github.com/hashicorp/terraform/pull/2825
 Terraform側の設定 local envで環境を作ってDynamoDB Localをテスト用途で動かすという前提。以下がproject structure。
-&amp;lt;project root&amp;gt; - infrastructure - local/ - main.tf ここにDynamoDB Localの設定を入れる - modules/ - dynamodb/table.tf ここにテーブルの設定など  infrastructure/local/main.tfでは、endpointsを指定することができる。(デプロイ時にこのendpointを参照してテーブルを作ったりする)
-provider &amp;quot;aws&amp;quot; { region = &amp;quot;ap-northeast-1&amp;quot; endpoints { dynamodb = &amp;quot;http://localhost:8000&amp;quot; } }  DynamoDB Localは普通に動かせばよい。
+&amp;lt;project root&amp;gt; - infrastructure - local/ - main.tf ここにDynamoDB Localの設定を入れる - modules/ - dynamodb/table.tf ここにテーブルの設定など infrastructure/local/main.tfでは、endpointsを指定することができる。(デプロイ時にこのendpointを参照してテーブルを作ったりする)
+provider &amp;quot;aws&amp;quot; { region = &amp;quot;ap-northeast-1&amp;quot; endpoints { dynamodb = &amp;quot;http://localhost:8000&amp;quot; } } DynamoDB Localは普通に動かせばよい。
 port:8000で起動させたら、いつも通りterraform -e dev applyでDynamoDB Localにテーブルができる。
 スクリプト テストで使おうと思ったら、このDynamoDB Localを立ち上げる→terraform apply→テスト実行→DynamoDB Localを落とすを何度も繰り返すことになって面倒なので、私はMakefileを書いている。
-install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dynamodb; \ 	wget https://s3-ap-northeast-1.amazonaws.com/dynamodb-local-tokyo/dynamodb_local_latest.tar.gz; \ 	tar -xf ./dynamodb_local_latest.tar.gz test: $(MAKE) startTest # ここでテスト export .</description>
+install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dynamodb; \ 	wget https://s3-ap-northeast-1.amazonaws.com/dynamodb-local-tokyo/dynamodb_local_latest.tar.gz; \ 	tar -xf ./dynamodb_local_latest.tar.gz test: $(MAKE) startTest # ここでテスト export ...; \ 	go test .</description>
       </item>
     
       <item>
@@ -47,10 +48,9 @@ install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dy
         <description>Reason ML、やっていこうな 世はまさに大サーバーレス時代なのでLambda Functionやっていきというお気持ち。
 AWS Lambdaで現時点(2018年11月)で対応されている言語はNode.js, Python, Go, C#(dotnet), Javaの5つ。このうち後ろ2つはコールドスタートが激遅なので使い物にならない。で前3つのうちではドキュメントの多いNode.jsが安定ですが、Node.jsをランタイムに採用するとしてしかしJSは書きたくない、そういうときにReason MLはいい感じな選択肢なのでは？というのがこの記事の趣旨です。
 serverless-reason serverless frameworkというサーバーレスアプリをやるのにとても便利なツールがあって、それのReasonで動くテンプレートを作っておいたので好きに使ってくださいという感じ。
- 
 以下このプロジェクトの中身の解説をする。
 echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに定義されている。
-/* Sorry I&amp;#39;m a lazy person! */ type event = { . &amp;#34;pathParameters&amp;#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&amp;gt; Js.Promise.t(unit); type response = { . &amp;#34;statusCode&amp;#34;: int, &amp;#34;body&amp;#34;: string, }; let handler : (event, context, callback) =&amp;gt; Js.Promise.t(response) = (event, _, _) =&amp;gt; { Js.</description>
+/* Sorry I&amp;#39;m a lazy person! */ type event = { . &amp;#34;pathParameters&amp;#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&amp;gt; Js.Promise.t(unit); type response = { . &amp;#34;statusCode&amp;#34;: int, &amp;#34;body&amp;#34;: string, }; let handler : (event, context, callback) =&amp;gt; Js.Promise.t(response) = (event, _, _) =&amp;gt; { Js.log(&amp;#34;hello&amp;#34;); { &amp;#34;statusCode&amp;#34;: 200, &amp;#34;body&amp;#34;: event##pathParameters |&amp;gt; Js.</description>
       </item>
     
   </channel>

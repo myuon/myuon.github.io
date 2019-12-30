@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -29,10 +29,10 @@
 細かいところで前のテーマで便利だったけど失われてしまった機能性とかもあるのでそういうのはおいおい対応していきたい。
 Gitの管理方法を変えた こっちがむしろメイン。今使ってる静的サイトジェネレータのHugoはGitHubで公式にサポートされてるわけではないので、自分でHTMLファイルを生成する必要がある。一方で、GitHubはユーザーリポジトリ(myuon.github.ioの形のやつ)はmasterブランチがそのまま表示されてしまうのでソースファイルの管理は別ブランチで行う必要があるなどの問題がありめんどいなーと思っていたのだけど、それを解決する方法が分かった。
 結論としては次のサイトに書いてあるようなことをやればいい。
- http://kohki.hatenablog.jp/entry/hugo-portfolio https://qiita.com/kwappa/items/03ffdeb89039a7249619  masterブランチを殺して、代わりに git subtree push --prefix docs/ origin master とか叩くことで/docsをorigin/masterにpushできる。origin/masterって消せるんですね、知らんかった。
+ [http://kohki.hatenablog.jp/entry/hugo-portfolio](Hugo &#43; GitHub Pagesでポートフォリオを作る) [https://qiita.com/kwappa/items/03ffdeb89039a7249619](GitHub PagesのUser Pagesでドキュメントルートを変更するにはmasterを殺す)  masterブランチを殺して、代わりに git subtree push --prefix docs/ origin master とか叩くことで/docsをorigin/masterにpushできる。origin/masterって消せるんですね、知らんかった。
 というわけで、よくわからないsubmoduleの管理などせずとも(gitのsubmoduleって結構難しい機能だと思う、いつもいまいちよくわからんって言って使ってたし結構気をつかわないといけなかったりする)、簡単にHTMLの管理ができるしpublishも1コマンドでできるしで便利～になった。
 実はこの辺の問題があって最近はブログ記事を書けていなかったのだけれど、環境をえいやと整えたのでまたなんか書いていきたいと思います。
-そういえば私は飽きっぽいので今までいろいろなプロジェクトを始めては途中で飽きてやめたりしてきたが(ここ7年くらいでGitHubリポジトリの数は58になった)、最近は昔やってたやつを引き継いでまた始めたりということもちょくちょくやるようになったりしている気がする。良い傾向だし、そういう感じで過去に挑戦したプロジェクトのサルベージやら供養やらも自然にやっていけたらいいなと思ったり思わなかったり。" />
+ そういえば私は飽きっぽいので今までいろいろなプロジェクトを始めては途中で飽きてやめたりしてきたが(ここ7年くらいでGitHubリポジトリの数は58になった)、最近は昔やってたやつを引き継いでまた始めたりということもちょくちょくやるようになったりしている気がする。良い傾向だし、そういう感じで過去に挑戦したプロジェクトのサルベージやら供養やらも自然にやっていけたらいいなと思ったり思わなかったり。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/blog-simplicity/" />
 <meta property="article:published_time" content="2018-10-23T22:53:56+09:00" />
@@ -47,20 +47,17 @@ Gitの管理方法を変えた こっちがむしろメイン。今使ってる�
 細かいところで前のテーマで便利だったけど失われてしまった機能性とかもあるのでそういうのはおいおい対応していきたい。
 Gitの管理方法を変えた こっちがむしろメイン。今使ってる静的サイトジェネレータのHugoはGitHubで公式にサポートされてるわけではないので、自分でHTMLファイルを生成する必要がある。一方で、GitHubはユーザーリポジトリ(myuon.github.ioの形のやつ)はmasterブランチがそのまま表示されてしまうのでソースファイルの管理は別ブランチで行う必要があるなどの問題がありめんどいなーと思っていたのだけど、それを解決する方法が分かった。
 結論としては次のサイトに書いてあるようなことをやればいい。
- http://kohki.hatenablog.jp/entry/hugo-portfolio https://qiita.com/kwappa/items/03ffdeb89039a7249619  masterブランチを殺して、代わりに git subtree push --prefix docs/ origin master とか叩くことで/docsをorigin/masterにpushできる。origin/masterって消せるんですね、知らんかった。
+ [http://kohki.hatenablog.jp/entry/hugo-portfolio](Hugo &#43; GitHub Pagesでポートフォリオを作る) [https://qiita.com/kwappa/items/03ffdeb89039a7249619](GitHub PagesのUser Pagesでドキュメントルートを変更するにはmasterを殺す)  masterブランチを殺して、代わりに git subtree push --prefix docs/ origin master とか叩くことで/docsをorigin/masterにpushできる。origin/masterって消せるんですね、知らんかった。
 というわけで、よくわからないsubmoduleの管理などせずとも(gitのsubmoduleって結構難しい機能だと思う、いつもいまいちよくわからんって言って使ってたし結構気をつかわないといけなかったりする)、簡単にHTMLの管理ができるしpublishも1コマンドでできるしで便利～になった。
 実はこの辺の問題があって最近はブログ記事を書けていなかったのだけれど、環境をえいやと整えたのでまたなんか書いていきたいと思います。
-そういえば私は飽きっぽいので今までいろいろなプロジェクトを始めては途中で飽きてやめたりしてきたが(ここ7年くらいでGitHubリポジトリの数は58になった)、最近は昔やってたやつを引き継いでまた始めたりということもちょくちょくやるようになったりしている気がする。良い傾向だし、そういう感じで過去に挑戦したプロジェクトのサルベージやら供養やらも自然にやっていけたらいいなと思ったり思わなかったり。">
-
-
+ そういえば私は飽きっぽいので今までいろいろなプロジェクトを始めては途中で飽きてやめたりしてきたが(ここ7年くらいでGitHubリポジトリの数は58になった)、最近は昔やってたやつを引き継いでまた始めたりということもちょくちょくやるようになったりしている気がする。良い傾向だし、そういう感じで過去に挑戦したプロジェクトのサルベージやら供養やらも自然にやっていけたらいいなと思ったり思わなかったり。">
 <meta itemprop="datePublished" content="2018-10-23T22:53:56&#43;09:00" />
 <meta itemprop="dateModified" content="2018-10-23T22:53:56&#43;09:00" />
-<meta itemprop="wordCount" content="24">
+<meta itemprop="wordCount" content="29">
 
 
 
 <meta itemprop="keywords" content="ブログ," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="ブログのテーマ(とGitの管理方法)を変えた"/>
 <meta name="twitter:description" content="Git管理が色々あれなことになっており記事を書くのがとても大変なことになっていたので直したかった、ついでにテーマを変えた。
@@ -70,10 +67,10 @@ Gitの管理方法を変えた こっちがむしろメイン。今使ってる�
 細かいところで前のテーマで便利だったけど失われてしまった機能性とかもあるのでそういうのはおいおい対応していきたい。
 Gitの管理方法を変えた こっちがむしろメイン。今使ってる静的サイトジェネレータのHugoはGitHubで公式にサポートされてるわけではないので、自分でHTMLファイルを生成する必要がある。一方で、GitHubはユーザーリポジトリ(myuon.github.ioの形のやつ)はmasterブランチがそのまま表示されてしまうのでソースファイルの管理は別ブランチで行う必要があるなどの問題がありめんどいなーと思っていたのだけど、それを解決する方法が分かった。
 結論としては次のサイトに書いてあるようなことをやればいい。
- http://kohki.hatenablog.jp/entry/hugo-portfolio https://qiita.com/kwappa/items/03ffdeb89039a7249619  masterブランチを殺して、代わりに git subtree push --prefix docs/ origin master とか叩くことで/docsをorigin/masterにpushできる。origin/masterって消せるんですね、知らんかった。
+ [http://kohki.hatenablog.jp/entry/hugo-portfolio](Hugo &#43; GitHub Pagesでポートフォリオを作る) [https://qiita.com/kwappa/items/03ffdeb89039a7249619](GitHub PagesのUser Pagesでドキュメントルートを変更するにはmasterを殺す)  masterブランチを殺して、代わりに git subtree push --prefix docs/ origin master とか叩くことで/docsをorigin/masterにpushできる。origin/masterって消せるんですね、知らんかった。
 というわけで、よくわからないsubmoduleの管理などせずとも(gitのsubmoduleって結構難しい機能だと思う、いつもいまいちよくわからんって言って使ってたし結構気をつかわないといけなかったりする)、簡単にHTMLの管理ができるしpublishも1コマンドでできるしで便利～になった。
 実はこの辺の問題があって最近はブログ記事を書けていなかったのだけれど、環境をえいやと整えたのでまたなんか書いていきたいと思います。
-そういえば私は飽きっぽいので今までいろいろなプロジェクトを始めては途中で飽きてやめたりしてきたが(ここ7年くらいでGitHubリポジトリの数は58になった)、最近は昔やってたやつを引き継いでまた始めたりということもちょくちょくやるようになったりしている気がする。良い傾向だし、そういう感じで過去に挑戦したプロジェクトのサルベージやら供養やらも自然にやっていけたらいいなと思ったり思わなかったり。"/>
+ そういえば私は飽きっぽいので今までいろいろなプロジェクトを始めては途中で飽きてやめたりしてきたが(ここ7年くらいでGitHubリポジトリの数は58になった)、最近は昔やってたやつを引き継いでまた始めたりということもちょくちょくやるようになったりしている気がする。良い傾向だし、そういう感じで過去に挑戦したプロジェクトのサルベージやら供養やらも自然にやっていけたらいいなと思ったり思わなかったり。"/>
 
 
   </head>
@@ -102,39 +99,23 @@ Gitの管理方法を変えた こっちがむしろメイン。今使ってる�
       <time datetime="2018-10-23 10:53">2018-10-23</time>
       <h1>ブログのテーマ(とGitの管理方法)を変えた</h1>
     </header>
-    <section>
-
-<p>Git管理が色々あれなことになっており記事を書くのがとても大変なことになっていたので直したかった、ついでにテーマを変えた。</p>
-
+    <section><p>Git管理が色々あれなことになっており記事を書くのがとても大変なことになっていたので直したかった、ついでにテーマを変えた。</p>
 <p>テーマはもともと自作だったのだけれどまぁ私はデザイナーではないのであるやつに乗っかる方が色々便利だということが分かったりした(自分で書くと、状況によって変な空白が出たりとかしがち)。</p>
-
-<h2 id="テーマを変えた">テーマを変えた</h2>
-
+<h2 id="heading">テーマを変えた</h2>
 <p>Simplicity: <a href="https://github.com/eshlox/simplicity">https://github.com/eshlox/simplicity</a></p>
-
 <p>というテーマにしました。シンプルですっきりだけど普通に見やすいと思う(シンプルで見にくいテーマも多いのでこういうテーマは貴重)</p>
-
 <p>細かいところで前のテーマで便利だったけど失われてしまった機能性とかもあるのでそういうのはおいおい対応していきたい。</p>
-
-<h2 id="gitの管理方法を変えた">Gitの管理方法を変えた</h2>
-
+<h2 id="git">Gitの管理方法を変えた</h2>
 <p>こっちがむしろメイン。今使ってる静的サイトジェネレータのHugoはGitHubで公式にサポートされてるわけではないので、自分でHTMLファイルを生成する必要がある。一方で、GitHubはユーザーリポジトリ(myuon.github.ioの形のやつ)はmasterブランチがそのまま表示されてしまうのでソースファイルの管理は別ブランチで行う必要があるなどの問題がありめんどいなーと思っていたのだけど、それを解決する方法が分かった。</p>
-
 <p>結論としては次のサイトに書いてあるようなことをやればいい。</p>
-
 <ul>
-<li><a href="Hugo + GitHub Pagesでポートフォリオを作る">http://kohki.hatenablog.jp/entry/hugo-portfolio</a></li>
-<li><a href="GitHub PagesのUser Pagesでドキュメントルートを変更するにはmasterを殺す">https://qiita.com/kwappa/items/03ffdeb89039a7249619</a></li>
+<li>[http://kohki.hatenablog.jp/entry/hugo-portfolio](Hugo + GitHub Pagesでポートフォリオを作る)</li>
+<li>[https://qiita.com/kwappa/items/03ffdeb89039a7249619](GitHub PagesのUser Pagesでドキュメントルートを変更するにはmasterを殺す)</li>
 </ul>
-
 <p>masterブランチを殺して、代わりに <code>git subtree push --prefix docs/ origin master</code> とか叩くことで/docsをorigin/masterにpushできる。origin/masterって消せるんですね、知らんかった。</p>
-
 <p>というわけで、よくわからないsubmoduleの管理などせずとも(gitのsubmoduleって結構難しい機能だと思う、いつもいまいちよくわからんって言って使ってたし結構気をつかわないといけなかったりする)、簡単にHTMLの管理ができるしpublishも1コマンドでできるしで便利～になった。</p>
-
 <p>実はこの辺の問題があって最近はブログ記事を書けていなかったのだけれど、環境をえいやと整えたのでまたなんか書いていきたいと思います。</p>
-
-<hr />
-
+<hr>
 <p>そういえば私は飽きっぽいので今までいろいろなプロジェクトを始めては途中で飽きてやめたりしてきたが(ここ7年くらいでGitHubリポジトリの数は58になった)、最近は昔やってたやつを引き継いでまた始めたりということもちょくちょくやるようになったりしている気がする。良い傾向だし、そういう感じで過去に挑戦したプロジェクトのサルベージやら供養やらも自然にやっていけたらいいなと思ったり思わなかったり。</p>
 </section>
     <footer>

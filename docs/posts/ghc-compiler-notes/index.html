@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -59,8 +59,6 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
 ビルドコマンド キャッシュは、今のところは cabal new-update してからindex.cacheのchecksumをみて ~/.cabal を丸ごとキャッシュしている。よくわかってないんだけどこれで大丈夫なの？
 あと、以後のjobでも使うので dist-newstyle もworkspaceに放り込んでる。
 何かの参考になれば。">
-
-
 <meta itemprop="datePublished" content="2019-04-04T22:30:29&#43;09:00" />
 <meta itemprop="dateModified" content="2019-04-04T22:30:29&#43;09:00" />
 <meta itemprop="wordCount" content="53">
@@ -68,7 +66,6 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
 
 
 <meta itemprop="keywords" content="Haskell," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="GHCのソースコードのノートを読むやつを作った"/>
 <meta name="twitter:description" content="タイトルがふわっとしてるけど見れば多分わかる。
@@ -114,22 +111,13 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
       <time datetime="2019-04-04 10:30">2019-04-04</time>
       <h1>GHCのソースコードのノートを読むやつを作った</h1>
     </header>
-    <section>
-
-<p>タイトルがふわっとしてるけど見れば多分わかる。</p>
-
+    <section><p>タイトルがふわっとしてるけど見れば多分わかる。</p>
 <p><a href="https://ghc-compiler-notes.readthedocs.io/en/latest/">ghc-compiler-notes</a></p>
-
-<h2 id="経緯とか">経緯とか</h2>
-
+<h2 id="heading">経緯とか</h2>
 <p>注意: 作ったと書いてるが私の力ではなく主に水無さん(<a href="https://github.com/mizunashi-mana">@mizunashi-mana</a>)とわどさん(<a href="https://github.com/waddlaw">@waddlaw</a>)のお力添えによるところが大きい。</p>
-
 <p>GHCのソースコードにはNoteと称して有益な(GHCの内部実装等に関する)情報が書いてあることは有名だと思うけど、実際にそれはまとまったりはしてなかったので知る人ぞ知る、みたいな情報であった。こういう他のドキュメントには書いてないような貴重な情報が誰にも読まれることなく眠っているのはもったいないと常々感じていたのでそれを読めるようにしたかった。</p>
-
 <p>このプロジェクトは最近GitLabに移った方の<a href="https://gitlab.haskell.org/ghc/ghc">ghc/ghc</a>のソースコードに埋められているNotes部分を抜粋しそれを比較的読みやすい形で並べて整理したものである。</p>
-
-<h2 id="現在の仕様一覧-ざっくり">現在の仕様一覧(ざっくり)</h2>
-
+<h2 id="heading-1">現在の仕様一覧(ざっくり)</h2>
 <ul>
 <li>compiler, libraries, utils以下にあるモジュールを再帰的に読んでドキュメントとして吐くようになっている</li>
 <li>ghc/ghcはデプロイのたびにクローンしているので、ドキュメントの参照元は比較的最近のmasterであることが期待される</li>
@@ -137,49 +125,33 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
 <li>(Noteのフォーマットがまともなら)箇条書き等にも対応</li>
 <li>色々欠陥があるコードブロックの表示</li>
 </ul>
-
-<h2 id="中身-雰囲気">中身(雰囲気)</h2>
-
+<h2 id="heading-2">中身(雰囲気)</h2>
 <p>実装は、checkoutしてきたソースコードの中身を辿ってコメントの該当箇所を抜き出してきて、reST形式てファイルに吐きreadthedocsに突っ込んでいるだけである。</p>
-
 <p>ちなみにNoteの箇所を抜き出す実装は私は完全にノータッチで上に上げたお二人がやってくれたので詳しいことはよくわかりません。</p>
-
 <p>ちなみにこのNoteは書かれている場所によりフォーマットがまちまちで、Noteのタイトル表からコメントの形式や箇条書きの形式、コードブロックの指定の仕方に至るまで全く統一されていないという荒れっぷりなので実装は大変だったと思う。</p>
-
-<h2 id="今後の課題等">今後の課題等</h2>
-
+<h2 id="heading-3">今後の課題等</h2>
 <ul>
 <li>コードブロックはfalse positiveとfalse negativeだらけなので流石になんとかしたい(しかしフォーマットが統一されてなさすぎてかなり厳しい)</li>
 <li>文章中の他のノートへのリンクをちゃんとリンクとして辿れるようにしたい</li>
 <li>masterだけでなくて特定のタグがついたghcのバージョン等をスナップショットとして見られるようにしたい</li>
 </ul>
-
-<h2 id="ciについて">CIについて</h2>
-
+<h2 id="ci">CIについて</h2>
 <p>このプロジェクトで主に私が頑張ったところがCIだったのでCIを少しだけ解説。</p>
-
 <p>CIはCircleCIを使っている。プロジェクト自体のビルドはcabalでもstackでも出来るが、Haskell公式のdocker imageがcabalとghcが入ったやつなのでそれを使っている。多分docker imageは次のいずれかを使うと良い。</p>
-
 <ul>
 <li><a href="https://hub.docker.com/_/haskell">haskell</a>: 7.8, 7.10, 8.0, 8.2, 8.4, 8.6などがある</li>
 <li><a href="https://hub.docker.com/r/fpco/haskell/">fpco/haskell</a>: GHC8.0.2版のみ。stackなので他のものはインストールすればよいというのは確かにそうだが…</li>
 </ul>
-
 <p>公式のはまだ8.6.4がリリースされてないみたいなので必要であれば<a href="https://github.com/freebroccolo/docker-haskell/issues/87">これ</a>を見ると良い。</p>
-
 <p>また、CircleCIであれば<a href="https://circleci.com/orbs/registry/orb/haskell-works/haskell-build">haskell-build</a>というorbが用意されているので、単にビルドするだけならこれが簡単で良いと思う。</p>
-
-<h3 id="ビルドコマンド">ビルドコマンド</h3>
-
+<h3 id="heading-4">ビルドコマンド</h3>
 <p>キャッシュは、今のところは <code>cabal new-update</code> してからindex.cacheのchecksumをみて <code>~/.cabal</code> を丸ごとキャッシュしている。よくわかってないんだけどこれで大丈夫なの？</p>
-
 <p>あと、以後のjobでも使うので <code>dist-newstyle</code> もworkspaceに放り込んでる。</p>
-
 <p>何かの参考になれば。</p>
 <div class="highlight"><pre class="chroma"><code class="language-yml" data-lang="yml"><span class="w">  </span>build-test-8_6_3<span class="p">:</span><span class="w">
 </span><span class="w">    </span>working_directory<span class="p">:</span><span class="w"> </span>~/workspace<span class="w">
 </span><span class="w">    </span>docker<span class="p">:</span><span class="w">
-</span><span class="w">      </span>-<span class="w"> </span>image<span class="p">:</span><span class="w"> </span>haskell<span class="p">:</span><span class="m">8.6.3</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>image<span class="p">:</span><span class="w"> </span>haskell<span class="p">:</span><span class="m">8.6</span><span class="m">.3</span><span class="w">
 </span><span class="w">    </span>steps<span class="p">:</span><span class="w">
 </span><span class="w">      </span>-<span class="w"> </span>checkout<span class="w">
 </span><span class="w">      </span>-<span class="w"> </span>run<span class="p">:</span><span class="w"> </span>cabal<span class="w"> </span>new-update<span class="w">
@@ -195,7 +167,8 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
 </span><span class="w">      </span>-<span class="w"> </span>persist_to_workspace<span class="p">:</span><span class="w">
 </span><span class="w">          </span>root<span class="p">:</span><span class="w"> </span>.<span class="w">
 </span><span class="w">          </span>paths<span class="p">:</span><span class="w">
-</span><span class="w">            </span>-<span class="w"> </span>dist-newstyle</code></pre></div></section>
+</span><span class="w">            </span>-<span class="w"> </span>dist-newstyle<span class="w">
+</span></code></pre></div></section>
     <footer>
       <hr>
       <div class="meta">

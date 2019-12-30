@@ -28,7 +28,8 @@ Isabelle で検証って何するの ブロックチェーンはコンセンサ�
 実際の証明について 証明は基本的に論文に沿って進めた: https://github.com/cbc-casper/cbc-casper-paper
 ただし Safety Oracle の証明について、論文では clique というタイプのグラフについての性質を示すことで証明を行っているが、今回はこれを inspector(finality detector)というやつに一般化して証明を行った。
 完走した感想 ドメイン知識がないこともあってめっちゃ大変だったというのが正直なところ。アタリマエであるが、論文に書いてない行間を埋める作業や誤植・足りない仮定を追加するなどの作業はちゃんと理論側の理解がないとやはりつらい。
-一方で、今回は「理論側は別の人・定理証明は私」という分担を行ったが、そういう感じでもこういう証明の仕事を行うことは不可能ではないなという手応えを感じることが出来たのも良かった気がする。</description>
+一方で、今回は「理論側は別の人・定理証明は私」という分担を行ったが、そういう感じでもこういう証明の仕事を行うことは不可能ではないなという手応えを感じることが出来たのも良かった気がする。
+証明がめっちゃ汚いのとまだ一般化する余地がそれなりに残っているので(あと Liveness の証明という大仕事も手付かずだし…)、気が向いたらまた続きをやりたいと思います。</description>
       </item>
     
       <item>
@@ -55,10 +56,11 @@ data Sample = Sample { key :: VarChar 20 :- &amp;#39;[&amp;#34;PRIMARY KEY&amp;#
         <description>調べたけどあんまり情報がなかったので。
 AppSync Pipeline Resolver AppSyncにはPipeline Resolverというリゾルバーがあり、これによって複数のリゾルバーを指定できる、とある。
 CFnにはfunctionConfigurationを指定するといいよと書いてある。serverless-appsync-pluginだと次のように書ける。
-custom:appSync:mappingTemplates:-type:Queryfield:testPipelineQueryrequest:&amp;#39;./mapping-templates/before.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;before&amp;#34; mapping templateresponse:&amp;#39;./mapping-templates/after.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;after&amp;#34; mapping templatekind:PIPELINEfunctions:-authorizeFunction-fetchDataFunctionfunctionConfigurations:-dataSource:graphqlLambdaname:&amp;#39;authorizeFunction&amp;#39;request:&amp;#39;./mapping-templates/authorize-request.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39;-dataSource:dataTablename:&amp;#39;fetchDataFunction&amp;#39;request:&amp;#39;./mapping-templates/fetchData.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39; でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
- リゾルバーに対して指定できる処理の単位を&amp;rdquo;function&amp;rdquo;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&amp;rdquo;functionからなる&amp;rdquo; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
-before mapping template ↓ authorizeFunction request mapping template ↓ authorizeFunction本体 ↓ authorizeFunction response mapping template ↓ fetchDataFunction request mapping template ↓ fetchDataFunction本体 ↓ fetchDataFunction response mapping template ↓ after mapping template  functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。
-Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。</description>
+custom:appSync:mappingTemplates:-type:Queryfield:testPipelineQueryrequest:&amp;#39;./mapping-templates/before.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;before&amp;#34; mapping templateresponse:&amp;#39;./mapping-templates/after.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;after&amp;#34; mapping templatekind:PIPELINEfunctions:-authorizeFunction-fetchDataFunctionfunctionConfigurations:-dataSource:graphqlLambdaname:&amp;#39;authorizeFunction&amp;#39;request:&amp;#39;./mapping-templates/authorize-request.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39;-dataSource:dataTablename:&amp;#39;fetchDataFunction&amp;#39;request:&amp;#39;./mapping-templates/fetchData.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39;でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
+ リゾルバーに対して指定できる処理の単位を&amp;quot;function&amp;quot;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&amp;quot;functionからなる&amp;rdquo; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
+before mapping template ↓ authorizeFunction request mapping template ↓ authorizeFunction本体 ↓ authorizeFunction response mapping template ↓ fetchDataFunction request mapping template ↓ fetchDataFunction本体 ↓ fetchDataFunction response mapping template ↓ after mapping template functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。
+Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。
+設定例を以下に示す。</description>
       </item>
     
       <item>
@@ -69,8 +71,6 @@ Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorize
         <description>-ddump-simpl で出力されるSimplified Coreをいい感じに解析して読めるやつを作ろうかと思ってたけどつらすぎたので(少なくともこの方針では)やめた。
 以下愚痴を述べますがこれは私が結構無理なことをやろうとしているだけでGHCに(そこまで)非はないと思うし直してくれという意味で言ってるわけでもない。いや直してくれるならありがたいんだけど。
 様子 様子です
-Coreに色がつき始めたぞ pic.twitter.com/M1SmAFgPOB
-&amp;mdash; みょん (@myuon_myon) 2019年5月16日 
 CoreSyn CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。
 まずこの時点で嫌な予感がするよねという感じ。CoreSynは自作することになる。
 PprCore -ddump-simplの出力フォーマットはPprCoreによって制御されている。中を読むとわかるがこれが実はASTとあまり対応がない。
@@ -83,7 +83,9 @@ foobar :: Type [GblId, Str=&amp;lt;S,U&amp;gt;, Unf=Unf{...なんやらかんや
 (ちなみにGHCはGHC拡張をオンにするとParserどころかLexerもゴリゴリ挙動が変わるので結構すごいと思う。MagicHashとか典型例ですね。あとはCPP入れると複数行文字列リテラルを改行をエスケープすることで書けるようになるとか。変態的すぎると思う。)
 識別子は主に $ 問題と # 問題の2つ？ある。
 GHC Coreにはworker/wrapper変換という有名な最適化が入っているがこれにより新たに導入されるworkerには識別子の先頭に $w マークが付与される。ユーザー側で識別子に使えない文字を割り振ることで衝突等を回避してるんだろうか(しかしRenamerとかで上手く処理することも可能な気はする。そうでもないんだろうか)。しかしこれによりLexerが正しくtokenizeできなくなる(Module.$wfoobar は qualified operator Module.$ と varid foobar に分解される)。
-次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。</description>
+次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。
+というわけでLexerも自作することになる。
+この辺で諦めた ここまで来ていや〜厳しいってなった。Lexer Parser ASTまで自作するとか何と戦ってるんだという感じだしそもそもCoreくらいちゃんと読んでって言われるとまぁそうね…という気持ちになる。そもそもここでこれを頑張ったところでGHCのCore付近は毎バージョンごとにめちゃくちゃ変わりまくるのでどうせすぐ動かなくなると思うとメンテも大変そうだしなぁという後ろ向きな感情しかない。</description>
       </item>
     
       <item>
@@ -93,7 +95,7 @@ GHC Coreにはworker/wrapper変換という有名な最適化が入っている�
         <guid>https://myuon.github.io/posts/haskell-atcoder/</guid>
         <description>最近HaskellでAtCoderの問題を解いたりしているのでごく基本的な知見をまとめておく。
 テクニック集 多くは割と色んな人がすでに言っていることではある。また、想定解法を正しく実装すれば以下のようなことを守らなくても時間内に収まるだろうが、GHCは最適化が効かなければ10倍遅くなる言語であるので普段から守っておくに越したことはないと思う。
- 環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。  Strict拡張がない BangPatterns拡張はある 環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない  文字列  基本はData.ByteString.Chan8 Stringは死んでも使わない(遅いので) Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない  リスト  リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く)) 添字アクセスと結合は死んでもしない 遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと) 累積和はscan系を使うといいよ  Vector: 基本はData.Vector.Unboxed  BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難 push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが) Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る 便利なAPI: create, unfoldrN 注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)  データ構造  その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど) Data.Set: priority queueの実装が面倒な場合 Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合  再帰の実装  単なるループはfoldl&#39;, 早期リターンが必要ならfoldr 雑に再帰したいときはControl.Monad.Fix.fixを使っても良い Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと  GHC最適化系:  繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される) タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全 datatypeのフィールドも正格にしておくこと コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない  パフォーマンス:  実行時間はC++やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い) メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)   入力  上にも書いたようにByteStringで読み込む 「n個の数値の読み出し」とかはVectorでササッと書く  例 例: a1 .</description>
+ 環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。  Strict拡張がない BangPatterns拡張はある 環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない   文字列  基本はData.ByteString.Chan8 Stringは死んでも使わない(遅いので) Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない   リスト  リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く)) 添字アクセスと結合は死んでもしない 遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと) 累積和はscan系を使うといいよ   Vector: 基本はData.Vector.Unboxed  BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難 push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが) Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る 便利なAPI: create, unfoldrN 注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)   データ構造  その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど) Data.Set: priority queueの実装が面倒な場合 Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合   再帰の実装  単なるループはfoldl&#39;, 早期リターンが必要ならfoldr 雑に再帰したいときはControl.Monad.Fix.fixを使っても良い Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと   GHC最適化系:  繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される) タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全 datatypeのフィールドも正格にしておくこと コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない   パフォーマンス:  実行時間はC++やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い) メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)    入力  上にも書いたようにByteStringで読み込む 「n個の数値の読み出し」とかはVectorでササッと書く  例 例: a1 .</description>
       </item>
     
       <item>
@@ -108,7 +110,7 @@ GHC Coreにはworker/wrapper変換という有名な最適化が入っている�
 例: ボタン 例として押した回数が表示されるボタンを作ってみる。
 https://github.com/myuon/minilight/blob/master/examples/button-counter.hs
 コード自体はせいぜい30行程度で書けるので結構お手軽だと思う。
-以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
+ 以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
 data Button = Button { font :: SDL.Font.Font, counter :: Int } new :: MiniLight Button new = do font &amp;lt;- loadFont (FontDescriptor &amp;#34;IPAGothic&amp;#34; (FontStyle False False)) 22 return $ Button {font = font, counter = 0} 以下がボタンコンポーネントの定義。ComponentUnitのインスタンスを作れば良い。viewはfiguresで、イベントハンドラーはonSignalで、モデルの更新はupdateで、キャッシュの設定はuseCacheでそれぞれ行う。
 instance ComponentUnit Button where update = return figures comp = do textTexture &amp;lt;- liftMiniLight $ text (font comp) (Vect.V4 255 255 255 255) $ if counter comp == 0 then &amp;#34;Click me!</description>
       </item>
@@ -143,7 +145,7 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
         <description>前に入門記事を書いてそこから色々調べたりしてたのでその備忘録として
 アルゴリズムについて カメラから出たレイをたどりながら光線のシミュレーションを行う単純なアルゴリズムをレイトレーシングと言って、それを確率的な計算によってオブジェクトの数に依らない計算量で計算できるように改良したものをパストレーシングと呼ぶらしい(正確な定義はよくわからなかったがアルゴリズムの差から名前が違うみたい)。
 アルゴリズムの詳細については次とかを見るとよさそう。
- memoRANDOM 物理ベースレンダラ edupt解説  パストレーシングアルゴリズムの初出は&amp;rdquo;The rendering equation (J. Kajiya, 1986)&amp;ldquo;か？
+ memoRANDOM 物理ベースレンダラ edupt解説  パストレーシングアルゴリズムの初出は&amp;quot;The rendering equation (J. Kajiya, 1986)&amp;ldquo;か？
 bidirectional, NEE, metropolis light transport, photon mappingあたりは実装してみたいがお勉強が先かも。
 NEE (Next Event Estimation) 悩みとして、memoRANDOMさんのサイトに載ってる通りに、3点のレンダリング方程式をベースにしたNEEを実装してみたけど寄与が小さすぎて全然効果がなかった。単に実装を間違えているだけか？
 また、調べているとshadow rayを蓄積したあと反射を行い、そっちで同じ光源に向けてexplicitなrayが飛んだとしたら無視するみたいなアルゴリズムでNEEを計算しているサイトも見かけたけど、それは何か違いがあるのだろうかと思った。NEEの正しいアルゴリズムがよくわからない。(というか、本当はちゃんと平均とかを計算してどういうアルゴリズムなら正しい結果が得られるかは手で確認すべきかなと思う)
@@ -153,8 +155,9 @@ Stratified Sampling 層化サンプリングによってサンプルの座標が
 そもそもシェーダー言語とかCUDAとかにパストレーシングアルゴリズムをナイーブに突っ込んでるのとかよく見るんだけど本当にそんなんでいいの？という気持ちになったりならんかったりする。
  Path tracing on GPU  Unity Unity(のComputeShaderなんか)を使うとGPUを使った計算が簡単にできる。要は単にHLSL(これはWindowsだから？)とのintegrationがUnityに用意されているというだけのことだけど、Unityは普通に解説も多いしGPUを使ったレイトレーシングの入門にはいいかもしれない。
  GPU Ray Tracing in Unity – Part 1  例えば次のような画像が割と簡単に出せる。
-なるほど pic.twitter.com/vgvv8ohDdk
-&amp;mdash; みょん (@myuon_myon) 2019年3月3日</description>
+WebGL 人間に見せるUIとしてWebGLにして吐くのは結構ありかもしれないと思っていた。WebGLはRustを使っても吐けるみたいだった(けど中身は普通にshader言語書いてたのでRustで書けるとは言わない気もする)。
+実際にWebGLでやってる例とかもあって面白かったのでなおさら。
+ gfx-rs/gfx WebGL+GLSLによる超高速なパストレーシング http://madebyevan.com/webgl-path-tracing/  </description>
       </item>
     
       <item>
@@ -165,11 +168,11 @@ Stratified Sampling 層化サンプリングによってサンプルの座標が
         <description>タイトルの通り。大体以下のPRの説明読めば分かる。
 https://github.com/hashicorp/terraform/pull/2825
 Terraform側の設定 local envで環境を作ってDynamoDB Localをテスト用途で動かすという前提。以下がproject structure。
-&amp;lt;project root&amp;gt; - infrastructure - local/ - main.tf ここにDynamoDB Localの設定を入れる - modules/ - dynamodb/table.tf ここにテーブルの設定など  infrastructure/local/main.tfでは、endpointsを指定することができる。(デプロイ時にこのendpointを参照してテーブルを作ったりする)
-provider &amp;quot;aws&amp;quot; { region = &amp;quot;ap-northeast-1&amp;quot; endpoints { dynamodb = &amp;quot;http://localhost:8000&amp;quot; } }  DynamoDB Localは普通に動かせばよい。
+&amp;lt;project root&amp;gt; - infrastructure - local/ - main.tf ここにDynamoDB Localの設定を入れる - modules/ - dynamodb/table.tf ここにテーブルの設定など infrastructure/local/main.tfでは、endpointsを指定することができる。(デプロイ時にこのendpointを参照してテーブルを作ったりする)
+provider &amp;quot;aws&amp;quot; { region = &amp;quot;ap-northeast-1&amp;quot; endpoints { dynamodb = &amp;quot;http://localhost:8000&amp;quot; } } DynamoDB Localは普通に動かせばよい。
 port:8000で起動させたら、いつも通りterraform -e dev applyでDynamoDB Localにテーブルができる。
 スクリプト テストで使おうと思ったら、このDynamoDB Localを立ち上げる→terraform apply→テスト実行→DynamoDB Localを落とすを何度も繰り返すことになって面倒なので、私はMakefileを書いている。
-install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dynamodb; \ 	wget https://s3-ap-northeast-1.amazonaws.com/dynamodb-local-tokyo/dynamodb_local_latest.tar.gz; \ 	tar -xf ./dynamodb_local_latest.tar.gz test: $(MAKE) startTest # ここでテスト export .</description>
+install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dynamodb; \ 	wget https://s3-ap-northeast-1.amazonaws.com/dynamodb-local-tokyo/dynamodb_local_latest.tar.gz; \ 	tar -xf ./dynamodb_local_latest.tar.gz test: $(MAKE) startTest # ここでテスト export ...; \ 	go test .</description>
       </item>
     
       <item>
@@ -180,8 +183,8 @@ install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dy
         <description>定理証明、特に定理証明支援系(Proof Assistant)はその存在こそ少しずつ浸透しつつあるような気がしないでもないけれど資料とか全然まとまってないのが不便だなと前々から思っていたのでリソースをまとめておきます。
 これも追加してほしいみたいなのあったら教えてください。
 Proof Assistants 始めるなら次の中から選ぶのがよいと思います。
- Coq  Calculus of constructionsベースの型システムとリッチなコマンドを備えた言語 このリストの中では最もコミュニティが大きい、入門書等も豊富 型システムと項を書くためのGallina, コンパイラへの命令を記述するためのVernacular, タクティクスの定義に使うLtacなどの言語が混ざって出てくるのが初心者には混乱必至 結構複雑な言語なので使いこなすのはそれなりに大変  Agda  Martin-Löf type theoryベースの言語 Coqと違ってコマンド等はとても貧弱だが言語が薄いので中の仕組みが分かりやすい、依存型の勉強にはもってこい 実践的に使おうとするとパフォーマンスが悪いのがネック モジュール分割や証明のスキップみたいな面白くないところに時間を取られる可能性あり  Idris  Agdaに似た感じの言語 この中では唯一純粋なプログラミング言語として使用可能(runtimeがあって実行可能コードを吐ける)だが実際に動かして使うにはまだまだという感じ Agdaよりはサポートが多く証明が書きやすいはず(未検証なので嘘かも)  Lean  この中では後発、CoqやAgdaに似ており、Agdaよりは書きやすくリッチでCoqよりは薄くて簡単 数年前にメジャーバージョンが2から3に上がりそこで多少の断絶があるらしい 機能網羅的なリファレンスがまだ用意されてないらしいのでCoqやAgdaの知識がないと使いこなすのは難しいかもしれない  Isabelle  この中では唯一Curry-Howardをベースとしない形式証明(依存型もない) 豊富なライブラリと強力なproverによる自動証明が魅力 「普通の」数学をやりたいならこれがおすすめ 公式のリファレンスはあるが機能は膨大、非公式ドキュメントも少ないので習得は骨が折れるかも   入門書等 出版されていてもドラフト版のpdfが無料で読めるものが多い
- Software Foundations: Coqを使用しプログラム意味論的な話題が中心。Coqの説明ばかりというわけではないので他言語ユーザーでも読めると思われる。 Software Foundations in Idris: Software FoundationsのIdris版 Concrete Semantics: Isabelle/HOLを使用しこちらもプログラム意味論系の証明を行う本。前半はIsabelleの説明で後半はコンピューターサイエンスという構成。 Certified Programming with Dependent Types: Coqで依存型を学べる本。Coqに限らず定理証明で幅広く使える話が書いてあるので非Coqユーザーでもおすすめ。 Verified Functional Programming in Agda: Agdaの本、読んでないので詳細知らず Coq&amp;rsquo;Art: Coqの定評のある入門書、詳細は知らない Coq/SSReflect/MathCompによる定理証明: 日本語(！)で書かれたCoqの入門書  入門記事等 読み物もあり</description>
+ Coq  Calculus of constructionsベースの型システムとリッチなコマンドを備えた言語 このリストの中では最もコミュニティが大きい、入門書等も豊富 型システムと項を書くためのGallina, コンパイラへの命令を記述するためのVernacular, タクティクスの定義に使うLtacなどの言語が混ざって出てくるのが初心者には混乱必至 結構複雑な言語なので使いこなすのはそれなりに大変   Agda  Martin-Löf type theoryベースの言語 Coqと違ってコマンド等はとても貧弱だが言語が薄いので中の仕組みが分かりやすい、依存型の勉強にはもってこい 実践的に使おうとするとパフォーマンスが悪いのがネック モジュール分割や証明のスキップみたいな面白くないところに時間を取られる可能性あり   Idris  Agdaに似た感じの言語 この中では唯一純粋なプログラミング言語として使用可能(runtimeがあって実行可能コードを吐ける)だが実際に動かして使うにはまだまだという感じ Agdaよりはサポートが多く証明が書きやすいはず(未検証なので嘘かも)   Lean  この中では後発、CoqやAgdaに似ており、Agdaよりは書きやすくリッチでCoqよりは薄くて簡単 数年前にメジャーバージョンが2から3に上がりそこで多少の断絶があるらしい 機能網羅的なリファレンスがまだ用意されてないらしいのでCoqやAgdaの知識がないと使いこなすのは難しいかもしれない   Isabelle  この中では唯一Curry-Howardをベースとしない形式証明(依存型もない) 豊富なライブラリと強力なproverによる自動証明が魅力 「普通の」数学をやりたいならこれがおすすめ 公式のリファレンスはあるが機能は膨大、非公式ドキュメントも少ないので習得は骨が折れるかも    入門書等 出版されていてもドラフト版のpdfが無料で読めるものが多い
+ Software Foundations: Coqを使用しプログラム意味論的な話題が中心。Coqの説明ばかりというわけではないので他言語ユーザーでも読めると思われる。 Software Foundations in Idris: Software FoundationsのIdris版 Concrete Semantics: Isabelle/HOLを使用しこちらもプログラム意味論系の証明を行う本。前半はIsabelleの説明で後半はコンピューターサイエンスという構成。 Certified Programming with Dependent Types: Coqで依存型を学べる本。Coqに限らず定理証明で幅広く使える話が書いてあるので非Coqユーザーでもおすすめ。 Verified Functional Programming in Agda: Agdaの本、読んでないので詳細知らず Coq&#39;Art: Coqの定評のある入門書、詳細は知らない Coq/SSReflect/MathCompによる定理証明: 日本語(！)で書かれたCoqの入門書  入門記事等 読み物もあり</description>
       </item>
     
       <item>
@@ -189,13 +192,12 @@ Proof Assistants 始めるなら次の中から選ぶのがよいと思います
         <link>https://myuon.github.io/posts/start-ray-tracing/</link>
         <pubDate>Sun, 06 Jan 2019 13:34:10 +0900</pubDate>
         <guid>https://myuon.github.io/posts/start-ray-tracing/</guid>
-        <description> レイトレ自体は前から興味あったんだけど年末年始でいよいよ真面目に入門し始めました(今後も続けるかは不明)。
+        <description>レイトレ自体は前から興味あったんだけど年末年始でいよいよ真面目に入門し始めました(今後も続けるかは不明)。
 Ray tracing in one weekendシリーズを読んでこの3冊分の実装をRustで書きました。 本に沿って実装したのでレイトレーサーとして使えるような感じにはなってない(再利用性がなさすぎるところがちょいちょいある)。
  Ray Tracing Minibooks (3 Book Series) リポジトリ  スクショ 個人的にお気に入りのやつをいくつか貼っておきます
 今後やりたいこととか 本では純粋なCPU実装で最適化とかもそこまで(3冊目の後半はやるけど)だったので、まぁその辺かなー。SIMDとか使って高速化するのはできそうなのと、GPUを使ったちゃんとした高速レイトレみたいなのもちょっとやってみたい(そこまでそっちに傾倒する気はないしガリガリチューニングしたり最適化テク実装というよりは、もっと綺麗な絵を高速にレンダリングしたい)。
 レイトレにも色々なテクがあるようで(bidirectionalなんとかとかmetropolisなんとかとか)、その辺によっても得意なシチュエーションが変わってくるみたいなので色々実装して遊べたりしたら面白そうだなーと思う。
-アルゴリズムの詳細については以下のスライドが詳しくてしかも超面白かった。
- </description>
+アルゴリズムの詳細については以下のスライドが詳しくてしかも超面白かった。</description>
       </item>
     
       <item>
@@ -236,13 +238,6 @@ SoPLセミナーも3月くらいに人を集めて4月から本格始動みた�
         <description>この記事とは特に関係ないのですがVTuber Techアドベントカレンダー(その1 その2)があるらしいので興味がある人は覗いてみるといいんじゃないでしょうか。
 バーチャル引きこもり病弱定理証明士 夕暮寝子というのがいて、その子の裏側のシステムを作ったので(作ったのはだいぶ前)その解説をします。なお問題は山積みの模様(そもそも私以外の人が使う想定じゃないので自分でいじるなりなんなりしてください)。
 技術スタック: Docker, Python, TypeScript, dlib (Python bindings), OpenCVちょこっと, Live2D SDK
-💞はじめまして💞
-🎊夕暮寝子といいます🎊
-😴電脳空間で引きこもりをやっています😴
-💻プログラムとか証明とかを書きます💻
-💪Live2D動かすやつ作ってるのでそれができたらデビューします💪
-👏よろしくお願いします👏#Vtuber準備中#Vtuber始めました#新人Vtuber#Vtuber pic.twitter.com/UAM9iTrFLU
-&amp;mdash; 夕暮寝子 (@YugureNeko) 2018年7月24日 
 リポジトリ コードは全部公開しています。
 https://github.com/myuon/juniQ
 免責事項
@@ -278,7 +273,7 @@ E2Eテスト: エンドユーザーが行う操作と同じ操作を行い期待
 サービステストはもちろん書く。というかこれがすべて。そこまで難しくない世のほとんどのプログラムならサービステストをsemanticsに乗っ取って書くだけでカバレッジ100%にできると思う。
 実装詳細テスト要らないのか じゃあ実装詳細テスト書いちゃだめかというとそうではないです。普通に必要になることもある。
  ライブラリとして切り出す場合: ライブラリはそこでexportされる関数がsemanticsになるので今度そのテストはむしろ書いてくださいとなる。同じプログラムでも使われ方によって意味が変わってくるのでしょうがない。 スタブとかの都合: サービステストは通常複数のモジュールをまたがるのでローカルサーバーとかでテストできるのが一番良いのだけど使ってるSDKの都合とかでそういうテストが書きにくいのでこの画面のテストだけは実装詳細でやりますみたいなのはアリだと思う(というかしょうがない) 実装が非自明な場合: 何かの方程式を超多ステップで解くとか複雑なアルゴリズムを手書きするとか まぁ実装が非自明な場合はやった方がいいですね 当たり前や  ｳｪｯﾌﾞｻｰﾋﾞｽの構成 今こういう感じでやっておる
- サーバーサイド  SDK: サーバーサイドが提供するAPIをたたくだけのSDKを用意する; クライアントサイドで読み込んで使う サーバーサイドのコード サービステスト: SDKに対するテストをがりがり書く (必要があればモジュールごとに)実装詳細テスト  クライアントサイド  (必要があればコンポーネント/画面ごとに)Viewの詳細テスト   ひとまず困ってない。あとテストはやっぱり書きたくない。
+ サーバーサイド  SDK: サーバーサイドが提供するAPIをたたくだけのSDKを用意する; クライアントサイドで読み込んで使う サーバーサイドのコード サービステスト: SDKに対するテストをがりがり書く (必要があればモジュールごとに)実装詳細テスト   クライアントサイド  (必要があればコンポーネント/画面ごとに)Viewの詳細テスト    ひとまず困ってない。あとテストはやっぱり書きたくない。
 semantics、意識していこうな</description>
       </item>
     
@@ -312,7 +307,7 @@ OGP画像はサイト全体で使いまわされたりすることも多い(ペ�
         <guid>https://myuon.github.io/posts/get-started-with-firebase/</guid>
         <description>Firebaseがすごい話 今までAWSのサービス(サーバーレス中心・LambdaとかDynamoDBとかAPI Gatewayとか)は結構触ってたけどGCP系はノータッチだったので一時期超流行ってた(少し前になんかやたらブログ記事とかが量産されていた時期があったように思うんだけどあれは何だったんだ…)firebaseをこの際触ってみることにした。
 Cloud Firestoreとかいう無敵のDB Cloud Firestoreというまだベータ版だけどFirebaseもイチオシっぽいDBがある。こいつは特にDynamoDBを知ってるとそれに比べても無敵だなと思う。個人的すごいポイント:
- Collection/Documentという分かりやすさ(Partition KeyだのSort Keyだのといった面倒さがない) やたら複雑なベストプラクティスとかもない インデックスが自動でいっぱい貼られる！GSIの制限とかもない！ read/write/deleteの完全リクエスト回数課金という分かりやすさ(あっちもon-demand capacity来ましたが) コンソールから触るのも簡単・分かりやすい rulesによる超細かい権限管理(これはmBaaSだからできないとまぁ困るけど) DynamoDB Stream的な機能もくっついてる Paginationとかにも対応してる emulatorも来た(DynamoDBもdynamodb-localあるよ！)   Firebaseの便利さ Firebaseは認証・FaaS・DB・ストレージあたりが全部オールインワンで全部そろっておりエコシステムがとても強くてよい。どこぞのAmplifyも見習ってほしい(re:Invent2018を見る限り力入れてる感はあった)。クライアントサイドだけですべてを完結させるぞという強さがありやーすごいって感じだった。
+ Collection/Documentという分かりやすさ(Partition KeyだのSort Keyだのといった面倒さがない) やたら複雑なベストプラクティスとかもない インデックスが自動でいっぱい貼られる！GSIの制限とかもない！ read/write/deleteの完全リクエスト回数課金という分かりやすさ(あっちもon-demand capacity来ましたが) コンソールから触るのも簡単・分かりやすい rulesによる超細かい権限管理(これはmBaaSだからできないとまぁ困るけど) DynamoDB Stream的な機能もくっついてる Paginationとかにも対応してる emulatorも来た(DynamoDBもdynamodb-localあるよ！)  Firebaseの便利さ Firebaseは認証・FaaS・DB・ストレージあたりが全部オールインワンで全部そろっておりエコシステムがとても強くてよい。どこぞのAmplifyも見習ってほしい(re:Invent2018を見る限り力入れてる感はあった)。クライアントサイドだけですべてを完結させるぞという強さがありやーすごいって感じだった。
 GCPもそうだけどGoogleのサービスは分かりやすさと欲しいものが大体そろってる感じが強いと思う。よく考えられてるしサービスの質が本当に高いなと思ったりあれこれ。
 Firebaseをやめたいって話 とべた褒めなんですがしばらく書いてFirebaseやめるかーってなった。
  早く東京リージョンに来てくれ (これが一番大きい; Firestoreとかレイテンシが400-500msとかで正直使い物にならない。ページ表示に1秒もかかるサービスを使うほど暇なユーザーもそういないよ！) 地味に高い、というかAWSが安すぎるのでそれに比べるとちょっとお高く感じるのはある。DynamoDBとかおかしいんじゃないかというくらい安いのでまぁね。 あとAppSync使いたかった これは完全な趣味だけど、AppSyncずっと使いたいと思ってたのでせっかくだしこの機会にと思って 正直mBaaSがとてつもなく向いてるようなユースケースではなかったというところが大きい までもFirebaseの勉強になったので良いとしましょう  メインの理由としてはパフォーマンスとコストが大きかった(と言ってもFirebaseは無料枠もあるのでコストはそこまで大きな差はないと思う)。GCPはいい感じのやつを用意しときました！みたいなサービスが多くて、AWSは本当に特定の用途のためだけのサービスを作っといたから設計は自分で考えろやみたいな投げ方してくるのが多いイメージ。AWSの方がめんどいけどちゃんと組むとカリカリにチューニングされたプログラムのごとく本当に安く早くで組めるというイメージはありますね。めんどいけど。
@@ -327,10 +322,9 @@ Firebaseをやめたいって話 とべた褒めなんですがしばらく書�
         <description>Reason ML、やっていこうな 世はまさに大サーバーレス時代なのでLambda Functionやっていきというお気持ち。
 AWS Lambdaで現時点(2018年11月)で対応されている言語はNode.js, Python, Go, C#(dotnet), Javaの5つ。このうち後ろ2つはコールドスタートが激遅なので使い物にならない。で前3つのうちではドキュメントの多いNode.jsが安定ですが、Node.jsをランタイムに採用するとしてしかしJSは書きたくない、そういうときにReason MLはいい感じな選択肢なのでは？というのがこの記事の趣旨です。
 serverless-reason serverless frameworkというサーバーレスアプリをやるのにとても便利なツールがあって、それのReasonで動くテンプレートを作っておいたので好きに使ってくださいという感じ。
- 
 以下このプロジェクトの中身の解説をする。
 echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに定義されている。
-/* Sorry I&amp;#39;m a lazy person! */ type event = { . &amp;#34;pathParameters&amp;#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&amp;gt; Js.Promise.t(unit); type response = { . &amp;#34;statusCode&amp;#34;: int, &amp;#34;body&amp;#34;: string, }; let handler : (event, context, callback) =&amp;gt; Js.Promise.t(response) = (event, _, _) =&amp;gt; { Js.</description>
+/* Sorry I&amp;#39;m a lazy person! */ type event = { . &amp;#34;pathParameters&amp;#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&amp;gt; Js.Promise.t(unit); type response = { . &amp;#34;statusCode&amp;#34;: int, &amp;#34;body&amp;#34;: string, }; let handler : (event, context, callback) =&amp;gt; Js.Promise.t(response) = (event, _, _) =&amp;gt; { Js.log(&amp;#34;hello&amp;#34;); { &amp;#34;statusCode&amp;#34;: 200, &amp;#34;body&amp;#34;: event##pathParameters |&amp;gt; Js.</description>
       </item>
     
       <item>
@@ -357,7 +351,7 @@ https://elm-lang.org/assets/papers/concurrent-frp.pdf
 はじめに 某所でFRPをeffect systemとみなせないか、という大変示唆的な質問をいただいて、気になったのでFRPについて調べてた流れで教えてもらったElmの作者が書いた論文。 自分はFRPについては「なんかEventとBehaviorがあってArrowになったりMonadになったりするやつ」くらいの感覚しかなかったので論文読んでみることにした。
 ところでmarkdownで数式や図を記述するのは大変つらいので記事は適当に日本語で書きます。詳しく知りたい人は論文の方を読んでください。
 あと、ElmはFRP捨てたって言ってた気がするので多分今のElmはもう論文にあるような仕組みで動いてないような気がしないでもない。
-2章 背景  FRPにはClassical, Real-time (とEvent-driven), Arrowizedの3種類ある Classical:  Behavior a = Time -&amp;gt; a: これが時間の経過とともに変わる値を表現する Event a = [(Time, a)]: これがBehaviorのスナップショットを取ったもの 基本はBehaviorをベースに計算を行うけど、実際のプログラムでは無限に細かい時間で計算はできないので30fpsとか決まったタイミングで再計算するかどうかを考えることになる。そういう離散化のためにEventがあるよみたいな感じ  Real-time:  Event a = Behavior (Maybe a) EventもBehaviorで書いちゃえばいいんちゃうん Event, Behaviorをまとめて Signal a = Time -&amp;gt; a と呼ぶことに 論文で説明されてるElm Coreもこれにinspireされてるっぽい  Arrowized:  SF a b = Signal a -&amp;gt; Signal b signal functionというものをベースにしてこれをArrowにする 論文読んだ限りだと理論が難しくなりそうなのでFRPにおける特にArrowの優位性はよくわからなかった 書きやすいってくらいなのか  Message-Passing Concurrency  Concurrent MLの説明 実装はこれで書いたり書かなかったりする(あとの章でtranslationが与えられる)  既存のFRP GUI frameworks  メモリリークする(Haskellなので)(って何度も書いてあってウケるって思った)   3章 Core Language  Dicreteなsignalを扱う 文法: e ::= () | n \in Z | \x.</description>
+2章 背景  FRPにはClassical, Real-time (とEvent-driven), Arrowizedの3種類ある Classical:  Behavior a = Time -&amp;gt; a: これが時間の経過とともに変わる値を表現する Event a = [(Time, a)]: これがBehaviorのスナップショットを取ったもの 基本はBehaviorをベースに計算を行うけど、実際のプログラムでは無限に細かい時間で計算はできないので30fpsとか決まったタイミングで再計算するかどうかを考えることになる。そういう離散化のためにEventがあるよみたいな感じ   Real-time:  Event a = Behavior (Maybe a) EventもBehaviorで書いちゃえばいいんちゃうん Event, Behaviorをまとめて Signal a = Time -&amp;gt; a と呼ぶことに 論文で説明されてるElm Coreもこれにinspireされてるっぽい   Arrowized:  SF a b = Signal a -&amp;gt; Signal b signal functionというものをベースにしてこれをArrowにする 論文読んだ限りだと理論が難しくなりそうなのでFRPにおける特にArrowの優位性はよくわからなかった 書きやすいってくらいなのか   Message-Passing Concurrency  Concurrent MLの説明 実装はこれで書いたり書かなかったりする(あとの章でtranslationが与えられる)   既存のFRP GUI frameworks  メモリリークする(Haskellなので)(って何度も書いてあってウケるって思った)    3章 Core Language  Dicreteなsignalを扱う 文法: e ::= () | n \in Z | \x.</description>
       </item>
     
       <item>
@@ -376,7 +370,8 @@ RustでgRPC Rustでサーバー側の処理を書く。
 まず、上にも書いたようにprotoをRustコードに変換するgRPCコンパイラのRustプラグインが必要になる。これにはprotobuf-codegenとgrpcio-compilerを使うといいよってあった。
 # インストール $ cargo install protobuf-codegen grpcio-compiler # コンパイル $ protoc --rust_out=. --grpc_out=. --plugin=protoc-gen-grpc=`which grpc_rust_plugin` example.proto これによって生成されたRustモジュールを読み込んで使うことになるけど、それにはgrpc-rsを使った(grpc-rustというのもあるけどこっちは触ってない)。
 サーバー側のプログラムはこんな感じで書くと良い。
-コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。</description>
+コンパイルすると、protocol buffersのmessageが定義されたexample.rsと、RPC関連が定義されたexample_grpc.rsが生成される。
+Node.jsでgRPC Node.</description>
       </item>
     
       <item>
@@ -391,10 +386,10 @@ RustでgRPC Rustでサーバー側の処理を書く。
 細かいところで前のテーマで便利だったけど失われてしまった機能性とかもあるのでそういうのはおいおい対応していきたい。
 Gitの管理方法を変えた こっちがむしろメイン。今使ってる静的サイトジェネレータのHugoはGitHubで公式にサポートされてるわけではないので、自分でHTMLファイルを生成する必要がある。一方で、GitHubはユーザーリポジトリ(myuon.github.ioの形のやつ)はmasterブランチがそのまま表示されてしまうのでソースファイルの管理は別ブランチで行う必要があるなどの問題がありめんどいなーと思っていたのだけど、それを解決する方法が分かった。
 結論としては次のサイトに書いてあるようなことをやればいい。
- http://kohki.hatenablog.jp/entry/hugo-portfolio https://qiita.com/kwappa/items/03ffdeb89039a7249619  masterブランチを殺して、代わりに git subtree push --prefix docs/ origin master とか叩くことで/docsをorigin/masterにpushできる。origin/masterって消せるんですね、知らんかった。
+ [http://kohki.hatenablog.jp/entry/hugo-portfolio](Hugo + GitHub Pagesでポートフォリオを作る) [https://qiita.com/kwappa/items/03ffdeb89039a7249619](GitHub PagesのUser Pagesでドキュメントルートを変更するにはmasterを殺す)  masterブランチを殺して、代わりに git subtree push --prefix docs/ origin master とか叩くことで/docsをorigin/masterにpushできる。origin/masterって消せるんですね、知らんかった。
 というわけで、よくわからないsubmoduleの管理などせずとも(gitのsubmoduleって結構難しい機能だと思う、いつもいまいちよくわからんって言って使ってたし結構気をつかわないといけなかったりする)、簡単にHTMLの管理ができるしpublishも1コマンドでできるしで便利～になった。
 実はこの辺の問題があって最近はブログ記事を書けていなかったのだけれど、環境をえいやと整えたのでまたなんか書いていきたいと思います。
-そういえば私は飽きっぽいので今までいろいろなプロジェクトを始めては途中で飽きてやめたりしてきたが(ここ7年くらいでGitHubリポジトリの数は58になった)、最近は昔やってたやつを引き継いでまた始めたりということもちょくちょくやるようになったりしている気がする。良い傾向だし、そういう感じで過去に挑戦したプロジェクトのサルベージやら供養やらも自然にやっていけたらいいなと思ったり思わなかったり。</description>
+ そういえば私は飽きっぽいので今までいろいろなプロジェクトを始めては途中で飽きてやめたりしてきたが(ここ7年くらいでGitHubリポジトリの数は58になった)、最近は昔やってたやつを引き継いでまた始めたりということもちょくちょくやるようになったりしている気がする。良い傾向だし、そういう感じで過去に挑戦したプロジェクトのサルベージやら供養やらも自然にやっていけたらいいなと思ったり思わなかったり。</description>
       </item>
     
       <item>
@@ -602,7 +597,7 @@ Gitの管理方法を変えた こっちがむしろメイン。今使ってる�
         <link>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</link>
         <pubDate>Thu, 14 Dec 2017 00:03:01 +0900</pubDate>
         <guid>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。   今回は小ネタです。  monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。 Coroutine-monad  example: coroutine   名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。  サンプルとしては次のような感じ: countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {- &amp;gt; printProduce countup counting.</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。   今回は小ネタです。  monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。 Coroutine-monad  example: coroutine   名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。  サンプルとしては次のような感じ: countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {-&amp;gt; printProduce countup counting.</description>
       </item>
     
       <item>

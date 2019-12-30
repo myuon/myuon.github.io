@@ -34,8 +34,6 @@ data Sample = Sample { key :: VarChar 20 :- &amp;#39;[&amp;#34;PRIMARY KEY&amp;#
         <description>-ddump-simpl で出力されるSimplified Coreをいい感じに解析して読めるやつを作ろうかと思ってたけどつらすぎたので(少なくともこの方針では)やめた。
 以下愚痴を述べますがこれは私が結構無理なことをやろうとしているだけでGHCに(そこまで)非はないと思うし直してくれという意味で言ってるわけでもない。いや直してくれるならありがたいんだけど。
 様子 様子です
-Coreに色がつき始めたぞ pic.twitter.com/M1SmAFgPOB
-&amp;mdash; みょん (@myuon_myon) 2019年5月16日 
 CoreSyn CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。
 まずこの時点で嫌な予感がするよねという感じ。CoreSynは自作することになる。
 PprCore -ddump-simplの出力フォーマットはPprCoreによって制御されている。中を読むとわかるがこれが実はASTとあまり対応がない。
@@ -48,7 +46,9 @@ foobar :: Type [GblId, Str=&amp;lt;S,U&amp;gt;, Unf=Unf{...なんやらかんや
 (ちなみにGHCはGHC拡張をオンにするとParserどころかLexerもゴリゴリ挙動が変わるので結構すごいと思う。MagicHashとか典型例ですね。あとはCPP入れると複数行文字列リテラルを改行をエスケープすることで書けるようになるとか。変態的すぎると思う。)
 識別子は主に $ 問題と # 問題の2つ？ある。
 GHC Coreにはworker/wrapper変換という有名な最適化が入っているがこれにより新たに導入されるworkerには識別子の先頭に $w マークが付与される。ユーザー側で識別子に使えない文字を割り振ることで衝突等を回避してるんだろうか(しかしRenamerとかで上手く処理することも可能な気はする。そうでもないんだろうか)。しかしこれによりLexerが正しくtokenizeできなくなる(Module.$wfoobar は qualified operator Module.$ と varid foobar に分解される)。
-次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。</description>
+次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。
+というわけでLexerも自作することになる。
+この辺で諦めた ここまで来ていや〜厳しいってなった。Lexer Parser ASTまで自作するとか何と戦ってるんだという感じだしそもそもCoreくらいちゃんと読んでって言われるとまぁそうね…という気持ちになる。そもそもここでこれを頑張ったところでGHCのCore付近は毎バージョンごとにめちゃくちゃ変わりまくるのでどうせすぐ動かなくなると思うとメンテも大変そうだしなぁという後ろ向きな感情しかない。</description>
       </item>
     
       <item>
@@ -58,7 +58,7 @@ GHC Coreにはworker/wrapper変換という有名な最適化が入っている�
         <guid>https://myuon.github.io/posts/haskell-atcoder/</guid>
         <description>最近HaskellでAtCoderの問題を解いたりしているのでごく基本的な知見をまとめておく。
 テクニック集 多くは割と色んな人がすでに言っていることではある。また、想定解法を正しく実装すれば以下のようなことを守らなくても時間内に収まるだろうが、GHCは最適化が効かなければ10倍遅くなる言語であるので普段から守っておくに越したことはないと思う。
- 環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。  Strict拡張がない BangPatterns拡張はある 環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない  文字列  基本はData.ByteString.Chan8 Stringは死んでも使わない(遅いので) Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない  リスト  リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く)) 添字アクセスと結合は死んでもしない 遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと) 累積和はscan系を使うといいよ  Vector: 基本はData.Vector.Unboxed  BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難 push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが) Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る 便利なAPI: create, unfoldrN 注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)  データ構造  その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど) Data.Set: priority queueの実装が面倒な場合 Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合  再帰の実装  単なるループはfoldl&#39;, 早期リターンが必要ならfoldr 雑に再帰したいときはControl.Monad.Fix.fixを使っても良い Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと  GHC最適化系:  繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される) タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全 datatypeのフィールドも正格にしておくこと コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない  パフォーマンス:  実行時間はC++やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い) メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)   入力  上にも書いたようにByteStringで読み込む 「n個の数値の読み出し」とかはVectorでササッと書く  例 例: a1 .</description>
+ 環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。  Strict拡張がない BangPatterns拡張はある 環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない   文字列  基本はData.ByteString.Chan8 Stringは死んでも使わない(遅いので) Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない   リスト  リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く)) 添字アクセスと結合は死んでもしない 遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと) 累積和はscan系を使うといいよ   Vector: 基本はData.Vector.Unboxed  BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難 push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが) Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る 便利なAPI: create, unfoldrN 注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)   データ構造  その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど) Data.Set: priority queueの実装が面倒な場合 Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合   再帰の実装  単なるループはfoldl&#39;, 早期リターンが必要ならfoldr 雑に再帰したいときはControl.Monad.Fix.fixを使っても良い Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと   GHC最適化系:  繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される) タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全 datatypeのフィールドも正格にしておくこと コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない   パフォーマンス:  実行時間はC++やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い) メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)    入力  上にも書いたようにByteStringで読み込む 「n個の数値の読み出し」とかはVectorでササッと書く  例 例: a1 .</description>
       </item>
     
       <item>
@@ -73,7 +73,7 @@ GHC Coreにはworker/wrapper変換という有名な最適化が入っている�
 例: ボタン 例として押した回数が表示されるボタンを作ってみる。
 https://github.com/myuon/minilight/blob/master/examples/button-counter.hs
 コード自体はせいぜい30行程度で書けるので結構お手軽だと思う。
-以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
+ 以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
 data Button = Button { font :: SDL.Font.Font, counter :: Int } new :: MiniLight Button new = do font &amp;lt;- loadFont (FontDescriptor &amp;#34;IPAGothic&amp;#34; (FontStyle False False)) 22 return $ Button {font = font, counter = 0} 以下がボタンコンポーネントの定義。ComponentUnitのインスタンスを作れば良い。viewはfiguresで、イベントハンドラーはonSignalで、モデルの更新はupdateで、キャッシュの設定はuseCacheでそれぞれ行う。
 instance ComponentUnit Button where update = return figures comp = do textTexture &amp;lt;- liftMiniLight $ text (font comp) (Vect.V4 255 255 255 255) $ if counter comp == 0 then &amp;#34;Click me!</description>
       </item>
@@ -209,7 +209,7 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
         <link>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</link>
         <pubDate>Thu, 14 Dec 2017 00:03:01 +0900</pubDate>
         <guid>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。   今回は小ネタです。  monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。 Coroutine-monad  example: coroutine   名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。  サンプルとしては次のような感じ: countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {- &amp;gt; printProduce countup counting.</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。   今回は小ネタです。  monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。 Coroutine-monad  example: coroutine   名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。  サンプルとしては次のような感じ: countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {-&amp;gt; printProduce countup counting.</description>
       </item>
     
       <item>

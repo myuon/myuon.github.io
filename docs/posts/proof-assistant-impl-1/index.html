@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,16 +31,13 @@
 
 <meta itemprop="name" content="Proof Assistantを作る・実装編 その1">
 <meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 18日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Syntax: FOL, LK, Claire   初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。 FOL   Claire.Syntax.FOL data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show)   それぞれfirst-order logicの項と論理式の定義です。  項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。  さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&lt;==&gt;: fml2 = (fml1 :==&gt;: fml2) :/\: (fml2 :==&gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 :&lt;==&gt;: をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。  そもそもこのFormulaはProof Assistantのメタロジックを表すもので、Proof Assistantにおいてメタロジックが正しい(おかしなことがおこらない)ことは絶対に必要なことですがこのことはProof Assistantによって直接検証することは出来ません。 Proof Assistantはメタロジックを用いて現在考えているロジックの上で証明を書く道具なので、メタロジックとしてのFormulaを変えるような操作はしてはいけません。  これがわざわざIsabelleやこのClaireでも標準ライブラリでロジックを再定義する理由で、このメタロジックとロジックの区別は今後も大変重要になるので覚えておいてください。 LK   Claire.">
-
-
 <meta itemprop="datePublished" content="2017-12-18T00:01:47&#43;09:00" />
 <meta itemprop="dateModified" content="2017-12-18T00:01:47&#43;09:00" />
-<meta itemprop="wordCount" content="541">
+<meta itemprop="wordCount" content="534">
 
 
 
 <meta itemprop="keywords" content="AdC2017,定理証明,Haskell," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Proof Assistantを作る・実装編 その1"/>
 <meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 18日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Syntax: FOL, LK, Claire   初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。 FOL   Claire.Syntax.FOL data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show)   それぞれfirst-order logicの項と論理式の定義です。  項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。  さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&lt;==&gt;: fml2 = (fml1 :==&gt;: fml2) :/\: (fml2 :==&gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 :&lt;==&gt;: をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。  そもそもこのFormulaはProof Assistantのメタロジックを表すもので、Proof Assistantにおいてメタロジックが正しい(おかしなことがおこらない)ことは絶対に必要なことですがこのことはProof Assistantによって直接検証することは出来ません。 Proof Assistantはメタロジックを用いて現在考えているロジックの上で証明を書く道具なので、メタロジックとしてのFormulaを変えるような操作はしてはいけません。  これがわざわざIsabelleやこのClaireでも標準ライブラリでロジックを再定義する理由で、このメタロジックとロジックの区別は今後も大変重要になるので覚えておいてください。 LK   Claire."/>
@@ -83,16 +80,16 @@ Proof Assistant 「Claire」の実装について説明していきます。
 <p>
 リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a>
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 Syntax: FOL, LK, Claire
-</h1>
+</h2>
 <p>
 初めにSyntaxの定義をしてからパーサーを用意します。
 これがないと何も出来ないので。
 </p>
-<h2 id="headline-2">
+<h3 id="headline-2">
 FOL
-</h2>
+</h3>
 <p>
 <a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/FOL.hs">Claire.Syntax.FOL</a>
 </p>
@@ -133,9 +130,9 @@ Proof Assistantはメタロジックを用いて現在考えているロジッ�
 <p>
 これがわざわざIsabelleやこのClaireでも標準ライブラリでロジックを再定義する理由で、このメタロジックとロジックの区別は今後も大変重要になるので覚えておいてください。
 </p>
-<h2 id="headline-3">
+<h3 id="headline-3">
 LK
-</h2>
+</h3>
 <p>
 <a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/LK.hs">Claire.Syntax.LK</a>
 </p>
@@ -159,9 +156,9 @@ LK
 LKの推論規則とJudgementを定めます。
 Judgementは仮定と命題をそれぞれ表し、 <code>Qm..Q1 |- P1..Pn</code> を <code>Judgement [Q1..Qm] [P1..Pn]</code> で表すので順番に気をつけてください。
 </p>
-<h2 id="headline-4">
+<h3 id="headline-4">
 Claire
-</h2>
+</h3>
 <p>
 <a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/Claire.hs">Claire.Syntax.Claire</a>
 </p>
@@ -183,7 +180,7 @@ ClaireはProof Assistantの名前ですが証明記述言語の名前でもあ�
   <span class="kr">data</span> <span class="kt">Proof</span>
     <span class="ow">=</span> <span class="kt">Proof</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
 
-  <span class="kr">type</span> <span class="kt">Pairs</span> <span class="ow">=</span> <span class="p">[(</span><span class="kt">Ident</span><span class="p">,</span><span class="kt">Predicate</span><span class="p">)]</span>
+  <span class="kr">type</span> <span class="kt">Pairs</span> <span class="ow">=</span> <span class="p">[</span><span class="p">(</span><span class="kt">Ident</span><span class="p">,</span><span class="kt">Predicate</span><span class="p">)</span><span class="p">]</span>
 
   <span class="kr">data</span> <span class="kt">Command</span>
     <span class="ow">=</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">Rule</span><span class="p">]</span>
@@ -197,7 +194,7 @@ ClaireはProof Assistantの名前ですが証明記述言語の名前でもあ�
     <span class="o">|</span> <span class="kt">ArgPreds</span> <span class="p">[</span><span class="kt">Predicate</span><span class="p">]</span>
     <span class="o">|</span> <span class="kt">ArgTerms</span> <span class="p">[</span><span class="kt">Term</span><span class="p">]</span>
     <span class="o">|</span> <span class="kt">ArgTyped</span> <span class="kt">Ident</span> <span class="kt">Type</span>
-    <span class="o">|</span> <span class="kt">ArgIdents</span> <span class="p">[(</span><span class="kt">Ident</span><span class="p">,</span><span class="kt">Pairs</span><span class="p">)]</span></code></pre></div>
+    <span class="o">|</span> <span class="kt">ArgIdents</span> <span class="p">[</span><span class="p">(</span><span class="kt">Ident</span><span class="p">,</span><span class="kt">Pairs</span><span class="p">)</span><span class="p">]</span></code></pre></div>
 </div>
 <p>
 見てもらうと分かる通り、Claire型がまずあり、これがDeclarationのリストからなります<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>。
@@ -210,16 +207,16 @@ ThmIndexが定理の名前、Formulaが証明したい論理式、Proofが証明
 <p>
 まぁ細かく見ていくと時間かかりそうなので、syntaxの説明は後で必要になったらするとして今は先に進みましょう。
 </p>
-<h1 id="headline-5">
+<h2 id="headline-5">
 Alex/Happy
-</h1>
+</h2>
 <p>
 さてASTを定義したのでパーサーを書きます。
 ここでは字句解析器を生成する<a href="https://www.haskell.org/alex/">alex</a>と構文解析器を生成する<a href="https://www.haskell.org/happy/">happy</a>を使います。いわゆるlex/yaccに似た感じのツールのようです(触ったことないからしらんけど)。
 </p>
-<h2 id="headline-6">
+<h3 id="headline-6">
 cabal-build integration
-</h2>
+</h3>
 <p>
 alex/happyはコマンドラインツールで、.x, .yファイルをHaskellモジュールに変換しますが、stackから使いたい場合はpackage.yamlに次のように書くといいです:
 </p>
@@ -239,9 +236,9 @@ alex/happyはコマンドラインツールで、.x, .yファイルをHaskellモ
 <p>
 これでビルドするときにalex, happyが走ります。
 </p>
-<h2 id="headline-7">
+<h3 id="headline-7">
 alex
-</h2>
+</h3>
 <p>
 alex/happyの使い方をここで一からやる気はないのですが、一応コードの読み方だけ説明しておきます。
 </p>
@@ -254,18 +251,18 @@ alex/happyの使い方をここで一からやる気はないのですが、一�
 
   <span class="p">}</span>
 
-  <span class="o">%</span><span class="n">wrapper</span> <span class="s">&#34;basic&#34;</span>
+  <span class="o">%</span><span class="n">wrapper</span> <span class="s">&#34;</span><span class="s">basic</span><span class="s">&#34;</span>
 
   <span class="o">$</span><span class="n">digit</span> <span class="ow">=</span> <span class="p">[</span><span class="mi">0</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>
   <span class="o">$</span><span class="n">alpha</span> <span class="ow">=</span> <span class="p">[</span><span class="n">a</span><span class="o">-</span><span class="n">zA</span><span class="o">-</span><span class="kt">Z</span><span class="p">]</span>
 
   <span class="n">tokens</span> <span class="kt">:-</span>
     <span class="o">$</span><span class="n">white</span><span class="o">+</span>   <span class="p">;</span>
-    <span class="s">&#34;#&#34;</span><span class="o">.*</span>     <span class="p">;</span>
+    <span class="s">&#34;</span><span class="s">#</span><span class="s">&#34;</span><span class="o">.*</span>     <span class="p">;</span>
     <span class="kt">Forall</span>    <span class="p">{</span> <span class="nf">\</span><span class="n">s</span> <span class="ow">-&gt;</span> <span class="kt">TokenForall</span> <span class="p">}</span>
     <span class="kt">Exist</span>     <span class="p">{</span> <span class="nf">\</span><span class="n">s</span> <span class="ow">-&gt;</span> <span class="kt">TokenExist</span> <span class="p">}</span>
     <span class="o">...</span>
-    <span class="o">$</span><span class="n">alpha</span> <span class="p">[</span><span class="o">$</span><span class="n">alpha</span> <span class="o">$</span><span class="n">digit</span> <span class="nf">\</span><span class="kr">_</span> <span class="nf">\</span><span class="sc">&#39;</span><span class="err">]*      { TokenIdent }</span>
+    <span class="o">$</span><span class="n">alpha</span> <span class="p">[</span><span class="o">$</span><span class="n">alpha</span> <span class="o">$</span><span class="n">digit</span> <span class="nf">\</span><span class="kr">_</span> <span class="nf">\</span><span class="sc">&#39;</span><span class="err">]</span><span class="err">*</span><span class="err"> </span><span class="err"> </span><span class="err"> </span><span class="err"> </span><span class="err"> </span><span class="err"> </span><span class="err">{</span><span class="err"> </span><span class="err">T</span><span class="err">o</span><span class="err">k</span><span class="err">e</span><span class="err">n</span><span class="err">I</span><span class="err">d</span><span class="err">e</span><span class="err">n</span><span class="err">t</span><span class="err"> </span><span class="err">}</span>
 
   <span class="p">{</span>
   <span class="kr">data</span> <span class="kt">Token</span>
@@ -312,9 +309,9 @@ Existという文字列はTokenExistに変換
 <p>
 みたいな感じですね。
 </p>
-<h2 id="headline-8">
+<h3 id="headline-8">
 happy
-</h2>
+</h3>
 <p>
 alexによって文字列はトークンの列に変換されるので今度はそれをASTの形に変換するのがhappyです。
 </p>
@@ -342,7 +339,7 @@ alexによって文字列はトークンの列に変換されるので今度は�
     <span class="n">exist</span>     <span class="p">{</span> <span class="kt">TokenExist</span> <span class="p">}</span>
     <span class="o">...</span>
 
-  <span class="o">%</span><span class="n">right</span> <span class="sc">&#39;</span><span class="err">==</span><span class="sc">&gt;&#39;</span>
+  <span class="o">%</span><span class="n">right</span> <span class="sc">&#39;</span><span class="err">=</span><span class="err">=</span><span class="sc">&gt;&#39;</span>
   <span class="o">%</span><span class="n">left</span> <span class="n">and</span> <span class="n">or</span>
   <span class="o">%</span><span class="n">nonassoc</span> <span class="sc">&#39;~&#39;</span>
 
@@ -354,7 +351,7 @@ alexによって文字列はトークンの列に変換されるので今度は�
     <span class="kt">:</span> <span class="kt">Decls</span>  <span class="p">{</span> <span class="kt">Laire</span> <span class="o">$</span><span class="mi">1</span> <span class="p">}</span>
 
   <span class="kt">Decls</span> <span class="ow">::</span> <span class="p">{</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span> <span class="p">}</span>
-    <span class="kt">:</span> <span class="cm">{- empty -}</span>  <span class="p">{</span> <span class="kt">[]</span> <span class="p">}</span>
+    <span class="kt">:</span> <span class="cm">{-</span><span class="cm"> empty </span><span class="cm">-}</span>  <span class="p">{</span> <span class="kt">[]</span> <span class="p">}</span>
     <span class="o">|</span> <span class="kt">Decl</span> <span class="kt">Decls</span>   <span class="p">{</span> <span class="o">$</span><span class="mi">1</span> <span class="kt">:</span> <span class="o">$</span><span class="mi">2</span> <span class="p">}</span>
 
   <span class="kt">Decl</span> <span class="ow">::</span> <span class="p">{</span> <span class="kt">Decl</span> <span class="p">}</span>
@@ -372,9 +369,9 @@ alexによって文字列はトークンの列に変換されるので今度は�
 <p>
 本当はこの辺の定義を逐一見ていくべきかもしれませんが、一度にやると大変なので後で項目ごとに説明することにします。
 </p>
-<h2 id="headline-9">
+<h3 id="headline-9">
 実行
-</h2>
+</h3>
 <p>
 定義ができたら、パーサーを実行することが出来ます。
 </p>
@@ -382,25 +379,25 @@ alexによって文字列はトークンの列に変換されるので今度は�
 alexはalexScanTokens、happyは <code>%name</code> で指定したパーサーを関数として生成するのでそれを使って試してみます。
 </p>
 <div class="src src-haskell">
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="o">&gt;</span> <span class="n">folparser</span> <span class="o">$</span> <span class="n">alexScanTokens</span> <span class="o">$</span> <span class="s">&#34;p ==&gt; (q /</span><span class="se">\\</span><span class="s"> q&#39; ==&gt; r)&#34;</span>
-  <span class="kt">Pred</span> <span class="s">&#34;p&#34;</span> <span class="kt">[]</span> <span class="kt">:==&gt;:</span> <span class="p">((</span><span class="kt">Pred</span> <span class="s">&#34;q&#34;</span> <span class="kt">[]</span> <span class="kt">:/\:</span> <span class="kt">Pred</span> <span class="s">&#34;q&#39;&#34;</span> <span class="kt">[]</span><span class="p">)</span> <span class="kt">:==&gt;:</span> <span class="kt">Pred</span> <span class="s">&#34;r&#34;</span> <span class="kt">[]</span><span class="p">)</span>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="o">&gt;</span> <span class="n">folparser</span> <span class="o">$</span> <span class="n">alexScanTokens</span> <span class="o">$</span> <span class="s">&#34;</span><span class="s">p ==&gt; (q /</span><span class="se">\</span><span class="se">\</span><span class="s"> q&#39; ==&gt; r)</span><span class="s">&#34;</span>
+  <span class="kt">Pred</span> <span class="s">&#34;</span><span class="s">p</span><span class="s">&#34;</span> <span class="kt">[]</span> <span class="kt">:==&gt;:</span> <span class="p">(</span><span class="p">(</span><span class="kt">Pred</span> <span class="s">&#34;</span><span class="s">q</span><span class="s">&#34;</span> <span class="kt">[]</span> <span class="kt">:/\:</span> <span class="kt">Pred</span> <span class="s">&#34;</span><span class="s">q&#39;</span><span class="s">&#34;</span> <span class="kt">[]</span><span class="p">)</span> <span class="kt">:==&gt;:</span> <span class="kt">Pred</span> <span class="s">&#34;</span><span class="s">r</span><span class="s">&#34;</span> <span class="kt">[]</span><span class="p">)</span>
 
-  <span class="o">&gt;</span> <span class="n">folparser</span> <span class="o">$</span> <span class="n">alexScanTokens</span> <span class="o">$</span> <span class="s">&#34;P(a,b,c)&#34;</span>
-  <span class="kt">Pred</span> <span class="s">&#34;P&#34;</span> <span class="p">[</span><span class="kt">Var</span> <span class="s">&#34;a&#34;</span><span class="p">,</span> <span class="kt">Var</span> <span class="s">&#34;b&#34;</span><span class="p">,</span> <span class="kt">Var</span> <span class="s">&#34;c&#34;</span><span class="p">]</span>
+  <span class="o">&gt;</span> <span class="n">folparser</span> <span class="o">$</span> <span class="n">alexScanTokens</span> <span class="o">$</span> <span class="s">&#34;</span><span class="s">P(a,b,c)</span><span class="s">&#34;</span>
+  <span class="kt">Pred</span> <span class="s">&#34;</span><span class="s">P</span><span class="s">&#34;</span> <span class="p">[</span><span class="kt">Var</span> <span class="s">&#34;</span><span class="s">a</span><span class="s">&#34;</span><span class="p">,</span> <span class="kt">Var</span> <span class="s">&#34;</span><span class="s">b</span><span class="s">&#34;</span><span class="p">,</span> <span class="kt">Var</span> <span class="s">&#34;</span><span class="s">c</span><span class="s">&#34;</span><span class="p">]</span>
 
   <span class="o">&gt;</span> <span class="n">declparser</span> <span class="o">$</span> <span class="n">alexScanTokens</span>
-    <span class="o">$</span> <span class="s">&#34;theorem id: a ==&gt; a </span><span class="se">\
-</span><span class="se">    \</span><span class="s"> proof </span><span class="se">\
-</span><span class="se">    \</span><span class="s">   apply (ImpR, I) </span><span class="se">\
-</span><span class="se">    \</span><span class="s"> qed&#34;</span>
-  <span class="kt">ThmD</span> <span class="s">&#34;id&#34;</span> <span class="p">(</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span> <span class="kt">:==&gt;:</span> <span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span><span class="p">)</span> <span class="p">(</span><span class="kt">Proof</span> <span class="p">[</span><span class="kt">Apply</span> <span class="p">[</span><span class="kt">ImpR</span><span class="p">,</span> <span class="kt">I</span><span class="p">]])</span></code></pre></div>
+    <span class="o">$</span> <span class="s">&#34;</span><span class="s">theorem id: a ==&gt; a </span><span class="se">\</span><span class="se">
+</span><span class="se">    \</span><span class="s"> proof </span><span class="se">\</span><span class="se">
+</span><span class="se">    \</span><span class="s">   apply (ImpR, I) </span><span class="se">\</span><span class="se">
+</span><span class="se">    \</span><span class="s"> qed</span><span class="s">&#34;</span>
+  <span class="kt">ThmD</span> <span class="s">&#34;</span><span class="s">id</span><span class="s">&#34;</span> <span class="p">(</span><span class="kt">Pred</span> <span class="s">&#34;</span><span class="s">a</span><span class="s">&#34;</span> <span class="kt">[]</span> <span class="kt">:==&gt;:</span> <span class="kt">Pred</span> <span class="s">&#34;</span><span class="s">a</span><span class="s">&#34;</span> <span class="kt">[]</span><span class="p">)</span> <span class="p">(</span><span class="kt">Proof</span> <span class="p">[</span><span class="kt">Apply</span> <span class="p">[</span><span class="kt">ImpR</span><span class="p">,</span> <span class="kt">I</span><span class="p">]</span><span class="p">]</span><span class="p">)</span></code></pre></div>
 </div>
 <p>
 みたいな感じになれば成功です。
 </p>
-<h1 id="headline-10">
+<h2 id="headline-10">
 まとめ
-</h1>
+</h2>
 <p>
 今回はClaireのsyntaxとパーサーをalex/happyで書く話を簡単にしました。
 といいつつsyntaxの説明を一切していないのでこれもそのうちしないとだめですね。

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="IMPのoperational semantics その4">
 <meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 8日目の記事です。   前回は、big-stepがdeterministicであることを示した。 9. Small-step long reduction   csmallを複数回適用した、ということを表す関係を &lt;_,_&gt; ⟶* &lt;_,_&gt; でかいて、次のように定める。 subsubsection {* small-step long reduction *} inductive csmall_long (&#34;&lt;_,_&gt; ⟶* &lt;_,_&gt;&#34;) where SL_refl: &#34;&lt;c,st&gt; ⟶* &lt;c,st&gt;&#34; | SL_trans1: &#34;⟦ &lt;c,st&gt; ⟶ &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34; lemma SL_trans: &#34;⟦ &lt;c,st&gt; ⟶* &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34; apply (induction arbitrary: c&#39;&#39; st&#39;&#39; rule: csmall_long.induct) apply simp apply (blast intro: SL_trans1) done lemma SL_SeqStep: &#34;&lt;c1,st&gt; ⟶* &lt;c1&#39;,st&#39;&gt; ⟹ &lt;c1;;c2,st&gt; ⟶* &lt;c1&#39;;;c2,st&#39;&gt;&#34; apply (induction arbitrary: c2 rule: csmall_long.">
-
-
 <meta itemprop="datePublished" content="2017-12-08T00:01:48&#43;09:00" />
 <meta itemprop="dateModified" content="2017-12-08T00:01:48&#43;09:00" />
 <meta itemprop="wordCount" content="545">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="AdC2017,Isabelle,計算機科学," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="IMPのoperational semantics その4"/>
 <meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 8日目の記事です。   前回は、big-stepがdeterministicであることを示した。 9. Small-step long reduction   csmallを複数回適用した、ということを表す関係を &lt;_,_&gt; ⟶* &lt;_,_&gt; でかいて、次のように定める。 subsubsection {* small-step long reduction *} inductive csmall_long (&#34;&lt;_,_&gt; ⟶* &lt;_,_&gt;&#34;) where SL_refl: &#34;&lt;c,st&gt; ⟶* &lt;c,st&gt;&#34; | SL_trans1: &#34;⟦ &lt;c,st&gt; ⟶ &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34; lemma SL_trans: &#34;⟦ &lt;c,st&gt; ⟶* &lt;c&#39;,st&#39;&gt;; &lt;c&#39;,st&#39;&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt; ⟧ ⟹ &lt;c,st&gt; ⟶* &lt;c&#39;&#39;,st&#39;&#39;&gt;&#34; apply (induction arbitrary: c&#39;&#39; st&#39;&#39; rule: csmall_long.induct) apply simp apply (blast intro: SL_trans1) done lemma SL_SeqStep: &#34;&lt;c1,st&gt; ⟶* &lt;c1&#39;,st&#39;&gt; ⟹ &lt;c1;;c2,st&gt; ⟶* &lt;c1&#39;;;c2,st&#39;&gt;&#34; apply (induction arbitrary: c2 rule: csmall_long."/>
@@ -80,9 +77,9 @@
 <p>
 前回は、big-stepがdeterministicであることを示した。
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 9. Small-step long reduction
-</h1>
+</h2>
 <p>
 csmallを複数回適用した、ということを表す関係を <code>&lt;_,_&gt; ⟶* &lt;_,_&gt;</code> でかいて、次のように定める。
 </p>
@@ -118,11 +115,11 @@ csmall_longは見ての通り、reflexitivityとtransitivityを使って定義�
 </p>
 <p>
 代わりにnステップ同士のtransitivityは <code>SL_trans</code> として改めて示している。
-<code>SL_SeqStep</code> はあとで必要になる補題である。
+ <code>SL_SeqStep</code> はあとで必要になる補題である。
 </p>
-<h1 id="headline-2">
+<h2 id="headline-2">
 10. Proof of Small-step &amp; Big-step
-</h1>
+</h2>
 <p>
 さて目標となる定理を示そう。
 </p>
@@ -209,18 +206,18 @@ csmall_stepのinduction以下は全部sledgehammerで進むので簡単。csmall
   ⟶* &lt;WHILE b DO c,st&#39;&gt;
   ⟶* &lt;SKIP,st&#39;&#39;&gt;</code></pre></div>
 </div>
-<h1 id="headline-3">
+<h2 id="headline-3">
 最後に:証明全体
-</h1>
+</h2>
 <p>
 最後に証明全体を貼っておく。
 </p>
 <p>
 &lt;script src=&#34;<a href="https://gist.github.com/myuon/e0c10a5bb0c14a70ad0eca5460cb7231.js">https://gist.github.com/myuon/e0c10a5bb0c14a70ad0eca5460cb7231.js</a>&#34;&gt;&lt;/script&gt;
 </p>
-<h1 id="headline-4">
+<h2 id="headline-4">
 まとめ
-</h1>
+</h2>
 <p>
 というわけで4回に分けてゆっくりめに説明してきたIMP編も終わりです。
 </p>

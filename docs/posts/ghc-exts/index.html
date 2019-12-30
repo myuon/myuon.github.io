@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="GHC拡張一覧を眺める">
 <meta itemprop="description" content="GHC-8.2.2のGHC拡張を眺めます。    10. GHC Language Features User&#39;s Guideの該当セクション    7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い    上から順に見ていって後から関連するものとかを再編します。 GHC拡張一覧    AllowAmbiguousTypes    型変数が全て決定していないものを通すようにする (個人的)非推奨1   Arrows    arrow notationを使えるようにする FRPする人なんかは使う   ApplicativeDo    do-notationがApplicativeに対しても使えるようになる 個人的には嫌い   BangPatterns    関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする   BinaryLiterals    バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない   CApiFFI    FFI関連; 使ったことない   ConstrainedClassMethods    型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ)   ConstraintKinds    Constraintというカインドが使えるようになる   CPP    Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる   DataKinds    データ型の宣言をカインドの宣言へ昇格する   DefaultSignatures    型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる   DeriveAnyClass    defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう   DeriveDataTypeable    deriving Data ってかける   DeriveFunctor    deriving Functor ってかける   DeriveFoldable    deriving Foldable ってかける   DeriveGeneric    deriving Generic ってかける   DeriveLift    deriving Lift ってかける LiftはTHのこれで、値をsyntactic expressionに変換できるようにするやつ   DeriveTraversable    deriving Traversable ってかける   DerivingStrategies    derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ   DisambiguateRecordFields    \k -&gt; k {hoge = x} におけるkのような、推論可能だが曖昧なレコード名を許す   EmptyCase    case x of {} ってかける Void型を扱う時なんかに使える   EmptyDataDecls    data Empty のようなコンストラクタを持たない型の宣言を許す   ExistentialQuantification    exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい   ExplicitForall    型宣言のimplicitな全称量化をexplicitにかけるようにする id : forall a.">
-
-
 <meta itemprop="datePublished" content="2018-01-13T00:38:01&#43;09:00" />
 <meta itemprop="dateModified" content="2018-01-13T00:38:01&#43;09:00" />
 <meta itemprop="wordCount" content="450">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="Haskell," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="GHC拡張一覧を眺める"/>
 <meta name="twitter:description" content="GHC-8.2.2のGHC拡張を眺めます。    10. GHC Language Features User&#39;s Guideの該当セクション    7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い    上から順に見ていって後から関連するものとかを再編します。 GHC拡張一覧    AllowAmbiguousTypes    型変数が全て決定していないものを通すようにする (個人的)非推奨1   Arrows    arrow notationを使えるようにする FRPする人なんかは使う   ApplicativeDo    do-notationがApplicativeに対しても使えるようになる 個人的には嫌い   BangPatterns    関数の引数やデータ型のパラメーターをstrictに評価する; Strict拡張で事足りることが多い気がする   BinaryLiterals    バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない   CApiFFI    FFI関連; 使ったことない   ConstrainedClassMethods    型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ)   ConstraintKinds    Constraintというカインドが使えるようになる   CPP    Cプリプロセッサが使えるようになる THの代わりにお手軽マクロとして(大量のinstance宣言とかに)使ってる人をたまにみる   DataKinds    データ型の宣言をカインドの宣言へ昇格する   DefaultSignatures    型クラスのメソッドのデフォルト宣言が書けるようになる; Genericsを使った定義みたいな、汎用的な型に対して定義できるけど具体的な型についてはspecializeした方がいいみたいな場面で使われる   DeriveAnyClass    defaultで宣言したメソッドのみをもつ型クラス、あるいはminimal definitionがない型クラスのinstanceをderivingで導出できるようにするっぽい 詳細色々ありそう   DeriveDataTypeable    deriving Data ってかける   DeriveFunctor    deriving Functor ってかける   DeriveFoldable    deriving Foldable ってかける   DeriveGeneric    deriving Generic ってかける   DeriveLift    deriving Lift ってかける LiftはTHのこれで、値をsyntactic expressionに変換できるようにするやつ   DeriveTraversable    deriving Traversable ってかける   DerivingStrategies    derivingって書いた時に適用されるストラテジーが衝突する場合にそれらをexplicitにかけるようにするやつ？ ナニコレ   DisambiguateRecordFields    \k -&gt; k {hoge = x} におけるkのような、推論可能だが曖昧なレコード名を許す   EmptyCase    case x of {} ってかける Void型を扱う時なんかに使える   EmptyDataDecls    data Empty のようなコンストラクタを持たない型の宣言を許す   ExistentialQuantification    exist型が使えるようになる 非推奨とまでは言わないけど使いどころはよく考えたほうがいい   ExplicitForall    型宣言のimplicitな全称量化をexplicitにかけるようにする id : forall a."/>
@@ -91,9 +88,9 @@ GHC-8.2.2のGHC拡張を眺めます。
 <p>
 上から順に見ていって後から関連するものとかを再編します。
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 GHC拡張一覧
-</h1>
+</h2>
 <dl>
 <dt>
 AllowAmbiguousTypes
@@ -832,9 +829,9 @@ ViewPatterns
 </p>
 </dd>
 </dl>
-<h1 id="headline-2">
+<h2 id="headline-2">
 デフォルトONにしてほしい拡張一覧
-</h1>
+</h2>
 <ul>
 <li>
 <p>
@@ -870,9 +867,9 @@ TupleSections
 <p>
 後方互換性を壊さず、明らかに便利で、濫用されることはなく、デフォルトONになってれば使うんだけどプラグマかくのが面倒だから使わないんだよなみたいなやつら
 </p>
-<h1 id="headline-3">
+<h2 id="headline-3">
 型レベルほげほげでなんだかんだ必要になる拡張一覧
-</h1>
+</h2>
 <ul>
 <li>
 <p>
@@ -938,9 +935,9 @@ TypeOperators
 <p>
 気がついたらこの辺は入れてる
 </p>
-<h1 id="headline-4">
+<h2 id="headline-4">
 (個人的に)より詳しい知りたい拡張一覧
-</h1>
+</h2>
 <ul>
 <li>
 <p>
@@ -963,9 +960,9 @@ MonoLocalBinds
 </p>
 </li>
 </ul>
-<h1 id="headline-5">
+<h2 id="headline-5">
 おわりに
-</h1>
+</h2>
 <p>
 GHC拡張全てに目を通したのは初めてだったけど意外と知ってた いくつか存在を知らないのもあったけど
 </p>

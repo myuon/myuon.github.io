@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="HakyllでBlogを作る">
 <meta itemprop="description" content="Hakyllでこのブログを作ったのでそのあれこれを 概要   やりたいことは以下    orgで文章をかく(大事)    orgから良い感じのHTMLを生成し    github pagesで公開   Hakyllのsetup   次を参考にした    Hakyll Tutorials    Hakyll, stack, Travis CI, Github でブログを管理する    GitHub Pages はじめました    hakyll package    stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく 文書の変換・Hakyllの設定   プロジェクトの構造は次のようになっている - root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site.">
-
-
 <meta itemprop="datePublished" content="2017-08-16T22:39:48&#43;09:00" />
 <meta itemprop="dateModified" content="2017-08-16T22:39:48&#43;09:00" />
 <meta itemprop="wordCount" content="167">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="Haskell,Webサイト," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="HakyllでBlogを作る"/>
 <meta name="twitter:description" content="Hakyllでこのブログを作ったのでそのあれこれを 概要   やりたいことは以下    orgで文章をかく(大事)    orgから良い感じのHTMLを生成し    github pagesで公開   Hakyllのsetup   次を参考にした    Hakyll Tutorials    Hakyll, stack, Travis CI, Github でブログを管理する    GitHub Pages はじめました    hakyll package    stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく 文書の変換・Hakyllの設定   プロジェクトの構造は次のようになっている - root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site."/>
@@ -76,9 +73,9 @@
 <p>
 Hakyllでこのブログを作ったのでそのあれこれを
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 概要
-</h1>
+</h2>
 <p>
 やりたいことは以下
 </p>
@@ -99,9 +96,9 @@ github pagesで公開
 </p>
 </li>
 </ul>
-<h1 id="headline-2">
+<h2 id="headline-2">
 Hakyllのsetup
-</h1>
+</h2>
 <p>
 次を参考にした
 </p>
@@ -131,9 +128,9 @@ Hakyllのsetup
 <code class="verbatim">stack</code> でパッケージを入れて、 <code class="verbatim">hakyll-init</code> → <code class="verbatim">stack build</code> → <code class="verbatim">stack exec site watch</code> で動かすところまでは簡単にいけた
 2番目のリンクにあるように、 <code class="verbatim">_site</code> をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく
 </p>
-<h1 id="headline-3">
+<h2 id="headline-3">
 文書の変換・Hakyllの設定
-</h1>
+</h2>
 <p>
 プロジェクトの構造は次のようになっている
 </p>
@@ -147,9 +144,9 @@ Hakyllのsetup
   - posts    ここにorg or markdownで書いた記事を入れる
   - site.hs  Hakyllの設定ファイル</code></pre></div>
 </div>
-<h2 id="headline-4">
+<h3 id="headline-4">
 orgの変換
-</h2>
+</h3>
 <p>
 Hakyllは内部で文書変換にpandocを使っていて、pandocはorgに対応しているらしいので何も設定しなくても変換はできる
 (デフォルトの状態では <code class="verbatim">posts</code> 以下の文書ファイルが変換される)
@@ -172,9 +169,9 @@ toc(目次)の表示
 <p>
 syntax highlightを有効にする
 </p>
-<h3 id="headline-5">
+<h4 id="headline-5">
 改行
-</h3>
+</h4>
 </li>
 </ol>
 <p>
@@ -182,21 +179,21 @@ org-modeでは、パラグラフ中で強制改行したい場合は <code class
 markdownではmarkdown optionsに <code class="verbatim">hard_line_break</code> というのがあるのでそれで読みこめばいいんだけど、orgにはそんなものはなかったので <code class="verbatim">SoftBreak</code> を無理やり <code class="verbatim">LineBreak</code> に変換するという強引な方法をとっている。
 これでいつでも求めるHTMLが得られるかは不明。今のところは困ってない。
 </p>
-<h3 id="headline-6">
+<h4 id="headline-6">
 TOC
-</h3>
+</h4>
 <p>
 pandocのオプションをつければいけるらしい
 </p>
-<h3 id="headline-7">
+<h4 id="headline-7">
 syntax highlight
-</h3>
+</h4>
 <p>
 これもオプションで指定すると、 <code class="verbatim">code</code> タグ内の適当なキーワードに適切なclassが付与されるので、色を自分でcssで指定した
 </p>
-<h3 id="headline-8">
+<h4 id="headline-8">
 コード
-</h3>
+</h4>
 <ul>
 <li>
 <p>
@@ -214,22 +211,22 @@ syntax highlight
 	  <span class="kr">let</span> <span class="n">wopt</span> <span class="ow">=</span> <span class="n">def</span>
 		<span class="p">{</span> <span class="n">writerTableOfContents</span> <span class="ow">=</span> <span class="kt">True</span>
 		<span class="p">,</span> <span class="n">writerSectionDivs</span> <span class="ow">=</span> <span class="kt">True</span>
-		<span class="p">,</span> <span class="n">writerTemplate</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="s">&#34;$if(toc)$</span><span class="se">\n</span><span class="s">$toc$</span><span class="se">\n</span><span class="s">$endif$</span><span class="se">\n</span><span class="s">$body$&#34;</span>
+		<span class="p">,</span> <span class="n">writerTemplate</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="s">&#34;</span><span class="s">$if(toc)$</span><span class="se">\</span><span class="se">n</span><span class="s">$toc$</span><span class="se">\</span><span class="se">n</span><span class="s">$endif$</span><span class="se">\</span><span class="se">n</span><span class="s">$body$</span><span class="s">&#34;</span>
 		<span class="p">,</span> <span class="n">writerWrapText</span> <span class="ow">=</span> <span class="kt">WrapPreserve</span>
 		<span class="p">,</span> <span class="n">writerHighlight</span> <span class="ow">=</span> <span class="kt">True</span>
 		<span class="p">}</span>
         
 	  <span class="n">compile</span> <span class="o">$</span> <span class="n">pandocCompilerWithTransform</span> <span class="n">ropt</span> <span class="n">wopt</span> <span class="p">(</span><span class="n">walk</span> <span class="n">hardLineBreaks</span><span class="p">)</span>
-	      <span class="o">&gt;&gt;=</span> <span class="n">loadAndApplyTemplate</span> <span class="s">&#34;templates/post.html&#34;</span>    <span class="n">postCtx</span>
-	      <span class="o">&gt;&gt;=</span> <span class="n">loadAndApplyTemplate</span> <span class="s">&#34;templates/default.html&#34;</span> <span class="n">postCtx</span>
+	      <span class="o">&gt;&gt;=</span> <span class="n">loadAndApplyTemplate</span> <span class="s">&#34;</span><span class="s">templates/post.html</span><span class="s">&#34;</span>    <span class="n">postCtx</span>
+	      <span class="o">&gt;&gt;=</span> <span class="n">loadAndApplyTemplate</span> <span class="s">&#34;</span><span class="s">templates/default.html</span><span class="s">&#34;</span> <span class="n">postCtx</span>
 	      <span class="o">&gt;&gt;=</span> <span class="n">relativizeUrls</span></code></pre></div>
 </div>
 <p>
 ここの <code class="verbatim">pandocCompilerWithTransform ...</code> がそれ。
 </p>
-<h2 id="headline-9">
+<h3 id="headline-9">
 デザイン
-</h2>
+</h3>
 <p>
 Hakyllのテーマにはあまりまともなものがなく、例えばJekyllのテーマをHakyll用に変換するのは<a href="https://matsubara0507.github.io/posts/2016-10-24-changed-design.html">かなり大変そう</a>なのでやりたくなかった。
 ので、デザインは自力で何とかすることにした。
@@ -241,9 +238,9 @@ Hakyllのテーマにはあまりまともなものがなく、例えばJekyll�
 <p>
 まぁひとまずこれで。
 </p>
-<h2 id="headline-10">
+<h3 id="headline-10">
 コメント機能
-</h2>
+</h3>
 <p>
 ブログなのでコメント機能は欲しいなということで、<a href="https://disqus.com/">disqus</a>を入れてみた(このページの一番下に表示されてる)
 海外のブログでは割とよく見るやつ

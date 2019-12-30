@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,16 +31,13 @@
 
 <meta itemprop="name" content="Proof Assistantを作る・実装編 その3">
 <meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 20日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Proofchecker state machine   さてClaireのproofcheckerを作っていきます。  前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。 proof state   初めに仕様を固めます。   (state:toplevel)    Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する   (state:command)    Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る    注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。 Coroutine monad   さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。  Claire.Checker Command Machine Suspender   簡単な方から行きます。 data ComSuspender y = ComAwait (Command -&gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&gt; Env -&gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = .">
-
-
 <meta itemprop="datePublished" content="2017-12-20T00:12:26&#43;09:00" />
 <meta itemprop="dateModified" content="2017-12-20T00:12:26&#43;09:00" />
-<meta itemprop="wordCount" content="473">
+<meta itemprop="wordCount" content="472">
 
 
 
 <meta itemprop="keywords" content="AdC2017,定理証明,Haskell," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Proof Assistantを作る・実装編 その3"/>
 <meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 20日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Proofchecker state machine   さてClaireのproofcheckerを作っていきます。  前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。 proof state   初めに仕様を固めます。   (state:toplevel)    Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する   (state:command)    Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る    注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。 Coroutine monad   さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。  Claire.Checker Command Machine Suspender   簡単な方から行きます。 data ComSuspender y = ComAwait (Command -&gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&gt; Env -&gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = ."/>
@@ -83,9 +80,9 @@ Proof Assistant 「Claire」の実装について説明していきます。
 <p>
 リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a>
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 Proofchecker state machine
-</h1>
+</h2>
 <p>
 さてClaireのproofcheckerを作っていきます。
 </p>
@@ -93,9 +90,9 @@ Proofchecker state machine
 前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。
 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。
 </p>
-<h2 id="headline-2">
+<h3 id="headline-2">
 proof state
-</h2>
+</h3>
 <p>
 初めに仕様を固めます。
 </p>
@@ -121,9 +118,9 @@ Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻�
 注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。
 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。
 </p>
-<h2 id="headline-3">
+<h3 id="headline-3">
 Coroutine monad
-</h2>
+</h3>
 <p>
 さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？
 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 <a href="https://myuon.github.io/posts/coroutine-monad-as-state-machine/">Coroutineモナドとステートマシン</a> でも説明したとおり、Coroutine monadを使います<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>。
@@ -131,9 +128,9 @@ Coroutine monad
 <p>
 <a href="https://github.com/myuon/claire/blob/master/src/Claire/Checker.hs">Claire.Checker</a>
 </p>
-<h3 id="headline-4">
+<h4 id="headline-4">
 Command Machine Suspender
-</h3>
+</h4>
 <p>
 簡単な方から行きます。
 </p>
@@ -157,9 +154,9 @@ ComSuspenderは2つのコンストラクタがあり、ComAwaitがawaitとして
 <p>
 commandMの型から、command machineはJudgementのリスト(つまりゴール)を変形するようなステートマシンであることが分かります。
 </p>
-<h3 id="headline-5">
+<h4 id="headline-5">
 Toplevel Machine Suspender
-</h3>
+</h4>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">DeclSuspender</span> <span class="n">y</span>
     <span class="ow">=</span> <span class="kt">DeclAwait</span> <span class="p">(</span><span class="kt">Decl</span> <span class="ow">-&gt;</span> <span class="n">y</span><span class="p">)</span>
@@ -178,9 +175,9 @@ DeclSuspenderは(1)Declを受け取るawait (2)Proofが終了していない状�
 <p>
 toplevelMはEnvを変えるステートマシンです。
 </p>
-<h1 id="headline-6">
+<h2 id="headline-6">
 Commands
-</h1>
+</h2>
 <p>
 commandMは、コマンドをawaitで受け取り、コマンドを実行し、ゴールが全て解消されていなければ再びcommandMを繰り返すという単純な実装です。
 </p>
@@ -191,7 +188,7 @@ commandMは、コマンドをawaitで受け取り、コマンドを実行し、�
     <span class="kr">let</span> <span class="n">insts</span> <span class="n">fml</span> <span class="n">pairs</span> <span class="ow">=</span> <span class="n">foldlM</span> <span class="p">(</span><span class="nf">\</span><span class="n">f</span> <span class="p">(</span><span class="n">idt</span><span class="p">,</span><span class="n">pred</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">substPred</span> <span class="p">(</span><span class="sc">&#39;?&#39;</span><span class="kt">:</span><span class="n">idt</span><span class="p">)</span> <span class="n">pred</span> <span class="n">f</span><span class="p">)</span> <span class="n">fml</span> <span class="n">pairs</span>
 
     <span class="kr">case</span> <span class="n">com</span> <span class="kr">of</span>
-      <span class="kr">_</span> <span class="ow">-&gt;</span> <span class="err">ここにコマンドの実装を追加する</span>
+      <span class="kr">_</span> <span class="ow">-&gt;</span> <span class="err">こ</span><span class="err">こ</span><span class="err">に</span><span class="err">コ</span><span class="err">マ</span><span class="err">ン</span><span class="err">ド</span><span class="err">の</span><span class="err">実</span><span class="err">装</span><span class="err">を</span><span class="err">追</span><span class="err">加</span><span class="err">す</span><span class="err">る</span>
 
     <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
     <span class="n">unless</span> <span class="p">(</span><span class="n">null</span> <span class="n">js</span><span class="p">)</span> <span class="o">$</span> <span class="n">commandM</span> <span class="n">env</span></code></pre></div>
@@ -202,9 +199,9 @@ commandMは、コマンドをawaitで受け取り、コマンドを実行し、�
 <p>
 Claireに組み込みのコマンド(ゴールを変形する仕組み)は5つあります。
 </p>
-<h2 id="headline-7">
+<h3 id="headline-7">
 Apply [rule]
-</h2>
+</h3>
 <p>
 applyはLKのルールを現在のゴールに対して適用します。
 </p>
@@ -213,27 +210,27 @@ applyはLKのルールを現在のゴールに対して適用します。
         <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
         <span class="kr">case</span> <span class="n">judge</span> <span class="n">env</span> <span class="n">rs</span> <span class="n">js</span> <span class="kr">of</span>
           <span class="kt">Left</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">js&#39;</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-            <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;apply&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotApply</span> <span class="n">r</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+            <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;</span><span class="s">apply</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotApply</span> <span class="n">r</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
             <span class="n">commandM</span> <span class="n">env</span>
           <span class="kt">Right</span> <span class="n">js&#39;</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">put</span> <span class="n">js&#39;</span></code></pre></div>
 </div>
 <p>
 中では普通にjudgeを読んで、エラーがあればCommandErrorを、なければそのままゴールを書き換えるということをします。
 </p>
-<h2 id="headline-8">
+<h3 id="headline-8">
 NoApply rule
-</h2>
+</h3>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">NoApply</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
         <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
         <span class="kr">case</span> <span class="n">judge</span> <span class="n">env</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="n">js</span> <span class="kr">of</span>
           <span class="kt">Left</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">js&#39;</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-            <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;noapply&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotApply</span> <span class="n">r</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+            <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;</span><span class="s">noapply</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotApply</span> <span class="n">r</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
             <span class="n">commandM</span> <span class="n">env</span>
           <span class="kt">Right</span> <span class="n">js&#39;</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-            <span class="n">liftIO</span> <span class="o">$</span> <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&#34;= NoApply &#34;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">r</span> <span class="o">++</span> <span class="s">&#34; result&#34;</span>
+            <span class="n">liftIO</span> <span class="o">$</span> <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&#34;</span><span class="s">= NoApply </span><span class="s">&#34;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">r</span> <span class="o">++</span> <span class="s">&#34;</span><span class="s"> result</span><span class="s">&#34;</span>
             <span class="n">liftIO</span> <span class="o">$</span> <span class="n">mapM_</span> <span class="n">print</span> <span class="n">js&#39;</span>
-            <span class="n">liftIO</span> <span class="o">$</span> <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&#34;=</span><span class="se">\n</span><span class="s">&#34;</span></code></pre></div>
+            <span class="n">liftIO</span> <span class="o">$</span> <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&#34;</span><span class="s">=</span><span class="se">\</span><span class="se">n</span><span class="s">&#34;</span></code></pre></div>
 </div>
 <p>
 noapplyは「applyを実行し、その結果を画面に表示するが実際にゴールは書き換えない」というコマンドです。
@@ -242,9 +239,9 @@ noapplyは「applyを実行し、その結果を画面に表示するが実際�
 <p>
 実装はapplyのときとほぼ同じで、ただしゴールには触れずにprintするというところが違います。
 </p>
-<h2 id="headline-9">
+<h3 id="headline-9">
 Use thmindex [(identifier,predicate)]
-</h2>
+</h3>
 <p>
 useは「すでに証明した定理を仮定に追加する」です。
 </p>
@@ -268,7 +265,7 @@ Answer) Yes: P ⊢ Qと⊢ Pがあるならば、Cut規則により⊢ Qが言�
         <span class="kr">let</span> <span class="n">fml</span> <span class="ow">=</span> <span class="n">thms</span> <span class="n">env</span> <span class="kt">M</span><span class="o">.!</span> <span class="n">idx</span>
         <span class="kr">case</span> <span class="n">insts</span> <span class="n">fml</span> <span class="n">pairs</span> <span class="kr">of</span>
           <span class="kt">Right</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">modify</span> <span class="o">$</span> <span class="nf">\</span><span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">r</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
-          <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;inst&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotInstantiate</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
+          <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;</span><span class="s">inst</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotInstantiate</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
 </div>
 <p>
 実装としては、環境から対応する定理を引っ張ってきて自由変数を書き換えて仮定に追加するだけです。
@@ -277,9 +274,9 @@ Answer) Yes: P ⊢ Qと⊢ Pがあるならば、Cut規則により⊢ Qが言�
 このような、自由変数を書き換えて使えるというのは意外と証明の書きやすさに影響してくるのでuseに機能として持たせることにしました。
 これはIsabelleでも自由変数Pは一度証明すると?Pの形になり、OFで後から代入したり出来ましたがそれと同じことです。
 </p>
-<h2 id="headline-10">
+<h3 id="headline-10">
 Inst identifier predicate
-</h2>
+</h3>
 <p>
 instは「自由変数への代入を行う」です。
 上のuseが仮定に追加しさらに代入を行うことが出来ましたが、この代入部分だけ取り出したものです。
@@ -292,27 +289,27 @@ instは「自由変数への代入を行う」です。
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">Inst</span> <span class="n">idt</span> <span class="n">pred</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
         <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
         <span class="kr">case</span> <span class="n">js</span> <span class="kr">of</span>
-          <span class="kt">[]</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;inst&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="p">(</span><span class="ne">error</span> <span class="s">&#34;empty judgement&#34;</span> <span class="ow">::</span> <span class="kt">ErrorCall</span><span class="p">))</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+          <span class="kt">[]</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;</span><span class="s">inst</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="p">(</span><span class="ne">error</span> <span class="s">&#34;</span><span class="s">empty judgement</span><span class="s">&#34;</span> <span class="ow">::</span> <span class="kt">ErrorCall</span><span class="p">)</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
           <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="n">assm</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
             <span class="kr">case</span> <span class="n">substPred</span> <span class="p">(</span><span class="sc">&#39;?&#39;</span><span class="kt">:</span><span class="n">idt</span><span class="p">)</span> <span class="n">pred</span> <span class="n">assm</span> <span class="kr">of</span>
               <span class="kt">Right</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">put</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">r</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js&#39;</span>
-              <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;inst&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotInstantiate</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
+              <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;</span><span class="s">inst</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotInstantiate</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
 </div>
 <p>
 代入するのは仮定の一番最初の項だけなことに注意します。
 </p>
-<h2 id="headline-11">
+<h3 id="headline-11">
 NewCommand identifier argument
-</h2>
+</h3>
 <p>
 最後は組み込みのコマンドではなく、マクロで定義されたコマンドの読み込みです。
 </p>
 <p>
 これは一旦置いておいてあとの方で説明しましょう。
 </p>
-<h1 id="headline-12">
+<h2 id="headline-12">
 まとめ
-</h1>
+</h2>
 <p>
 というわけで組み込みのコマンド Command型を説明しました。
 次にClaireのメインの文法にあたるDeclを説明する必要があるのでそれはまた明日ということで。

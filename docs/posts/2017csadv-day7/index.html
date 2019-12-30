@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="IMPのoperational semantics その3">
 <meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 7日目の記事です。   前回はcommandとcommandの評価を定義した。 6. Coherent lemmas  SKIP  subsection {* Coherent lemmas *} lemma coh_B_Skip: assumes &#34;&lt;SKIP,st&gt; ⇓ st&#39;&#34; shows &#34;st = st&#39;&#34; using cbig.cases [OF assms] by auto   始めの補題はSKIPについてで、 &lt;SKIP,st&gt; ⇓ st&#39; ならば st = st&#39; というものである。 直観的には明らかであろうし、証明も場合分けをするだけで済む。 Ass  lemma coh_B_Ass: assumes &#34;&lt;x ::= a , st&gt; ⇓ st&#39;&#34; shows &#34;st&#39; = st [x ↦ aeval st a]&#34; using cbig.cases [OF assms] by auto   次は変数への代入。これも簡単なので省略。 Seq  lemma coh_B_Seq: assumes &#34;&lt;c1 ;; c2 , st&gt; ⇓ st&#39;&#34; obtains st&#39;&#39; where &#34;&lt;c1 , st&gt; ⇓ st&#39;&#39;&#34; and &#34;&lt;c2 , st&#39;&#39;&gt; ⇓ st&#39;&#34;   &lt;c1 ;; c2,st&gt; ⇓ st&#39; ならば、 c1 を実行すると評価が停止し、さらにその後 c2 を実行すると st&#39; の状態になって評価が停止するということが言えるはずである。 上では後々の便利さのために obtains .">
-
-
 <meta itemprop="datePublished" content="2017-12-07T00:18:10&#43;09:00" />
 <meta itemprop="dateModified" content="2017-12-07T00:18:10&#43;09:00" />
 <meta itemprop="wordCount" content="569">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="AdC2017,Isabelle,計算機科学," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="IMPのoperational semantics その3"/>
 <meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 7日目の記事です。   前回はcommandとcommandの評価を定義した。 6. Coherent lemmas  SKIP  subsection {* Coherent lemmas *} lemma coh_B_Skip: assumes &#34;&lt;SKIP,st&gt; ⇓ st&#39;&#34; shows &#34;st = st&#39;&#34; using cbig.cases [OF assms] by auto   始めの補題はSKIPについてで、 &lt;SKIP,st&gt; ⇓ st&#39; ならば st = st&#39; というものである。 直観的には明らかであろうし、証明も場合分けをするだけで済む。 Ass  lemma coh_B_Ass: assumes &#34;&lt;x ::= a , st&gt; ⇓ st&#39;&#34; shows &#34;st&#39; = st [x ↦ aeval st a]&#34; using cbig.cases [OF assms] by auto   次は変数への代入。これも簡単なので省略。 Seq  lemma coh_B_Seq: assumes &#34;&lt;c1 ;; c2 , st&gt; ⇓ st&#39;&#34; obtains st&#39;&#39; where &#34;&lt;c1 , st&gt; ⇓ st&#39;&#39;&#34; and &#34;&lt;c2 , st&#39;&#39;&gt; ⇓ st&#39;&#34;   &lt;c1 ;; c2,st&gt; ⇓ st&#39; ならば、 c1 を実行すると評価が停止し、さらにその後 c2 を実行すると st&#39; の状態になって評価が停止するということが言えるはずである。 上では後々の便利さのために obtains ."/>
@@ -80,12 +77,12 @@
 <p>
 前回はcommandとcommandの評価を定義した。
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 6. Coherent lemmas
-</h1>
-<h2 id="headline-2">
-SKIP
 </h2>
+<h3 id="headline-2">
+SKIP
+</h3>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  subsection {* Coherent lemmas *}
 
@@ -98,9 +95,9 @@ SKIP
 始めの補題はSKIPについてで、 <code>&lt;SKIP,st&gt; ⇓ st&#39;</code> ならば <code>st = st&#39;</code> というものである。
 直観的には明らかであろうし、証明も場合分けをするだけで済む。
 </p>
-<h2 id="headline-3">
+<h3 id="headline-3">
 Ass
-</h2>
+</h3>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma coh_B_Ass:
     assumes &#34;&lt;x ::= a , st&gt; ⇓ st&#39;&#34;
@@ -110,9 +107,9 @@ Ass
 <p>
 次は変数への代入。これも簡単なので省略。
 </p>
-<h2 id="headline-4">
+<h3 id="headline-4">
 Seq
-</h2>
+</h3>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma coh_B_Seq:
     assumes &#34;&lt;c1 ;; c2 , st&gt; ⇓ st&#39;&#34;
@@ -135,9 +132,9 @@ Seq
 <p>
 証明の内容自体は場合分けくらいしかしてないのでよいと思う。
 </p>
-<h2 id="headline-5">
+<h3 id="headline-5">
 If
-</h2>
+</h3>
 <p>
 <code>&lt;IF b THEN c1 ELSE c2 , st&gt; ⇓ st&#39;</code> のときにst&#39;がどうなるかは <code>b</code> が何になるかによって変わるのでここでは2つ補題をおく。
 </p>
@@ -170,9 +167,9 @@ If
 見たままではあるが、bがtrueになるときはc1が実行され、bがfalseになるときはc2が実行される。
 ところでbはboolではなくbexpだったので、場合分けは <code>beval st b</code> によって行うことに注意。
 </p>
-<h2 id="headline-6">
+<h3 id="headline-6">
 While
-</h2>
+</h3>
 <p>
 さて最後にWHILEである。
 WHILEもIFと同じく与えられた条件が成り立つかによって場合分けを行う。
@@ -206,9 +203,9 @@ WHILEもIFと同じく与えられた条件が成り立つかによって場合�
 <p>
 これも場合分けやるだけ。
 </p>
-<h1 id="headline-7">
+<h2 id="headline-7">
 7. Proof of Determinism
-</h1>
+</h2>
 <p>
 いよいよ目標だったcbigのDeterminismを示そう。
 </p>
@@ -241,9 +238,9 @@ WHILEもIFと同じく与えられた条件が成り立つかによって場合�
 <p>
 補題をおくということは仮定を減らすことでもあり、本当に必要な仮定だけにしないと現実的な時間で探索が終わらないということはよくあるので、このように適切な補題をおくのは(証明が再利用できるだけでなく)大切なことである。
 </p>
-<h1 id="headline-8">
+<h2 id="headline-8">
 8. Small-step &amp; Big-step
-</h1>
+</h2>
 <p>
 次に目標となる定理は次である。
 </p>
@@ -257,9 +254,9 @@ WHILEもIFと同じく与えられた条件が成り立つかによって場合�
 <p>
 以下でこの定理を示していく。
 </p>
-<h1 id="headline-9">
+<h2 id="headline-9">
 まとめ
-</h1>
+</h2>
 <p>
 というところで今回はおしまい。
 </p>

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="Nominal Isabelleとラムダ計算 その2">
 <meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 11日目の記事です。   前回はNominal Isabelleの説明と証明を少しだけしました。 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。 equivarianceとnominal_inductive  補題   さて2つの補題を示しておく。 lemma subst_eqvt[eqvt]: fixes π :: &#34;var prm&#34; shows &#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &#34;x ♯ t&#34; shows &#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda.">
-
-
 <meta itemprop="datePublished" content="2017-12-11T00:13:11&#43;09:00" />
 <meta itemprop="dateModified" content="2017-12-11T00:13:11&#43;09:00" />
 <meta itemprop="wordCount" content="965">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="AdC2017,Isabelle,計算機科学,ラムダ計算," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Nominal Isabelleとラムダ計算 その2"/>
 <meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 11日目の記事です。   前回はNominal Isabelleの説明と証明を少しだけしました。 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。 equivarianceとnominal_inductive  補題   さて2つの補題を示しておく。 lemma subst_eqvt[eqvt]: fixes π :: &#34;var prm&#34; shows &#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &#34;x ♯ t&#34; shows &#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda."/>
@@ -81,12 +78,12 @@
 前回はNominal Isabelleの説明と証明を少しだけしました。
 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。
 </p>
-<h1 id="headline-1">
+<h2 id="headline-1">
 equivarianceとnominal_inductive
-</h1>
-<h2 id="headline-2">
-補題
 </h2>
+<h3 id="headline-2">
+補題
+</h3>
 <p>
 さて2つの補題を示しておく。
 </p>
@@ -115,9 +112,9 @@ subst_eqvtに <code>[eqvt]</code> というattributeがついていることに�
 <p>
 これが以下の話に関わってくる。
 </p>
-<h2 id="headline-3">
+<h3 id="headline-3">
 β変換
-</h2>
+</h3>
 <p>
 さてβ簡約を定義しよう。1ステップのβ簡約は普通にinductive relationとして定められる。
 </p>
@@ -137,9 +134,9 @@ subst_eqvtに <code>[eqvt]</code> というattributeがついていることに�
 β変換を行うb_beta&#39;では、freshnessの条件がついていることに注意。
 そしてその下では、equivarianceとnominal_inductiveというのがあるが、これの説明をしよう。
 </p>
-<h2 id="headline-4">
+<h3 id="headline-4">
 nominal_inductive
-</h2>
+</h3>
 <p>
 nominal_inductiveはnominal_datatypeの時のようなstrong_inductを生成するためのコマンドである。つまり、上のbetaでいうならば <code>M →β M&#39;</code> についての帰納法で、b_abs規則の <code>lam[x].t →β lam[x].s</code> 部分でxが特定の項にfreshになるようにとれるようなものである。
 このようなstrong_inductを生成するのがnominal_inductiveである。
@@ -171,9 +168,9 @@ b_absとb_beta&#39;のところで、新たに <code>x ♯ y</code> が追加さ
 まとめると、inductive relationに対するstrong_inductを使うためにはequivariance→nominal_inductの流れだけを抑えておけばよい。
 しかし、例えば上のbetaの定義にはsubstが出現するが、それについての置換の作用は自動では導出できないので、その場合は上でsubst_eqvtを示したように、置換の作用でどうなるかを <code>[eqvt]</code> attributeを付けて示す必要がある場合がある。
 </p>
-<h1 id="headline-5">
+<h2 id="headline-5">
 confluenceへ
-</h1>
+</h2>
 <p>
 さて今回はNominal Isabelleの解説が目的ではなく(いやそれもあるけど)ラムダ計算の定理証明が目的だったのでそのへんの話をしよう。
 以下ではChurch-Rosserを示していくが、ここではparallel beta変換を用いる手法を用いることにする。
@@ -181,9 +178,9 @@ confluenceへ
 <p>
 (parallel beta変換て何という人もきっと証明を追いかけていれば分かると思うので(ほんまか)安心して欲しい)
 </p>
-<h2 id="headline-6">
+<h3 id="headline-6">
 parallel beta
-</h2>
+</h3>
 <p>
 初めにparallel beta変換を定義する。上でもやったようにparallel betaのstrong_inductも導出しておく。
 </p>
@@ -207,9 +204,9 @@ parallel betaは普通のbeta簡約より少し強力で、1度(1ステップで
 ただしparallel betaは「すでに見えているβ基を同時に複数簡約出来るだけで」あって、「β変換を行うことによって初めて得られるβ基の簡約はできない」ことに注意。
 例えば、 <code>(lam [x]. (lam [y]. M)) N L</code> を <code>(lam [y]. M[x::=N]) L</code> にはできるが、このyとLの簡約は最初の項から直接は行えない。このような違いがCRの証明に関わってくるので注意しよう。
 </p>
-<h2 id="headline-7">
+<h3 id="headline-7">
 CR property
-</h2>
+</h3>
 <p>
 CRを言うためにparallel betaを導入したが、実際に必要になるのは以下の3性質である:
 </p>
@@ -233,9 +230,9 @@ par_to_star: <code>⟦ t ⟶* t1; t ⇒β t2 ⟧ ⟹ t2 ⇒β t1</code>
 <p>
 <code>⟶*</code> は、あとで定義するがβ基を全て簡約する変換である。
 </p>
-<h2 id="headline-8">
+<h3 id="headline-8">
 parallel betaの補題
-</h2>
+</h3>
 <p>
 いくつか補題を示す。
 </p>
@@ -259,9 +256,9 @@ pb_reflはよいだろう。
 <p>
 one_to_parは先にも言った重要な性質で、parallel betaは通常のbetaを含んでいることを表している。
 </p>
-<h2 id="headline-9">
+<h3 id="headline-9">
 long beta
-</h2>
+</h3>
 <p>
 次にlong beta簡約を定義する。といっても普通のbetaのreflexive transitive closureを取るだけで、さらにrefl-trans closureはIsabelleに組み込みのものがあるのでそれを使うことにする。
 </p>
@@ -305,9 +302,9 @@ long beta
 <p>
 正直補題自体は特別言うこともないが、最後のpar_to_longbetaは先も出てきたやつの2つ目で、parallel betaはlong_betaに変換できることを言っている。
 </p>
-<h2 id="headline-10">
+<h3 id="headline-10">
 star変換
-</h2>
+</h3>
 <p>
 さてβ基を一度に全て簡約するstar変換を定義する。
 このstar変換は常に行うことができるが(どんなラムダ項も1-step star変換が可能だが)、それを直接nominal_primrecとして定義してさらに停止性まで言うのは難しいので一旦relationとして定める。
@@ -395,9 +392,9 @@ yのfreshnessによりベータ簡約ができて、 <code>… ⟶* ([(y,x)]∙M
 <p>
 yのfreshnessが効いてきてこういうことが言えるのだけど詳細は証明読んでって感じ。
 </p>
-<h1 id="headline-11">
+<h2 id="headline-11">
 まとめ
-</h1>
+</h2>
 <p>
 意外と説明することが多くて(そもそもラムダ計算の内容自体それなりにあるのでしょうがないけど)記事が長くなりすぎて驚愕してる。
 </p>

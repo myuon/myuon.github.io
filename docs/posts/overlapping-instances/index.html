@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.59.0" />
+<meta name="generator" content="Hugo 0.62.0" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -31,8 +31,6 @@
 
 <meta itemprop="name" content="Overlapping Instancesと戦う">
 <meta itemprop="description" content="Overlapping Instances   Haskellで少し凝ったinstanceをいくつか書いたりしているとoverlapping instancesに悩まされることはよくある。 この辺のまとまった解説があると便利なのではと思ったので書く。 ユーザーガイドにて   実際、overlapping instancesが何故起こるのかについてはGHCユーザーガイドにそれなりに詳しく書いてあるのでそこを読めば良いと思う。  GHCユーザーガイド - Overlapping instances  勝手に抄訳すると次のような感じ 9.8.3.6 Overlapping instances    一般に、Instance resolutionで述べたように、 GHCは、型クラス制約を解決するために使用されるinstance宣言が曖昧ではないことを要求する。 GHCは、 最も具体的な形が存在する時に限って 複数のinstanceにマッチすることを許すという方法で、instanceの解決を緩める方法も提供している。さらに、これはもっと緩くすることもできて、最も具体的な形があるかどうかにかかわらず、複数のinstanceにマッチすることを許すこともできる。この節で詳しく述べる。  instanceの選択をコントロールするには、それぞれのinstanceについてオーバーラップしたときの挙動を指定することができる。 instance キーワードの直後に次のいずれかのプラグマを書けば良い: {-# OVERLAPPING #-}, {-# OVERLAPPABLE #-}, {-# OVERLAPS #-} または {-# INCOHERENT #-}   INCOHERENT はinstanceが自由にoverlapしたりされたりすることを許すが、使わないほうがいいプラグマなので出来る限り避けたほうがいい。 また、後にもあるように OVERLAPS は OVERLAPPING と OVERLAPPABLE のいずれにもなるので OVERLAPS で事足りる場合も多いと思う。  また、いちいちプラグマを書かなくてもいいように、デフォルトの挙動を指定するための拡張 -XIncoherentInstances と -XOverlappingInstances も あるけれど使用は出来る限り避けよう。   さて、あるクライアントモジュールで (C ty1 .">
-
-
 <meta itemprop="datePublished" content="2017-08-21T00:31:03&#43;09:00" />
 <meta itemprop="dateModified" content="2017-08-21T00:31:03&#43;09:00" />
 <meta itemprop="wordCount" content="191">
@@ -40,7 +38,6 @@
 
 
 <meta itemprop="keywords" content="Haskell," />
-
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Overlapping Instancesと戦う"/>
 <meta name="twitter:description" content="Overlapping Instances   Haskellで少し凝ったinstanceをいくつか書いたりしているとoverlapping instancesに悩まされることはよくある。 この辺のまとまった解説があると便利なのではと思ったので書く。 ユーザーガイドにて   実際、overlapping instancesが何故起こるのかについてはGHCユーザーガイドにそれなりに詳しく書いてあるのでそこを読めば良いと思う。  GHCユーザーガイド - Overlapping instances  勝手に抄訳すると次のような感じ 9.8.3.6 Overlapping instances    一般に、Instance resolutionで述べたように、 GHCは、型クラス制約を解決するために使用されるinstance宣言が曖昧ではないことを要求する。 GHCは、 最も具体的な形が存在する時に限って 複数のinstanceにマッチすることを許すという方法で、instanceの解決を緩める方法も提供している。さらに、これはもっと緩くすることもできて、最も具体的な形があるかどうかにかかわらず、複数のinstanceにマッチすることを許すこともできる。この節で詳しく述べる。  instanceの選択をコントロールするには、それぞれのinstanceについてオーバーラップしたときの挙動を指定することができる。 instance キーワードの直後に次のいずれかのプラグマを書けば良い: {-# OVERLAPPING #-}, {-# OVERLAPPABLE #-}, {-# OVERLAPS #-} または {-# INCOHERENT #-}   INCOHERENT はinstanceが自由にoverlapしたりされたりすることを許すが、使わないほうがいいプラグマなので出来る限り避けたほうがいい。 また、後にもあるように OVERLAPS は OVERLAPPING と OVERLAPPABLE のいずれにもなるので OVERLAPS で事足りる場合も多いと思う。  また、いちいちプラグマを書かなくてもいいように、デフォルトの挙動を指定するための拡張 -XIncoherentInstances と -XOverlappingInstances も あるけれど使用は出来る限り避けよう。   さて、あるクライアントモジュールで (C ty1 ."/>
@@ -73,16 +70,16 @@
       <h1>Overlapping Instancesと戦う</h1>
     </header>
     <section>
-<h1 id="headline-1">
+<h2 id="headline-1">
 Overlapping Instances
-</h1>
+</h2>
 <p>
 Haskellで少し凝ったinstanceをいくつか書いたりしているとoverlapping instancesに悩まされることはよくある。
 この辺のまとまった解説があると便利なのではと思ったので書く。
 </p>
-<h1 id="headline-2">
+<h2 id="headline-2">
 ユーザーガイドにて
-</h1>
+</h2>
 <p>
 実際、overlapping instancesが何故起こるのかについてはGHCユーザーガイドにそれなりに詳しく書いてあるのでそこを読めば良いと思う。
 </p>
@@ -92,9 +89,9 @@ Haskellで少し凝ったinstanceをいくつか書いたりしているとoverl
 <p>
 勝手に抄訳すると次のような感じ
 </p>
-<h2 id="headline-3">
+<h3 id="headline-3">
 9.8.3.6 Overlapping instances
-</h2>
+</h3>
 <blockquote>
 <p>
 一般に、<a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/glasgow_exts.html#instance-resolution">Instance resolution</a>で述べたように、 <em>GHCは、型クラス制約を解決するために使用されるinstance宣言が曖昧ではないことを要求する。</em> GHCは、 <em>最も具体的な形が存在する時に限って</em> 複数のinstanceにマッチすることを許すという方法で、instanceの解決を緩める方法も提供している。さらに、これはもっと緩くすることもできて、最も具体的な形があるかどうかにかかわらず、複数のinstanceにマッチすることを許すこともできる。この節で詳しく述べる。
@@ -159,9 +156,9 @@ instanceの選択をコントロールするには、それぞれのinstanceに�
 incoherentプラグマを積極的に使う場面はないと思うので、incoherent関連の説明はあまり気にしなくても大丈夫だと思う。大事なのは2つ目の項目で、 <strong>具体的な候補が他にあるoverlappableな候補は選ばれないこと</strong> が大事。
 また、overlapping instanceエラーは上の検索が起こった場合にしかおきないので、おかしなinstanceを書いただけでは特にエラーにはならないことに注意。
 </p>
-<h2 id="headline-4">
+<h3 id="headline-4">
 例
-</h2>
+</h3>
 <p>
 さて、次のstackoverflowの質問を例に挙げる。
 </p>
@@ -179,9 +176,9 @@ incoherentプラグマを積極的に使う場面はないと思うので、inco
 これは特定の条件下でoverlapping instance errorを引き起こすが、なぜか、そしてどうすれば解決できるか分かるだろうか。
 これが分かっていれば、多分overlapping instanceに悩まされることはもうないと思う。
 </p>
-<h2 id="headline-5">
+<h3 id="headline-5">
 答え
-</h2>
+</h3>
 <p>
 <code class="verbatim">Transformable (Either a b) (Either a b)</code> のinstanceを見つけようとすると、この2つはいずれも候補であり、さらにいずれも上で説明した検索アルゴリズムによって排除されない。
 これは、上も下も互いのinstanceのより具体的な候補になっていないからである。
@@ -190,16 +187,16 @@ incoherentプラグマを積極的に使う場面はないと思うので、inco
 よって答えとしては次のようにinstanceを書き換えるのが正解(ベストアンサーになってるやつ)
 </p>
 <div class="src src-haskell">
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">instance</span> <span class="cm">{-# OVERLAPS #-}</span> <span class="p">(</span><span class="n">a</span> <span class="o">~</span> <span class="n">b</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Transformable</span> <span class="n">a</span> <span class="n">b</span> <span class="kr">where</span> <span class="o">...</span>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">instance</span> <span class="cm">{-</span><span class="cm"># OVERLAPS #</span><span class="cm">-}</span> <span class="p">(</span><span class="n">a</span> <span class="o">~</span> <span class="n">b</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Transformable</span> <span class="n">a</span> <span class="n">b</span> <span class="kr">where</span> <span class="o">...</span>
   <span class="kr">instance</span> <span class="p">(</span><span class="kt">Transformable</span> <span class="n">l</span> <span class="n">l&#39;</span><span class="p">,</span> <span class="kt">Transformable</span> <span class="n">r</span> <span class="n">r&#39;</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Transformable</span> <span class="p">(</span><span class="kt">Either</span> <span class="n">l</span> <span class="n">r</span><span class="p">)</span> <span class="p">(</span><span class="kt">Either</span> <span class="n">l&#39;</span> <span class="n">r&#39;</span><span class="p">)</span> <span class="kr">where</span> <span class="o">...</span></code></pre></div>
 </div>
 <p>
 制約の <code class="verbatim">a ~ b</code> はinstanceの検索には影響しないので、この場合は下の方が上より常に具体的になる(上に適切な代入を行うと下になる)。
 よって下にoverlapping、または上にoverlappableの指定をすればoverlap問題は解決される。
 </p>
-<h2 id="headline-6">
+<h3 id="headline-6">
 おわり
-</h2>
+</h3>
 <p>
 何かの参考になれば。
 </p>
