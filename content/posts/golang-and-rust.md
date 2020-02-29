@@ -1,5 +1,5 @@
 ---
-title: GoとRust
+title: GoとRustの言語比較記事を書くのが流行ってるらしい
 date: 2020-02-29T19:37:36+09:00
 tags: ['Go', 'Rust']
 ---
