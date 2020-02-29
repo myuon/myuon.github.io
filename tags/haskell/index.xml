@@ -97,7 +97,8 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
 また、CircleCIであればhaskell-buildというorbが用意されているので、単にビルドするだけならこれが簡単で良いと思う。
 ビルドコマンド キャッシュは、今のところは cabal new-update してからindex.cacheのchecksumをみて ~/.cabal を丸ごとキャッシュしている。よくわかってないんだけどこれで大丈夫なの？
 あと、以後のjobでも使うので dist-newstyle もworkspaceに放り込んでる。
-何かの参考になれば。</description>
+何かの参考になれば。
+build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:- checkout- run:cabalnew-update- restore_cache:keys:- cabal-index-{{checksum&amp;#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&amp;#34;}}-v1- run:makebuild- run:maketest- save_cache:key:cabal-index-{{checksum&amp;#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&amp;#34;}}-v1paths:- ~/.cabal- persist_to_workspace:root:.paths:- dist-newstyle</description>
       </item>
     
       <item>
@@ -209,7 +210,7 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
         <link>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</link>
         <pubDate>Thu, 14 Dec 2017 00:03:01 +0900</pubDate>
         <guid>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。   今回は小ネタです。  monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。 Coroutine-monad  example: coroutine   名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。  サンプルとしては次のような感じ: countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {-&amp;gt; printProduce countup counting.</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。   今回は小ネタです。  monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。 Coroutine-monad  example: coroutine   名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。  サンプルとしては次のような感じ: countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {- &amp;gt; printProduce countup counting.</description>
       </item>
     
       <item>

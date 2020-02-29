@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -92,7 +92,7 @@ install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dy
     </header>
     <section><p>タイトルの通り。大体以下のPRの説明読めば分かる。</p>
 <p><a href="https://github.com/hashicorp/terraform/pull/2825">https://github.com/hashicorp/terraform/pull/2825</a></p>
-<h2 id="terraform">Terraform側の設定</h2>
+<h2 id="terraform側の設定">Terraform側の設定</h2>
 <p>local envで環境を作ってDynamoDB Localをテスト用途で動かすという前提。以下がproject structure。</p>
 <pre><code>&lt;project root&gt;
   - infrastructure
@@ -109,7 +109,7 @@ install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dy
 }
 </code></pre><p>DynamoDB Localは普通に動かせばよい。</p>
 <p>port:8000で起動させたら、いつも通り<code>terraform -e dev apply</code>でDynamoDB Localにテーブルができる。</p>
-<h2 id="heading">スクリプト</h2>
+<h2 id="スクリプト">スクリプト</h2>
 <p>テストで使おうと思ったら、このDynamoDB Localを立ち上げる→terraform apply→テスト実行→DynamoDB Localを落とすを何度も繰り返すことになって面倒なので、私はMakefileを書いている。</p>
 <div class="highlight"><pre class="chroma"><code class="language-make" data-lang="make"><span class="nf">install</span><span class="o">:</span>
 	mkdir -p ./infrastructure/local/.dynamodb
@@ -137,7 +137,7 @@ install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dy
 	sleep <span class="m">2</span>
 </code></pre></div><p>(上のproject structureで<code>infrastructure/local/.dynamodb</code>に色々入れるという前提)</p>
 <p>色々汚いけどまぁ許してくれって感じ。</p>
-<h2 id="heading-1">おまけ</h2>
+<h2 id="おまけ">おまけ</h2>
 <p>DynamoDB Localは実はStreamsにも対応してるんだけど、そもそもLambda ARNを設定する関係上どうせローカルでは動かないのでテスト時には切っている。</p>
 <p>あとTerraformは柔軟性がなさすぎてつらいのでGoでTerraformをライブラリとして使ってtfファイルをコードで生成みたいなことやりたいなーとか思った。aws-cdk的なやつ。(調べてないけどすでにあったりしないのかな)</p>
 </section>
@@ -181,7 +181,7 @@ install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dy
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -87,9 +87,9 @@ Rustに引き続き9ヵ月ぶりくらいに良い言語に巡り合えました
       <time datetime="2018-11-10 12:24">2018-11-10</time>
       <h1>はじめようReason ML</h1>
     </header>
-    <section><h1 id="heading">はじめに</h1>
+    <section><h1 id="はじめに">はじめに</h1>
 <p>Reason MLを最近始めました。よき。</p>
-<h2 id="reason-ml">Reason MLとは</h2>
+<h2 id="reason-mlとは">Reason MLとは</h2>
 <p>Reason MLとはOCamlにインスパイアされたAltJSの一種。見た目は型の付いたJSみたいな感じだけど実際はJSのsyntaxに寄せたML。</p>
 <p>BuckleScriptというコンパイラ(この名前もどうなんという感じだけど)を使ってJSに変える。BuckleScriptはReason MLとOCamlをJSに変換するコンパイラであり、Reason MLとOCamlのいずれのsyntaxも混ぜて使うことができるっぽい。便利～。</p>
 <p>実際に使うときはBuckleScriptの方のドキュメントもちゃんと読んでおく必要がある(似たような見た目のページだけど内容は違う)。BuckleScriptにはコンパイラ拡張みたいなものが載っておりそれを上手く使うことで生成されるJSを制御したりJS側の関数を読み込んだりするのでこの辺も割と必須。</p>
@@ -98,7 +98,7 @@ Rustに引き続き9ヵ月ぶりくらいに良い言語に巡り合えました
 <li><a href="https://bucklescript.github.io/en/">https://bucklescript.github.io/en/</a> BuckleScriptリファレンス</li>
 <li><a href="https://bucklescript.github.io/bucklescript/api/index.html">https://bucklescript.github.io/bucklescript/api/index.html</a> BuckleScript標準ライブラリ(Reason MLも同じものがportされてる)</li>
 </ul>
-<h2 id="heading-1">よさ</h2>
+<h2 id="よさ">よさ</h2>
 <ul>
 <li>まともな型が付く(OCamlの型システム、世界で一番分かりやすいみたいなところがある)</li>
 <li>生成されるJSがまとも</li>
@@ -109,14 +109,14 @@ Rustに引き続き9ヵ月ぶりくらいに良い言語に巡り合えました
 <li>bs-jsonも普通に使いやすいよ</li>
 <li>JSの標準ライブラリの関数とか型はすべてportされてるのでちゃんと使える</li>
 </ul>
-<h2 id="heading-2">ハマりポイント</h2>
+<h2 id="ハマりポイント">ハマりポイント</h2>
 <ul>
 <li>BuckleScript拡張最初はよくわからなかった(ドキュメントを100回くらい読むと分かる)</li>
 <li>特殊な演算子とかが意外と多くてsyntaxを覚えるのは結構しんどい(Haskellとかだとライブラリ定義の演算子が多いから定義見ればいいけど組み込みの演算子が多いのがつらい)</li>
 <li>関数はデフォルトではカリー化されて <code>(a,b) =&gt; ...</code> は <code>a =&gt; b =&gt; ...</code> 相当のJSが生成されるので(これは回避可能)知らないとたまに思った通り動かない</li>
 <li>ReactはReasonReactというのがあるらしいけどVue.jsはどうしたらいいのかよくわからない(調べてもVue2のやつしか出てこない)</li>
 </ul>
-<h2 id="heading-3">レポート</h2>
+<h2 id="レポート">レポート</h2>
 <p>Node.jsで書いていたサーバーサイドをReason MLで書き直したりVue.jsのビジネスロジック部分だけを切り離してReason MLで書き直したりして安寧を得ています。</p>
 <p>Rustに引き続き9ヵ月ぶりくらいに良い言語に巡り合えました。ていうか私はML系の言語大体「良い」って言う傾向にあるしまぁML好きなんだなと自分でも思います。</p>
 <p>あとはVue.jsでスムーズに使えるようになったらフロントもバックも全部Reason MLでできるのになーって言ってる。 <code>create-vue-app</code> あたりのエコシステムが正式にサポートしてくんないかな～って感じですね。</p>
@@ -164,7 +164,7 @@ Rustに引き続き9ヵ月ぶりくらいに良い言語に巡り合えました
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.

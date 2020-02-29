@@ -5,10 +5,22 @@
     <description>Recent content in Posts on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Mon, 30 Dec 2019 22:18:25 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 29 Feb 2020 19:37:36 +0900</lastBuildDate>
     
       <atom:link href="https://myuon.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+      <item>
+        <title>GoとRust</title>
+        <link>https://myuon.github.io/posts/golang-and-rust/</link>
+        <pubDate>Sat, 29 Feb 2020 19:37:36 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/golang-and-rust/</guid>
+        <description>コンテキスト 仕事でGoとRustを書いています。いずれもWebのサーバーサイドです。パフォーマンスとかほとほどって感じなので極限までチューニングしたりしません。という前提で読んでください。
+Rust/Goはいずれも習得してから2年くらい書いています。書いてる量も多分そんなに変わりません。
+Go なんと言っても習得難度が低いので人を選ばず書けるようになります。現状だと仕事で書くなら一番無難な選択肢だなと思っています。一方言語もエコシステムも何もかもかなりクセが強いので、Go Wayにちゃんと従うことが大事だなと思ったりします。
+ ジェネリクスがないことは高速なコンパイルなど利点もありますがmap,filter等を型ごとにfor文書きまくることになるのでとても手が疲れます。スライスに値が入ってるかどうかをチェックする標準関数用意しといてくれ〜〜〜っていつも思う。 基本的に公式がユーザーに不便を強いる感じになっており、あまり便利さを追求しないほうが良いです。あとリポジトリのissueでGoodが100以上ついてるfeature requestを「対応しません」って言って問答無用で閉じたりするの結構趣がありますね。Goに入ってはGoに従えない人には向いてないです。 syntaxの一貫性があまりなく、結構Adhocな構文要素が多いです。特にゼロ値周りはヤバく、適当に書くとかなり気づきにくいバグを埋め込むおそれがあるのでチームで書くときはコード規約は必須です。公式がコード規約を出しているので、こういうのにとりあえず従っておくのが無難かもしれない。(なお結構うげーとなるような規約があるので私は全部は従いたくないです。) コンパイルが速くstatic buildが超カンタンなのはサイコーって感じですね(この辺はruntimeの出来がめちゃくちゃ良いのでそのへんのおかげ)。Dockerとの相性も良いのであんまり何も考えなくてもものが動いてサイコーです。 GoLandやVSCode pluginの出来が普通に良いのでDXはとても良いです。それはそうとVSCodeはなぜかcompletionの反応速度が異常に悪いので最近はもっぱらGoLandになりました。文明的だなあという気持ちになれて良いです。 標準ライブラリがやたら豪華なので結構何でも提供してくれています。大変便利です。言語人口が多いこともあってライブラリも(少なくとも数は)豊富です。 マクロとかそういうのもないので筋力が全てです。コーディングには筋肉をつけましょう。 仕事ではechoとgormを使っています。  Rust 使いこなせるようになればめちゃ便利な言語です。言語機能が強力なのとエコシステムが整っており、個人的な感覚ではライブラリも強力なものが多いので頼もしいです。習得難度が高いことと未だに言語自体が枯れていないため、界隈の趨勢が変わるとそれに振り回されそうな不安もあります。
+ とにかくコンパイルが遅いです。キャッシュしないとCIのビルド時間が(releaseビルドなのもあり)30分とかになります。誰か助けてほしい。 LSPが微妙にやる気がないです。なんかあんまり補完してくれないときとかがある。もうちょっとやる気を出してほしい。(VSCode) Goと違ってジェネリクスにADTにマクロもあって文明的です。工夫すればコードの治安を良い感じに保つことが出来ます。 最近はasync runtime周りでの動きが活発です。特にasync/awaitが最近になって安定化されたこともあり、「future0.1にのみ対応した非同期APIのないライブラリ」「future0.3に対応したasync/awaitで書けるライブラリ」が入り乱れています。さらにasync runtimeは現状はtokioが一番強いですが、最近になってasync-stdというのが登場し、これが覇権を握ることになるとtokioに依存するライブラリが一斉に死滅する可能性があります。各種ライブラリはasync-stdが台頭するとtokioと非互換なため動かなくなるという状況に危機感を感じているようですが、現状で非同期に対応しているライブラリはほぼruntimeと密結合しているため、すぐには解決されないと思われます。今年や来年にはasync runtime大戦争が起きる可能性があり、仕事でtokio依存ライブラリを使っている身としてはかなり戦々恐々としています。ちなみに最近一瞬消滅しかかったことで話題になったWebフレームワークのactix-webは、独自のthreadpoolを持っているためtokioともasync-stdとも互換性がないです。(async/awaitがもう少し浸透したらこのまま消える可能性もあるのではと個人的には思っている) 学習コストはかなり高いと思います。Goに比べて言語機能がとにかく多いことと、↑のようにライブラリや言語自体がまだ発展途上であること、Goと違ってあまりeasy方面に振ってないライブラリが多いところなどにその理由があると感じています。ちなみにパフォーマンスを追求するわけでも低レイヤーであれこれするわけでもなく普通にアプリケーションを書くだけなら、巷で言われてるほど所有権とかライフタイムとかで詰まることはないと思います。 仕事ではhyperとdieselを使っています。(diesel辞めたいって毎秒言っている)  終わりに </description>
+      </item>
     
       <item>
         <title>2019年を振り返って</title>
@@ -79,11 +91,10 @@ data Sample = Sample { key :: VarChar 20 :- &amp;#39;[&amp;#34;PRIMARY KEY&amp;#
         <description>調べたけどあんまり情報がなかったので。
 AppSync Pipeline Resolver AppSyncにはPipeline Resolverというリゾルバーがあり、これによって複数のリゾルバーを指定できる、とある。
 CFnにはfunctionConfigurationを指定するといいよと書いてある。serverless-appsync-pluginだと次のように書ける。
-custom:appSync:mappingTemplates:-type:Queryfield:testPipelineQueryrequest:&amp;#39;./mapping-templates/before.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;before&amp;#34; mapping templateresponse:&amp;#39;./mapping-templates/after.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;after&amp;#34; mapping templatekind:PIPELINEfunctions:-authorizeFunction-fetchDataFunctionfunctionConfigurations:-dataSource:graphqlLambdaname:&amp;#39;authorizeFunction&amp;#39;request:&amp;#39;./mapping-templates/authorize-request.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39;-dataSource:dataTablename:&amp;#39;fetchDataFunction&amp;#39;request:&amp;#39;./mapping-templates/fetchData.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39;でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
+custom:appSync:mappingTemplates:- type:Queryfield:testPipelineQueryrequest:&amp;#39;./mapping-templates/before.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;before&amp;#34; mapping templateresponse:&amp;#39;./mapping-templates/after.vtl&amp;#39;# the pipeline&amp;#39;s &amp;#34;after&amp;#34; mapping templatekind:PIPELINEfunctions:- authorizeFunction- fetchDataFunctionfunctionConfigurations:- dataSource:graphqlLambdaname:&amp;#39;authorizeFunction&amp;#39;request:&amp;#39;./mapping-templates/authorize-request.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39;- dataSource:dataTablename:&amp;#39;fetchDataFunction&amp;#39;request:&amp;#39;./mapping-templates/fetchData.vtl&amp;#39;response:&amp;#39;./mapping-templates/common-response.vtl&amp;#39;でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
  リゾルバーに対して指定できる処理の単位を&amp;quot;function&amp;quot;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&amp;quot;functionからなる&amp;rdquo; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
 before mapping template ↓ authorizeFunction request mapping template ↓ authorizeFunction本体 ↓ authorizeFunction response mapping template ↓ fetchDataFunction request mapping template ↓ fetchDataFunction本体 ↓ fetchDataFunction response mapping template ↓ after mapping template functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。
-Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。
-設定例を以下に示す。</description>
+Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。</description>
       </item>
     
       <item>
@@ -157,7 +168,8 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
 また、CircleCIであればhaskell-buildというorbが用意されているので、単にビルドするだけならこれが簡単で良いと思う。
 ビルドコマンド キャッシュは、今のところは cabal new-update してからindex.cacheのchecksumをみて ~/.cabal を丸ごとキャッシュしている。よくわかってないんだけどこれで大丈夫なの？
 あと、以後のjobでも使うので dist-newstyle もworkspaceに放り込んでる。
-何かの参考になれば。</description>
+何かの参考になれば。
+build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:- checkout- run:cabalnew-update- restore_cache:keys:- cabal-index-{{checksum&amp;#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&amp;#34;}}-v1- run:makebuild- run:maketest- save_cache:key:cabal-index-{{checksum&amp;#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&amp;#34;}}-v1paths:- ~/.cabal- persist_to_workspace:root:.paths:- dist-newstyle</description>
       </item>
     
       <item>
@@ -207,7 +219,7 @@ install: mkdir -p ./infrastructure/local/.dynamodb cd ./infrastructure/local/.dy
 これも追加してほしいみたいなのあったら教えてください。
 Proof Assistants 始めるなら次の中から選ぶのがよいと思います。
  Coq  Calculus of constructionsベースの型システムとリッチなコマンドを備えた言語 このリストの中では最もコミュニティが大きい、入門書等も豊富 型システムと項を書くためのGallina, コンパイラへの命令を記述するためのVernacular, タクティクスの定義に使うLtacなどの言語が混ざって出てくるのが初心者には混乱必至 結構複雑な言語なので使いこなすのはそれなりに大変   Agda  Martin-Löf type theoryベースの言語 Coqと違ってコマンド等はとても貧弱だが言語が薄いので中の仕組みが分かりやすい、依存型の勉強にはもってこい 実践的に使おうとするとパフォーマンスが悪いのがネック モジュール分割や証明のスキップみたいな面白くないところに時間を取られる可能性あり   Idris  Agdaに似た感じの言語 この中では唯一純粋なプログラミング言語として使用可能(runtimeがあって実行可能コードを吐ける)だが実際に動かして使うにはまだまだという感じ Agdaよりはサポートが多く証明が書きやすいはず(未検証なので嘘かも)   Lean  この中では後発、CoqやAgdaに似ており、Agdaよりは書きやすくリッチでCoqよりは薄くて簡単 数年前にメジャーバージョンが2から3に上がりそこで多少の断絶があるらしい 機能網羅的なリファレンスがまだ用意されてないらしいのでCoqやAgdaの知識がないと使いこなすのは難しいかもしれない   Isabelle  この中では唯一Curry-Howardをベースとしない形式証明(依存型もない) 豊富なライブラリと強力なproverによる自動証明が魅力 「普通の」数学をやりたいならこれがおすすめ 公式のリファレンスはあるが機能は膨大、非公式ドキュメントも少ないので習得は骨が折れるかも    入門書等 出版されていてもドラフト版のpdfが無料で読めるものが多い
- Software Foundations: Coqを使用しプログラム意味論的な話題が中心。Coqの説明ばかりというわけではないので他言語ユーザーでも読めると思われる。 Software Foundations in Idris: Software FoundationsのIdris版 Concrete Semantics: Isabelle/HOLを使用しこちらもプログラム意味論系の証明を行う本。前半はIsabelleの説明で後半はコンピューターサイエンスという構成。 Certified Programming with Dependent Types: Coqで依存型を学べる本。Coqに限らず定理証明で幅広く使える話が書いてあるので非Coqユーザーでもおすすめ。 Verified Functional Programming in Agda: Agdaの本、読んでないので詳細知らず Coq&#39;Art: Coqの定評のある入門書、詳細は知らない Coq/SSReflect/MathCompによる定理証明: 日本語(！)で書かれたCoqの入門書  入門記事等 読み物もあり</description>
+ Software Foundations: Coqを使用しプログラム意味論的な話題が中心。Coqの説明ばかりというわけではないので他言語ユーザーでも読めると思われる。 Software Foundations in Idris: Software FoundationsのIdris版 Concrete Semantics: Isabelle/HOLを使用しこちらもプログラム意味論系の証明を行う本。前半はIsabelleの説明で後半はコンピューターサイエンスという構成。 Certified Programming with Dependent Types: Coqで依存型を学べる本。Coqに限らず定理証明で幅広く使える話が書いてあるので非Coqユーザーでもおすすめ。 Verified Functional Programming in Agda: Agdaの本、読んでないので詳細知らず Coq&amp;rsquo;Art: Coqの定評のある入門書、詳細は知らない Coq/SSReflect/MathCompによる定理証明: 日本語(！)で書かれたCoqの入門書  入門記事等 読み物もあり</description>
       </item>
     
       <item>
@@ -620,7 +632,7 @@ Gitの管理方法を変えた こっちがむしろメイン。今使ってる�
         <link>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</link>
         <pubDate>Thu, 14 Dec 2017 00:03:01 +0900</pubDate>
         <guid>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</guid>
-        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。   今回は小ネタです。  monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。 Coroutine-monad  example: coroutine   名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。  サンプルとしては次のような感じ: countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {-&amp;gt; printProduce countup counting.</description>
+        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。   今回は小ネタです。  monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。 Coroutine-monad  example: coroutine   名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。  サンプルとしては次のような感じ: countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {- &amp;gt; printProduce countup counting.</description>
       </item>
     
       <item>

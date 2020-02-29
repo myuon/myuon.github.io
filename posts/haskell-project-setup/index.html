@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -263,11 +263,11 @@ package.yamlに
 みたいにして書いて、 <code>test/Driver.hs</code> に
 </p>
 <div class="src src-haskell">
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="cm">{-</span><span class="cm">#
-</span><span class="cm">    OPTIONS_GHC </span><span class="cm">-</span><span class="cm">F
-</span><span class="cm">    </span><span class="cm">-</span><span class="cm">pgmF tasty</span><span class="cm">-</span><span class="cm">discover
-</span><span class="cm">    </span><span class="cm">-</span><span class="cm">optF </span><span class="cm">-</span><span class="cm">-</span><span class="cm">tree</span><span class="cm">-</span><span class="cm">display
-</span><span class="cm">  #</span><span class="cm">-}</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="cm">{-#
+</span><span class="cm">    OPTIONS_GHC -F
+</span><span class="cm">    -pgmF tasty-discover
+</span><span class="cm">    -optF --tree-display
+</span><span class="cm">  #-}</span></code></pre></div>
 </div>
 <p>
 と書くと使えます。 <code>stack test</code> であとは勝手にテストが走ります。便利。
@@ -418,7 +418,7 @@ hpackはpackage.yamlをcabalファイルに変換するツールですが、今�
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.

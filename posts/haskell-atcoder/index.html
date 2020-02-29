@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -76,7 +76,7 @@
       <h1>Haskellで解くAtCoder</h1>
     </header>
     <section><p>最近HaskellでAtCoderの問題を解いたりしているのでごく基本的な知見をまとめておく。</p>
-<h1 id="heading">テクニック集</h1>
+<h1 id="テクニック集">テクニック集</h1>
 <p>多くは割と色んな人がすでに言っていることではある。また、想定解法を正しく実装すれば以下のようなことを守らなくても時間内に収まるだろうが、GHCは最適化が効かなければ10倍遅くなる言語であるので普段から守っておくに越したことはないと思う。</p>
 <ul>
 <li>環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。
@@ -140,12 +140,12 @@
 </ul>
 </li>
 </ul>
-<h2 id="heading-1">入力</h2>
+<h2 id="入力">入力</h2>
 <ul>
 <li>上にも書いたようにByteStringで読み込む</li>
 <li>「n個の数値の読み出し」とかはVectorでササッと書く</li>
 </ul>
-<h4 id="heading-2">例</h4>
+<h4 id="例">例</h4>
 <p>例: <code>a1 .. aN</code> を読み取り</p>
 <div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.Vector.Unboxed</span> <span class="k">as</span> <span class="n">VU</span>
 <span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.ByteString.Char8</span> <span class="k">as</span> <span class="n">B</span>
@@ -162,7 +162,7 @@
 <span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
   <span class="kr">let</span> <span class="n">readInt</span> <span class="ow">=</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">second</span> <span class="kt">B</span><span class="o">.</span><span class="n">tail</span><span class="p">)</span> <span class="o">.</span> <span class="kt">B</span><span class="o">.</span><span class="n">readInt</span>
  
-  <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="p">(</span><span class="nf">\</span><span class="n">vec</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">1</span><span class="p">)</span><span class="p">)</span> <span class="o">.</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="mi">2</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span>
+  <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="p">(</span><span class="nf">\</span><span class="n">vec</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">1</span><span class="p">))</span> <span class="o">.</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="mi">2</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span>
 </code></pre></div><p>上と同じように長さ2のvectorを作りこれを手で分解する(Vectorのままにして添字アクセスしてもいい)</p>
 <p>例: <code>A1 B1\nA2 B2\n ... An Bn</code> を読み取り(縦に並んでいる場合)</p>
 <div class="highlight"><pre class="chroma"><code class="language-hs" data-lang="hs"><span class="kr">import</span> <span class="k">qualified</span> <span class="nn">Data.Vector.Unboxed</span> <span class="k">as</span> <span class="n">VU</span>
@@ -172,7 +172,7 @@
   <span class="kr">let</span> <span class="n">readInt</span> <span class="ow">=</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">second</span> <span class="kt">B</span><span class="o">.</span><span class="n">tail</span><span class="p">)</span> <span class="o">.</span> <span class="kt">B</span><span class="o">.</span><span class="n">readInt</span>
  
   <span class="n">abs</span> <span class="ow">&lt;-</span>
-    <span class="kt">VU</span><span class="o">.</span><span class="n">replicateM</span> <span class="n">n</span> <span class="o">$</span> <span class="p">(</span><span class="nf">\</span><span class="n">vec</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">1</span><span class="p">)</span><span class="p">)</span> <span class="o">.</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="mi">2</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span>
+    <span class="kt">VU</span><span class="o">.</span><span class="n">replicateM</span> <span class="n">n</span> <span class="o">$</span> <span class="p">(</span><span class="nf">\</span><span class="n">vec</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vec</span> <span class="kt">VU</span><span class="o">.!</span> <span class="mi">1</span><span class="p">))</span> <span class="o">.</span> <span class="kt">VU</span><span class="o">.</span><span class="n">unfoldrN</span> <span class="mi">2</span> <span class="n">readInt</span> <span class="o">&lt;$&gt;</span> <span class="kt">B</span><span class="o">.</span><span class="n">getLine</span>
 </code></pre></div><p>上でやったのを<code>replicateM</code>で増やせばOK</p>
 <h2 id="vector">Vector</h2>
 <p>上にも書いたとおり、基本的にUnboxed Vectorを多用する。モジュールがいくつかあるのでどれを使えばいいかを覚えておこう。</p>
@@ -276,7 +276,7 @@
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.

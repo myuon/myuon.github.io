@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -211,14 +211,14 @@ syntax highlight
 	  <span class="kr">let</span> <span class="n">wopt</span> <span class="ow">=</span> <span class="n">def</span>
 		<span class="p">{</span> <span class="n">writerTableOfContents</span> <span class="ow">=</span> <span class="kt">True</span>
 		<span class="p">,</span> <span class="n">writerSectionDivs</span> <span class="ow">=</span> <span class="kt">True</span>
-		<span class="p">,</span> <span class="n">writerTemplate</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="s">&#34;</span><span class="s">$if(toc)$</span><span class="se">\</span><span class="se">n</span><span class="s">$toc$</span><span class="se">\</span><span class="se">n</span><span class="s">$endif$</span><span class="se">\</span><span class="se">n</span><span class="s">$body$</span><span class="s">&#34;</span>
+		<span class="p">,</span> <span class="n">writerTemplate</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="s">&#34;$if(toc)$</span><span class="se">\n</span><span class="s">$toc$</span><span class="se">\n</span><span class="s">$endif$</span><span class="se">\n</span><span class="s">$body$&#34;</span>
 		<span class="p">,</span> <span class="n">writerWrapText</span> <span class="ow">=</span> <span class="kt">WrapPreserve</span>
 		<span class="p">,</span> <span class="n">writerHighlight</span> <span class="ow">=</span> <span class="kt">True</span>
 		<span class="p">}</span>
         
 	  <span class="n">compile</span> <span class="o">$</span> <span class="n">pandocCompilerWithTransform</span> <span class="n">ropt</span> <span class="n">wopt</span> <span class="p">(</span><span class="n">walk</span> <span class="n">hardLineBreaks</span><span class="p">)</span>
-	      <span class="o">&gt;&gt;=</span> <span class="n">loadAndApplyTemplate</span> <span class="s">&#34;</span><span class="s">templates/post.html</span><span class="s">&#34;</span>    <span class="n">postCtx</span>
-	      <span class="o">&gt;&gt;=</span> <span class="n">loadAndApplyTemplate</span> <span class="s">&#34;</span><span class="s">templates/default.html</span><span class="s">&#34;</span> <span class="n">postCtx</span>
+	      <span class="o">&gt;&gt;=</span> <span class="n">loadAndApplyTemplate</span> <span class="s">&#34;templates/post.html&#34;</span>    <span class="n">postCtx</span>
+	      <span class="o">&gt;&gt;=</span> <span class="n">loadAndApplyTemplate</span> <span class="s">&#34;templates/default.html&#34;</span> <span class="n">postCtx</span>
 	      <span class="o">&gt;&gt;=</span> <span class="n">relativizeUrls</span></code></pre></div>
 </div>
 <p>
@@ -289,7 +289,7 @@ Hakyllのテーマにはあまりまともなものがなく、例えばJekyll�
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.

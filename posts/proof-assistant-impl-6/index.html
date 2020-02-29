@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -33,7 +33,7 @@
 <meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 23日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  今回はClaireのマクロ機能について説明します。 マクロ記述言語   Proof Assistantでは、コマンドが組み込みのものしか使えないと何かと不便なので(特にライブラリで定義されたデータに対する便利コマンドなんかは組み込みようがないので)、コマンドを定義するためのマクロ記述ができるようにするのが普通です。  Coqでは専用の言語としてLtacがあります。IsabelleではSMLが(直接？この辺よく知らないけど実装側からインタープリター呼ぶみたいなことしてるのだろうか)呼べます。  Claireにもそういう機能を乗っけたいわけですが、言語を新たに定義するのは面倒なのでHaskellで書いたものを直接インタープリターを呼ぶことにします。  マクロはCommandを定義するものと、Declを定義するものと(これはまぁ今回の話とはちょっと違うのですが、あったほうが便利なので用意しておきました)あります。 マクロの実装   マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。 マクロ定義モジュール   定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。 module Commands where import Claire macro :: Env -&gt; Argument -&gt; [Judgement] -&gt; [Command] macro = ... export_command :: [(String, Env -&gt; Argument -&gt; [Judgement] -&gt; [Command])] export_command = [ (&#34;name&#34;, macro) ] declmacro :: [Argument] -&gt; [Decl] declmacro = .">
 <meta itemprop="datePublished" content="2017-12-23T00:04:55&#43;09:00" />
 <meta itemprop="dateModified" content="2017-12-23T00:04:55&#43;09:00" />
-<meta itemprop="wordCount" content="1262">
+<meta itemprop="wordCount" content="1289">
 
 
 
@@ -119,17 +119,17 @@ export_command, export_declに定義したマクロを列挙します。
   <span class="n">macro</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
   <span class="n">macro</span> <span class="ow">=</span> <span class="o">...</span>
 
-  <span class="n">export_command</span> <span class="ow">::</span> <span class="p">[</span><span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span><span class="p">)</span><span class="p">]</span>
+  <span class="n">export_command</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">])]</span>
   <span class="n">export_command</span> <span class="ow">=</span>
-    <span class="p">[</span> <span class="p">(</span><span class="s">&#34;</span><span class="s">name</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">macro</span><span class="p">)</span>
+    <span class="p">[</span> <span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="n">macro</span><span class="p">)</span>
     <span class="p">]</span>
 
   <span class="n">declmacro</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span>
   <span class="n">declmacro</span> <span class="ow">=</span> <span class="o">...</span>
 
-  <span class="n">export_decl</span> <span class="ow">::</span> <span class="p">[</span><span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span><span class="p">)</span><span class="p">]</span>
+  <span class="n">export_decl</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">])]</span>
   <span class="n">export_decl</span> <span class="ow">=</span>
-    <span class="p">[</span> <span class="p">(</span><span class="s">&#34;</span><span class="s">name</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">declmacro</span><span class="p">)</span>
+    <span class="p">[</span> <span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="n">declmacro</span><span class="p">)</span>
     <span class="p">]</span></code></pre></div>
 </div>
 <p>
@@ -150,7 +150,7 @@ export_command, export_declに定義したマクロを列挙します。
     <span class="o">|</span> <span class="kt">ArgPreds</span> <span class="p">[</span><span class="kt">Predicate</span><span class="p">]</span>
     <span class="o">|</span> <span class="kt">ArgTerms</span> <span class="p">[</span><span class="kt">Term</span><span class="p">]</span>
     <span class="o">|</span> <span class="kt">ArgTyped</span> <span class="kt">Ident</span> <span class="kt">Type</span>
-    <span class="o">|</span> <span class="kt">ArgIdents</span> <span class="p">[</span><span class="p">(</span><span class="kt">Ident</span><span class="p">,</span><span class="kt">Pairs</span><span class="p">)</span><span class="p">]</span></code></pre></div>
+    <span class="o">|</span> <span class="kt">ArgIdents</span> <span class="p">[(</span><span class="kt">Ident</span><span class="p">,</span><span class="kt">Pairs</span><span class="p">)]</span></code></pre></div>
 </div>
 <p>
 定義はこうなっていて、パーサーの定義は次です。
@@ -184,11 +184,11 @@ export_command, export_declに定義したマクロを列挙します。
         <span class="n">r</span> <span class="ow">&lt;-</span> <span class="n">liftIO</span> <span class="o">$</span> <span class="n">runInterpreter</span> <span class="o">$</span> <span class="kr">do</span>
           <span class="n">loadModules</span> <span class="p">[</span><span class="n">file</span><span class="p">]</span>
           <span class="n">setTopLevelModules</span> <span class="p">[</span><span class="n">takeBaseName</span> <span class="n">file</span><span class="p">]</span>
-          <span class="n">ds</span> <span class="ow">&lt;-</span> <span class="n">interpret</span> <span class="s">&#34;</span><span class="s">export_decl</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">as</span> <span class="ow">::</span> <span class="p">[</span><span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span><span class="p">)</span><span class="p">]</span><span class="p">)</span>
-          <span class="n">cs</span> <span class="ow">&lt;-</span> <span class="n">interpret</span> <span class="s">&#34;</span><span class="s">export_command</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">as</span> <span class="ow">::</span> <span class="p">[</span><span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span><span class="p">)</span><span class="p">]</span><span class="p">)</span>
+          <span class="n">ds</span> <span class="ow">&lt;-</span> <span class="n">interpret</span> <span class="s">&#34;export_decl&#34;</span> <span class="p">(</span><span class="n">as</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">])])</span>
+          <span class="n">cs</span> <span class="ow">&lt;-</span> <span class="n">interpret</span> <span class="s">&#34;export_command&#34;</span> <span class="p">(</span><span class="n">as</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">])])</span>
           <span class="n">return</span> <span class="o">$</span> <span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">cs</span><span class="p">)</span>
         <span class="kr">case</span> <span class="n">r</span> <span class="kr">of</span>
-          <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;</span><span class="s">HsFile</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">HsFileLoadError</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+          <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;HsFile&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">HsFileLoadError</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
           <span class="kt">Right</span> <span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">cs</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">modify</span> <span class="o">$</span> <span class="nf">\</span><span class="n">env</span> <span class="ow">-&gt;</span> <span class="n">env</span>
             <span class="p">{</span> <span class="n">newdecls</span> <span class="ow">=</span> <span class="kt">M</span><span class="o">.</span><span class="n">union</span> <span class="p">(</span><span class="kt">M</span><span class="o">.</span><span class="n">fromList</span> <span class="n">ds</span><span class="p">)</span> <span class="p">(</span><span class="n">newdecls</span> <span class="n">env</span><span class="p">)</span>
             <span class="p">,</span> <span class="n">newcommands</span> <span class="ow">=</span> <span class="kt">M</span><span class="o">.</span><span class="n">union</span> <span class="p">(</span><span class="kt">M</span><span class="o">.</span><span class="n">fromList</span> <span class="n">cs</span><span class="p">)</span> <span class="p">(</span><span class="n">newcommands</span> <span class="n">env</span><span class="p">)</span>
@@ -209,7 +209,7 @@ NewCommand
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">NewCommand</span> <span class="n">com</span> <span class="n">args</span> <span class="o">|</span> <span class="kt">M</span><span class="o">.</span><span class="n">member</span> <span class="n">com</span> <span class="p">(</span><span class="n">newcommands</span> <span class="n">env</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
         <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
-        <span class="n">r</span> <span class="ow">&lt;-</span> <span class="n">liftIO</span> <span class="o">$</span> <span class="n">try</span> <span class="o">$</span> <span class="n">execStateT</span> <span class="p">(</span><span class="n">comrunner</span> <span class="n">env</span> <span class="p">(</span><span class="p">(</span><span class="n">newcommands</span> <span class="n">env</span> <span class="kt">M</span><span class="o">.!</span> <span class="n">com</span><span class="p">)</span> <span class="n">env</span> <span class="n">args</span> <span class="n">js</span><span class="p">)</span><span class="p">)</span> <span class="n">js</span>
+        <span class="n">r</span> <span class="ow">&lt;-</span> <span class="n">liftIO</span> <span class="o">$</span> <span class="n">try</span> <span class="o">$</span> <span class="n">execStateT</span> <span class="p">(</span><span class="n">comrunner</span> <span class="n">env</span> <span class="p">((</span><span class="n">newcommands</span> <span class="n">env</span> <span class="kt">M</span><span class="o">.!</span> <span class="n">com</span><span class="p">)</span> <span class="n">env</span> <span class="n">args</span> <span class="n">js</span><span class="p">))</span> <span class="n">js</span>
         <span class="kr">case</span> <span class="n">r</span> <span class="kr">of</span>
           <span class="kt">Right</span> <span class="n">js&#39;</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">put</span> <span class="n">js&#39;</span>
           <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="n">com</span> <span class="n">err</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
@@ -220,7 +220,7 @@ NewDecl
 </h4>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">NewDecl</span> <span class="n">dec</span> <span class="n">args</span> <span class="o">|</span> <span class="kt">M</span><span class="o">.</span><span class="n">member</span> <span class="n">dec</span> <span class="p">(</span><span class="n">newdecls</span> <span class="n">env</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-        <span class="n">r</span> <span class="ow">&lt;-</span> <span class="n">liftIO</span> <span class="o">$</span> <span class="n">try</span> <span class="o">$</span> <span class="n">execStateT</span> <span class="p">(</span><span class="n">declrunner</span> <span class="p">(</span><span class="p">(</span><span class="n">newdecls</span> <span class="n">env</span> <span class="kt">M</span><span class="o">.!</span> <span class="n">dec</span><span class="p">)</span> <span class="n">args</span><span class="p">)</span><span class="p">)</span> <span class="n">env</span>
+        <span class="n">r</span> <span class="ow">&lt;-</span> <span class="n">liftIO</span> <span class="o">$</span> <span class="n">try</span> <span class="o">$</span> <span class="n">execStateT</span> <span class="p">(</span><span class="n">declrunner</span> <span class="p">((</span><span class="n">newdecls</span> <span class="n">env</span> <span class="kt">M</span><span class="o">.!</span> <span class="n">dec</span><span class="p">)</span> <span class="n">args</span><span class="p">))</span> <span class="n">env</span>
         <span class="kr">case</span> <span class="n">r</span> <span class="kr">of</span>
           <span class="kt">Right</span> <span class="n">env&#39;</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">put</span> <span class="n">env&#39;</span>
           <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="n">dec</span> <span class="n">err</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
@@ -264,7 +264,7 @@ assumption
   <span class="n">onlyR</span> <span class="n">i</span> <span class="n">n</span> <span class="ow">=</span> <span class="n">concat</span> <span class="o">$</span> <span class="n">replicate</span> <span class="n">i</span> <span class="p">[</span><span class="kt">WR</span><span class="p">]</span> <span class="o">++</span> <span class="n">replicate</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">[</span><span class="kt">PR</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">WR</span><span class="p">]</span>
 
   <span class="n">assumption</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
-  <span class="n">assumption</span> <span class="n">env</span> <span class="kt">ArgEmpty</span> <span class="p">(</span><span class="n">js</span><span class="o">@</span><span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="n">props</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span><span class="p">)</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">findIndex</span> <span class="p">(</span><span class="p">`</span><span class="n">elem</span><span class="p">`</span> <span class="n">toList</span> <span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kr">of</span>
+  <span class="n">assumption</span> <span class="n">env</span> <span class="kt">ArgEmpty</span> <span class="p">(</span><span class="n">js</span><span class="o">@</span><span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="n">props</span><span class="kt">:</span><span class="kr">_</span><span class="p">))</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">findIndex</span> <span class="p">(`</span><span class="n">elem</span><span class="p">`</span> <span class="n">toList</span> <span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kr">of</span>
     <span class="kt">Nothing</span> <span class="ow">-&gt;</span> <span class="n">throwM</span> <span class="o">$</span> <span class="kt">CannotSolve</span> <span class="n">js</span>
     <span class="kt">Just</span> <span class="n">i</span> <span class="ow">-&gt;</span>
       <span class="kr">let</span> <span class="kt">Just</span> <span class="n">j</span> <span class="ow">=</span> <span class="n">elemIndex</span> <span class="p">(</span><span class="n">toList</span> <span class="n">props</span> <span class="o">!!</span> <span class="n">i</span><span class="p">)</span> <span class="p">(</span><span class="n">toList</span> <span class="n">assms</span><span class="p">)</span>
@@ -282,29 +282,29 @@ implyRは <code>thm: a ==&gt; b</code> を受け取って <code>assms |- b, prop
 引数を省略した場合は <code>assms, a ==&gt; b |- b, props</code> を <code>assms |- a, props</code> に変形します。
 </p>
 <div class="src src-haskell">
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="cm">{-</span><span class="cm">| implyR
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="cm">{-| implyR
 </span><span class="cm">  thm: a ==&gt; b
-</span><span class="cm">  goal: assms |</span><span class="cm">-</span><span class="cm"> b, props
+</span><span class="cm">  goal: assms |- b, props
 </span><span class="cm">  use thm
-</span><span class="cm">    assms, a ==&gt; b |</span><span class="cm">-</span><span class="cm"> b, props
+</span><span class="cm">    assms, a ==&gt; b |- b, props
 </span><span class="cm">  apply ImpL
-</span><span class="cm">    assms |</span><span class="cm">-</span><span class="cm"> a, b, props
-</span><span class="cm">    assms, b |</span><span class="cm">-</span><span class="cm"> b, props
+</span><span class="cm">    assms |- a, b, props
+</span><span class="cm">    assms, b |- b, props
 </span><span class="cm">  defer
-</span><span class="cm">    assms, b |</span><span class="cm">-</span><span class="cm"> b, props
-</span><span class="cm">    assms |</span><span class="cm">-</span><span class="cm"> a, b, props
+</span><span class="cm">    assms, b |- b, props
+</span><span class="cm">    assms |- a, b, props
 </span><span class="cm">  assumption
-</span><span class="cm">    assms |</span><span class="cm">-</span><span class="cm"> a, b, props
+</span><span class="cm">    assms |- a, b, props
 </span><span class="cm">  apply (PR 1, WR)
-</span><span class="cm">    assms |</span><span class="cm">-</span><span class="cm"> a, props
-</span><span class="cm">  </span><span class="cm">-}</span>
+</span><span class="cm">    assms |- a, props
+</span><span class="cm">  -}</span>
   <span class="n">implyR</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
-  <span class="n">implyR</span> <span class="n">env</span> <span class="p">(</span><span class="kt">ArgIdents</span> <span class="p">[</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">ps</span><span class="p">)</span><span class="p">]</span><span class="p">)</span> <span class="n">js</span> <span class="ow">=</span> <span class="kt">Use</span> <span class="n">i</span> <span class="n">ps</span> <span class="kt">:</span> <span class="n">implyR</span> <span class="n">env</span> <span class="kt">ArgEmpty</span> <span class="n">js</span>
+  <span class="n">implyR</span> <span class="n">env</span> <span class="p">(</span><span class="kt">ArgIdents</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="n">ps</span><span class="p">)])</span> <span class="n">js</span> <span class="ow">=</span> <span class="kt">Use</span> <span class="n">i</span> <span class="n">ps</span> <span class="kt">:</span> <span class="n">implyR</span> <span class="n">env</span> <span class="kt">ArgEmpty</span> <span class="n">js</span>
   <span class="n">implyR</span> <span class="n">env</span> <span class="kt">ArgEmpty</span> <span class="kr">_</span> <span class="ow">=</span> <span class="n">coms</span> <span class="kr">where</span>
     <span class="n">coms</span> <span class="ow">=</span>
       <span class="p">[</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">ImpL</span><span class="p">]</span>
-      <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;</span><span class="s">defer</span><span class="s">&#34;</span> <span class="kt">ArgEmpty</span>
-      <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;</span><span class="s">assumption</span><span class="s">&#34;</span> <span class="kt">ArgEmpty</span>
+      <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;defer&#34;</span> <span class="kt">ArgEmpty</span>
+      <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;assumption&#34;</span> <span class="kt">ArgEmpty</span>
       <span class="p">,</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">PR</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">WR</span><span class="p">]</span>
       <span class="p">]</span>
   <span class="n">implyR</span> <span class="n">env</span> <span class="n">arg</span> <span class="kr">_</span> <span class="ow">=</span> <span class="n">throwM</span> <span class="o">$</span> <span class="kt">WrongArgument</span> <span class="n">arg</span></code></pre></div>
@@ -331,29 +331,29 @@ genR
 たまに便利かもしれない(ほんまか)
 </p>
 <div class="src src-haskell">
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="cm">{-</span><span class="cm">| genR
-</span><span class="cm">  goal: assms |</span><span class="cm">-</span><span class="cm"> P(a), props
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="cm">{-| genR
+</span><span class="cm">  goal: assms |- P(a), props
 </span><span class="cm">  apply Cut [Forall a. P(a)]
-</span><span class="cm">    assms |</span><span class="cm">-</span><span class="cm"> Forall a. P(a), P(a), props
-</span><span class="cm">    assms, Forall a. P(a) |</span><span class="cm">-</span><span class="cm"> P(a), props
+</span><span class="cm">    assms |- Forall a. P(a), P(a), props
+</span><span class="cm">    assms, Forall a. P(a) |- P(a), props
 </span><span class="cm">  defer
-</span><span class="cm">    assms, Forall a. P(a) |</span><span class="cm">-</span><span class="cm"> P(a), props
-</span><span class="cm">    assms, |</span><span class="cm">-</span><span class="cm"> Forall a. P(a), P(a), props
+</span><span class="cm">    assms, Forall a. P(a) |- P(a), props
+</span><span class="cm">    assms, |- Forall a. P(a), P(a), props
 </span><span class="cm">  apply (ForallL [a])
-</span><span class="cm">    assms, P(a) |</span><span class="cm">-</span><span class="cm"> P(a), props
-</span><span class="cm">    assms, |</span><span class="cm">-</span><span class="cm"> Forall a. P(a), P(a), props
+</span><span class="cm">    assms, P(a) |- P(a), props
+</span><span class="cm">    assms, |- Forall a. P(a), P(a), props
 </span><span class="cm">  assumption
-</span><span class="cm">    assms, |</span><span class="cm">-</span><span class="cm"> Forall a. P(a), P(a), props
+</span><span class="cm">    assms, |- Forall a. P(a), P(a), props
 </span><span class="cm">  apply (PR 1, WR)
-</span><span class="cm">    assms, |</span><span class="cm">-</span><span class="cm"> Forall a. P(a), props
-</span><span class="cm">  </span><span class="cm">-}</span>
+</span><span class="cm">    assms, |- Forall a. P(a), props
+</span><span class="cm">  -}</span>
   <span class="n">genR</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
-  <span class="n">genR</span> <span class="n">env</span> <span class="p">(</span><span class="kt">ArgIdents</span> <span class="p">[</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="kt">[]</span><span class="p">)</span><span class="p">]</span><span class="p">)</span> <span class="p">(</span><span class="n">js</span><span class="o">@</span><span class="p">(</span><span class="kt">Judgement</span> <span class="kr">_</span> <span class="p">(</span><span class="n">p</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span><span class="p">)</span> <span class="ow">=</span> <span class="n">coms</span> <span class="kr">where</span>
+  <span class="n">genR</span> <span class="n">env</span> <span class="p">(</span><span class="kt">ArgIdents</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="kt">[]</span><span class="p">)])</span> <span class="p">(</span><span class="n">js</span><span class="o">@</span><span class="p">(</span><span class="kt">Judgement</span> <span class="kr">_</span> <span class="p">(</span><span class="n">p</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span><span class="kt">:</span><span class="kr">_</span><span class="p">))</span> <span class="ow">=</span> <span class="n">coms</span> <span class="kr">where</span>
     <span class="n">coms</span> <span class="ow">=</span>
       <span class="p">[</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">Cut</span> <span class="o">$</span> <span class="kt">Forall</span> <span class="n">i</span> <span class="n">p</span><span class="p">]</span>
-      <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;</span><span class="s">defer</span><span class="s">&#34;</span> <span class="kt">ArgEmpty</span>
-      <span class="p">,</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">ForallL</span> <span class="p">(</span><span class="kt">Var</span> <span class="n">i</span><span class="p">)</span><span class="p">]</span>
-      <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;</span><span class="s">assumption</span><span class="s">&#34;</span> <span class="kt">ArgEmpty</span>
+      <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;defer&#34;</span> <span class="kt">ArgEmpty</span>
+      <span class="p">,</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">ForallL</span> <span class="p">(</span><span class="kt">Var</span> <span class="n">i</span><span class="p">)]</span>
+      <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;assumption&#34;</span> <span class="kt">ArgEmpty</span>
       <span class="p">,</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">PR</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">WR</span><span class="p">]</span>
       <span class="p">]</span>
   <span class="n">genR</span> <span class="n">env</span> <span class="n">arg</span> <span class="kr">_</span> <span class="ow">=</span> <span class="n">throwM</span> <span class="o">$</span> <span class="kt">WrongArgument</span> <span class="n">arg</span></code></pre></div>
@@ -377,31 +377,31 @@ absR
 要は==&gt;のelimination ruleなのですが、適用したい補題の仮定がならばの形になっている時なんかに便利ですね。
 </p>
 <div class="src src-haskell">
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="cm">{-</span><span class="cm">| absR
-</span><span class="cm">  goal: assms, a |</span><span class="cm">-</span><span class="cm"> b, props
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="cm">{-| absR
+</span><span class="cm">  goal: assms, a |- b, props
 </span><span class="cm">  apply Cut [a ==&gt; b]
-</span><span class="cm">    assms, a |</span><span class="cm">-</span><span class="cm"> a ==&gt; b, b, props
-</span><span class="cm">    assms, a, a ==&gt; b |</span><span class="cm">-</span><span class="cm"> b, props
+</span><span class="cm">    assms, a |- a ==&gt; b, b, props
+</span><span class="cm">    assms, a, a ==&gt; b |- b, props
 </span><span class="cm">  defer
-</span><span class="cm">    assms, a, a ==&gt; b |</span><span class="cm">-</span><span class="cm"> b, props
-</span><span class="cm">    assms, a |</span><span class="cm">-</span><span class="cm"> a ==&gt; b, b, props
+</span><span class="cm">    assms, a, a ==&gt; b |- b, props
+</span><span class="cm">    assms, a |- a ==&gt; b, b, props
 </span><span class="cm">  apply ImpL
-</span><span class="cm">    assms, a |</span><span class="cm">-</span><span class="cm"> a, b, props
-</span><span class="cm">    assms, a, b |</span><span class="cm">-</span><span class="cm"> b, props
-</span><span class="cm">    assms, a |</span><span class="cm">-</span><span class="cm"> a ==&gt; b, b, props
+</span><span class="cm">    assms, a |- a, b, props
+</span><span class="cm">    assms, a, b |- b, props
+</span><span class="cm">    assms, a |- a ==&gt; b, b, props
 </span><span class="cm">  assumption [2]
-</span><span class="cm">    assms, a |</span><span class="cm">-</span><span class="cm"> a ==&gt; b, b, props
+</span><span class="cm">    assms, a |- a ==&gt; b, b, props
 </span><span class="cm">  apply (PR 1, WR, WL)
-</span><span class="cm">    assms |</span><span class="cm">-</span><span class="cm"> a ==&gt; b, props
-</span><span class="cm">  </span><span class="cm">-}</span>
+</span><span class="cm">    assms |- a ==&gt; b, props
+</span><span class="cm">  -}</span>
 
   <span class="n">absL</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span>
-  <span class="n">absL</span> <span class="n">env</span> <span class="kt">ArgEmpty</span> <span class="p">(</span><span class="n">js</span><span class="o">@</span><span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="n">a</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span> <span class="p">(</span><span class="n">b</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span><span class="p">)</span> <span class="ow">=</span>
+  <span class="n">absL</span> <span class="n">env</span> <span class="kt">ArgEmpty</span> <span class="p">(</span><span class="n">js</span><span class="o">@</span><span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="n">a</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span> <span class="p">(</span><span class="n">b</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span><span class="kt">:</span><span class="kr">_</span><span class="p">))</span> <span class="ow">=</span>
     <span class="p">[</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">Cut</span> <span class="o">$</span> <span class="n">a</span> <span class="kt">:==&gt;:</span> <span class="n">b</span><span class="p">]</span>
-    <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;</span><span class="s">defer</span><span class="s">&#34;</span> <span class="kt">ArgEmpty</span>
+    <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;defer&#34;</span> <span class="kt">ArgEmpty</span>
     <span class="p">,</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">ImpL</span><span class="p">]</span>
-    <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;</span><span class="s">assumption</span><span class="s">&#34;</span> <span class="kt">ArgEmpty</span>
-    <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;</span><span class="s">assumption</span><span class="s">&#34;</span> <span class="kt">ArgEmpty</span>
+    <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;assumption&#34;</span> <span class="kt">ArgEmpty</span>
+    <span class="p">,</span> <span class="kt">NewCommand</span> <span class="s">&#34;assumption&#34;</span> <span class="kt">ArgEmpty</span>
     <span class="p">,</span> <span class="kt">Apply</span> <span class="p">[</span><span class="kt">PR</span> <span class="mi">1</span><span class="p">,</span> <span class="kt">WR</span><span class="p">,</span> <span class="kt">WL</span><span class="p">]</span>
     <span class="p">]</span></code></pre></div>
 </div>
@@ -422,9 +422,9 @@ Isabelleのdefinitionをまぁパクった感じなんですが、constantとか
 </p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">definition</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span>
-  <span class="n">definition</span> <span class="p">[</span><span class="kt">ArgTyped</span> <span class="n">i</span> <span class="n">typ</span><span class="p">,</span> <span class="kt">ArgPreds</span> <span class="p">[</span><span class="kt">PredFml</span> <span class="n">body</span><span class="p">]</span><span class="p">]</span> <span class="ow">=</span>
+  <span class="n">definition</span> <span class="p">[</span><span class="kt">ArgTyped</span> <span class="n">i</span> <span class="n">typ</span><span class="p">,</span> <span class="kt">ArgPreds</span> <span class="p">[</span><span class="kt">PredFml</span> <span class="n">body</span><span class="p">]]</span> <span class="ow">=</span>
     <span class="p">[</span> <span class="kt">ConstD</span> <span class="n">i</span> <span class="n">typ</span>
-    <span class="p">,</span> <span class="kt">AxiomD</span> <span class="p">(</span><span class="n">i</span> <span class="o">++</span> <span class="s">&#34;</span><span class="s">_def</span><span class="s">&#34;</span><span class="p">)</span> <span class="n">body</span>
+    <span class="p">,</span> <span class="kt">AxiomD</span> <span class="p">(</span><span class="n">i</span> <span class="o">++</span> <span class="s">&#34;_def&#34;</span><span class="p">)</span> <span class="n">body</span>
     <span class="p">]</span>
   <span class="n">definition</span> <span class="n">arg</span> <span class="ow">=</span> <span class="n">throwM</span> <span class="o">$</span> <span class="kt">WrongArguments</span> <span class="n">arg</span></code></pre></div>
 </div>
@@ -586,7 +586,7 @@ Isabelleのdefinitionをまぁパクった感じなんですが、constantとか
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
