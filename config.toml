@@ -31,3 +31,5 @@ publishDir = "docs"
   description = "λに捧げよ"
 [pygmentsOptions]
   linenos = false
+[markup.goldmark.renderer]
+  unsafe = true
