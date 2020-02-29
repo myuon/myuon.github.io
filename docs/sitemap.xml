@@ -2,21 +2,49 @@
   
     
       <url>
-        <loc>https://myuon.github.io/posts/end-of-2019/</loc>
-        <lastmod>2019-12-30T22:18:25+09:00</lastmod>
+        <loc>https://myuon.github.io/tags/go/</loc>
+        <lastmod>2020-02-29T19:37:36+09:00</lastmod>
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://myuon.github.io/posts/golang-and-rust/</loc>
+        <lastmod>2020-02-29T19:37:36+09:00</lastmod>
       </url>
     
   
     
       <url>
         <loc>https://myuon.github.io/posts/</loc>
-        <lastmod>2019-12-30T22:18:25+09:00</lastmod>
+        <lastmod>2020-02-29T19:37:36+09:00</lastmod>
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://myuon.github.io/tags/rust/</loc>
+        <lastmod>2020-02-29T19:37:36+09:00</lastmod>
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://myuon.github.io/tags/</loc>
+        <lastmod>2020-02-29T19:37:36+09:00</lastmod>
       </url>
     
   
     
       <url>
         <loc>https://myuon.github.io/</loc>
+        <lastmod>2020-02-29T19:37:36+09:00</lastmod>
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://myuon.github.io/posts/end-of-2019/</loc>
         <lastmod>2019-12-30T22:18:25+09:00</lastmod>
       </url>
     
@@ -31,13 +59,6 @@
     
       <url>
         <loc>https://myuon.github.io/posts/isabelle-cbc-casper-safety-proof/</loc>
-        <lastmod>2019-10-27T15:33:19+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/</loc>
         <lastmod>2019-10-27T15:33:19+09:00</lastmod>
       </url>
     
@@ -227,13 +248,6 @@
     
       <url>
         <loc>https://myuon.github.io/tags/javascript/</loc>
-        <lastmod>2018-10-28T16:03:12+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/rust/</loc>
         <lastmod>2018-10-28T16:03:12+09:00</lastmod>
       </url>
     

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -33,7 +33,7 @@
 <meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 20日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Proofchecker state machine   さてClaireのproofcheckerを作っていきます。  前回にもちょこっと話しましたが、proofcheckerをステートマシンとして捉えます。 これは、インタラクティブシェルを実装しなければいけない関係で、proofcheckerを1ステップずつ(証明ファイル1行ずつ)進むという処理をさせたいからです。 proof state   初めに仕様を固めます。   (state:toplevel)    Declを読む; Theoremが来たらstate:commandに移行; 全ての入力を消費するか途中でエラーになったら停止する   (state:command)    Comを読む; 途中で失敗したらエラーを吐いてstate:toplevelに戻る    注意が必要なのは、state:commandでエラーが出たら、state:toplevelに戻ってエラーが出るところです。 このエラーというのはcheckerを走らせるときは普通のなんでもよいですが、インタラクティブシェルの場合はユーザーにエラー内容を表示しつつ再入力を促す必要があるのであとでcatchする必要があることも念頭に置いておきます。 Coroutine monad   さてこういうステートマシンを作りたいときはどうするのがいいでしょうか？ 察しの良い方ならわかるとおりこのアドベントカレンダー14日目の記事 Coroutineモナドとステートマシン でも説明したとおり、Coroutine monadを使います1。  Claire.Checker Command Machine Suspender   簡単な方から行きます。 data ComSuspender y = ComAwait (Command -&gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&gt; Env -&gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = .">
 <meta itemprop="datePublished" content="2017-12-20T00:12:26&#43;09:00" />
 <meta itemprop="dateModified" content="2017-12-20T00:12:26&#43;09:00" />
-<meta itemprop="wordCount" content="472">
+<meta itemprop="wordCount" content="473">
 
 
 
@@ -188,7 +188,7 @@ commandMは、コマンドをawaitで受け取り、コマンドを実行し、�
     <span class="kr">let</span> <span class="n">insts</span> <span class="n">fml</span> <span class="n">pairs</span> <span class="ow">=</span> <span class="n">foldlM</span> <span class="p">(</span><span class="nf">\</span><span class="n">f</span> <span class="p">(</span><span class="n">idt</span><span class="p">,</span><span class="n">pred</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">substPred</span> <span class="p">(</span><span class="sc">&#39;?&#39;</span><span class="kt">:</span><span class="n">idt</span><span class="p">)</span> <span class="n">pred</span> <span class="n">f</span><span class="p">)</span> <span class="n">fml</span> <span class="n">pairs</span>
 
     <span class="kr">case</span> <span class="n">com</span> <span class="kr">of</span>
-      <span class="kr">_</span> <span class="ow">-&gt;</span> <span class="err">こ</span><span class="err">こ</span><span class="err">に</span><span class="err">コ</span><span class="err">マ</span><span class="err">ン</span><span class="err">ド</span><span class="err">の</span><span class="err">実</span><span class="err">装</span><span class="err">を</span><span class="err">追</span><span class="err">加</span><span class="err">す</span><span class="err">る</span>
+      <span class="kr">_</span> <span class="ow">-&gt;</span> <span class="err">ここにコマンドの実装を追加する</span>
 
     <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
     <span class="n">unless</span> <span class="p">(</span><span class="n">null</span> <span class="n">js</span><span class="p">)</span> <span class="o">$</span> <span class="n">commandM</span> <span class="n">env</span></code></pre></div>
@@ -210,7 +210,7 @@ applyはLKのルールを現在のゴールに対して適用します。
         <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
         <span class="kr">case</span> <span class="n">judge</span> <span class="n">env</span> <span class="n">rs</span> <span class="n">js</span> <span class="kr">of</span>
           <span class="kt">Left</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">js&#39;</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-            <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;</span><span class="s">apply</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotApply</span> <span class="n">r</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+            <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;apply&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotApply</span> <span class="n">r</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
             <span class="n">commandM</span> <span class="n">env</span>
           <span class="kt">Right</span> <span class="n">js&#39;</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">put</span> <span class="n">js&#39;</span></code></pre></div>
 </div>
@@ -225,12 +225,12 @@ NoApply rule
         <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
         <span class="kr">case</span> <span class="n">judge</span> <span class="n">env</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="n">js</span> <span class="kr">of</span>
           <span class="kt">Left</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">js&#39;</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-            <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;</span><span class="s">noapply</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotApply</span> <span class="n">r</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+            <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;noapply&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotApply</span> <span class="n">r</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
             <span class="n">commandM</span> <span class="n">env</span>
           <span class="kt">Right</span> <span class="n">js&#39;</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-            <span class="n">liftIO</span> <span class="o">$</span> <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&#34;</span><span class="s">= NoApply </span><span class="s">&#34;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">r</span> <span class="o">++</span> <span class="s">&#34;</span><span class="s"> result</span><span class="s">&#34;</span>
+            <span class="n">liftIO</span> <span class="o">$</span> <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&#34;= NoApply &#34;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">r</span> <span class="o">++</span> <span class="s">&#34; result&#34;</span>
             <span class="n">liftIO</span> <span class="o">$</span> <span class="n">mapM_</span> <span class="n">print</span> <span class="n">js&#39;</span>
-            <span class="n">liftIO</span> <span class="o">$</span> <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&#34;</span><span class="s">=</span><span class="se">\</span><span class="se">n</span><span class="s">&#34;</span></code></pre></div>
+            <span class="n">liftIO</span> <span class="o">$</span> <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&#34;=</span><span class="se">\n</span><span class="s">&#34;</span></code></pre></div>
 </div>
 <p>
 noapplyは「applyを実行し、その結果を画面に表示するが実際にゴールは書き換えない」というコマンドです。
@@ -265,7 +265,7 @@ Answer) Yes: P ⊢ Qと⊢ Pがあるならば、Cut規則により⊢ Qが言�
         <span class="kr">let</span> <span class="n">fml</span> <span class="ow">=</span> <span class="n">thms</span> <span class="n">env</span> <span class="kt">M</span><span class="o">.!</span> <span class="n">idx</span>
         <span class="kr">case</span> <span class="n">insts</span> <span class="n">fml</span> <span class="n">pairs</span> <span class="kr">of</span>
           <span class="kt">Right</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">modify</span> <span class="o">$</span> <span class="nf">\</span><span class="p">(</span><span class="kt">Judgement</span> <span class="n">assms</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">r</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span>
-          <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;</span><span class="s">inst</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotInstantiate</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
+          <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;inst&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotInstantiate</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
 </div>
 <p>
 実装としては、環境から対応する定理を引っ張ってきて自由変数を書き換えて仮定に追加するだけです。
@@ -289,11 +289,11 @@ instは「自由変数への代入を行う」です。
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">Inst</span> <span class="n">idt</span> <span class="n">pred</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
         <span class="n">js</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
         <span class="kr">case</span> <span class="n">js</span> <span class="kr">of</span>
-          <span class="kt">[]</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;</span><span class="s">inst</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="p">(</span><span class="ne">error</span> <span class="s">&#34;</span><span class="s">empty judgement</span><span class="s">&#34;</span> <span class="ow">::</span> <span class="kt">ErrorCall</span><span class="p">)</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+          <span class="kt">[]</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;inst&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="p">(</span><span class="ne">error</span> <span class="s">&#34;empty judgement&#34;</span> <span class="ow">::</span> <span class="kt">ErrorCall</span><span class="p">))</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
           <span class="p">(</span><span class="kt">Judgement</span> <span class="p">(</span><span class="n">assm</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js&#39;</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
             <span class="kr">case</span> <span class="n">substPred</span> <span class="p">(</span><span class="sc">&#39;?&#39;</span><span class="kt">:</span><span class="n">idt</span><span class="p">)</span> <span class="n">pred</span> <span class="n">assm</span> <span class="kr">of</span>
               <span class="kt">Right</span> <span class="n">r</span> <span class="ow">-&gt;</span> <span class="n">lift</span> <span class="o">$</span> <span class="n">put</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">r</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js&#39;</span>
-              <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;</span><span class="s">inst</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotInstantiate</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
+              <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">CommandError</span> <span class="s">&#34;inst&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">CannotInstantiate</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span></code></pre></div>
 </div>
 <p>
 代入するのは仮定の一番最初の項だけなことに注意します。
@@ -378,7 +378,7 @@ NewCommand identifier argument
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -86,12 +86,12 @@ https://elm-lang.org/assets/papers/concurrent-frp.pdf
     </header>
     <section><p>これ</p>
 <p><a href="https://elm-lang.org/assets/papers/concurrent-frp.pdf">https://elm-lang.org/assets/papers/concurrent-frp.pdf</a></p>
-<h2 id="heading">はじめに</h2>
+<h2 id="はじめに">はじめに</h2>
 <p>某所でFRPをeffect systemとみなせないか、という大変示唆的な質問をいただいて、気になったのでFRPについて調べてた流れで教えてもらったElmの作者が書いた論文。
 自分はFRPについては「なんかEventとBehaviorがあってArrowになったりMonadになったりするやつ」くらいの感覚しかなかったので論文読んでみることにした。</p>
 <p>ところでmarkdownで数式や図を記述するのは大変つらいので記事は適当に日本語で書きます。詳しく知りたい人は論文の方を読んでください。</p>
 <p>あと、ElmはFRP捨てたって言ってた気がするので多分今のElmはもう論文にあるような仕組みで動いてないような気がしないでもない。</p>
-<h2 id="2-">2章 背景</h2>
+<h2 id="2章-背景">2章 背景</h2>
 <ul>
 <li>FRPにはClassical, Real-time (とEvent-driven), Arrowizedの3種類ある</li>
 <li>Classical:
@@ -128,7 +128,7 @@ https://elm-lang.org/assets/papers/concurrent-frp.pdf
 </ul>
 </li>
 </ul>
-<h2 id="3-core-language">3章 Core Language</h2>
+<h2 id="3章-core-language">3章 Core Language</h2>
 <ul>
 <li>Dicreteなsignalを扱う</li>
 <li>文法: <code>e ::= () | n \in Z | \x. e | e1 e2 | x | let x = e1 in e2 | i \in Input | lift e e1 .. en | foldp e1 e2 e3 | async e</code>
@@ -186,7 +186,7 @@ https://elm-lang.org/assets/papers/concurrent-frp.pdf
 <li>EXPAND <code>(let x = s in e1) e2 -&gt; let x = s in (e1 e2)</code> (<code>x \notin fv(e2)</code>)</li>
 </ul>
 <p>また、primitiveは左から右に順に計算を行う。</p>
-<h2 id="4-concurrency">4章 Concurrency</h2>
+<h2 id="4章-concurrency">4章 Concurrency</h2>
 <ul>
 <li>Concurrentにどうやって計算をするかということと、global delay(入力の変化の伝播に時間がかかること)をどうやって避けるかって話が書いてある</li>
 <li>結局asyncにできるところはやりましょという感じ</li>
@@ -195,12 +195,12 @@ https://elm-lang.org/assets/papers/concurrent-frp.pdf
 <li>Translation to CML: CMLでのCoreの実装が書いてあるがこれだけ見せられても困るとしか言いようがない(そもそもCMLの説明全然してないじゃん) やーここのsemanticsはちゃんと与えてほしかったが作者は実装したい人だろうしまぁしょうがないか</li>
 <li>translationはよくわかってないのでequationとかも含めまた機会があればちゃんと考えたい</li>
 </ul>
-<h2 id="5">5章以降</h2>
+<h2 id="5章以降">5章以降</h2>
 <ul>
 <li>GUIフレームワークどうやって作るかとかそういう話</li>
 <li>まぁ割愛</li>
 </ul>
-<h2 id="heading-1">論文を読んで</h2>
+<h2 id="論文を読んで">論文を読んで</h2>
 <p>FRPについての概説が2章でまとめられていたのはよかった。semanticsは分かったような分からんような(やっぱequational theoryとか作って構造を明示してくれないと分かった気がしないよな)という感じ。</p>
 <p>ここでのElmのsignalはapplicativeだけどclassical frpでmonadicなやつとかもあるっぽい。その辺見てたらどうもmonadicといいつつ普通にparametricっぽさあるやつとか出てきてeffect systemでは？という感じになったりした(その論文ではalgebraicというかfree effectだった)ので、monadicな方もまた論文を読んだら記事を書こうと思います。</p>
 <p>おわり</p>
@@ -248,7 +248,7 @@ https://elm-lang.org/assets/papers/concurrent-frp.pdf
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.

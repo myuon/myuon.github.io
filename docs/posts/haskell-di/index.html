@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -180,7 +180,7 @@ reflectionのAPIを専用関数としてラップしたものを用意してお�
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">something</span> <span class="ow">::</span> <span class="kt">UseLogger</span> <span class="ow">=&gt;</span> <span class="o">...</span>
   <span class="n">something</span> <span class="ow">=</span> <span class="kr">do</span>
-    <span class="n">writeLog</span> <span class="n">useLogger</span> <span class="s">&#34;</span><span class="s">write to log!</span><span class="s">&#34;</span></code></pre></div>
+    <span class="n">writeLog</span> <span class="n">useLogger</span> <span class="s">&#34;write to log!&#34;</span></code></pre></div>
 </div>
 <p>
 <code>UseLogger =&gt;</code> の中では <code>useLogger</code> を使うことができてロガーを使うことができる。ここではロガーの具体的な型には言及しなくてもよいところが大事。
@@ -279,7 +279,7 @@ DIを用いたアプリでの例
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.

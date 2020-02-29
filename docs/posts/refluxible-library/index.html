@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -33,7 +33,7 @@
 <meta itemprop="description" content="Haskellの2D graphics libraryを作った   作った: refluxive  与太話に興味がない人は解説まで飛んでください なにこれ   大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。 なぜ   大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。  —  なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。 画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。  グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。 Flux   JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。 といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。 Haskellとは   HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。 Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。 テクいところ   最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。 refluxive   ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。  あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。 構成要素     Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない    Model: Componentの内部状態    Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる    ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる    Graphical: Viewの表現    UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる   例:ボタン   とりあえず例をやろうということでボタン。  https://github.">
 <meta itemprop="datePublished" content="2018-06-16T08:00:49-07:00" />
 <meta itemprop="dateModified" content="2018-06-16T08:00:49-07:00" />
-<meta itemprop="wordCount" content="342">
+<meta itemprop="wordCount" content="343">
 
 
 
@@ -198,14 +198,14 @@ Componentはbuttonとappの2つ
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">ButtonState</span> <span class="ow">=</span> <span class="kt">None</span> <span class="o">|</span> <span class="kt">Hover</span> <span class="o">|</span> <span class="kt">Clicking</span>
     <span class="kr">deriving</span> <span class="kt">Eq</span>
 
-  <span class="kr">instance</span> <span class="kt">Component</span> <span class="kt">UI</span> <span class="s">&#34;</span><span class="s">button</span><span class="s">&#34;</span> <span class="kr">where</span>
-    <span class="kr">type</span> <span class="kt">ModelParam</span> <span class="s">&#34;</span><span class="s">button</span><span class="s">&#34;</span> <span class="ow">=</span> <span class="kt">Record</span>
-      <span class="p">[</span> <span class="s">&#34;</span><span class="s">label</span><span class="s">&#34;</span> <span class="o">&gt;:</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span>
-      <span class="p">,</span> <span class="s">&#34;</span><span class="s">clicked_label</span><span class="s">&#34;</span> <span class="o">&gt;:</span> <span class="p">(</span><span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span><span class="p">)</span>
-      <span class="p">,</span> <span class="s">&#34;</span><span class="s">size</span><span class="s">&#34;</span> <span class="o">&gt;:</span> <span class="kt">SDLP</span><span class="o">.</span><span class="kt">Pos</span>
+  <span class="kr">instance</span> <span class="kt">Component</span> <span class="kt">UI</span> <span class="s">&#34;button&#34;</span> <span class="kr">where</span>
+    <span class="kr">type</span> <span class="kt">ModelParam</span> <span class="s">&#34;button&#34;</span> <span class="ow">=</span> <span class="kt">Record</span>
+      <span class="p">[</span> <span class="s">&#34;label&#34;</span> <span class="o">&gt;:</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span>
+      <span class="p">,</span> <span class="s">&#34;clicked_label&#34;</span> <span class="o">&gt;:</span> <span class="p">(</span><span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span><span class="p">)</span>
+      <span class="p">,</span> <span class="s">&#34;size&#34;</span> <span class="o">&gt;:</span> <span class="kt">SDLP</span><span class="o">.</span><span class="kt">Pos</span>
       <span class="p">]</span>
 
-    <span class="kr">data</span> <span class="kt">Model</span> <span class="s">&#34;</span><span class="s">button</span><span class="s">&#34;</span> <span class="ow">=</span> <span class="kt">ButtonModel</span>
+    <span class="kr">data</span> <span class="kt">Model</span> <span class="s">&#34;button&#34;</span> <span class="ow">=</span> <span class="kt">ButtonModel</span>
       <span class="p">{</span> <span class="n">label</span> <span class="ow">::</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span>
       <span class="p">,</span> <span class="n">clickedLabel</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">T</span><span class="o">.</span><span class="kt">Text</span>
       <span class="p">,</span> <span class="n">size</span> <span class="ow">::</span> <span class="kt">SDLP</span><span class="o">.</span><span class="kt">Pos</span>
@@ -213,7 +213,7 @@ Componentはbuttonとappの2つ
       <span class="p">,</span> <span class="n">clickCounter</span> <span class="ow">::</span> <span class="kt">Int</span>
       <span class="p">}</span>
 
-  <span class="kr">data</span> <span class="kt">Signal</span> <span class="s">&#34;</span><span class="s">button</span><span class="s">&#34;</span> <span class="ow">=</span> <span class="kt">Click</span></code></pre></div>
+  <span class="kr">data</span> <span class="kt">Signal</span> <span class="s">&#34;button&#34;</span> <span class="ow">=</span> <span class="kt">Click</span></code></pre></div>
 </div>
 <p>
 ModelParamがコンストラクタの引数で、Modelが実際の内部状態の定義。Signalは今回はクリックだけ拾えればいいのでClickだけ。
@@ -225,9 +225,9 @@ ModelParamがコンストラクタの引数で、Modelが実際の内部状態�
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="o">...</span>
       <span class="n">addWatchSignal</span> <span class="n">self</span> <span class="o">$</span> <span class="n">watch</span> <span class="n">b</span> <span class="o">$</span> <span class="nf">\</span><span class="n">rs</span> <span class="ow">-&gt;</span> <span class="nf">\</span><span class="kr">case</span>
-        <span class="kt">BuiltInSignal</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">Event</span> <span class="kr">_</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">MouseButtonEvent</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">MouseButtonEventData</span> <span class="kr">_</span> <span class="kt">SDL</span><span class="o">.</span><span class="kt">Pressed</span> <span class="kr">_</span> <span class="kt">SDL</span><span class="o">.</span><span class="kt">ButtonLeft</span> <span class="kr">_</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">P</span> <span class="n">v</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="kt">BuiltInSignal</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">Event</span> <span class="kr">_</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">MouseButtonEvent</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">MouseButtonEventData</span> <span class="kr">_</span> <span class="kt">SDL</span><span class="o">.</span><span class="kt">Pressed</span> <span class="kr">_</span> <span class="kt">SDL</span><span class="o">.</span><span class="kt">ButtonLeft</span> <span class="kr">_</span> <span class="p">(</span><span class="kt">SDL</span><span class="o">.</span><span class="kt">P</span> <span class="n">v</span><span class="p">))))</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
           <span class="n">model</span> <span class="ow">&lt;-</span> <span class="n">get</span>
-          <span class="n">when</span> <span class="p">(</span><span class="n">inRange</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">fromEnum</span> <span class="o">$</span> <span class="n">coordinate</span> <span class="n">rs</span><span class="p">,</span> <span class="n">fmap</span> <span class="n">fromEnum</span> <span class="o">$</span> <span class="n">coordinate</span> <span class="n">rs</span> <span class="o">+</span> <span class="n">size</span> <span class="n">model</span><span class="p">)</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">fromEnum</span> <span class="n">v</span><span class="p">)</span><span class="p">)</span> <span class="o">$</span> <span class="kr">do</span>
+          <span class="n">when</span> <span class="p">(</span><span class="n">inRange</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">fromEnum</span> <span class="o">$</span> <span class="n">coordinate</span> <span class="n">rs</span><span class="p">,</span> <span class="n">fmap</span> <span class="n">fromEnum</span> <span class="o">$</span> <span class="n">coordinate</span> <span class="n">rs</span> <span class="o">+</span> <span class="n">size</span> <span class="n">model</span><span class="p">)</span> <span class="p">(</span><span class="n">fmap</span> <span class="n">fromEnum</span> <span class="n">v</span><span class="p">))</span> <span class="o">$</span> <span class="kr">do</span>
             <span class="n">modify</span> <span class="o">$</span> <span class="nf">\</span><span class="n">model</span> <span class="ow">-&gt;</span> <span class="n">model</span> <span class="p">{</span> <span class="n">buttonState</span> <span class="ow">=</span> <span class="kt">Clicking</span> <span class="p">}</span>
             <span class="n">lift</span> <span class="o">$</span> <span class="n">emit</span> <span class="n">self</span> <span class="kt">Click</span>
   <span class="o">...</span></code></pre></div>
@@ -240,15 +240,15 @@ MouseButtonのイベントが来て、カーソルがエリア内部だったら
 一応appの方も
 </p>
 <div class="src src-haskell">
-<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">instance</span> <span class="kt">Component</span> <span class="kt">UI</span> <span class="s">&#34;</span><span class="s">app</span><span class="s">&#34;</span> <span class="kr">where</span>
-    <span class="kr">type</span> <span class="kt">ModelParam</span> <span class="s">&#34;</span><span class="s">app</span><span class="s">&#34;</span> <span class="ow">=</span> <span class="nb">()</span>
-    <span class="kr">data</span> <span class="kt">Model</span> <span class="s">&#34;</span><span class="s">app</span><span class="s">&#34;</span> <span class="ow">=</span> <span class="kt">AppModel</span> <span class="p">{</span> <span class="n">button</span> <span class="ow">::</span> <span class="kt">ComponentView</span> <span class="s">&#34;</span><span class="s">button</span><span class="s">&#34;</span> <span class="p">}</span>
-    <span class="kr">data</span> <span class="kt">Signal</span> <span class="s">&#34;</span><span class="s">app</span><span class="s">&#34;</span>
+<div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">instance</span> <span class="kt">Component</span> <span class="kt">UI</span> <span class="s">&#34;app&#34;</span> <span class="kr">where</span>
+    <span class="kr">type</span> <span class="kt">ModelParam</span> <span class="s">&#34;app&#34;</span> <span class="ow">=</span> <span class="nb">()</span>
+    <span class="kr">data</span> <span class="kt">Model</span> <span class="s">&#34;app&#34;</span> <span class="ow">=</span> <span class="kt">AppModel</span> <span class="p">{</span> <span class="n">button</span> <span class="ow">::</span> <span class="kt">ComponentView</span> <span class="s">&#34;button&#34;</span> <span class="p">}</span>
+    <span class="kr">data</span> <span class="kt">Signal</span> <span class="s">&#34;app&#34;</span>
 
     <span class="n">newModel</span> <span class="nb">()</span> <span class="ow">=</span> <span class="kr">do</span>
-      <span class="n">button</span> <span class="ow">&lt;-</span> <span class="n">new</span> <span class="o">@</span><span class="s">&#34;</span><span class="s">button</span><span class="s">&#34;</span> <span class="o">$</span>
-        <span class="o">#</span><span class="n">label</span> <span class="o">@=</span> <span class="s">&#34;</span><span class="s">Click me!</span><span class="s">&#34;</span>
-        <span class="o">&lt;:</span> <span class="o">#</span><span class="n">clicked_label</span> <span class="o">@=</span> <span class="p">(</span><span class="nf">\</span><span class="n">n</span> <span class="ow">-&gt;</span> <span class="s">&#34;</span><span class="s">You clicked </span><span class="s">&#34;</span> <span class="p">`</span><span class="kt">T</span><span class="o">.</span><span class="n">append</span><span class="p">`</span> <span class="kt">T</span><span class="o">.</span><span class="n">pack</span> <span class="p">(</span><span class="n">show</span> <span class="n">n</span><span class="p">)</span> <span class="p">`</span><span class="kt">T</span><span class="o">.</span><span class="n">append</span><span class="p">`</span> <span class="s">&#34;</span><span class="s"> times</span><span class="s">&#34;</span><span class="p">)</span>
+      <span class="n">button</span> <span class="ow">&lt;-</span> <span class="n">new</span> <span class="o">@</span><span class="s">&#34;button&#34;</span> <span class="o">$</span>
+        <span class="o">#</span><span class="n">label</span> <span class="o">@=</span> <span class="s">&#34;Click me!&#34;</span>
+        <span class="o">&lt;:</span> <span class="o">#</span><span class="n">clicked_label</span> <span class="o">@=</span> <span class="p">(</span><span class="nf">\</span><span class="n">n</span> <span class="ow">-&gt;</span> <span class="s">&#34;You clicked &#34;</span> <span class="p">`</span><span class="kt">T</span><span class="o">.</span><span class="n">append</span><span class="p">`</span> <span class="kt">T</span><span class="o">.</span><span class="n">pack</span> <span class="p">(</span><span class="n">show</span> <span class="n">n</span><span class="p">)</span> <span class="p">`</span><span class="kt">T</span><span class="o">.</span><span class="n">append</span><span class="p">`</span> <span class="s">&#34; times&#34;</span><span class="p">)</span>
         <span class="o">&lt;:</span> <span class="o">#</span><span class="n">size</span> <span class="o">@=</span> <span class="kt">V2</span> <span class="mi">250</span> <span class="mi">40</span>
         <span class="o">&lt;:</span> <span class="n">nil</span>
       <span class="n">register</span> <span class="n">button</span>
@@ -278,7 +278,7 @@ main
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">main</span> <span class="ow">=</span> <span class="n">runUI</span> <span class="o">$</span> <span class="kr">do</span>
     <span class="n">setClearColor</span> <span class="p">(</span><span class="kt">V4</span> <span class="mi">255</span> <span class="mi">255</span> <span class="mi">255</span> <span class="mi">255</span><span class="p">)</span>
 
-    <span class="n">app</span> <span class="ow">&lt;-</span> <span class="n">new</span> <span class="o">@</span><span class="s">&#34;</span><span class="s">app</span><span class="s">&#34;</span> <span class="nb">()</span>
+    <span class="n">app</span> <span class="ow">&lt;-</span> <span class="n">new</span> <span class="o">@</span><span class="s">&#34;app&#34;</span> <span class="nb">()</span>
     <span class="n">register</span> <span class="n">app</span>
 
     <span class="n">mainloop</span> <span class="p">[</span><span class="n">asRoot</span> <span class="n">app</span><span class="p">]</span></code></pre></div>
@@ -363,7 +363,7 @@ main
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.

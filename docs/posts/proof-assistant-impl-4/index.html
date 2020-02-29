@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -96,15 +96,15 @@ Declarations
       <span class="n">env</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span><span class="p">;</span>
       <span class="n">utyp</span> <span class="ow">&lt;-</span> <span class="n">liftIO</span> <span class="o">$</span> <span class="n">try</span> <span class="o">$</span> <span class="n">infer</span> <span class="n">env</span> <span class="n">fml</span><span class="p">;</span>
       <span class="kr">case</span> <span class="n">utyp</span> <span class="kr">of</span>
-        <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;</span><span class="s">typecheck</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="n">fml</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+        <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;typecheck&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="n">fml</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
         <span class="kt">Right</span> <span class="n">typ</span> <span class="o">|</span> <span class="n">u</span> <span class="o">==</span> <span class="n">typ</span> <span class="ow">-&gt;</span> <span class="n">k</span>
-        <span class="kt">Right</span> <span class="n">typ</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;</span><span class="s">typecheck</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="n">fml</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">UnificationFailed</span> <span class="n">u</span> <span class="n">typ</span><span class="p">)</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+        <span class="kt">Right</span> <span class="n">typ</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;typecheck&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="n">fml</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">UnificationFailed</span> <span class="n">u</span> <span class="n">typ</span><span class="p">))</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
     <span class="p">}</span>
  
     <span class="n">decl</span> <span class="ow">&lt;-</span> <span class="n">suspend</span> <span class="p">(</span><span class="kt">DeclAwait</span> <span class="n">return</span><span class="p">)</span>
     <span class="n">env</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
     <span class="kr">case</span> <span class="n">decl</span> <span class="kr">of</span>
-      <span class="err">こ</span><span class="err">こ</span><span class="err">に</span><span class="err">実</span><span class="err">装</span><span class="err">を</span><span class="err">書</span><span class="err">く</span></code></pre></div>
+      <span class="err">ここに実装を書く</span></code></pre></div>
 </div>
 <p>
 Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。
@@ -143,7 +143,7 @@ ThmD thmindex formula proof
                     <span class="n">go</span> <span class="p">(</span><span class="n">suspend</span> <span class="o">$</span> <span class="kt">ComAwait</span> <span class="n">cont</span><span class="p">)</span> <span class="n">js&#39;</span> <span class="p">[</span><span class="n">com&#39;</span><span class="p">]</span>
                   <span class="p">(</span><span class="n">c</span><span class="kt">:</span><span class="n">cs</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
                     <span class="n">go</span> <span class="p">(</span><span class="n">cont</span> <span class="n">c</span><span class="p">)</span> <span class="n">js&#39;</span> <span class="n">cs</span>
-              <span class="kt">Left</span> <span class="p">(</span><span class="n">z</span><span class="o">@</span><span class="p">(</span><span class="kt">CommandError</span> <span class="n">idt</span> <span class="n">err</span> <span class="n">cont</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+              <span class="kt">Left</span> <span class="p">(</span><span class="n">z</span><span class="o">@</span><span class="p">(</span><span class="kt">CommandError</span> <span class="n">idt</span> <span class="n">err</span> <span class="n">cont</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
                 <span class="n">suspend</span> <span class="o">$</span> <span class="kt">RunCommandError</span> <span class="n">idt</span> <span class="n">err</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
                 <span class="n">go</span> <span class="n">cont</span> <span class="n">js</span> <span class="n">coms</span></code></pre></div>
 </div>
@@ -270,16 +270,16 @@ Main.hs
     <span class="kr">case</span> <span class="p">(</span><span class="n">xs</span> <span class="o">/=</span> <span class="kt">[]</span><span class="p">)</span> <span class="kr">of</span>
       <span class="kt">True</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
         <span class="n">env</span> <span class="ow">&lt;-</span> <span class="n">claire</span> <span class="n">defEnv</span> <span class="o">.</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="kt">Laire</span> <span class="n">ds</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">ds</span><span class="p">)</span> <span class="o">.</span> <span class="n">pLaire</span> <span class="o">=&lt;&lt;</span> <span class="n">readFile</span> <span class="p">(</span><span class="n">head</span> <span class="n">xs</span><span class="p">)</span>
-        <span class="n">putStrLn</span> <span class="s">&#34;</span><span class="s">= Constants =</span><span class="s">&#34;</span>
+        <span class="n">putStrLn</span> <span class="s">&#34;= Constants =&#34;</span>
         <span class="n">mapM_</span> <span class="n">print</span> <span class="o">$</span> <span class="kt">M</span><span class="o">.</span><span class="n">assocs</span> <span class="o">$</span> <span class="n">types</span> <span class="n">env</span>
-        <span class="n">putStrLn</span> <span class="s">&#34;</span><span class="s">= Proved Theorems =</span><span class="s">&#34;</span>
+        <span class="n">putStrLn</span> <span class="s">&#34;= Proved Theorems =&#34;</span>
         <span class="n">mapM_</span> <span class="n">print</span> <span class="o">$</span> <span class="kt">M</span><span class="o">.</span><span class="n">assocs</span> <span class="o">$</span> <span class="n">thms</span> <span class="n">env</span>
       <span class="kt">False</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
         <span class="n">mapM_</span> <span class="n">putStrLn</span> <span class="o">$</span>
-          <span class="p">[</span> <span class="s">&#34;</span><span class="s">=========================</span><span class="s">&#34;</span>
-          <span class="p">,</span> <span class="s">&#34;</span><span class="s">=== Welcome to Claire ===</span><span class="s">&#34;</span>
-          <span class="p">,</span> <span class="s">&#34;</span><span class="s">=========================</span><span class="s">&#34;</span>
-          <span class="p">,</span> <span class="s">&#34;</span><span class="s">&#34;</span>
+          <span class="p">[</span> <span class="s">&#34;=========================&#34;</span>
+          <span class="p">,</span> <span class="s">&#34;=== Welcome to Claire ===&#34;</span>
+          <span class="p">,</span> <span class="s">&#34;=========================&#34;</span>
+          <span class="p">,</span> <span class="s">&#34;&#34;</span>
           <span class="p">]</span>
         <span class="n">clairepl</span> <span class="n">defEnv</span></code></pre></div>
 </div>
@@ -300,19 +300,19 @@ proofcheckerは先程説明したclaireを実行するだけですね。
       <span class="kr">case</span> <span class="n">result</span> <span class="kr">of</span>
         <span class="kt">Right</span> <span class="nb">()</span> <span class="ow">-&gt;</span> <span class="n">go</span> <span class="n">env&#39;</span> <span class="n">k</span>
         <span class="kt">Left</span> <span class="p">(</span><span class="kt">DeclAwait</span> <span class="n">k</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
-          <span class="n">t</span> <span class="ow">&lt;-</span> <span class="n">safep</span> <span class="p">(</span><span class="n">putStr</span> <span class="s">&#34;</span><span class="s">decl&gt;</span><span class="s">&#34;</span> <span class="o">&gt;&gt;</span> <span class="n">hFlush</span> <span class="n">stdout</span><span class="p">)</span> <span class="n">pDecl</span>
+          <span class="n">t</span> <span class="ow">&lt;-</span> <span class="n">safep</span> <span class="p">(</span><span class="n">putStr</span> <span class="s">&#34;decl&gt;&#34;</span> <span class="o">&gt;&gt;</span> <span class="n">hFlush</span> <span class="n">stdout</span><span class="p">)</span> <span class="n">pDecl</span>
           <span class="n">go</span> <span class="n">env&#39;</span> <span class="p">(</span><span class="n">k</span> <span class="n">t</span><span class="p">)</span>
         <span class="kt">Left</span> <span class="p">(</span><span class="kt">ProofNotFinished</span> <span class="n">js</span> <span class="n">cont</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
           <span class="n">mapM_</span> <span class="n">print</span> <span class="n">js</span>
-          <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">raw</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="n">safep</span> <span class="p">(</span><span class="n">putStr</span> <span class="s">&#34;</span><span class="s">command&gt;</span><span class="s">&#34;</span> <span class="o">&gt;&gt;</span> <span class="n">hFlush</span> <span class="n">stdout</span><span class="p">)</span> <span class="p">(</span><span class="nf">\</span><span class="n">s</span> <span class="ow">-&gt;</span> <span class="kr">let</span> <span class="n">s&#39;</span> <span class="ow">=</span> <span class="n">pCommand</span> <span class="n">s</span> <span class="kr">in</span> <span class="n">s&#39;</span> <span class="p">`</span><span class="n">seq</span><span class="p">`</span> <span class="p">(</span><span class="n">s&#39;</span><span class="p">,</span><span class="n">s</span><span class="p">)</span><span class="p">)</span>
+          <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">raw</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="n">safep</span> <span class="p">(</span><span class="n">putStr</span> <span class="s">&#34;command&gt;&#34;</span> <span class="o">&gt;&gt;</span> <span class="n">hFlush</span> <span class="n">stdout</span><span class="p">)</span> <span class="p">(</span><span class="nf">\</span><span class="n">s</span> <span class="ow">-&gt;</span> <span class="kr">let</span> <span class="n">s&#39;</span> <span class="ow">=</span> <span class="n">pCommand</span> <span class="n">s</span> <span class="kr">in</span> <span class="n">s&#39;</span> <span class="p">`</span><span class="n">seq</span><span class="p">`</span> <span class="p">(</span><span class="n">s&#39;</span><span class="p">,</span><span class="n">s</span><span class="p">))</span>
           <span class="kr">let</span> <span class="n">addProof</span> <span class="n">env</span> <span class="n">k</span> <span class="ow">=</span> <span class="n">env</span> <span class="p">{</span> <span class="n">proof</span> <span class="ow">=</span> <span class="n">proof</span> <span class="n">env</span> <span class="o">++</span> <span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="p">}</span>
-          <span class="n">go</span> <span class="p">(</span><span class="n">addProof</span> <span class="n">env&#39;</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">raw</span><span class="p">)</span><span class="p">)</span> <span class="p">(</span><span class="n">cont</span> <span class="n">t</span><span class="p">)</span>
-        <span class="kt">Left</span> <span class="p">(</span><span class="n">z</span><span class="o">@</span><span class="p">(</span><span class="kt">RunCommandError</span> <span class="n">idt</span> <span class="n">err</span> <span class="n">cont</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+          <span class="n">go</span> <span class="p">(</span><span class="n">addProof</span> <span class="n">env&#39;</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">raw</span><span class="p">))</span> <span class="p">(</span><span class="n">cont</span> <span class="n">t</span><span class="p">)</span>
+        <span class="kt">Left</span> <span class="p">(</span><span class="n">z</span><span class="o">@</span><span class="p">(</span><span class="kt">RunCommandError</span> <span class="n">idt</span> <span class="n">err</span> <span class="n">cont</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
           <span class="n">print</span> <span class="n">z</span>
           <span class="kr">let</span> <span class="n">unaddProof</span> <span class="n">env</span> <span class="o">|</span> <span class="n">length</span> <span class="p">(</span><span class="n">proof</span> <span class="n">env</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">=</span> <span class="n">env</span> <span class="p">{</span> <span class="n">proof</span> <span class="ow">=</span> <span class="n">init</span> <span class="p">(</span><span class="n">proof</span> <span class="n">env</span><span class="p">)</span> <span class="p">}</span>
               <span class="n">unaddProof</span> <span class="n">env</span> <span class="ow">=</span> <span class="n">env</span>
           <span class="n">go</span> <span class="p">(</span><span class="n">unaddProof</span> <span class="n">env&#39;</span><span class="p">)</span> <span class="n">cont</span>
-        <span class="kt">Left</span> <span class="p">(</span><span class="n">z</span><span class="o">@</span><span class="p">(</span><span class="kt">DeclError</span> <span class="n">idt</span> <span class="n">err</span> <span class="n">cont</span><span class="p">)</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
+        <span class="kt">Left</span> <span class="p">(</span><span class="n">z</span><span class="o">@</span><span class="p">(</span><span class="kt">DeclError</span> <span class="n">idt</span> <span class="n">err</span> <span class="n">cont</span><span class="p">))</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
           <span class="n">print</span> <span class="n">z</span>
           <span class="n">go</span> <span class="n">env</span> <span class="n">cont</span>
 
@@ -432,7 +432,7 @@ decl&gt;, command&gt; の部分がユーザーの入力です。
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.

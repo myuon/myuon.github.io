@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -99,9 +99,9 @@ proofcheckerは環境とよばれる状態をもっていて、ここに証明�
     <span class="ow">=</span> <span class="kt">Env</span>
     <span class="p">{</span> <span class="n">thms</span> <span class="ow">::</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">ThmIndex</span> <span class="kt">Formula</span>
     <span class="p">,</span> <span class="n">types</span> <span class="ow">::</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">Ident</span> <span class="kt">Type</span>
-    <span class="p">,</span> <span class="n">proof</span> <span class="ow">::</span> <span class="p">[</span><span class="p">(</span><span class="kt">Command</span><span class="p">,</span> <span class="kt">String</span><span class="p">)</span><span class="p">]</span>
-    <span class="p">,</span> <span class="n">newcommands</span> <span class="ow">::</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">Ident</span> <span class="p">(</span><span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">]</span><span class="p">)</span>
-    <span class="p">,</span> <span class="n">newdecls</span> <span class="ow">::</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">Ident</span> <span class="p">(</span><span class="p">[</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span><span class="p">)</span>
+    <span class="p">,</span> <span class="n">proof</span> <span class="ow">::</span> <span class="p">[(</span><span class="kt">Command</span><span class="p">,</span> <span class="kt">String</span><span class="p">)]</span>
+    <span class="p">,</span> <span class="n">newcommands</span> <span class="ow">::</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">Ident</span> <span class="p">(</span><span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">Argument</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Command</span><span class="p">])</span>
+    <span class="p">,</span> <span class="n">newdecls</span> <span class="ow">::</span> <span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">Ident</span> <span class="p">([</span><span class="kt">Argument</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">])</span>
     <span class="p">}</span></code></pre></div>
 </div>
 <p>
@@ -120,7 +120,7 @@ proofcheckerは環境とよばれる状態をもっていて、ここに証明�
   <span class="n">qed</span>
 
   <span class="c1">-- この証明の直後、Envのthmsには</span>
-  <span class="p">(</span><span class="s">&#34;</span><span class="s">id</span><span class="s">&#34;</span><span class="p">,</span> <span class="kt">Pred</span> <span class="s">&#34;</span><span class="s">?a</span><span class="s">&#34;</span> <span class="kt">[]</span> <span class="kt">:==&gt;:</span> <span class="kt">Pred</span> <span class="s">&#34;</span><span class="s">?a</span><span class="s">&#34;</span> <span class="kt">[]</span><span class="p">)</span>
+  <span class="p">(</span><span class="s">&#34;id&#34;</span><span class="p">,</span> <span class="kt">Pred</span> <span class="s">&#34;?a&#34;</span> <span class="kt">[]</span> <span class="kt">:==&gt;:</span> <span class="kt">Pred</span> <span class="s">&#34;?a&#34;</span> <span class="kt">[]</span><span class="p">)</span>
   <span class="c1">-- が追加されている</span></code></pre></div>
 </div>
 <p>
@@ -204,9 +204,9 @@ typecheck自体は上のようにconstant宣言した時、axiomとtheoremで命
       <span class="n">env</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span><span class="p">;</span>
       <span class="n">utyp</span> <span class="ow">&lt;-</span> <span class="n">liftIO</span> <span class="o">$</span> <span class="n">try</span> <span class="o">$</span> <span class="n">infer</span> <span class="n">env</span> <span class="n">fml</span><span class="p">;</span>
       <span class="kr">case</span> <span class="n">utyp</span> <span class="kr">of</span>
-        <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;</span><span class="s">typecheck</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="n">fml</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+        <span class="kt">Left</span> <span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;typecheck&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="n">fml</span> <span class="n">err</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
         <span class="kt">Right</span> <span class="n">typ</span> <span class="o">|</span> <span class="n">u</span> <span class="o">==</span> <span class="n">typ</span> <span class="ow">-&gt;</span> <span class="n">k</span>
-        <span class="kt">Right</span> <span class="n">typ</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;</span><span class="s">typecheck</span><span class="s">&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="n">fml</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">UnificationFailed</span> <span class="n">u</span> <span class="n">typ</span><span class="p">)</span><span class="p">)</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
+        <span class="kt">Right</span> <span class="n">typ</span> <span class="ow">-&gt;</span> <span class="n">suspend</span> <span class="o">$</span> <span class="kt">DeclError</span> <span class="s">&#34;typecheck&#34;</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">TypeError</span> <span class="n">fml</span> <span class="p">(</span><span class="n">toException</span> <span class="o">$</span> <span class="kt">UnificationFailed</span> <span class="n">u</span> <span class="n">typ</span><span class="p">))</span> <span class="p">(</span><span class="n">return</span> <span class="nb">()</span><span class="p">)</span>
     <span class="p">}</span>
 
     <span class="kr">case</span> <span class="n">decl</span> <span class="kr">of</span>
@@ -485,7 +485,7 @@ Claireを起動して次のCurryを入力します。
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.

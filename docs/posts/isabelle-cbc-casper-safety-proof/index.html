@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.62.0" />
+<meta name="generator" content="Hugo 0.65.3" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -113,29 +113,29 @@ Isabelle で検証って何するの ブロックチェーンはコンセンサ�
     </header>
     <section><p>日記です。</p>
 <p>リポジトリ: <a href="https://github.com/LayerXcom/cbc-casper-proof">LayerXcom/cbc-casper-proof</a></p>
-<h2 id="heading">概要</h2>
+<h2 id="概要">概要</h2>
 <p>(私は LayerX の人ではないですが)LayerX 社の人と色々あって CBC Casper というブロックチェーンのプロトコルの検証作業を行いました。(主に定理証明士としてのお手伝い)</p>
 <p>半年くらいかかったけどやりたかった証明についにたどり着いたよという話。</p>
-<h2 id="cbc-casper-">CBC Casper って何</h2>
+<h2 id="cbc-casper-って何">CBC Casper って何</h2>
 <p>わからん。(無知)</p>
 <p>何かブロックチェーンのプロトコルの名前らしい。Ethereum 財団が目をつけてるらしい。いわゆるビットコインとは違ってブロックを頑張ってマシンをぶん回してマイニングしたりしないらしい(ビットコインは PoW で CBC Casper は PoS)。</p>
 <p>詳しいことは詳しい人に聞いたほうがいいよ(真理)。</p>
 <p>cf: <a href="https://medium.com/layerx-jp/cbc-casper%E3%81%A8%E5%BD%A2%E5%BC%8F%E7%9A%84%E6%A4%9C%E8%A8%BC-c456fddbd5c5">CBC Casper と形式的検証</a></p>
-<h2 id="isabelle-">Isabelle で検証って何するの</h2>
+<h2 id="isabelle-で検証って何するの">Isabelle で検証って何するの</h2>
 <p>ブロックチェーンはコンセンサス(分散合意)アルゴリズムの一種で、みんなで合意を取りましょうみたいなやつ。コンセンサスアルゴリズムで言われる正当性というのは主に次の 2 つ。</p>
 <ol>
 <li>Safety: 1 つの round でたかだか 1 つの値にしか合意しないこと</li>
 <li>Liveness: 必ず 1 つの値にいずれは合意できること(一生合意できないみたいな状態に陥らないこと)</li>
 </ol>
 <p>実際のステートメントでは色々条件はあるがそういうのは一旦おいておいて、CBC Casper に対しては Safety は示されていて(論文があり) Liveness はまだ示されていないみたいなステータスだったはず。定理証明はどちらもされていないので、今回は簡単な(というか参考になる論文がすでにある)Safety の方を示した。</p>
-<h3 id="heading-1">実際の証明について</h3>
+<h3 id="実際の証明について">実際の証明について</h3>
 <p>証明は基本的に論文に沿って進めた: <a href="https://github.com/cbc-casper/cbc-casper-paper">https://github.com/cbc-casper/cbc-casper-paper</a></p>
 <p>ただし Safety Oracle の証明について、論文では clique というタイプのグラフについての性質を示すことで証明を行っているが、今回はこれを inspector(finality detector)というやつに一般化して証明を行った。</p>
-<h2 id="heading-2">完走した感想</h2>
+<h2 id="完走した感想">完走した感想</h2>
 <p>ドメイン知識がないこともあってめっちゃ大変だったというのが正直なところ。アタリマエであるが、論文に書いてない行間を埋める作業や誤植・足りない仮定を追加するなどの作業はちゃんと理論側の理解がないとやはりつらい。</p>
 <p>一方で、今回は「理論側は別の人・定理証明は私」という分担を行ったが、そういう感じでもこういう証明の仕事を行うことは不可能ではないなという手応えを感じることが出来たのも良かった気がする。</p>
 <p>証明がめっちゃ汚いのとまだ一般化する余地がそれなりに残っているので(あと Liveness の証明という大仕事も手付かずだし…)、気が向いたらまた続きをやりたいと思います。</p>
-<h3 id="isabelle--1">Isabelle について</h3>
+<h3 id="isabelle-について">Isabelle について</h3>
 <p>今回の証明を通して得た、Isabelle についての学び</p>
 <ul>
 <li>定理はなるべく HOL より Pure logic の形で述べるほうが良い: <code>apply (rule THM)</code> って出来るの偉大だなと思った</li>
@@ -143,7 +143,7 @@ Isabelle で検証って何するの ブロックチェーンはコンセンサ�
 <li>sledgehammer は definition が苦手: definition を入れると展開した後の探索が必要な分 sledgehammer の賢さが目に見えて下がってしまう。definition でラップする場合はちゃんと補題もラップしたやつを用意しておいてあげないといろいろ大変</li>
 <li>Isabelle のタクティクスよくわからない: sledgehammer にばっかり頼っているので未だに rule と simp くらいしかわからない…。どっかでちゃんと勉強したいですね(どこで？)</li>
 </ul>
-<h2 id="heading-3">終わりに</h2>
+<h2 id="終わりに">終わりに</h2>
 <p>私は定理証明士としての貢献ができてそれなりに満足したので、もしこれを見て興味が沸いたつよつよ定理証明士は私の代わりに残りの作業をやってほしい。</p>
 </section>
     <footer>
@@ -189,7 +189,7 @@ Isabelle で検証って何するの ブロックチェーンはコンセンサ�
     </main>
     <footer>
   <p>
-    &copy; 2019 myuon.
+    &copy; 2020 myuon.
   </p>
   <p>
     Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
