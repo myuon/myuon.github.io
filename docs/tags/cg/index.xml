@@ -28,9 +28,8 @@ Stratified Sampling 層化サンプリングによってサンプルの座標が
 そもそもシェーダー言語とかCUDAとかにパストレーシングアルゴリズムをナイーブに突っ込んでるのとかよく見るんだけど本当にそんなんでいいの？という気持ちになったりならんかったりする。
  Path tracing on GPU  Unity Unity(のComputeShaderなんか)を使うとGPUを使った計算が簡単にできる。要は単にHLSL(これはWindowsだから？)とのintegrationがUnityに用意されているというだけのことだけど、Unityは普通に解説も多いしGPUを使ったレイトレーシングの入門にはいいかもしれない。
  GPU Ray Tracing in Unity – Part 1  例えば次のような画像が割と簡単に出せる。
-WebGL 人間に見せるUIとしてWebGLにして吐くのは結構ありかもしれないと思っていた。WebGLはRustを使っても吐けるみたいだった(けど中身は普通にshader言語書いてたのでRustで書けるとは言わない気もする)。
-実際にWebGLでやってる例とかもあって面白かったのでなおさら。
- gfx-rs/gfx WebGL+GLSLによる超高速なパストレーシング http://madebyevan.com/webgl-path-tracing/  </description>
+なるほど pic.twitter.com/vgvv8ohDdk
+&amp;mdash; みょん (@myuon_myon) 2019年3月3日  WebGL 人間に見せるUIとしてWebGLにして吐くのは結構ありかもしれないと思っていた。WebGLはRustを使っても吐けるみたいだった(けど中身は普通にshader言語書いてたのでRustで書けるとは言わない気もする)。</description>
       </item>
     
   </channel>

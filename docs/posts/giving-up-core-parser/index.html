@@ -25,7 +25,8 @@
 <meta property="og:description" content="-ddump-simpl で出力されるSimplified Coreをいい感じに解析して読めるやつを作ろうかと思ってたけどつらすぎたので(少なくともこの方針では)やめた。
 以下愚痴を述べますがこれは私が結構無理なことをやろうとしているだけでGHCに(そこまで)非はないと思うし直してくれという意味で言ってるわけでもない。いや直してくれるならありがたいんだけど。
 様子 様子です
-CoreSyn CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。
+Coreに色がつき始めたぞ pic.twitter.com/M1SmAFgPOB
+&mdash; みょん (@myuon_myon) 2019年5月16日  CoreSyn CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。
 まずこの時点で嫌な予感がするよねという感じ。CoreSynは自作することになる。
 PprCore -ddump-simplの出力フォーマットはPprCoreによって制御されている。中を読むとわかるがこれが実はASTとあまり対応がない。
 ASTに乗ってない情報が付加されていたり、あるいはASTの情報が一部出力されてなかったりする。
@@ -37,9 +38,7 @@ foobar :: Type [GblId, Str=&lt;S,U&gt;, Unf=Unf{...なんやらかんやら, Gui
 (ちなみにGHCはGHC拡張をオンにするとParserどころかLexerもゴリゴリ挙動が変わるので結構すごいと思う。MagicHashとか典型例ですね。あとはCPP入れると複数行文字列リテラルを改行をエスケープすることで書けるようになるとか。変態的すぎると思う。)
 識別子は主に $ 問題と # 問題の2つ？ある。
 GHC Coreにはworker/wrapper変換という有名な最適化が入っているがこれにより新たに導入されるworkerには識別子の先頭に $w マークが付与される。ユーザー側で識別子に使えない文字を割り振ることで衝突等を回避してるんだろうか(しかしRenamerとかで上手く処理することも可能な気はする。そうでもないんだろうか)。しかしこれによりLexerが正しくtokenizeできなくなる(Module.$wfoobar は qualified operator Module.$ と varid foobar に分解される)。
-次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。
-というわけでLexerも自作することになる。
-この辺で諦めた ここまで来ていや〜厳しいってなった。Lexer Parser ASTまで自作するとか何と戦ってるんだという感じだしそもそもCoreくらいちゃんと読んでって言われるとまぁそうね…という気持ちになる。そもそもここでこれを頑張ったところでGHCのCore付近は毎バージョンごとにめちゃくちゃ変わりまくるのでどうせすぐ動かなくなると思うとメンテも大変そうだしなぁという後ろ向きな感情しかない。" />
+次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/giving-up-core-parser/" />
 <meta property="article:published_time" content="2019-05-21T23:25:02+09:00" />
@@ -50,7 +49,8 @@ GHC Coreにはworker/wrapper変換という有名な最適化が入っている�
 <meta itemprop="description" content="-ddump-simpl で出力されるSimplified Coreをいい感じに解析して読めるやつを作ろうかと思ってたけどつらすぎたので(少なくともこの方針では)やめた。
 以下愚痴を述べますがこれは私が結構無理なことをやろうとしているだけでGHCに(そこまで)非はないと思うし直してくれという意味で言ってるわけでもない。いや直してくれるならありがたいんだけど。
 様子 様子です
-CoreSyn CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。
+Coreに色がつき始めたぞ pic.twitter.com/M1SmAFgPOB
+&mdash; みょん (@myuon_myon) 2019年5月16日  CoreSyn CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。
 まずこの時点で嫌な予感がするよねという感じ。CoreSynは自作することになる。
 PprCore -ddump-simplの出力フォーマットはPprCoreによって制御されている。中を読むとわかるがこれが実はASTとあまり対応がない。
 ASTに乗ってない情報が付加されていたり、あるいはASTの情報が一部出力されてなかったりする。
@@ -62,12 +62,10 @@ foobar :: Type [GblId, Str=&lt;S,U&gt;, Unf=Unf{...なんやらかんやら, Gui
 (ちなみにGHCはGHC拡張をオンにするとParserどころかLexerもゴリゴリ挙動が変わるので結構すごいと思う。MagicHashとか典型例ですね。あとはCPP入れると複数行文字列リテラルを改行をエスケープすることで書けるようになるとか。変態的すぎると思う。)
 識別子は主に $ 問題と # 問題の2つ？ある。
 GHC Coreにはworker/wrapper変換という有名な最適化が入っているがこれにより新たに導入されるworkerには識別子の先頭に $w マークが付与される。ユーザー側で識別子に使えない文字を割り振ることで衝突等を回避してるんだろうか(しかしRenamerとかで上手く処理することも可能な気はする。そうでもないんだろうか)。しかしこれによりLexerが正しくtokenizeできなくなる(Module.$wfoobar は qualified operator Module.$ と varid foobar に分解される)。
-次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。
-というわけでLexerも自作することになる。
-この辺で諦めた ここまで来ていや〜厳しいってなった。Lexer Parser ASTまで自作するとか何と戦ってるんだという感じだしそもそもCoreくらいちゃんと読んでって言われるとまぁそうね…という気持ちになる。そもそもここでこれを頑張ったところでGHCのCore付近は毎バージョンごとにめちゃくちゃ変わりまくるのでどうせすぐ動かなくなると思うとメンテも大変そうだしなぁという後ろ向きな感情しかない。">
+次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。">
 <meta itemprop="datePublished" content="2019-05-21T23:25:02&#43;09:00" />
 <meta itemprop="dateModified" content="2019-05-21T23:25:02&#43;09:00" />
-<meta itemprop="wordCount" content="72">
+<meta itemprop="wordCount" content="78">
 
 
 
@@ -77,7 +75,8 @@ GHC Coreにはworker/wrapper変換という有名な最適化が入っている�
 <meta name="twitter:description" content="-ddump-simpl で出力されるSimplified Coreをいい感じに解析して読めるやつを作ろうかと思ってたけどつらすぎたので(少なくともこの方針では)やめた。
 以下愚痴を述べますがこれは私が結構無理なことをやろうとしているだけでGHCに(そこまで)非はないと思うし直してくれという意味で言ってるわけでもない。いや直してくれるならありがたいんだけど。
 様子 様子です
-CoreSyn CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。
+Coreに色がつき始めたぞ pic.twitter.com/M1SmAFgPOB
+&mdash; みょん (@myuon_myon) 2019年5月16日  CoreSyn CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。
 まずこの時点で嫌な予感がするよねという感じ。CoreSynは自作することになる。
 PprCore -ddump-simplの出力フォーマットはPprCoreによって制御されている。中を読むとわかるがこれが実はASTとあまり対応がない。
 ASTに乗ってない情報が付加されていたり、あるいはASTの情報が一部出力されてなかったりする。
@@ -89,9 +88,7 @@ foobar :: Type [GblId, Str=&lt;S,U&gt;, Unf=Unf{...なんやらかんやら, Gui
 (ちなみにGHCはGHC拡張をオンにするとParserどころかLexerもゴリゴリ挙動が変わるので結構すごいと思う。MagicHashとか典型例ですね。あとはCPP入れると複数行文字列リテラルを改行をエスケープすることで書けるようになるとか。変態的すぎると思う。)
 識別子は主に $ 問題と # 問題の2つ？ある。
 GHC Coreにはworker/wrapper変換という有名な最適化が入っているがこれにより新たに導入されるworkerには識別子の先頭に $w マークが付与される。ユーザー側で識別子に使えない文字を割り振ることで衝突等を回避してるんだろうか(しかしRenamerとかで上手く処理することも可能な気はする。そうでもないんだろうか)。しかしこれによりLexerが正しくtokenizeできなくなる(Module.$wfoobar は qualified operator Module.$ と varid foobar に分解される)。
-次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。
-というわけでLexerも自作することになる。
-この辺で諦めた ここまで来ていや〜厳しいってなった。Lexer Parser ASTまで自作するとか何と戦ってるんだという感じだしそもそもCoreくらいちゃんと読んでって言われるとまぁそうね…という気持ちになる。そもそもここでこれを頑張ったところでGHCのCore付近は毎バージョンごとにめちゃくちゃ変わりまくるのでどうせすぐ動かなくなると思うとメンテも大変そうだしなぁという後ろ向きな感情しかない。"/>
+次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。"/>
 
 
   </head>
@@ -124,7 +121,8 @@ GHC Coreにはworker/wrapper変換という有名な最適化が入っている�
 <p>以下愚痴を述べますがこれは私が結構無理なことをやろうとしているだけでGHCに(そこまで)非はないと思うし直してくれという意味で言ってるわけでもない。いや直してくれるならありがたいんだけど。</p>
 <h2 id="様子">様子</h2>
 <p>様子です</p>
-<!-- raw HTML omitted -->
+<blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">Coreに色がつき始めたぞ <a href="https://t.co/M1SmAFgPOB">pic.twitter.com/M1SmAFgPOB</a></p>&mdash; みょん (@myuon_myon) <a href="https://twitter.com/myuon_myon/status/1129021022584229888?ref_src=twsrc%5Etfw">2019年5月16日</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <h2 id="coresyn">CoreSyn</h2>
 <p>CoreSynにCoreのSyntaxがある。ASTが用意されてて便利〜かと思いきや、これがなんとコンストラクタが公開されてないものがある(TypeとかCoercionとか)。</p>
 <p>まずこの時点で嫌な予感がするよねという感じ。CoreSynは自作することになる。</p>

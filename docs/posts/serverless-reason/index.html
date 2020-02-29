@@ -25,9 +25,9 @@
 <meta property="og:description" content="Reason ML、やっていこうな 世はまさに大サーバーレス時代なのでLambda Functionやっていきというお気持ち。
 AWS Lambdaで現時点(2018年11月)で対応されている言語はNode.js, Python, Go, C#(dotnet), Javaの5つ。このうち後ろ2つはコールドスタートが激遅なので使い物にならない。で前3つのうちではドキュメントの多いNode.jsが安定ですが、Node.jsをランタイムに採用するとしてしかしJSは書きたくない、そういうときにReason MLはいい感じな選択肢なのでは？というのがこの記事の趣旨です。
 serverless-reason serverless frameworkというサーバーレスアプリをやるのにとても便利なツールがあって、それのReasonで動くテンプレートを作っておいたので好きに使ってくださいという感じ。
-以下このプロジェクトの中身の解説をする。
+  以下このプロジェクトの中身の解説をする。
 echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに定義されている。
-/* Sorry I&#39;m a lazy person! */ type event = { . &#34;pathParameters&#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&gt; Js.Promise.t(unit); type response = { . &#34;statusCode&#34;: int, &#34;body&#34;: string, }; let handler : (event, context, callback) =&gt; Js.Promise.t(response) = (event, _, _) =&gt; { Js.log(&#34;hello&#34;); { &#34;statusCode&#34;: 200, &#34;body&#34;: event##pathParameters |&gt; Js." />
+/* Sorry I&#39;m a lazy person! */ type event = { . &#34;pathParameters&#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&gt; Js.Promise.t(unit); type response = { . &#34;statusCode&#34;: int, &#34;body&#34;: string, }; let handler : (event, context, callback) =&gt; Js.Promise.t(response) = (event, _, _) =&gt; { Js." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/serverless-reason/" />
 <meta property="article:published_time" content="2018-11-23T21:00:48+09:00" />
@@ -38,9 +38,9 @@ echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに�
 <meta itemprop="description" content="Reason ML、やっていこうな 世はまさに大サーバーレス時代なのでLambda Functionやっていきというお気持ち。
 AWS Lambdaで現時点(2018年11月)で対応されている言語はNode.js, Python, Go, C#(dotnet), Javaの5つ。このうち後ろ2つはコールドスタートが激遅なので使い物にならない。で前3つのうちではドキュメントの多いNode.jsが安定ですが、Node.jsをランタイムに採用するとしてしかしJSは書きたくない、そういうときにReason MLはいい感じな選択肢なのでは？というのがこの記事の趣旨です。
 serverless-reason serverless frameworkというサーバーレスアプリをやるのにとても便利なツールがあって、それのReasonで動くテンプレートを作っておいたので好きに使ってくださいという感じ。
-以下このプロジェクトの中身の解説をする。
+  以下このプロジェクトの中身の解説をする。
 echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに定義されている。
-/* Sorry I&#39;m a lazy person! */ type event = { . &#34;pathParameters&#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&gt; Js.Promise.t(unit); type response = { . &#34;statusCode&#34;: int, &#34;body&#34;: string, }; let handler : (event, context, callback) =&gt; Js.Promise.t(response) = (event, _, _) =&gt; { Js.log(&#34;hello&#34;); { &#34;statusCode&#34;: 200, &#34;body&#34;: event##pathParameters |&gt; Js.">
+/* Sorry I&#39;m a lazy person! */ type event = { . &#34;pathParameters&#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&gt; Js.Promise.t(unit); type response = { . &#34;statusCode&#34;: int, &#34;body&#34;: string, }; let handler : (event, context, callback) =&gt; Js.Promise.t(response) = (event, _, _) =&gt; { Js.">
 <meta itemprop="datePublished" content="2018-11-23T21:00:48&#43;09:00" />
 <meta itemprop="dateModified" content="2018-11-23T21:00:48&#43;09:00" />
 <meta itemprop="wordCount" content="117">
@@ -53,9 +53,9 @@ echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに�
 <meta name="twitter:description" content="Reason ML、やっていこうな 世はまさに大サーバーレス時代なのでLambda Functionやっていきというお気持ち。
 AWS Lambdaで現時点(2018年11月)で対応されている言語はNode.js, Python, Go, C#(dotnet), Javaの5つ。このうち後ろ2つはコールドスタートが激遅なので使い物にならない。で前3つのうちではドキュメントの多いNode.jsが安定ですが、Node.jsをランタイムに採用するとしてしかしJSは書きたくない、そういうときにReason MLはいい感じな選択肢なのでは？というのがこの記事の趣旨です。
 serverless-reason serverless frameworkというサーバーレスアプリをやるのにとても便利なツールがあって、それのReasonで動くテンプレートを作っておいたので好きに使ってくださいという感じ。
-以下このプロジェクトの中身の解説をする。
+  以下このプロジェクトの中身の解説をする。
 echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに定義されている。
-/* Sorry I&#39;m a lazy person! */ type event = { . &#34;pathParameters&#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&gt; Js.Promise.t(unit); type response = { . &#34;statusCode&#34;: int, &#34;body&#34;: string, }; let handler : (event, context, callback) =&gt; Js.Promise.t(response) = (event, _, _) =&gt; { Js.log(&#34;hello&#34;); { &#34;statusCode&#34;: 200, &#34;body&#34;: event##pathParameters |&gt; Js."/>
+/* Sorry I&#39;m a lazy person! */ type event = { . &#34;pathParameters&#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&gt; Js.Promise.t(unit); type response = { . &#34;statusCode&#34;: int, &#34;body&#34;: string, }; let handler : (event, context, callback) =&gt; Js.Promise.t(response) = (event, _, _) =&gt; { Js."/>
 
 
   </head>
@@ -89,7 +89,8 @@ echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに�
 <p>AWS Lambdaで現時点(2018年11月)で対応されている言語はNode.js, Python, Go, C#(dotnet), Javaの5つ。このうち後ろ2つはコールドスタートが激遅なので使い物にならない。で前3つのうちではドキュメントの多いNode.jsが安定ですが、Node.jsをランタイムに採用するとしてしかしJSは書きたくない、そういうときにReason MLはいい感じな選択肢なのでは？というのがこの記事の趣旨です。</p>
 <h2 id="serverless-reason">serverless-reason</h2>
 <p>serverless frameworkというサーバーレスアプリをやるのにとても便利なツールがあって、それのReasonで動くテンプレートを作っておいたので好きに使ってくださいという感じ。</p>
-<!-- raw HTML omitted -->
+<div class="github-card" data-github="myuon/serverless-reason" data-width="400" data-height="" data-theme="default"></div>
+<script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 <p>以下このプロジェクトの中身の解説をする。</p>
 <h2 id="echore">echo.re</h2>
 <p>Lambda Functionとしてechoというものが<code>src/functions/echo.re</code>に定義されている。</p>
