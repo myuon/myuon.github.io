@@ -5,10 +5,21 @@
     <description>Recent content in Posts on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Fri, 03 Apr 2020 01:10:11 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 02 May 2020 01:29:52 +0900</lastBuildDate>
     
       <atom:link href="https://myuon.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+      <item>
+        <title>日本語のTypographyの設定</title>
+        <link>https://myuon.github.io/posts/typography-japanese/</link>
+        <pubDate>Sat, 02 May 2020 01:29:52 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/typography-japanese/</guid>
+        <description>日本語のTypography、意外と誰もまとめてくれなくて悲しみながら自分で調整したので置いておく用。
+これにした:
+様子:
+気持ち  フォントとか全部Noto Sans JPでいいよ(少なくともLinuxでキレイに見えるなら他の環境のことは知らねえというスタンスでいるので) Material Designだとh5, h6, body2とかあるけどまあ使うことないよ Material Designは全体的にfont-sizeのメリハリが大きすぎなので弱めて、代わりにletter-spacingは強めに設定しました。h1,h2は少し寄りすぎくらいかもしれない…が、カタカナ・ひらがなと密度の高い漢字だとだいぶ変わってきてしまうのでどこを取るのかは難しいところ…(普通の文章でそこまで漢字が連続することもそんなに無い気がするけど…) font-weightは大きい文字だと500くらいがキレイに見えると個人的に思っているのでそのへんで。Material Design氏なぜかh1-h6でfont-weightがバラバラなんだけどあれは一体何なんだ… line-heightは完全にノリでやってるけど適正値が分からない、そもそもheader要素は改行されることあんまないし大概専用のmargin入れるのでそんなに気にしなくてもいいのかもしれない 調整甘いところあるけどデフォルトよりはずっとマシになったのでとりあえずこれで手を打った  material-uiでの設定 createMuiTheme({ typography: { h1: { fontSize: &amp;#34;2rem&amp;#34;, fontWeight: 500, lineHeight: 1.75, letterSpacing: &amp;#34;-0.035em&amp;#34; }, h2: { fontSize: &amp;#34;1.65rem&amp;#34;, fontWeight: 500, lineHeight: 1.6, letterSpacing: &amp;#34;-0.03em&amp;#34; }, h3: { fontSize: &amp;#34;1.5rem&amp;#34;, fontWeight: 500, lineHeight: 1.5, letterSpacing: &amp;#34;-0.025em&amp;#34; }, h4: { fontSize: &amp;#34;1.25rem&amp;#34;, lineHeight: 1.5, letterSpacing: &amp;#34;-0.02em&amp;#34; }, body1: { lineHeight: 1.7, letterSpacing: &amp;#34;0.</description>
+      </item>
     
       <item>
         <title>Lightsailでやっていくサービス開発</title>
