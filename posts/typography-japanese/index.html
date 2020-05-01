@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本語のTypographyの設定 - The curse of λ</title>
+<meta name="author" content="myuon">
+<meta name="description" content="λに捧げよ">
+
+<meta name="generator" content="Hugo 0.69.2" />
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
+<link rel="stylesheet" href='/assets/css/main.39ec5efb65b7.css'>
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/img/apple-touch-icon.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+
+<link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="The curse of λ" />
+<link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
+
+<meta property="og:title" content="日本語のTypographyの設定" />
+<meta property="og:description" content="日本語のTypography、意外と誰もまとめてくれなくて悲しみながら自分で調整したので置いておく用。
+これにした:
+様子:
+気持ち  フォントとか全部Noto Sans JPでいいよ(少なくともLinuxでキレイに見えるなら他の環境のことは知らねえというスタンスでいるので) Material Designだとh5, h6, body2とかあるけどまあ使うことないよ Material Designは全体的にfont-sizeのメリハリが大きすぎなので弱めて、代わりにletter-spacingは強めに設定しました。h1,h2は少し寄りすぎくらいかもしれない…が、カタカナ・ひらがなと密度の高い漢字だとだいぶ変わってきてしまうのでどこを取るのかは難しいところ…(普通の文章でそこまで漢字が連続することもそんなに無い気がするけど…) font-weightは大きい文字だと500くらいがキレイに見えると個人的に思っているのでそのへんで。Material Design氏なぜかh1-h6でfont-weightがバラバラなんだけどあれは一体何なんだ… line-heightは完全にノリでやってるけど適正値が分からない、そもそもheader要素は改行されることあんまないし大概専用のmargin入れるのでそんなに気にしなくてもいいのかもしれない 調整甘いところあるけどデフォルトよりはずっとマシになったのでとりあえずこれで手を打った  material-uiでの設定 createMuiTheme({ typography: { h1: { fontSize: &#34;2rem&#34;, fontWeight: 500, lineHeight: 1.75, letterSpacing: &#34;-0.035em&#34; }, h2: { fontSize: &#34;1.65rem&#34;, fontWeight: 500, lineHeight: 1.6, letterSpacing: &#34;-0.03em&#34; }, h3: { fontSize: &#34;1.5rem&#34;, fontWeight: 500, lineHeight: 1.5, letterSpacing: &#34;-0.025em&#34; }, h4: { fontSize: &#34;1.25rem&#34;, lineHeight: 1.5, letterSpacing: &#34;-0.02em&#34; }, body1: { lineHeight: 1.7, letterSpacing: &#34;0." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://myuon.github.io/posts/typography-japanese/" />
+<meta property="article:published_time" content="2020-05-02T01:29:52+09:00" />
+<meta property="article:modified_time" content="2020-05-02T01:29:52+09:00" />
+
+
+<meta itemprop="name" content="日本語のTypographyの設定">
+<meta itemprop="description" content="日本語のTypography、意外と誰もまとめてくれなくて悲しみながら自分で調整したので置いておく用。
+これにした:
+様子:
+気持ち  フォントとか全部Noto Sans JPでいいよ(少なくともLinuxでキレイに見えるなら他の環境のことは知らねえというスタンスでいるので) Material Designだとh5, h6, body2とかあるけどまあ使うことないよ Material Designは全体的にfont-sizeのメリハリが大きすぎなので弱めて、代わりにletter-spacingは強めに設定しました。h1,h2は少し寄りすぎくらいかもしれない…が、カタカナ・ひらがなと密度の高い漢字だとだいぶ変わってきてしまうのでどこを取るのかは難しいところ…(普通の文章でそこまで漢字が連続することもそんなに無い気がするけど…) font-weightは大きい文字だと500くらいがキレイに見えると個人的に思っているのでそのへんで。Material Design氏なぜかh1-h6でfont-weightがバラバラなんだけどあれは一体何なんだ… line-heightは完全にノリでやってるけど適正値が分からない、そもそもheader要素は改行されることあんまないし大概専用のmargin入れるのでそんなに気にしなくてもいいのかもしれない 調整甘いところあるけどデフォルトよりはずっとマシになったのでとりあえずこれで手を打った  material-uiでの設定 createMuiTheme({ typography: { h1: { fontSize: &#34;2rem&#34;, fontWeight: 500, lineHeight: 1.75, letterSpacing: &#34;-0.035em&#34; }, h2: { fontSize: &#34;1.65rem&#34;, fontWeight: 500, lineHeight: 1.6, letterSpacing: &#34;-0.03em&#34; }, h3: { fontSize: &#34;1.5rem&#34;, fontWeight: 500, lineHeight: 1.5, letterSpacing: &#34;-0.025em&#34; }, h4: { fontSize: &#34;1.25rem&#34;, lineHeight: 1.5, letterSpacing: &#34;-0.02em&#34; }, body1: { lineHeight: 1.7, letterSpacing: &#34;0.">
+<meta itemprop="datePublished" content="2020-05-02T01:29:52&#43;09:00" />
+<meta itemprop="dateModified" content="2020-05-02T01:29:52&#43;09:00" />
+<meta itemprop="wordCount" content="96">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="日本語のTypographyの設定"/>
+<meta name="twitter:description" content="日本語のTypography、意外と誰もまとめてくれなくて悲しみながら自分で調整したので置いておく用。
+これにした:
+様子:
+気持ち  フォントとか全部Noto Sans JPでいいよ(少なくともLinuxでキレイに見えるなら他の環境のことは知らねえというスタンスでいるので) Material Designだとh5, h6, body2とかあるけどまあ使うことないよ Material Designは全体的にfont-sizeのメリハリが大きすぎなので弱めて、代わりにletter-spacingは強めに設定しました。h1,h2は少し寄りすぎくらいかもしれない…が、カタカナ・ひらがなと密度の高い漢字だとだいぶ変わってきてしまうのでどこを取るのかは難しいところ…(普通の文章でそこまで漢字が連続することもそんなに無い気がするけど…) font-weightは大きい文字だと500くらいがキレイに見えると個人的に思っているのでそのへんで。Material Design氏なぜかh1-h6でfont-weightがバラバラなんだけどあれは一体何なんだ… line-heightは完全にノリでやってるけど適正値が分からない、そもそもheader要素は改行されることあんまないし大概専用のmargin入れるのでそんなに気にしなくてもいいのかもしれない 調整甘いところあるけどデフォルトよりはずっとマシになったのでとりあえずこれで手を打った  material-uiでの設定 createMuiTheme({ typography: { h1: { fontSize: &#34;2rem&#34;, fontWeight: 500, lineHeight: 1.75, letterSpacing: &#34;-0.035em&#34; }, h2: { fontSize: &#34;1.65rem&#34;, fontWeight: 500, lineHeight: 1.6, letterSpacing: &#34;-0.03em&#34; }, h3: { fontSize: &#34;1.5rem&#34;, fontWeight: 500, lineHeight: 1.5, letterSpacing: &#34;-0.025em&#34; }, h4: { fontSize: &#34;1.25rem&#34;, lineHeight: 1.5, letterSpacing: &#34;-0.02em&#34; }, body1: { lineHeight: 1.7, letterSpacing: &#34;0."/>
+
+
+  </head>
+  <body>
+    <nav>
+  <a href="/" title="">
+    The curse of λ
+  </a>
+  
+    <a class="homePageIcon" href="/" title="">
+      <svg fill="#000000" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </a>
+  
+</nav>
+
+    <main>
+      
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <article>
+    <header>
+      <time datetime="2020-05-02 01:29">2020-05-02</time>
+      <h1>日本語のTypographyの設定</h1>
+    </header>
+    <section><p>日本語のTypography、意外と誰もまとめてくれなくて悲しみながら自分で調整したので置いておく用。</p>
+<p>これにした:</p>
+<p><img src="/images/Screenshot_20200502_014752.png" alt="Typography"></p>
+<p>様子:</p>
+<p><img src="/images/Screenshot_20200502_014852.png" alt="様子"></p>
+<h2 id="気持ち">気持ち</h2>
+<ul>
+<li>フォントとか全部Noto Sans JPでいいよ(少なくともLinuxでキレイに見えるなら他の環境のことは知らねえというスタンスでいるので)</li>
+<li>Material Designだとh5, h6, body2とかあるけどまあ使うことないよ</li>
+<li>Material Designは全体的にfont-sizeのメリハリが大きすぎなので弱めて、代わりにletter-spacingは強めに設定しました。h1,h2は少し寄りすぎくらいかもしれない…が、カタカナ・ひらがなと密度の高い漢字だとだいぶ変わってきてしまうのでどこを取るのかは難しいところ…(普通の文章でそこまで漢字が連続することもそんなに無い気がするけど…)</li>
+<li>font-weightは大きい文字だと500くらいがキレイに見えると個人的に思っているのでそのへんで。Material Design氏なぜかh1-h6でfont-weightがバラバラなんだけどあれは一体何なんだ…</li>
+<li>line-heightは完全にノリでやってるけど適正値が分からない、そもそもheader要素は改行されることあんまないし大概専用のmargin入れるのでそんなに気にしなくてもいいのかもしれない</li>
+<li>調整甘いところあるけどデフォルトよりはずっとマシになったのでとりあえずこれで手を打った</li>
+</ul>
+<h2 id="material-uiでの設定">material-uiでの設定</h2>
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">createMuiTheme</span><span class="p">({</span>
+  <span class="nx">typography</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">h1</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">fontSize</span><span class="o">:</span> <span class="s2">&#34;2rem&#34;</span><span class="p">,</span>
+      <span class="nx">fontWeight</span><span class="o">:</span> <span class="mi">500</span><span class="p">,</span>
+      <span class="nx">lineHeight</span><span class="o">:</span> <span class="mf">1.75</span><span class="p">,</span>
+      <span class="nx">letterSpacing</span><span class="o">:</span> <span class="s2">&#34;-0.035em&#34;</span>
+    <span class="p">},</span>
+    <span class="nx">h2</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">fontSize</span><span class="o">:</span> <span class="s2">&#34;1.65rem&#34;</span><span class="p">,</span>
+      <span class="nx">fontWeight</span><span class="o">:</span> <span class="mi">500</span><span class="p">,</span>
+      <span class="nx">lineHeight</span><span class="o">:</span> <span class="mf">1.6</span><span class="p">,</span>
+      <span class="nx">letterSpacing</span><span class="o">:</span> <span class="s2">&#34;-0.03em&#34;</span>
+    <span class="p">},</span>
+    <span class="nx">h3</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">fontSize</span><span class="o">:</span> <span class="s2">&#34;1.5rem&#34;</span><span class="p">,</span>
+      <span class="nx">fontWeight</span><span class="o">:</span> <span class="mi">500</span><span class="p">,</span>
+      <span class="nx">lineHeight</span><span class="o">:</span> <span class="mf">1.5</span><span class="p">,</span>
+      <span class="nx">letterSpacing</span><span class="o">:</span> <span class="s2">&#34;-0.025em&#34;</span>
+    <span class="p">},</span>
+    <span class="nx">h4</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">fontSize</span><span class="o">:</span> <span class="s2">&#34;1.25rem&#34;</span><span class="p">,</span>
+      <span class="nx">lineHeight</span><span class="o">:</span> <span class="mf">1.5</span><span class="p">,</span>
+      <span class="nx">letterSpacing</span><span class="o">:</span> <span class="s2">&#34;-0.02em&#34;</span>
+    <span class="p">},</span>
+    <span class="nx">body1</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">lineHeight</span><span class="o">:</span> <span class="mf">1.7</span><span class="p">,</span>
+      <span class="nx">letterSpacing</span><span class="o">:</span> <span class="s2">&#34;0.05em&#34;</span>
+    <span class="p">},</span>
+    <span class="nx">caption</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">fontSize</span><span class="o">:</span> <span class="s2">&#34;0.85rem&#34;</span><span class="p">,</span>
+      <span class="nx">lineHeight</span><span class="o">:</span> <span class="mf">1.75</span><span class="p">,</span>
+      <span class="nx">letterSpacing</span><span class="o">:</span> <span class="s2">&#34;0.075em&#34;</span>
+    <span class="p">},</span>
+    <span class="nx">button</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">fontSize</span><span class="o">:</span> <span class="s2">&#34;0.85rem&#34;</span><span class="p">,</span>
+      <span class="nx">fontWeight</span><span class="o">:</span> <span class="mi">500</span>
+    <span class="p">},</span>
+    <span class="nx">fontFamily</span><span class="o">:</span> <span class="s2">&#34;&#39;Noto Sans JP&#39;, sans-serif&#34;</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div><h2 id="その他">その他</h2>
+<p>日本語Webサイトだとこれが正解ですっていうのを誰か教えてほしい</p>
+<p>このブログのデザインもまったく日本語向けではないので手を入れたいなと言う気持ちがありつつHugoのテンプレート触るのか…という気持ちになっている。オワリ。</p>
+</section>
+    <footer>
+      <hr>
+      <div class="meta">
+        <p class="categories"></p>
+        <p class="tags">
+          
+        </p>
+      </div>
+      <hr>
+      <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "the-curse-of-lambda" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </footer>
+  </article>
+
+    </main>
+    <footer>
+  <p>
+    &copy; 2020 myuon.
+  </p>
+  <p>
+    Powered by <a href="https://gohugo.io" title="A Fast and Flexible Website Generator">Hugo</a> &amp; <a href="https://github.com/eshlox/simplicity" title="Hugo theme">Simplicity</a>.
+  </p>
+</footer>
+
+    <script src="/assets/js/main.82829af440c4.js"></script>
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-33072399-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>
