@@ -1,667 +1,479 @@
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/</loc>
-        <lastmod>2020-05-02T01:29:52+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/</loc>
-        <lastmod>2020-05-02T01:29:52+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/typography-japanese/</loc>
-        <lastmod>2020-05-02T01:29:52+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/aws/</loc>
-        <lastmod>2020-04-03T01:10:11+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/try-lightsail/</loc>
-        <lastmod>2020-04-03T01:10:11+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/</loc>
-        <lastmod>2020-04-03T01:10:11+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/go/</loc>
-        <lastmod>2020-02-29T19:37:36+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/golang-and-rust/</loc>
-        <lastmod>2020-02-29T19:37:36+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/rust/</loc>
-        <lastmod>2020-02-29T19:37:36+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/end-of-2019/</loc>
-        <lastmod>2019-12-30T22:18:25+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/isabelle/</loc>
-        <lastmod>2019-10-27T15:33:19+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/isabelle-cbc-casper-safety-proof/</loc>
-        <lastmod>2019-10-27T15:33:19+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E/</loc>
-        <lastmod>2019-10-27T15:33:19+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/database-generic-mapper/</loc>
-        <lastmod>2019-09-28T17:15:06+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/haskell/</loc>
-        <lastmod>2019-09-28T17:15:06+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/pipeline-resolver-authorizer/</loc>
-        <lastmod>2019-06-16T14:26:31+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/giving-up-core-parser/</loc>
-        <lastmod>2019-05-21T23:25:02+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/haskell-atcoder/</loc>
-        <lastmod>2019-04-28T16:44:29+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/minilight-component/</loc>
-        <lastmod>2019-04-11T20:30:21+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/ghc-compiler-notes/</loc>
-        <lastmod>2019-04-04T22:30:29+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/cg/</loc>
-        <lastmod>2019-03-03T19:33:25+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/survey-ray-tracing/</loc>
-        <lastmod>2019-03-03T19:33:25+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/dynanmodb-local-terraform/</loc>
-        <lastmod>2019-02-11T00:22:05+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/start-learning-proof-assistant/</loc>
-        <lastmod>2019-01-06T15:46:06+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/start-ray-tracing/</loc>
-        <lastmod>2019-01-06T13:34:10+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/sumup-2018/</loc>
-        <lastmod>2018-12-29T19:06:59+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/juniq/</loc>
-        <lastmod>2018-12-25T20:25:54+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/goodbye-to-impl-tests/</loc>
-        <lastmod>2018-12-24T14:25:05+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/implement-ogp-expansion/</loc>
-        <lastmod>2018-12-14T23:51:25+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/get-started-with-firebase/</loc>
-        <lastmod>2018-12-13T00:05:37+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/serverless-reason/</loc>
-        <lastmod>2018-11-23T21:00:48+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/reason/</loc>
-        <lastmod>2018-11-23T21:00:48+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/ml/</loc>
-        <lastmod>2018-11-10T00:24:20+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/start-reasonml/</loc>
-        <lastmod>2018-11-10T00:24:20+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/elm-functional-gui/</loc>
-        <lastmod>2018-11-04T12:32:56+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/frp/</loc>
-        <lastmod>2018-11-04T12:32:56+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/%E3%83%A9%E3%83%A0%E3%83%80%E8%A8%88%E7%AE%97/</loc>
-        <lastmod>2018-11-04T12:32:56+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/javascript/</loc>
-        <lastmod>2018-10-28T16:03:12+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/grpc-rust/</loc>
-        <lastmod>2018-10-28T16:03:12+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/%E3%83%96%E3%83%AD%E3%82%B0/</loc>
-        <lastmod>2018-10-23T22:53:56+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/blog-simplicity/</loc>
-        <lastmod>2018-10-23T22:53:56+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/isabelle-vscode-2018/</loc>
-        <lastmod>2018-07-28T11:46:33+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/%E9%9D%99%E7%9A%84%E8%A7%A3%E6%9E%90/</loc>
-        <lastmod>2018-07-11T05:49:39-07:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/how-far-can-static-analysis-go/</loc>
-        <lastmod>2018-07-11T05:49:39-07:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/architecture-basic-idea/</loc>
-        <lastmod>2018-07-10T02:49:04-07:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/haskell-di/</loc>
-        <lastmod>2018-07-06T05:51:00-07:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/refluxible-library/</loc>
-        <lastmod>2018-06-16T08:00:49-07:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/%E3%83%9D%E3%82%A8%E3%83%A0/</loc>
-        <lastmod>2018-06-02T08:27:31-07:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/type-system-poem/</loc>
-        <lastmod>2018-06-02T08:27:31-07:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/vm-linux-on-windows/</loc>
-        <lastmod>2018-05-20T08:11:42-07:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/linux/</loc>
-        <lastmod>2018-05-20T08:11:42-07:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/</loc>
-        <lastmod>2018-05-20T08:11:42-07:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/gstreamer/</loc>
-        <lastmod>2018-03-04T19:21:20+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/gtk/</loc>
-        <lastmod>2018-03-04T19:21:20+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/madder-start-to-create/</loc>
-        <lastmod>2018-03-04T19:21:20+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/rust-started/</loc>
-        <lastmod>2018-02-09T22:21:42+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/namespace-haskell/</loc>
-        <lastmod>2018-02-04T13:55:38+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/want-to-start-project-management/</loc>
-        <lastmod>2018-01-14T23:14:19+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/%E6%97%A5%E8%A8%98/</loc>
-        <lastmod>2018-01-14T23:14:19+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/ghc-exts/</loc>
-        <lastmod>2018-01-13T00:38:01+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/versus-hask-category/</loc>
-        <lastmod>2018-01-05T22:52:56+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/end-of-2017/</loc>
-        <lastmod>2017-12-31T20:24:14+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/adc2017/</loc>
-        <lastmod>2017-12-25T00:11:02+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/2017-csadv-finish/</loc>
-        <lastmod>2017-12-25T00:11:02+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/proof-assistant-impl-7/</loc>
-        <lastmod>2017-12-24T00:04:51+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/proof-assistant-impl-6/</loc>
-        <lastmod>2017-12-23T00:04:55+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/proof-assistant-impl-5/</loc>
-        <lastmod>2017-12-22T00:02:50+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/proof-assistant-impl-4/</loc>
-        <lastmod>2017-12-21T00:20:35+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/proof-assistant-impl-3/</loc>
-        <lastmod>2017-12-20T00:12:26+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/proof-assistant-impl-2/</loc>
-        <lastmod>2017-12-19T00:00:24+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/proof-assistant-impl-1/</loc>
-        <lastmod>2017-12-18T00:01:47+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/proof-assistant-theory-2/</loc>
-        <lastmod>2017-12-17T00:17:12+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/proof-assistant-theory-1/</loc>
-        <lastmod>2017-12-16T00:04:42+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/haskell-project-setup/</loc>
-        <lastmod>2017-12-15T00:04:21+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</loc>
-        <lastmod>2017-12-14T00:03:01+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/nominal-lambda-4/</loc>
-        <lastmod>2017-12-13T00:04:03+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%A6/</loc>
-        <lastmod>2017-12-13T00:04:03+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/nominal-lambda-3/</loc>
-        <lastmod>2017-12-12T00:05:37+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/nominal-lambda-2/</loc>
-        <lastmod>2017-12-11T00:13:11+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/nominal-lambda-1/</loc>
-        <lastmod>2017-12-10T00:13:17+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/isabelle-qanda/</loc>
-        <lastmod>2017-12-09T00:03:23+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/2017csadv-day8/</loc>
-        <lastmod>2017-12-08T00:01:48+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/2017csadv-day7/</loc>
-        <lastmod>2017-12-07T00:18:10+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/2017csadv-day6/</loc>
-        <lastmod>2017-12-06T00:07:53+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/2017csadv-day5/</loc>
-        <lastmod>2017-12-05T00:02:29+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/2017csadv-day4/</loc>
-        <lastmod>2017-12-04T00:39:09+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/2017csadv-day3/</loc>
-        <lastmod>2017-12-03T00:01:48+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/2017csadv-day2/</loc>
-        <lastmod>2017-12-02T00:00:44+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/2017csadv-day1/</loc>
-        <lastmod>2017-12-01T00:06:00+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/migrate-to-hugo/</loc>
-        <lastmod>2017-11-10T02:37:31+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/tags/web%E3%82%B5%E3%82%A4%E3%83%88/</loc>
-        <lastmod>2017-11-10T02:37:31+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/recursion-scheme/</loc>
-        <lastmod>2017-10-27T00:59:31+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/overlapping-instances/</loc>
-        <lastmod>2017-08-21T00:31:03+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/posts/hakyll-blog/</loc>
-        <lastmod>2017-08-16T22:39:48+09:00</lastmod>
-      </url>
-    
-  
-    
-      <url>
-        <loc>https://myuon.github.io/categories/</loc>
-      </url>
-    
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://myuon.github.io/posts/</loc>
+    <lastmod>2020-05-02T01:29:52+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/</loc>
+    <lastmod>2020-05-02T01:29:52+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/typography-japanese/</loc>
+    <lastmod>2020-05-02T01:29:52+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/aws/</loc>
+    <lastmod>2020-04-03T01:10:11+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/try-lightsail/</loc>
+    <lastmod>2020-04-03T01:10:11+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/</loc>
+    <lastmod>2020-04-03T01:10:11+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/go/</loc>
+    <lastmod>2020-02-29T19:37:36+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/golang-and-rust/</loc>
+    <lastmod>2020-02-29T19:37:36+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/rust/</loc>
+    <lastmod>2020-02-29T19:37:36+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/end-of-2019/</loc>
+    <lastmod>2019-12-30T22:18:25+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/isabelle/</loc>
+    <lastmod>2019-10-27T15:33:19+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/isabelle-cbc-casper-safety-proof/</loc>
+    <lastmod>2019-10-27T15:33:19+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E/</loc>
+    <lastmod>2019-10-27T15:33:19+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/database-generic-mapper/</loc>
+    <lastmod>2019-09-28T17:15:06+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/haskell/</loc>
+    <lastmod>2019-09-28T17:15:06+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/pipeline-resolver-authorizer/</loc>
+    <lastmod>2019-06-16T14:26:31+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/giving-up-core-parser/</loc>
+    <lastmod>2019-05-21T23:25:02+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/haskell-atcoder/</loc>
+    <lastmod>2019-04-28T16:44:29+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/minilight-component/</loc>
+    <lastmod>2019-04-11T20:30:21+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/ghc-compiler-notes/</loc>
+    <lastmod>2019-04-04T22:30:29+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/cg/</loc>
+    <lastmod>2019-03-03T19:33:25+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/survey-ray-tracing/</loc>
+    <lastmod>2019-03-03T19:33:25+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/dynanmodb-local-terraform/</loc>
+    <lastmod>2019-02-11T00:22:05+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/start-learning-proof-assistant/</loc>
+    <lastmod>2019-01-06T15:46:06+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/start-ray-tracing/</loc>
+    <lastmod>2019-01-06T13:34:10+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/sumup-2018/</loc>
+    <lastmod>2018-12-29T19:06:59+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/juniq/</loc>
+    <lastmod>2018-12-25T20:25:54+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/goodbye-to-impl-tests/</loc>
+    <lastmod>2018-12-24T14:25:05+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/implement-ogp-expansion/</loc>
+    <lastmod>2018-12-14T23:51:25+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/get-started-with-firebase/</loc>
+    <lastmod>2018-12-13T00:05:37+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/serverless-reason/</loc>
+    <lastmod>2018-11-23T21:00:48+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/reason/</loc>
+    <lastmod>2018-11-23T21:00:48+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/ml/</loc>
+    <lastmod>2018-11-10T00:24:20+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/start-reasonml/</loc>
+    <lastmod>2018-11-10T00:24:20+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/elm-functional-gui/</loc>
+    <lastmod>2018-11-04T12:32:56+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/frp/</loc>
+    <lastmod>2018-11-04T12:32:56+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/%E3%83%A9%E3%83%A0%E3%83%80%E8%A8%88%E7%AE%97/</loc>
+    <lastmod>2018-11-04T12:32:56+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/javascript/</loc>
+    <lastmod>2018-10-28T16:03:12+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/grpc-rust/</loc>
+    <lastmod>2018-10-28T16:03:12+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/%E3%83%96%E3%83%AD%E3%82%B0/</loc>
+    <lastmod>2018-10-23T22:53:56+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/blog-simplicity/</loc>
+    <lastmod>2018-10-23T22:53:56+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/isabelle-vscode-2018/</loc>
+    <lastmod>2018-07-28T11:46:33+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/%E9%9D%99%E7%9A%84%E8%A7%A3%E6%9E%90/</loc>
+    <lastmod>2018-07-11T05:49:39-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/how-far-can-static-analysis-go/</loc>
+    <lastmod>2018-07-11T05:49:39-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/architecture-basic-idea/</loc>
+    <lastmod>2018-07-10T02:49:04-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/haskell-di/</loc>
+    <lastmod>2018-07-06T05:51:00-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/refluxible-library/</loc>
+    <lastmod>2018-06-16T08:00:49-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/%E3%83%9D%E3%82%A8%E3%83%A0/</loc>
+    <lastmod>2018-06-02T08:27:31-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/type-system-poem/</loc>
+    <lastmod>2018-06-02T08:27:31-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/vm-linux-on-windows/</loc>
+    <lastmod>2018-05-20T08:11:42-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/linux/</loc>
+    <lastmod>2018-05-20T08:11:42-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89/</loc>
+    <lastmod>2018-05-20T08:11:42-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/gstreamer/</loc>
+    <lastmod>2018-03-04T19:21:20+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/gtk/</loc>
+    <lastmod>2018-03-04T19:21:20+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/madder-start-to-create/</loc>
+    <lastmod>2018-03-04T19:21:20+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/rust-started/</loc>
+    <lastmod>2018-02-09T22:21:42+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/namespace-haskell/</loc>
+    <lastmod>2018-02-04T13:55:38+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/want-to-start-project-management/</loc>
+    <lastmod>2018-01-14T23:14:19+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/%E6%97%A5%E8%A8%98/</loc>
+    <lastmod>2018-01-14T23:14:19+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/ghc-exts/</loc>
+    <lastmod>2018-01-13T00:38:01+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/versus-hask-category/</loc>
+    <lastmod>2018-01-05T22:52:56+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/end-of-2017/</loc>
+    <lastmod>2017-12-31T20:24:14+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/adc2017/</loc>
+    <lastmod>2017-12-25T00:11:02+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/2017-csadv-finish/</loc>
+    <lastmod>2017-12-25T00:11:02+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/proof-assistant-impl-7/</loc>
+    <lastmod>2017-12-24T00:04:51+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/proof-assistant-impl-6/</loc>
+    <lastmod>2017-12-23T00:04:55+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/proof-assistant-impl-5/</loc>
+    <lastmod>2017-12-22T00:02:50+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/proof-assistant-impl-4/</loc>
+    <lastmod>2017-12-21T00:20:35+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/proof-assistant-impl-3/</loc>
+    <lastmod>2017-12-20T00:12:26+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/proof-assistant-impl-2/</loc>
+    <lastmod>2017-12-19T00:00:24+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/proof-assistant-impl-1/</loc>
+    <lastmod>2017-12-18T00:01:47+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/proof-assistant-theory-2/</loc>
+    <lastmod>2017-12-17T00:17:12+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/proof-assistant-theory-1/</loc>
+    <lastmod>2017-12-16T00:04:42+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/haskell-project-setup/</loc>
+    <lastmod>2017-12-15T00:04:21+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</loc>
+    <lastmod>2017-12-14T00:03:01+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/nominal-lambda-4/</loc>
+    <lastmod>2017-12-13T00:04:03+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%A6/</loc>
+    <lastmod>2017-12-13T00:04:03+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/nominal-lambda-3/</loc>
+    <lastmod>2017-12-12T00:05:37+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/nominal-lambda-2/</loc>
+    <lastmod>2017-12-11T00:13:11+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/nominal-lambda-1/</loc>
+    <lastmod>2017-12-10T00:13:17+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/isabelle-qanda/</loc>
+    <lastmod>2017-12-09T00:03:23+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/2017csadv-day8/</loc>
+    <lastmod>2017-12-08T00:01:48+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/2017csadv-day7/</loc>
+    <lastmod>2017-12-07T00:18:10+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/2017csadv-day6/</loc>
+    <lastmod>2017-12-06T00:07:53+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/2017csadv-day5/</loc>
+    <lastmod>2017-12-05T00:02:29+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/2017csadv-day4/</loc>
+    <lastmod>2017-12-04T00:39:09+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/2017csadv-day3/</loc>
+    <lastmod>2017-12-03T00:01:48+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/2017csadv-day2/</loc>
+    <lastmod>2017-12-02T00:00:44+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/2017csadv-day1/</loc>
+    <lastmod>2017-12-01T00:06:00+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/migrate-to-hugo/</loc>
+    <lastmod>2017-11-10T02:37:31+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/tags/web%E3%82%B5%E3%82%A4%E3%83%88/</loc>
+    <lastmod>2017-11-10T02:37:31+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/recursion-scheme/</loc>
+    <lastmod>2017-10-27T00:59:31+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/overlapping-instances/</loc>
+    <lastmod>2017-08-21T00:31:03+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/posts/hakyll-blog/</loc>
+    <lastmod>2017-08-16T22:39:48+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://myuon.github.io/categories/</loc>
+  </url>
   
 </urlset>

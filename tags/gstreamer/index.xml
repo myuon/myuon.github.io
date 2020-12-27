@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Gstreamer on The curse of λ</title>
@@ -5,18 +6,32 @@
     <description>Recent content in Gstreamer on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sun, 04 Mar 2018 19:21:20 +0900</lastBuildDate>
-    
-      <atom:link href="https://myuon.github.io/tags/gstreamer/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-      <item>
-        <title>動画編集ソフトを作り始めた</title>
-        <link>https://myuon.github.io/posts/madder-start-to-create/</link>
-        <pubDate>Sun, 04 Mar 2018 19:21:20 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/madder-start-to-create/</guid>
-        <description>Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。  最近日本語をかくのがめんどくさい以外の発言をしていない気がする。  1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK+を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。 Rust   前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)    とりあえずメモリモデルとしてはスタックとヒープがあるということだけ分かっておけば大丈夫そう    structのフィールドに参照をもたせるとlifetime parameterにコードがまみれるのでやめたほうが良さそう    Rc&amp;lt;RefCell&amp;lt;T&amp;gt;&amp;gt; が便利(これは主にGTKを使う時に必要になったというのもある)    Rc&amp;lt;RefCell&amp;lt;T&amp;gt;&amp;gt; は確かに便利だけど hoge.borrow_mut().call(hoge.borrow()) みたいなことをするとBorrowMutError: already borrowedで実行時エラーになって死ぬので気をつけよう    参照が欲しいときはBorrow, BorrowMut, AsRef, AsMutトレイトの実装があるかを見よう    Derefトレイトは神    Fn, FnMut, FnOnceの意味がようやく分かってきた FnOnce系はちょっと気をつけたほうがいい(Option::unwrapがselfを消費するのとか)    trait, implは飽くまでインターフェイスの提供だけなのでデータの扱いはstructで行う    OOPっぽくコード書きたいときはtrait objectと動的ディスパッチの仕組みを上手く使う(果たしてこれが正しいアレなのかはよく分からん)    マクロは便利    別言語でtrailing commaで怒られると厳しい気持ちになる    if letが意外と便利    言語拡張が結構カジュアルに欲しくなるのでこのままだとnightlyしか使わなくなりそう    文字列リテラルが常に&amp;amp;strなのは意外とパターンマッチの時にめんどくさい マジでViewPatterns拡張が欲しい マジで    大抵の他の言語でもそうなんだけどasって書くのめんどくさい    あと as (i32,i32) って書けないの割と不便    前は「ブロックをclosureや関数として切り出してくると怒られるの理不尽💢」みたいなことを思っていたのだけれど、closureや関数は複数回呼ばれる可能性がある上に呼ばれるタイミングが不明なので所有権をちゃんと考えないといけないということが分かりスッキリした    最近Derefは神だなと思うことがあり、今まで(なんでこれ型が合うんだろう〜)って思ってたところは大体Derefのおかげであることが分かったりした。  例えば hoge: Rc&amp;lt;RefCell&amp;lt;T&amp;gt;&amp;gt; に対して hoge.</description>
-      </item>
+    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
+    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
+    <lastBuildDate>Sun, 04 Mar 2018 19:21:20 +0900</lastBuildDate><atom:link href="https://myuon.github.io/tags/gstreamer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>動画編集ソフトを作り始めた</title>
+      <link>https://myuon.github.io/posts/madder-start-to-create/</link>
+      <pubDate>Sun, 04 Mar 2018 19:21:20 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/madder-start-to-create/</guid>
+      <description>Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。
+ 最近日本語をかくのがめんどくさい以外の発言をしていない気がする。
+ 1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK+を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。
+Rust   前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)
+  とりあえずメモリモデルとしてはスタックとヒープがあるということだけ分かっておけば大丈夫そう
+  structのフィールドに参照をもたせるとlifetime parameterにコードがまみれるのでやめたほうが良さそう
+  Rc&amp;lt;RefCell&amp;lt;T&amp;gt;&amp;gt; が便利(これは主にGTKを使う時に必要になったというのもある)
+  Rc&amp;lt;RefCell&amp;lt;T&amp;gt;&amp;gt; は確かに便利だけど hoge.borrow_mut().call(hoge.borrow()) みたいなことをするとBorrowMutError: already borrowedで実行時エラーになって死ぬので気をつけよう
+  参照が欲しいときはBorrow, BorrowMut, AsRef, AsMutトレイトの実装があるかを見よう
+  Derefトレイトは神
+  Fn, FnMut, FnOnceの意味がようやく分かってきた FnOnce系はちょっと気をつけたほうがいい(Option::unwrapがselfを消費するのとか)
+  trait, implは飽くまでインターフェイスの提供だけなのでデータの扱いはstructで行う
+  OOPっぽくコード書きたいときはtrait objectと動的ディスパッチの仕組みを上手く使う(果たしてこれが正しいアレなのかはよく分からん)
+  マクロは便利
+  別言語でtrailing commaで怒られると厳しい気持ちになる
+  if letが意外と便利</description>
+    </item>
     
   </channel>
 </rss>

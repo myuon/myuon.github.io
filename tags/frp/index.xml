@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>FRP on The curse of λ</title>
@@ -5,23 +6,22 @@
     <description>Recent content in FRP on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sun, 04 Nov 2018 12:32:56 +0900</lastBuildDate>
-    
-      <atom:link href="https://myuon.github.io/tags/frp/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-      <item>
-        <title>Elm: Concurrent FRP for Functional GUIsを読んで</title>
-        <link>https://myuon.github.io/posts/elm-functional-gui/</link>
-        <pubDate>Sun, 04 Nov 2018 12:32:56 +0900</pubDate>
-        <guid>https://myuon.github.io/posts/elm-functional-gui/</guid>
-        <description>これ
+    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
+    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
+    <lastBuildDate>Sun, 04 Nov 2018 12:32:56 +0900</lastBuildDate><atom:link href="https://myuon.github.io/tags/frp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Elm: Concurrent FRP for Functional GUIsを読んで</title>
+      <link>https://myuon.github.io/posts/elm-functional-gui/</link>
+      <pubDate>Sun, 04 Nov 2018 12:32:56 +0900</pubDate>
+      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
+      <guid>https://myuon.github.io/posts/elm-functional-gui/</guid>
+      <description>これ
 https://elm-lang.org/assets/papers/concurrent-frp.pdf
 はじめに 某所でFRPをeffect systemとみなせないか、という大変示唆的な質問をいただいて、気になったのでFRPについて調べてた流れで教えてもらったElmの作者が書いた論文。 自分はFRPについては「なんかEventとBehaviorがあってArrowになったりMonadになったりするやつ」くらいの感覚しかなかったので論文読んでみることにした。
 ところでmarkdownで数式や図を記述するのは大変つらいので記事は適当に日本語で書きます。詳しく知りたい人は論文の方を読んでください。
 あと、ElmはFRP捨てたって言ってた気がするので多分今のElmはもう論文にあるような仕組みで動いてないような気がしないでもない。
 2章 背景  FRPにはClassical, Real-time (とEvent-driven), Arrowizedの3種類ある Classical:  Behavior a = Time -&amp;gt; a: これが時間の経過とともに変わる値を表現する Event a = [(Time, a)]: これがBehaviorのスナップショットを取ったもの 基本はBehaviorをベースに計算を行うけど、実際のプログラムでは無限に細かい時間で計算はできないので30fpsとか決まったタイミングで再計算するかどうかを考えることになる。そういう離散化のためにEventがあるよみたいな感じ   Real-time:  Event a = Behavior (Maybe a) EventもBehaviorで書いちゃえばいいんちゃうん Event, Behaviorをまとめて Signal a = Time -&amp;gt; a と呼ぶことに 論文で説明されてるElm Coreもこれにinspireされてるっぽい   Arrowized:  SF a b = Signal a -&amp;gt; Signal b signal functionというものをベースにしてこれをArrowにする 論文読んだ限りだと理論が難しくなりそうなのでFRPにおける特にArrowの優位性はよくわからなかった 書きやすいってくらいなのか   Message-Passing Concurrency  Concurrent MLの説明 実装はこれで書いたり書かなかったりする(あとの章でtranslationが与えられる)   既存のFRP GUI frameworks  メモリリークする(Haskellなので)(って何度も書いてあってウケるって思った)    3章 Core Language  Dicreteなsignalを扱う 文法: e ::= () | n \in Z | \x.</description>
-      </item>
+    </item>
     
   </channel>
 </rss>
