@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Haskell on The curse of λ</title>
@@ -6,16 +5,17 @@
     <description>Recent content in Haskell on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
-    <lastBuildDate>Sat, 28 Sep 2019 17:15:06 +0900</lastBuildDate><atom:link href="https://myuon.github.io/tags/haskell/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Genericなデータマッパーを書いた</title>
-      <link>https://myuon.github.io/posts/database-generic-mapper/</link>
-      <pubDate>Sat, 28 Sep 2019 17:15:06 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/database-generic-mapper/</guid>
-      <description>まだライブラリとしては公開してませんが
+    <lastBuildDate>Sat, 28 Sep 2019 17:15:06 +0900</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/haskell/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>Genericなデータマッパーを書いた</title>
+        <link>https://myuon.github.io/posts/database-generic-mapper/</link>
+        <pubDate>Sat, 28 Sep 2019 17:15:06 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/database-generic-mapper/</guid>
+        <description>まだライブラリとしては公開してませんが
 背景 Haskell でサーバーサイドを書いてみようと思い立って色々やっていたところ、ORM 的なものが欲しい気持ちになってきた。 業界では persistent がデファクト感あるが、思ったほど細かいところに手が届かない(？)上にドキュメントが全然なくて使う気がなくなったので自分なりに解決策を考えた結果 database-generic-mapper というパッケージを作るに至った。
 (実際のところ私は全然 persistent の全容を把握していない、そもそもドキュメントがないので把握のしようがない)
 ていうか Generic Programming なるものを初めてやったけど普通に便利だった。TH より簡単で使いやすいのでアイデア次第で色々できそうではある(今更〜〜〜〜)。
@@ -24,15 +24,14 @@ database-generic-mapper database と銘打ってるが実体はただの record 
  Generic インスタンスなレコードと値の列を mapping してくれるやつ(DB にデータを保存することを考えると mapping するレコードは Generic インスタンスになっていると仮定しても良いだろうという感じで) TH なし 実際のデータのマッピングはライブラリ側の型クラスを使っているので自分で型を定義してインスタンスを書けば挙動はカスタマイズ可能 私は一応 MySQL で使ってるが特に DB 依存はない気がする(ただしマッピングされる先の型はライブラリ側で定義されてるものから選ぶ必要はある) 本当に誰でも思いつきそうな仕組みなので絶対すでに作られてるでしょって思って調べたけど見つからなかった…何でみんな TH するんだ…レコード定義したくないのか…  使い方 適当なデータ型を定義する。制約を書きたいときは幽霊型に載せる(これは attribute として後で文字列のリストとして取得可能)
 mapper は (:-) だけは特別扱いしていて、 a :- xs を後で (a,[String]) の型に mapping する(:-ではないときは、 (a,[])に mapping する)
 data Sample = Sample { key :: VarChar 20 :- &amp;#39;[&amp;#34;PRIMARY KEY&amp;#34;], -- 制約書きたいときは (:-) を使う name :: BigInt :- &amp;#39;[&amp;#34;NOT NULL&amp;#34;], single :: String } deriving (Eq, Show, Generic) -- レコードのフィールドは全て次の型クラスのインスタンスである必要がある -- SQLValuesはStringやIntなどのunion class SQLField a where fieldType :: a -&amp;gt; String encode :: a -&amp;gt; SQLValue decode :: SQLValue -&amp;gt; a MySQL で使う都合上、 VarChar (s :: Nat) や BigInt を定義しているがこれらはインスタンスを導出するためのただの newtype wrapper である(実体は Text や Int64 など)</description>
-    </item>
+      </item>
     
-    <item>
-      <title>GHC Coreのパーサー書いてたけど諦めた</title>
-      <link>https://myuon.github.io/posts/giving-up-core-parser/</link>
-      <pubDate>Tue, 21 May 2019 23:25:02 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/giving-up-core-parser/</guid>
-      <description>-ddump-simpl で出力されるSimplified Coreをいい感じに解析して読めるやつを作ろうかと思ってたけどつらすぎたので(少なくともこの方針では)やめた。
+      <item>
+        <title>GHC Coreのパーサー書いてたけど諦めた</title>
+        <link>https://myuon.github.io/posts/giving-up-core-parser/</link>
+        <pubDate>Tue, 21 May 2019 23:25:02 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/giving-up-core-parser/</guid>
+        <description>-ddump-simpl で出力されるSimplified Coreをいい感じに解析して読めるやつを作ろうかと思ってたけどつらすぎたので(少なくともこの方針では)やめた。
 以下愚痴を述べますがこれは私が結構無理なことをやろうとしているだけでGHCに(そこまで)非はないと思うし直してくれという意味で言ってるわけでもない。いや直してくれるならありがたいんだけど。
 様子 様子です
 Coreに色がつき始めたぞ pic.twitter.com/M1SmAFgPOB
@@ -49,26 +48,24 @@ foobar :: Type [GblId, Str=&amp;lt;S,U&amp;gt;, Unf=Unf{...なんやらかんや
 識別子は主に $ 問題と # 問題の2つ？ある。
 GHC Coreにはworker/wrapper変換という有名な最適化が入っているがこれにより新たに導入されるworkerには識別子の先頭に $w マークが付与される。ユーザー側で識別子に使えない文字を割り振ることで衝突等を回避してるんだろうか(しかしRenamerとかで上手く処理することも可能な気はする。そうでもないんだろうか)。しかしこれによりLexerが正しくtokenizeできなくなる(Module.$wfoobar は qualified operator Module.$ と varid foobar に分解される)。
 次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Haskellで解くAtCoder</title>
-      <link>https://myuon.github.io/posts/haskell-atcoder/</link>
-      <pubDate>Sun, 28 Apr 2019 16:44:29 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/haskell-atcoder/</guid>
-      <description>最近HaskellでAtCoderの問題を解いたりしているのでごく基本的な知見をまとめておく。
+      <item>
+        <title>Haskellで解くAtCoder</title>
+        <link>https://myuon.github.io/posts/haskell-atcoder/</link>
+        <pubDate>Sun, 28 Apr 2019 16:44:29 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/haskell-atcoder/</guid>
+        <description>最近HaskellでAtCoderの問題を解いたりしているのでごく基本的な知見をまとめておく。
 テクニック集 多くは割と色んな人がすでに言っていることではある。また、想定解法を正しく実装すれば以下のようなことを守らなくても時間内に収まるだろうが、GHCは最適化が効かなければ10倍遅くなる言語であるので普段から守っておくに越したことはないと思う。
  環境: AtCoderのGHCは2019.04現在7.10なので注意が必要。そのうち上がるかもしれないけど。  Strict拡張がない BangPatterns拡張はある 環境構築がhaskell-platformらしいのでそれに入ってるライブラリしか使えない   文字列  基本はData.ByteString.Chan8 Stringは死んでも使わない(遅いので) Unicode文字列の扱いが必要(今の所みたことないけど)とかならtextを使うといいかもしれない   リスト  リストは遅延リストをイテレータとして利用するだけに限るようにする(それでも全ての要素を走査するならVectorの方が大体速い(fromListのコストは除く)) 添字アクセスと結合は死んでもしない 遅延リストは作って即畳めば最適化によってコストは消えてなくなるので、そういう使い方ならあまり心配はしなくて良い(畳み込みはiループ目にi番目の要素にのみアクセスするように書くこと) 累積和はscan系を使うといいよ   Vector: 基本はData.Vector.Unboxed  BoxedなVectorを使ってサンクを不必要に消費しないコードを書くのは結構難しいのでUnboxedを使うほうが無難 push_backがないのが致命的 グラフの構築とかは困ると思うので事前に何かしら考えておいたほうがいいかも(2秒制限に引っかかるほどではないのであまり気にしなくても良いが) Vectorにはfusionがあるので、遅延リスト同様作って即畳めば最適化によってデータ生成のコストを消すことが出来る 便利なAPI: create, unfoldrN 注意すべきAPI: generate(Boxed Vectorの方は中の要素が遅延される), modify(呼ぶたびにコピーが取られる)   データ構造  その他のデータ構造にほとんど出番はない(Vectorで書けるならVectorで書いたほうが速いことがほとんど) Data.Set: priority queueの実装が面倒な場合 Data.Graph: グラフの構築やdfsが必要で、問題ごとに実装を考えたくない場合   再帰の実装  単なるループはfoldl&#39;, 早期リターンが必要ならfoldr 雑に再帰したいときはControl.Monad.Fix.fixを使っても良い Data.IORefなどはポインタ経由になるので遅い 関数の引数にするかStateを使うこと   GHC最適化系:  繰り返し適用される関数の引数は全てbang patternを付けておくのが安全(foldやscanの中、fixの中、手で書いた再帰関数等)(bang patternにより普通のコードが速くなることはないが、不要なサンクにより無意味に遅いコードは改善される) タプルは中の要素が遅延されるので、タプルを評価するときは全ての要素を個別に評価すること リストも中の要素が遅延されるが、中の要素を個別に評価するのは難しいのでそれが必要なときはUnboxed Vectorで書くのが最も安全 datatypeのフィールドも正格にしておくこと コピーを取らない値の計算は爆速になるのでなるべくコピーは取らない   パフォーマンス:  実行時間はC++やRustの2-5倍程度が目安(10倍以上遅いときは書き方が悪い) メモリ使用量も目安に(消費メモリ量を改善できれば自然に速くなることも)    入力  上にも書いたようにByteStringで読み込む 「n個の数値の読み出し」とかはVectorでササッと書く  例 例: a1 .</description>
-    </item>
+      </item>
     
-    <item>
-      <title>newtype decoratorパターンとグラフィックスライブラリ</title>
-      <link>https://myuon.github.io/posts/minilight-component/</link>
-      <pubDate>Thu, 11 Apr 2019 20:30:21 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/minilight-component/</guid>
-      <description>minilightというSDL2の上で動くグラフィックスライブラリを作っている。
+      <item>
+        <title>newtype decoratorパターンとグラフィックスライブラリ</title>
+        <link>https://myuon.github.io/posts/minilight-component/</link>
+        <pubDate>Thu, 11 Apr 2019 20:30:21 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/minilight-component/</guid>
+        <description>minilightというSDL2の上で動くグラフィックスライブラリを作っている。
 前にも似たようなことをしており、フルスクラッチで作ったくせにそんなに変わらないという代物。
 (別にFluxとかを目指しているわけではないので…まぁ偶然の一致というやつだな)
 比較的簡単にコンポーネントが作れるようになったので、その紹介も兼ねて。
@@ -78,15 +75,14 @@ https://github.com/myuon/minilight/blob/master/examples/button-counter.hs
  以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
 data Button = Button { font :: SDL.Font.Font, counter :: Int } new :: MiniLight Button new = do font &amp;lt;- loadFont (FontDescriptor &amp;#34;IPAGothic&amp;#34; (FontStyle False False)) 22 return $ Button {font = font, counter = 0} 以下がボタンコンポーネントの定義。ComponentUnitのインスタンスを作れば良い。viewはfiguresで、イベントハンドラーはonSignalで、モデルの更新はupdateで、キャッシュの設定はuseCacheでそれぞれ行う。
 instance ComponentUnit Button where update = return figures comp = do textTexture &amp;lt;- liftMiniLight $ text (font comp) (Vect.V4 255 255 255 255) $ if counter comp == 0 then &amp;#34;Click me!</description>
-    </item>
+      </item>
     
-    <item>
-      <title>GHCのソースコードのノートを読むやつを作った</title>
-      <link>https://myuon.github.io/posts/ghc-compiler-notes/</link>
-      <pubDate>Thu, 04 Apr 2019 22:30:29 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/ghc-compiler-notes/</guid>
-      <description>タイトルがふわっとしてるけど見れば多分わかる。
+      <item>
+        <title>GHCのソースコードのノートを読むやつを作った</title>
+        <link>https://myuon.github.io/posts/ghc-compiler-notes/</link>
+        <pubDate>Thu, 04 Apr 2019 22:30:29 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/ghc-compiler-notes/</guid>
+        <description>タイトルがふわっとしてるけど見れば多分わかる。
 ghc-compiler-notes
 経緯とか 注意: 作ったと書いてるが私の力ではなく主に水無さん(@mizunashi-mana)とわどさん(@waddlaw)のお力添えによるところが大きい。
 GHCのソースコードにはNoteと称して有益な(GHCの内部実装等に関する)情報が書いてあることは有名だと思うけど、実際にそれはまとまったりはしてなかったので知る人ぞ知る、みたいな情報であった。こういう他のドキュメントには書いてないような貴重な情報が誰にも読まれることなく眠っているのはもったいないと常々感じていたのでそれを読めるようにしたかった。
@@ -102,15 +98,14 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
 あと、以後のjobでも使うので dist-newstyle もworkspaceに放り込んでる。
 何かの参考になれば。
 build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:- checkout- run:cabal new-update- restore_cache:keys:- cabal-index-{{ checksum &amp;#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&amp;#34; }}-v1- run:make build- run:make test- save_cache:key:cabal-index-{{ checksum &amp;#34;~/.</description>
-    </item>
+      </item>
     
-    <item>
-      <title>HaskellでDIする</title>
-      <link>https://myuon.github.io/posts/haskell-di/</link>
-      <pubDate>Fri, 06 Jul 2018 05:51:00 -0700</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/haskell-di/</guid>
-      <description>DI   DIの重要性はここ数年で急速に高まってきている。 依存性が注入されたりとかそういうことはどうでもよくて、設計と実装を分けたい、人類はそれだけのために色々と工夫をこらし最終的にたどり着いたのがDIであったのだろう。
+      <item>
+        <title>HaskellでDIする</title>
+        <link>https://myuon.github.io/posts/haskell-di/</link>
+        <pubDate>Fri, 06 Jul 2018 05:51:00 -0700</pubDate>
+        <guid>https://myuon.github.io/posts/haskell-di/</guid>
+        <description>DI   DIの重要性はここ数年で急速に高まってきている。 依存性が注入されたりとかそういうことはどうでもよくて、設計と実装を分けたい、人類はそれだけのために色々と工夫をこらし最終的にたどり着いたのがDIであったのだろう。
  Haskellでも設計と実装を分けるためにDIしたいというのは自然な流れである。
  ここでは型も含めて設計が実装に依存してはいけないということを要求する。 例えば設計でMySqlConnection、みたいな型が出現することも分離できていないので禁止とする。
 問題点   設計を定義するときには他の言語ではインターフェイスなどの仕組みが使われることが多い。 Haskellには型システムという仕組みがあるのでこれがインターフェイス相当の機能として紹介される場合がある。
@@ -123,15 +118,14 @@ build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:
  同じ型に対しては1つの値しか注入できないが、実際にDIするときは利用する型は1つだけなので問題がない。
  というわけでこれでHaskellでもDIできそう！ということが分かる。
     Loggerの例   例えばLoggerを作る例を考える。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Fluxを再発明する</title>
-      <link>https://myuon.github.io/posts/refluxible-library/</link>
-      <pubDate>Sat, 16 Jun 2018 08:00:49 -0700</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/refluxible-library/</guid>
-      <description>Haskellの2D graphics libraryを作った   作った: refluxive
+      <item>
+        <title>Fluxを再発明する</title>
+        <link>https://myuon.github.io/posts/refluxible-library/</link>
+        <pubDate>Sat, 16 Jun 2018 08:00:49 -0700</pubDate>
+        <guid>https://myuon.github.io/posts/refluxible-library/</guid>
+        <description>Haskellの2D graphics libraryを作った   作った: refluxive
  与太話に興味がない人は解説まで飛んでください
 なにこれ   大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。
   なぜ   大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。
@@ -144,15 +138,14 @@ build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:
     refluxive   ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。
  あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。
 構成要素    Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Namespace Haskell</title>
-      <link>https://myuon.github.io/posts/namespace-haskell/</link>
-      <pubDate>Sun, 04 Feb 2018 13:55:38 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/namespace-haskell/</guid>
-      <description>Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。
+      <item>
+        <title>Namespace Haskell</title>
+        <link>https://myuon.github.io/posts/namespace-haskell/</link>
+        <pubDate>Sun, 04 Feb 2018 13:55:38 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/namespace-haskell/</guid>
+        <description>Haskellにモジュールシステムが欲しすぎたのでNamespace Haskellとして提唱したい。
 主な機能  open import   Agdaにもある機能で、importをimport(モジュール読み込み)とopen(現在のコンテキストに名前を公開)に分割する.
   import M とすると, M.func によってモジュールMの関数funcにアクセスできる
   open M とすると, それを指定したブロックでMの関数を修飾子なしでアクセスできる
@@ -163,15 +156,14 @@ build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:
   associated function   要は「メソッド」機能なんだけどtypeclassの関数のことをメソッドって呼ぶことがあるような気がするので名前の衝突を避けるためにここではassociated functionとよぶ.
  次のような、データ型とそれに対する特別な関数定義を行うスコープを用意する。
 -- 例 data List a = Nil | Cons a (List a) impl (this :: List a) where { reverse :: List a reverse = .</description>
-    </item>
+      </item>
     
-    <item>
-      <title>GHC拡張一覧を眺める</title>
-      <link>https://myuon.github.io/posts/ghc-exts/</link>
-      <pubDate>Sat, 13 Jan 2018 00:38:01 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/ghc-exts/</guid>
-      <description>GHC-8.2.2のGHC拡張を眺めます。
+      <item>
+        <title>GHC拡張一覧を眺める</title>
+        <link>https://myuon.github.io/posts/ghc-exts/</link>
+        <pubDate>Sat, 13 Jan 2018 00:38:01 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/ghc-exts/</guid>
+        <description>GHC-8.2.2のGHC拡張を眺めます。
   10. GHC Language Features User&amp;#39;s Guideの該当セクション
   7.6.12. Language options 単に一覧が欲しいだけならここの -X から始まるものを見ると良い
   上から順に見ていって後から関連するものとかを再編します。
@@ -182,15 +174,14 @@ GHC拡張一覧    AllowAmbiguousTypes   型変数が全て決定していない
   BinaryLiterals   バイナリ表現が使えるようになる( 0b11001001 みたいなやつ); 使ったことない
   CApiFFI   FFI関連; 使ったことない
   ConstrainedClassMethods   型クラスのメソッドに型クラスが受け取る型変数を含む制約が使えるようにするやつ; これHaskell98だとだめってマジ？(そらそうよ)</description>
-    </item>
+      </item>
     
-    <item>
-      <title>V.S. Hask圏</title>
-      <link>https://myuon.github.io/posts/versus-hask-category/</link>
-      <pubDate>Fri, 05 Jan 2018 22:52:56 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/versus-hask-category/</guid>
-      <description>Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
+      <item>
+        <title>V.S. Hask圏</title>
+        <link>https://myuon.github.io/posts/versus-hask-category/</link>
+        <pubDate>Fri, 05 Jan 2018 22:52:56 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/versus-hask-category/</guid>
+        <description>Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
  さて基本的な結果として次のことが知られている。
   Hask#Is Hask even a category?
   Hask is not a category
@@ -202,15 +193,14 @@ undefinedを抜く   undefinedは「評価ができない(プログラムが正�
  しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。
     ここからポエム   いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。
  個人的に、CSとは「計算機で観測可能な現象に説明をつける」学問であると思うので、実際にHaskellという言語で観測可能な現象について圏論で説明をつけようとする営み自体が否定されることはないと思う。 計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・発展編 その7</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-7/</link>
-      <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-7/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・発展編 その7</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-7/</link>
+        <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-7/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
   Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
 実装すべき機能など  prover   さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
  Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
@@ -221,15 +211,14 @@ undefinedを抜く   undefinedは「評価ができない(プログラムが正�
  ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
  それに関連するrefl, substなどのコマンドを定義しておくと便利です。
   マクロ記述言語   前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・マクロ編 その6</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-6/</link>
-      <pubDate>Sat, 23 Dec 2017 00:04:55 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-6/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・マクロ編 その6</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-6/</link>
+        <pubDate>Sat, 23 Dec 2017 00:04:55 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-6/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
   Proof Assistant 「Claire」の実装について説明していきます。
  リポジトリはこちら: myuon/claire
  今回はClaireのマクロ機能について説明します。
@@ -240,15 +229,14 @@ undefinedを抜く   undefinedは「評価ができない(プログラムが正�
   マクロの実装   マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。
 マクロ定義モジュール   定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。
 module Commands where import Claire macro :: Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command] macro = ... export_command :: [(String, Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command])] export_command = [ (&amp;#34;name&amp;#34;, macro) ] declmacro :: [Argument] -&amp;gt; [Decl] declmacro = .</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・実装編 その5</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-5/</link>
-      <pubDate>Fri, 22 Dec 2017 00:02:50 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-5/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・実装編 その5</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-5/</link>
+        <pubDate>Fri, 22 Dec 2017 00:02:50 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-5/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
   Proof Assistant 「Claire」の実装について説明していきます。
  リポジトリはこちら: myuon/claire
  機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
@@ -256,29 +244,27 @@ Environment   proofcheckerは環境とよばれる状態をもっていて、こ
  Claire.Env
 data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&amp;gt; [Decl]) }   上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。
  また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・実装編 その4</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-4/</link>
-      <pubDate>Thu, 21 Dec 2017 00:20:35 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-4/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・実装編 その4</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-4/</link>
+        <pubDate>Thu, 21 Dec 2017 00:20:35 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-4/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
   Proof Assistant 「Claire」の実装について説明していきます。
  リポジトリはこちら: myuon/claire
  昨日に引き続いてClaireの宣言(Decl)について説明していきます。
 Declarations   まずはtoplevelMの定義から。
 toplevelM :: (Monad m, MonadIO m) =&amp;gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &amp;lt;- lift get; utyp &amp;lt;- liftIO $ try $ infer env fml; case utyp of Left err -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&amp;gt; k Right typ -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &amp;lt;- suspend (DeclAwait return) env &amp;lt;- lift get case decl of ここに実装を書く   Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・実装編 その3</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-3/</link>
-      <pubDate>Wed, 20 Dec 2017 00:12:26 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-3/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・実装編 その3</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-3/</link>
+        <pubDate>Wed, 20 Dec 2017 00:12:26 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-3/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
   Proof Assistant 「Claire」の実装について説明していきます。
  リポジトリはこちら: myuon/claire
 Proofchecker state machine   さてClaireのproofcheckerを作っていきます。
@@ -291,15 +277,14 @@ proof state   初めに仕様を固めます。
  Claire.Checker
 Command Machine Suspender   簡単な方から行きます。
 data ComSuspender y = ComAwait (Command -&amp;gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&amp;gt; Env -&amp;gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = .</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・実装編 その2</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-2/</link>
-      <pubDate>Tue, 19 Dec 2017 00:00:24 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-2/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・実装編 その2</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-2/</link>
+        <pubDate>Tue, 19 Dec 2017 00:00:24 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-2/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
   Proof Assistant 「Claire」の実装について説明していきます。
  リポジトリはこちら: myuon/claire
 LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
@@ -308,29 +293,27 @@ LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これ�
  LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
 Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ   このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
 data Rule = I | Cut Formula -- CutはFormulaを引数に取る ...    チェッカー   Claire.</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・実装編 その1</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-1/</link>
-      <pubDate>Mon, 18 Dec 2017 00:01:47 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-1/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・実装編 その1</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-1/</link>
+        <pubDate>Mon, 18 Dec 2017 00:01:47 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-1/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
   Proof Assistant 「Claire」の実装について説明していきます。
  リポジトリはこちら: myuon/claire
 Syntax: FOL, LK, Claire   初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
 FOL   Claire.Syntax.FOL
 data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&amp;gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show)   それぞれfirst-order logicの項と論理式の定義です。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Haskellプロジェクトを始めるにあたって</title>
-      <link>https://myuon.github.io/posts/haskell-project-setup/</link>
-      <pubDate>Fri, 15 Dec 2017 00:04:21 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/haskell-project-setup/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 15日目の記事です。
+      <item>
+        <title>Haskellプロジェクトを始めるにあたって</title>
+        <link>https://myuon.github.io/posts/haskell-project-setup/</link>
+        <pubDate>Fri, 15 Dec 2017 00:04:21 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/haskell-project-setup/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 15日目の記事です。
   Computer Science何も関係ないけど大丈夫か？(まぁ一応Haskellはテーマの1つであったというアレはあるけど)
  今回はHaskellで開発を始める時にいつもやってるセットアップの作業とかの説明をします。 どうも、Haskellerによるstackみたいな周辺ツールの情報の発信が足りてないんじゃないかみたいな噂が流れてきたのでじゃあまぁなんか記事にするかという流れです。
  ところでstackの説明はググれば日本語の記事がそれなりにヒットするようになったと思うのでここではあんまり説明しません。
@@ -343,29 +326,27 @@ $ curl -sSL https://get.haskellstack.org/ | sh # stackのinstall $ stack setup #
   IntelliJ IDEAの人: intellij-haskell
   を使いましょう。その他のエディタは知らない(emacs/intellijのプラグインが特に優秀みたいなので可能ならどっちかを使うのがいいんじゃないでしょうか)。
     プロジェクトセットアップ  stack new   [2017/12/16追記]</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Coroutineモナドとステートマシン</title>
-      <link>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</link>
-      <pubDate>Thu, 14 Dec 2017 00:03:01 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。
+      <item>
+        <title>Coroutineモナドとステートマシン</title>
+        <link>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</link>
+        <pubDate>Thu, 14 Dec 2017 00:03:01 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/coroutine-monad-as-state-machine/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 14日目の記事です。
   今回は小ネタです。
  monad-coroutineというライブラリを使って状態遷移してそうなプログラムを書こうみたいな話をします。
 Coroutine-monad  example: coroutine   名前の通りmonad-coroutineはコルーチン(つまりプログラムを一旦停止して値を返し、再び停止したところから再開できるような仕組み)を提供します。
  サンプルとしては次のような感じ:
 countup :: Coroutine (Yield Int) IO () countup = do lift $ print &amp;#34;counting...&amp;#34; yield 1 lift $ print &amp;#34;counting...&amp;#34; yield 2 return () printProduce :: Show x =&amp;gt; Coroutine (Yield x) IO r -&amp;gt; IO r printProduce producer = pogoStick (\(Yield x cont) -&amp;gt; lift (print x) &amp;gt;&amp;gt; cont) producer {- &amp;gt; printProduce countup counting.</description>
-    </item>
+      </item>
     
-    <item>
-      <title>一人CSアドベントカレンダー開催のお知らせ</title>
-      <link>https://myuon.github.io/posts/2017csadv-day1/</link>
-      <pubDate>Fri, 01 Dec 2017 00:06:00 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/2017csadv-day1/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 1日目の記事です。
+      <item>
+        <title>一人CSアドベントカレンダー開催のお知らせ</title>
+        <link>https://myuon.github.io/posts/2017csadv-day1/</link>
+        <pubDate>Fri, 01 Dec 2017 00:06:00 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day1/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 1日目の記事です。
 概要的なもの   「一人アドベントカレンダーって面白そうだな、やってみたい」みたいなノリで登録したんですが、 25日毎日記事を同じテーマで投稿し続けるのどう考えてもめっちゃ大変なのでやはりここは自分が一番得意な分野で行くしかないかなとなりCS関係ということになりました。
  上のQiitaのページでも書いてますが、キーワードとして&amp;#34;ラムダ計算・定理証明・Haskell・ML・圏論 とかなんかそのへん&amp;#34;を挙げていますので そのへんのお話になります。今のところは無難に定理証明を中心にテーマをいくつか選んでおいたので多分そのへんの話です。
   スケジュール   最終的にはQiitaのカレンダー見ればわかることなんでいいんですが一応今後どういう感じで進めていくのかのスケジュール的なものをまとめておきます。
@@ -376,15 +357,14 @@ Isabelle編  Isabelle/HOL入門(3-4日くらい)   最初にIsabelle(ここで�
  この辺は後で変更あるかも知れないのでそのへんはあしからず。
     Haskell編  ライブラリ紹介(1日1ライブラリ, 日数未定)   Haskellで最近使ったり使ってなかったりするライブラリの紹介とか解説とかをします。 ここ以外のコンテンツで25日分埋まらなかった場合に備えて空けてある枠なので日数は未定です。 Haskell編の最初にまとめてやるかも不明ですが一応ってことで。
   定理証明支援系を作ろう・理論編(2-3日くらい)   ここからがメインコンテンツで、Haskellを使ってproof assistantを作ります。 (最初に断っておくとproverは作りません。あくまでcheckerとそのassistする部分がメインです。)</description>
-    </item>
+      </item>
     
-    <item>
-      <title>HakyllからHugoに移行した</title>
-      <link>https://myuon.github.io/posts/migrate-to-hugo/</link>
-      <pubDate>Fri, 10 Nov 2017 02:37:31 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/migrate-to-hugo/</guid>
-      <description>移行理由   前はHakyll+pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。
+      <item>
+        <title>HakyllからHugoに移行した</title>
+        <link>https://myuon.github.io/posts/migrate-to-hugo/</link>
+        <pubDate>Fri, 10 Nov 2017 02:37:31 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/migrate-to-hugo/</guid>
+        <description>移行理由   前はHakyll+pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。
   手順諸々  導入   hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。 各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。
  hugo serve --watch --buildDrafts でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。
   テーマ   Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。 hugo new theme [テーマ名] で必要なファイル群が themes にできるのであとは Templates にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。
@@ -393,27 +373,25 @@ Isabelle編  Isabelle/HOL入門(3-4日くらい)   最初にIsabelle(ここで�
 pygmentscodefences = true pygmentsstyle = &amp;#34;manni&amp;#34;   と書いた。 pygmentscodefencesはmarkdownで ```lang みたいに書けるようにするやつだけど、org-modeのcode blockもありがたいことに対応してくれてたのでそのまま色がついた。
  カラースキームはPygmentsの公式サイトから色々試してしっくり来るやつを探すと良さそう。
 syntax highlight関係のデザイン   pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。 それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>n番煎じのrecursion-scheme</title>
-      <link>https://myuon.github.io/posts/recursion-scheme/</link>
-      <pubDate>Fri, 27 Oct 2017 00:59:31 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/recursion-scheme/</guid>
-      <description>前提になりそうなことをちょこっとPreliminariesに書いた.
+      <item>
+        <title>n番煎じのrecursion-scheme</title>
+        <link>https://myuon.github.io/posts/recursion-scheme/</link>
+        <pubDate>Fri, 27 Oct 2017 00:59:31 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/recursion-scheme/</guid>
+        <description>前提になりそうなことをちょこっとPreliminariesに書いた.
 Recursion schemes   以下, C は適当な条件を満たすfunctor F: C -&amp;gt; C がFixをもち, さらにそれがCofixにもなっていることを仮定する1. 以下ではこの適当な条件を満たすfunctorしか考えないものとする.
 catamorphism   F-algebra p: FA -&amp;gt; A に対し, D のinitialityにより得られる射 cata(p): D -&amp;gt; A を catamorphism とよぶ. これは in; cata(p) = fmap F cata(p); p: FD -&amp;gt; A を満たす.
   anamorphism   catamorphismの双対. F-coalgebra q: A -&amp;gt; FA に対し, D のterminalityにより得られる射 ana(q): A -&amp;gt; D を anamorphism とよぶ. これは q; fmap F ana(q) = ana(q); out を満たす.</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Overlapping Instancesと戦う</title>
-      <link>https://myuon.github.io/posts/overlapping-instances/</link>
-      <pubDate>Mon, 21 Aug 2017 00:31:03 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/overlapping-instances/</guid>
-      <description>Overlapping Instances   Haskellで少し凝ったinstanceをいくつか書いたりしているとoverlapping instancesに悩まされることはよくある。 この辺のまとまった解説があると便利なのではと思ったので書く。
+      <item>
+        <title>Overlapping Instancesと戦う</title>
+        <link>https://myuon.github.io/posts/overlapping-instances/</link>
+        <pubDate>Mon, 21 Aug 2017 00:31:03 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/overlapping-instances/</guid>
+        <description>Overlapping Instances   Haskellで少し凝ったinstanceをいくつか書いたりしているとoverlapping instancesに悩まされることはよくある。 この辺のまとまった解説があると便利なのではと思ったので書く。
   ユーザーガイドにて   実際、overlapping instancesが何故起こるのかについてはGHCユーザーガイドにそれなりに詳しく書いてあるのでそこを読めば良いと思う。
  GHCユーザーガイド - Overlapping instances
  勝手に抄訳すると次のような感じ
@@ -421,15 +399,14 @@ catamorphism   F-algebra p: FA -&amp;gt; A に対し, D のinitialityにより�
  instanceの選択をコントロールするには、それぞれのinstanceについてオーバーラップしたときの挙動を指定することができる。 instance キーワードの直後に次のいずれかのプラグマを書けば良い: {-# OVERLAPPING #-}, {-# OVERLAPPABLE #-}, {-# OVERLAPS #-} または {-# INCOHERENT #-}
   INCOHERENT はinstanceが自由にoverlapしたりされたりすることを許すが、使わないほうがいいプラグマなので出来る限り避けたほうがいい。 また、後にもあるように OVERLAPS は OVERLAPPING と OVERLAPPABLE のいずれにもなるので OVERLAPS で事足りる場合も多いと思う。
  また、いちいちプラグマを書かなくてもいいように、デフォルトの挙動を指定するための拡張 -XIncoherentInstances と -XOverlappingInstances も あるけれど使用は出来る限り避けよう。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>HakyllでBlogを作る</title>
-      <link>https://myuon.github.io/posts/hakyll-blog/</link>
-      <pubDate>Wed, 16 Aug 2017 22:39:48 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/hakyll-blog/</guid>
-      <description>Hakyllでこのブログを作ったのでそのあれこれを
+      <item>
+        <title>HakyllでBlogを作る</title>
+        <link>https://myuon.github.io/posts/hakyll-blog/</link>
+        <pubDate>Wed, 16 Aug 2017 22:39:48 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/hakyll-blog/</guid>
+        <description>Hakyllでこのブログを作ったのでそのあれこれを
 概要   やりたいことは以下
   orgで文章をかく(大事)
   orgから良い感じのHTMLを生成し
@@ -442,7 +419,7 @@ catamorphism   F-algebra p: FA -&amp;gt; A に対し, D のinitialityにより�
   stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく
   文書の変換・Hakyllの設定   プロジェクトの構造は次のようになっている
 - root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site.</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

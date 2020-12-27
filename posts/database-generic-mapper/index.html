@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -47,13 +47,14 @@ database-generic-mapper database と銘打ってるが実体はただの record 
  Generic インスタンスなレコードと値の列を mapping してくれるやつ(DB にデータを保存することを考えると mapping するレコードは Generic インスタンスになっていると仮定しても良いだろうという感じで) TH なし 実際のデータのマッピングはライブラリ側の型クラスを使っているので自分で型を定義してインスタンスを書けば挙動はカスタマイズ可能 私は一応 MySQL で使ってるが特に DB 依存はない気がする(ただしマッピングされる先の型はライブラリ側で定義されてるものから選ぶ必要はある) 本当に誰でも思いつきそうな仕組みなので絶対すでに作られてるでしょって思って調べたけど見つからなかった…何でみんな TH するんだ…レコード定義したくないのか…  使い方 適当なデータ型を定義する。制約を書きたいときは幽霊型に載せる(これは attribute として後で文字列のリストとして取得可能)
 mapper は (:-) だけは特別扱いしていて、 a :- xs を後で (a,[String]) の型に mapping する(:-ではないときは、 (a,[])に mapping する)
 data Sample = Sample { key :: VarChar 20 :- &#39;[&#34;PRIMARY KEY&#34;], -- 制約書きたいときは (:-) を使う name :: BigInt :- &#39;[&#34;NOT NULL&#34;], single :: String } deriving (Eq, Show, Generic) -- レコードのフィールドは全て次の型クラスのインスタンスである必要がある -- SQLValuesはStringやIntなどのunion class SQLField a where fieldType :: a -&gt; String encode :: a -&gt; SQLValue decode :: SQLValue -&gt; a MySQL で使う都合上、 VarChar (s :: Nat) や BigInt を定義しているがこれらはインスタンスを導出するためのただの newtype wrapper である(実体は Text や Int64 など)">
-<meta itemprop="datePublished" content="2019-09-28T17:15:06&#43;09:00" />
-<meta itemprop="dateModified" content="2019-09-28T17:15:06&#43;09:00" />
+<meta itemprop="datePublished" content="2019-09-28T17:15:06+09:00" />
+<meta itemprop="dateModified" content="2019-09-28T17:15:06+09:00" />
 <meta itemprop="wordCount" content="1028">
 
 
 
 <meta itemprop="keywords" content="haskell," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Genericなデータマッパーを書いた"/>
 <meta name="twitter:description" content="まだライブラリとしては公開してませんが

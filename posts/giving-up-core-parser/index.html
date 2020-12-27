@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -63,13 +63,14 @@ foobar :: Type [GblId, Str=&lt;S,U&gt;, Unf=Unf{...なんやらかんやら, Gui
 識別子は主に $ 問題と # 問題の2つ？ある。
 GHC Coreにはworker/wrapper変換という有名な最適化が入っているがこれにより新たに導入されるworkerには識別子の先頭に $w マークが付与される。ユーザー側で識別子に使えない文字を割り振ることで衝突等を回避してるんだろうか(しかしRenamerとかで上手く処理することも可能な気はする。そうでもないんだろうか)。しかしこれによりLexerが正しくtokenizeできなくなる(Module.$wfoobar は qualified operator Module.$ と varid foobar に分解される)。
 次に、出現条件はよくわからないがラムダ式で束縛される変数等で、文字の途中に # 記号が付与されるものがある。 n#_a8qS みたいな。おそらく元々の変数 n に対してrenamerでuniqueな名前が振られた結果こういうコトになっているのだと思われる。これもGHCのLexerは(MagicHashを入れた状態で) n# と _a8qS としかtokenizeできない。">
-<meta itemprop="datePublished" content="2019-05-21T23:25:02&#43;09:00" />
-<meta itemprop="dateModified" content="2019-05-21T23:25:02&#43;09:00" />
+<meta itemprop="datePublished" content="2019-05-21T23:25:02+09:00" />
+<meta itemprop="dateModified" content="2019-05-21T23:25:02+09:00" />
 <meta itemprop="wordCount" content="78">
 
 
 
 <meta itemprop="keywords" content="Haskell," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="GHC Coreのパーサー書いてたけど諦めた"/>
 <meta name="twitter:description" content="-ddump-simpl で出力されるSimplified Coreをいい感じに解析して読めるやつを作ろうかと思ってたけどつらすぎたので(少なくともこの方針では)やめた。

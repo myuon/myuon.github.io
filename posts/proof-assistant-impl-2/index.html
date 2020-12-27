@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,15 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Proof Assistantを作る・実装編 その2" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 19日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。  例として次のルールを考えます。 Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ   このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。  LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。 Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ   このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。 data Rule = I | Cut Formula -- CutはFormulaを引数に取る ...  チェッカー   Claire." />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
+  Proof Assistant 「Claire」の実装について説明していきます。
+ リポジトリはこちら: myuon/claire
+LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
+ 例として次のルールを考えます。
+Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ   このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。
+ LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
+Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ   このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
+data Rule = I | Cut Formula -- CutはFormulaを引数に取る ...    チェッカー   Claire." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-2/" />
 <meta property="article:published_time" content="2017-12-19T00:00:24+09:00" />
@@ -30,17 +38,34 @@
 
 
 <meta itemprop="name" content="Proof Assistantを作る・実装編 その2">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 19日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。  例として次のルールを考えます。 Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ   このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。  LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。 Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ   このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。 data Rule = I | Cut Formula -- CutはFormulaを引数に取る ...  チェッカー   Claire.">
-<meta itemprop="datePublished" content="2017-12-19T00:00:24&#43;09:00" />
-<meta itemprop="dateModified" content="2017-12-19T00:00:24&#43;09:00" />
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
+  Proof Assistant 「Claire」の実装について説明していきます。
+ リポジトリはこちら: myuon/claire
+LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
+ 例として次のルールを考えます。
+Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ   このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。
+ LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
+Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ   このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
+data Rule = I | Cut Formula -- CutはFormulaを引数に取る ...    チェッカー   Claire.">
+<meta itemprop="datePublished" content="2017-12-19T00:00:24+09:00" />
+<meta itemprop="dateModified" content="2017-12-19T00:00:24+09:00" />
 <meta itemprop="wordCount" content="631">
 
 
 
 <meta itemprop="keywords" content="AdC2017,定理証明,Haskell," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Proof Assistantを作る・実装編 その2"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 19日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。  例として次のルールを考えます。 Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ   このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。  LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。 Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ   このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。 data Rule = I | Cut Formula -- CutはFormulaを引数に取る ...  チェッカー   Claire."/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
+  Proof Assistant 「Claire」の実装について説明していきます。
+ リポジトリはこちら: myuon/claire
+LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
+ 例として次のルールを考えます。
+Γ,A |- Δ ----------- (AndL1) Γ,A∧B |- Δ   このようなルールは下から上に向かって適用します。ので、 Γ,A∧B |- Δ のJudgementを Γ,A |- Δ に変換します。
+ LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
+Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ   このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
+data Rule = I | Cut Formula -- CutはFormulaを引数に取る ...    チェッカー   Claire."/>
 
 
   </head>
@@ -71,58 +96,57 @@
     </header>
     <section>
 <p>
-<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 19日目の記事です。</strong>
-</p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 19日目の記事です。</strong></p>
 <hr>
 <p>
-Proof Assistant 「Claire」の実装について説明していきます。
-</p>
+Proof Assistant 「Claire」の実装について説明していきます。</p>
 <p>
-リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a>
-</p>
+リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a></p>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 LK proofchecker
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<div id="outline-container-headline-2" class="outline-3">
 <h3 id="headline-2">
 ルールの適用
 </h3>
+<div id="outline-text-headline-2" class="outline-text-3">
 <p>
-LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
-</p>
+LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。</p>
 <p>
-例として次のルールを考えます。
-</p>
+例として次のルールを考えます。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  Γ,A |- Δ
   ----------- (AndL1)
   Γ,A∧B |- Δ</code></pre></div>
 </div>
 <p>
-このようなルールは下から上に向かって適用します。ので、 <code>Γ,A∧B |- Δ</code> のJudgementを <code>Γ,A |- Δ</code> に変換します。
-</p>
+このようなルールは下から上に向かって適用します。ので、 <code>Γ,A∧B |- Δ</code> のJudgementを <code>Γ,A |- Δ</code> に変換します。</p>
 <p>
-LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
-</p>
+LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  Γ |- Δ,A    A,Γ |- Δ
   -------------------- (Cut)
          Γ |- Δ</code></pre></div>
 </div>
 <p>
-このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
-</p>
+このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Rule</span>
     <span class="ow">=</span> <span class="kt">I</span>
     <span class="o">|</span> <span class="kt">Cut</span> <span class="kt">Formula</span>    <span class="c1">-- CutはFormulaを引数に取る</span>
     <span class="o">...</span></code></pre></div>
 </div>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
 <h3 id="headline-3">
 チェッカー
 </h3>
+<div id="outline-text-headline-3" class="outline-text-3">
 <p>
-<a href="https://github.com/myuon/claire/blob/master/src/Claire/Checker.hs">Claire.Checker</a>
-</p>
+<a href="https://github.com/myuon/claire/blob/master/src/Claire/Checker.hs">Claire.Checker</a></p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">newGoal</span> <span class="ow">::</span> <span class="kt">Formula</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Judgement</span><span class="p">]</span>
   <span class="n">newGoal</span> <span class="n">fml</span> <span class="ow">=</span> <span class="p">[</span><span class="kt">Judgement</span> <span class="kt">[]</span> <span class="p">(</span><span class="n">return</span> <span class="n">fml</span><span class="p">)]</span>
@@ -158,27 +182,26 @@ LKのルールはほとんどintro ruleなのでルールの名前を指定す�
     <span class="n">deleteAt</span> <span class="n">k</span> <span class="n">xs</span> <span class="ow">=</span> <span class="n">take</span> <span class="n">k</span> <span class="n">xs</span> <span class="o">++</span> <span class="n">drop</span> <span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="n">xs</span></code></pre></div>
 </div>
 <p>
-証明の際に「ゴール」になるのはJudgementですが、一般にゴールは複数扱えるほうが都合がいいのでJudgementのリストをゴールとして考えることにします。
-</p>
+証明の際に「ゴール」になるのはJudgementですが、一般にゴールは複数扱えるほうが都合がいいのでJudgementのリストをゴールとして考えることにします。</p>
 <p>
 newGoalは論理式Aをゴール <code>[[] |- A]</code> へ変換します。
-judgeがルールの列を現在のゴールに適用してゆく関数です。これは一般に失敗する場合があることに注意します。
-</p>
+judgeがルールの列を現在のゴールに適用してゆく関数です。これは一般に失敗する場合があることに注意します。</p>
 <p>
-さきほど説明したAndL1の部分を見てみると
-</p>
+さきほど説明したAndL1の部分を見てみると</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">    <span class="n">go</span> <span class="kt">AndL1</span> <span class="p">(</span><span class="kt">Judgement</span> <span class="p">((</span><span class="n">fa</span> <span class="kt">:/\:</span> <span class="n">fb</span><span class="p">)</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Right</span> <span class="o">$</span> <span class="kt">Judgement</span> <span class="p">(</span><span class="n">fa</span><span class="kt">:</span><span class="n">assms</span><span class="p">)</span> <span class="n">props</span> <span class="kt">:</span> <span class="n">js</span></code></pre></div>
 </div>
 <p>
-となっていて、確かに先のルールをそのままコードに起こした形になっています。
-</p>
+となっていて、確かに先のルールをそのままコードに起こした形になっています。</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-3">
 <h3 id="headline-4">
 実行
 </h3>
+<div id="outline-text-headline-4" class="outline-text-3">
 <p>
-judge関数を動かしてみます。
-</p>
+judge関数を動かしてみます。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="o">&gt;</span> <span class="n">judge</span> <span class="p">[</span><span class="kt">I</span><span class="p">]</span> <span class="p">[</span><span class="kt">Judgement</span> <span class="p">[</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span><span class="p">]</span> <span class="p">[</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span><span class="p">]]</span>
   <span class="kt">Right</span> <span class="kt">[]</span>
@@ -190,85 +213,75 @@ judge関数を動かしてみます。
   <span class="kt">Right</span> <span class="p">[</span><span class="kt">Judgement</span> <span class="p">[</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span><span class="p">]</span> <span class="kt">[]</span><span class="p">]</span></code></pre></div>
 </div>
 <p>
-ところでJudgementのリストはゴールを表していたので、judgeの実行結果が空リストになったらゴールが全て解消されたことを表すので証明終了です。
-</p>
+ところでJudgementのリストはゴールを表していたので、judgeの実行結果が空リストになったらゴールが全て解消されたことを表すので証明終了です。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-2">
 <h2 id="headline-5">
 Claire proofchecker
 </h2>
+<div id="outline-text-headline-5" class="outline-text-2">
 <p>
-というわけで、今までのことを踏まえるとClaireの証明の流れは次のようになります。
-</p>
+というわけで、今までのことを踏まえるとClaireの証明の流れは次のようになります。</p>
 <ol>
 <li>
-<p>
-論理式Pが(示したい命題として)入力される
-</p>
+<p>論理式Pが(示したい命題として)入力される</p>
 </li>
 <li>
-<p>
-ゴールが <code>[] |- P</code> の形になる
-</p>
+<p>ゴールが <code>[] |- P</code> の形になる</p>
 </li>
 <li>
-<p>
-ルールの列 rs を入力する
-</p>
+<p>ルールの列 rs を入力する</p>
 </li>
 <li>
-<p>
-<code>judge rs ([] |- P)</code> を実行する
-</p>
+<p><code>judge rs ([] |- P)</code> を実行する</p>
 </li>
 <li>
-<p>
-全てのゴールが解消されたら証明完了と表示する ゴールが残っているなら2に戻る
-</p>
+<p>全てのゴールが解消されたら証明完了と表示する ゴールが残っているなら2に戻る</p>
 </li>
 </ol>
+<p>さてところでルールの列を入力する方法について、普通ならばこれは証明ファイルに <code>apply rs; apply rs&#39;</code> みたいなのを読み取ってrsを適用し、rs&#39;を適用し、みたいな感じでcheckerを走らせます。
+が、一方でClaireはインタラクティブシェル的なもので証明を書く仕組みも提供しています。</p>
 <p>
-さてところでルールの列を入力する方法について、普通ならばこれは証明ファイルに <code>apply rs; apply rs&#39;</code> みたいなのを読み取ってrsを適用し、rs&#39;を適用し、みたいな感じでcheckerを走らせます。
-が、一方でClaireはインタラクティブシェル的なもので証明を書く仕組みも提供しています。
-</p>
-<p>
-なので、通常ファイルに書くような証明1行1行を読み取って動くインタラクティブシェル的なものを作ります。
-</p>
+なので、通常ファイルに書くような証明1行1行を読み取って動くインタラクティブシェル的なものを作ります。</p>
+<div id="outline-container-headline-6" class="outline-3">
 <h3 id="headline-6">
 インタラクティブシェル
 </h3>
+<div id="outline-text-headline-6" class="outline-text-3">
 <p>
 インタラクティブシェルを作るにあたって、現在どういう状態にいるかということを考える必要があります。
-例えば次のようなフローになります。
-</p>
+例えば次のようなフローになります。</p>
 <ol>
 <li>
-<p>
-Claireを起動する; declarationモードに入る
-</p>
+<p>Claireを起動する; declarationモードに入る</p>
 </li>
 <li>
-<p>
-(declarationモード) 論理式を入力する; proofモードに入る
-</p>
+<p>(declarationモード) 論理式を入力する; proofモードに入る</p>
 </li>
 <li>
-<p>
-(proofモード) ルールの列を入力する; 証明が完了したらdeclarationモードに戻る
-</p>
+<p>(proofモード) ルールの列を入力する; 証明が完了したらdeclarationモードに戻る</p>
 </li>
 </ol>
+<p>みたいに、現在のモードによって受け付けるデータが変わるのでこの辺をいい感じにしないといけません。</p>
 <p>
-みたいに、現在のモードによって受け付けるデータが変わるのでこの辺をいい感じにしないといけません。
-</p>
-<p>
-というのが次の課題になります。
-</p>
+というのが次の課題になります。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-2">
 <h2 id="headline-7">
 まとめ
 </h2>
+<div id="outline-text-headline-7" class="outline-text-2">
 <p>
 というわけでLKのcheckerを書きました。
-ので、次回はインタラクティブシェルを作りつつClaire自体のproofcheckerを作ります。
-</p>
+ので、次回はインタラクティブシェルを作りつつClaire自体のproofcheckerを作ります。</p>
+</div>
+</div>
 </section>
     <footer>
       <hr>

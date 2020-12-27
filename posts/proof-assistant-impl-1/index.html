@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,12 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Proof Assistantを作る・実装編 その1" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 18日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Syntax: FOL, LK, Claire   初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。 FOL   Claire.Syntax.FOL data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show)   それぞれfirst-order logicの項と論理式の定義です。  項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。  さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&lt;==&gt;: fml2 = (fml1 :==&gt;: fml2) :/\: (fml2 :==&gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 :&lt;==&gt;: をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。  そもそもこのFormulaはProof Assistantのメタロジックを表すもので、Proof Assistantにおいてメタロジックが正しい(おかしなことがおこらない)ことは絶対に必要なことですがこのことはProof Assistantによって直接検証することは出来ません。 Proof Assistantはメタロジックを用いて現在考えているロジックの上で証明を書く道具なので、メタロジックとしてのFormulaを変えるような操作はしてはいけません。  これがわざわざIsabelleやこのClaireでも標準ライブラリでロジックを再定義する理由で、このメタロジックとロジックの区別は今後も大変重要になるので覚えておいてください。 LK   Claire." />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
+  Proof Assistant 「Claire」の実装について説明していきます。
+ リポジトリはこちら: myuon/claire
+Syntax: FOL, LK, Claire   初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
+FOL   Claire.Syntax.FOL
+data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show)   それぞれfirst-order logicの項と論理式の定義です。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-1/" />
 <meta property="article:published_time" content="2017-12-18T00:01:47+09:00" />
@@ -30,17 +35,28 @@
 
 
 <meta itemprop="name" content="Proof Assistantを作る・実装編 その1">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 18日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Syntax: FOL, LK, Claire   初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。 FOL   Claire.Syntax.FOL data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show)   それぞれfirst-order logicの項と論理式の定義です。  項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。  さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&lt;==&gt;: fml2 = (fml1 :==&gt;: fml2) :/\: (fml2 :==&gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 :&lt;==&gt;: をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。  そもそもこのFormulaはProof Assistantのメタロジックを表すもので、Proof Assistantにおいてメタロジックが正しい(おかしなことがおこらない)ことは絶対に必要なことですがこのことはProof Assistantによって直接検証することは出来ません。 Proof Assistantはメタロジックを用いて現在考えているロジックの上で証明を書く道具なので、メタロジックとしてのFormulaを変えるような操作はしてはいけません。  これがわざわざIsabelleやこのClaireでも標準ライブラリでロジックを再定義する理由で、このメタロジックとロジックの区別は今後も大変重要になるので覚えておいてください。 LK   Claire.">
-<meta itemprop="datePublished" content="2017-12-18T00:01:47&#43;09:00" />
-<meta itemprop="dateModified" content="2017-12-18T00:01:47&#43;09:00" />
-<meta itemprop="wordCount" content="547">
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
+  Proof Assistant 「Claire」の実装について説明していきます。
+ リポジトリはこちら: myuon/claire
+Syntax: FOL, LK, Claire   初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
+FOL   Claire.Syntax.FOL
+data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show)   それぞれfirst-order logicの項と論理式の定義です。">
+<meta itemprop="datePublished" content="2017-12-18T00:01:47+09:00" />
+<meta itemprop="dateModified" content="2017-12-18T00:01:47+09:00" />
+<meta itemprop="wordCount" content="548">
 
 
 
 <meta itemprop="keywords" content="AdC2017,定理証明,Haskell," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Proof Assistantを作る・実装編 その1"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 18日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire Syntax: FOL, LK, Claire   初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。 FOL   Claire.Syntax.FOL data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show)   それぞれfirst-order logicの項と論理式の定義です。  項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。 論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。  さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。 例えばiffの記号を fml1 :&lt;==&gt;: fml2 = (fml1 :==&gt;: fml2) :/\: (fml2 :==&gt;: fml1) と定義したいところですがそれは上の定義だと出来ません。 :&lt;==&gt;: をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。  そもそもこのFormulaはProof Assistantのメタロジックを表すもので、Proof Assistantにおいてメタロジックが正しい(おかしなことがおこらない)ことは絶対に必要なことですがこのことはProof Assistantによって直接検証することは出来ません。 Proof Assistantはメタロジックを用いて現在考えているロジックの上で証明を書く道具なので、メタロジックとしてのFormulaを変えるような操作はしてはいけません。  これがわざわざIsabelleやこのClaireでも標準ライブラリでロジックを再定義する理由で、このメタロジックとロジックの区別は今後も大変重要になるので覚えておいてください。 LK   Claire."/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
+  Proof Assistant 「Claire」の実装について説明していきます。
+ リポジトリはこちら: myuon/claire
+Syntax: FOL, LK, Claire   初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
+FOL   Claire.Syntax.FOL
+data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show)   それぞれfirst-order logicの項と論理式の定義です。"/>
 
 
   </head>
@@ -71,28 +87,27 @@
     </header>
     <section>
 <p>
-<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 18日目の記事です。</strong>
-</p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 18日目の記事です。</strong></p>
 <hr>
 <p>
-Proof Assistant 「Claire」の実装について説明していきます。
-</p>
+Proof Assistant 「Claire」の実装について説明していきます。</p>
 <p>
-リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a>
-</p>
+リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a></p>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 Syntax: FOL, LK, Claire
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
 <p>
 初めにSyntaxの定義をしてからパーサーを用意します。
-これがないと何も出来ないので。
-</p>
+これがないと何も出来ないので。</p>
+<div id="outline-container-headline-2" class="outline-3">
 <h3 id="headline-2">
 FOL
 </h3>
+<div id="outline-text-headline-2" class="outline-text-3">
 <p>
-<a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/FOL.hs">Claire.Syntax.FOL</a>
-</p>
+<a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/FOL.hs">Claire.Syntax.FOL</a></p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Term</span>
     <span class="ow">=</span> <span class="kt">Var</span> <span class="kt">Ident</span>
@@ -112,30 +127,28 @@ FOL
     <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span> <span class="kt">Show</span><span class="p">)</span></code></pre></div>
 </div>
 <p>
-それぞれfirst-order logicの項と論理式の定義です。
-</p>
+それぞれfirst-order logicの項と論理式の定義です。</p>
 <p>
 項は変数記号であるか関数記号に項を適用したもの、なのですがどうせ関数への代入操作とかするときにラムダ抽象みたいなのが必要になるので最初から割り切ってラムダ計算にしています。
-論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。
-</p>
+論理式は命題記号に項を適用したもの、あるいはいくつかの論理結合子からなります。</p>
 <p>
 さていきなり大切な話をしますが、これを見てもらうと分かる通りFormulaの方は定義がすでに決まっていて、後から新たな命題結合子を定義することはできません。
 例えばiffの記号を <code>fml1 :&lt;==&gt;: fml2 = (fml1 :==&gt;: fml2) :/\: (fml2 :==&gt;: fml1)</code> と定義したいところですがそれは上の定義だと出来ません。
-<code>:&lt;==&gt;:</code> をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。
-</p>
+<code>:&lt;==&gt;:</code> をエイリアスとして定め、ユーザーがこの記号を入力したら全て本来の定義を展開したものに差し替えるみたいな方法もありですが、それだとやはり不便なこともあります。</p>
 <p>
 そもそもこのFormulaはProof Assistantのメタロジックを表すもので、Proof Assistantにおいてメタロジックが正しい(おかしなことがおこらない)ことは絶対に必要なことですがこのことはProof Assistantによって直接検証することは出来ません。
-Proof Assistantはメタロジックを用いて現在考えているロジックの上で証明を書く道具なので、メタロジックとしてのFormulaを変えるような操作はしてはいけません。
-</p>
+Proof Assistantはメタロジックを用いて現在考えているロジックの上で証明を書く道具なので、メタロジックとしてのFormulaを変えるような操作はしてはいけません。</p>
 <p>
-これがわざわざIsabelleやこのClaireでも標準ライブラリでロジックを再定義する理由で、このメタロジックとロジックの区別は今後も大変重要になるので覚えておいてください。
-</p>
+これがわざわざIsabelleやこのClaireでも標準ライブラリでロジックを再定義する理由で、このメタロジックとロジックの区別は今後も大変重要になるので覚えておいてください。</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
 <h3 id="headline-3">
 LK
 </h3>
+<div id="outline-text-headline-3" class="outline-text-3">
 <p>
-<a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/LK.hs">Claire.Syntax.LK</a>
-</p>
+<a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/LK.hs">Claire.Syntax.LK</a></p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Rule</span>
     <span class="ow">=</span> <span class="kt">I</span> <span class="o">|</span> <span class="kt">Cut</span> <span class="kt">Formula</span>
@@ -154,17 +167,18 @@ LK
 </div>
 <p>
 LKの推論規則とJudgementを定めます。
-Judgementは仮定と命題をそれぞれ表し、 <code>Qm..Q1 |- P1..Pn</code> を <code>Judgement [Q1..Qm] [P1..Pn]</code> で表すので順番に気をつけてください。
-</p>
+Judgementは仮定と命題をそれぞれ表し、 <code>Qm..Q1 |- P1..Pn</code> を <code>Judgement [Q1..Qm] [P1..Pn]</code> で表すので順番に気をつけてください。</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-3">
 <h3 id="headline-4">
 Claire
 </h3>
+<div id="outline-text-headline-4" class="outline-text-3">
 <p>
-<a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/Claire.hs">Claire.Syntax.Claire</a>
-</p>
+<a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/Claire.hs">Claire.Syntax.Claire</a></p>
 <p>
-ClaireはProof Assistantの名前ですが証明記述言語の名前でもあります(分かりにくいですね; 例を挙げると前者がCoqで後者がGallinaみたいなものかな？)。
-</p>
+ClaireはProof Assistantの名前ですが証明記述言語の名前でもあります(分かりにくいですね; 例を挙げると前者がCoqで後者がGallinaみたいなものかな？)。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Claire</span> <span class="ow">=</span> <span class="kt">Claire</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span>
 
@@ -198,53 +212,57 @@ ClaireはProof Assistantの名前ですが証明記述言語の名前でもあ�
 </div>
 <p>
 見てもらうと分かる通り、Claire型がまずあり、これがDeclarationのリストからなります<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>。
-これはClaireのファイルがDeclarationを並べたものからなる、という意味でこう定義しています。
-</p>
+これはClaireのファイルがDeclarationを並べたものからなる、という意味でこう定義しています。</p>
 <p>
 Declは色々コンストラクターがありますが例えば <code>ThmD ThmIndex Formula Proof</code> に注目しましょう。
-ThmIndexが定理の名前、Formulaが証明したい論理式、Proofが証明です。Proofの定義を見ればProofはCommandの列からなるのが分かりますね。
-</p>
+ThmIndexが定理の名前、Formulaが証明したい論理式、Proofが証明です。Proofの定義を見ればProofはCommandの列からなるのが分かりますね。</p>
 <p>
-まぁ細かく見ていくと時間かかりそうなので、syntaxの説明は後で必要になったらするとして今は先に進みましょう。
-</p>
+まぁ細かく見ていくと時間かかりそうなので、syntaxの説明は後で必要になったらするとして今は先に進みましょう。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-2">
 <h2 id="headline-5">
 Alex/Happy
 </h2>
+<div id="outline-text-headline-5" class="outline-text-2">
 <p>
 さてASTを定義したのでパーサーを書きます。
-ここでは字句解析器を生成する<a href="https://www.haskell.org/alex/">alex</a>と構文解析器を生成する<a href="https://www.haskell.org/happy/">happy</a>を使います。いわゆるlex/yaccに似た感じのツールのようです(触ったことないからしらんけど)。
-</p>
+ここでは字句解析器を生成する<a href="https://www.haskell.org/alex/">alex</a>と構文解析器を生成する<a href="https://www.haskell.org/happy/">happy</a>を使います。いわゆるlex/yaccに似た感じのツールのようです(触ったことないからしらんけど)。</p>
+<div id="outline-container-headline-6" class="outline-3">
 <h3 id="headline-6">
 cabal-build integration
 </h3>
+<div id="outline-text-headline-6" class="outline-text-3">
 <p>
-alex/happyはコマンドラインツールで、.x, .yファイルをHaskellモジュールに変換しますが、stackから使いたい場合はpackage.yamlに次のように書くといいです:
-</p>
+alex/happyはコマンドラインツールで、.x, .yファイルをHaskellモジュールに変換しますが、stackから使いたい場合はpackage.yamlに次のように書くといいです:</p>
 <div class="src src-yaml">
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="w">  </span><span class="k">extra-source-files</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span>- src/Claire/Parser/Lexer.x<span class="w">
-</span><span class="w">  </span>- src/Claire/Parser/Parser.y<span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="w">  </span><span class="nt">extra-source-files</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="l">src/Claire/Parser/Lexer.x</span><span class="w">
+</span><span class="w">  </span>- <span class="l">src/Claire/Parser/Parser.y</span><span class="w">
 </span><span class="w">
-</span><span class="w">  </span><span class="k">build-tools</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span>- alex<span class="w">
-</span><span class="w">  </span>- happy<span class="w">
+</span><span class="w">  </span><span class="nt">build-tools</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="l">alex</span><span class="w">
+</span><span class="w">  </span>- <span class="l">happy</span><span class="w">
 </span><span class="w">
-</span><span class="w">  </span><span class="k">other-modules</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span>- Claire.Parser.Lexer<span class="w">
-</span><span class="w">  </span>- Claire.Parser.Parser</code></pre></div>
+</span><span class="w">  </span><span class="nt">other-modules</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="l">Claire.Parser.Lexer</span><span class="w">
+</span><span class="w">  </span>- <span class="l">Claire.Parser.Parser</span></code></pre></div>
 </div>
 <p>
-これでビルドするときにalex, happyが走ります。
-</p>
+これでビルドするときにalex, happyが走ります。</p>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-3">
 <h3 id="headline-7">
 alex
 </h3>
+<div id="outline-text-headline-7" class="outline-text-3">
 <p>
-alex/happyの使い方をここで一からやる気はないのですが、一応コードの読み方だけ説明しておきます。
-</p>
+alex/happyの使い方をここで一からやる気はないのですが、一応コードの読み方だけ説明しておきます。</p>
 <p>
-<a href="https://github.com/myuon/claire/blob/master/src/Claire/Parser/Lexer.x">src/Claire/Parser/Lexer.x</a>
-</p>
+<a href="https://github.com/myuon/claire/blob/master/src/Claire/Parser/Lexer.x">src/Claire/Parser/Lexer.x</a></p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="p">{</span>
   <span class="kr">module</span> <span class="nn">Claire.Parser.Lexer</span> <span class="kr">where</span>
@@ -274,50 +292,40 @@ alex/happyの使い方をここで一からやる気はないのですが、一�
 </div>
 <p>
 <code>{}</code> で囲まれた部分はそのままHaskellのコードとして埋め込まれます。
-lexerの方はTokenを定義して、文字列をどのようなトークンの列に変換するかを定義します。 <code>tokens :-</code> の下に、「どんな文字列を」「どんなトークン(Token型)」に変換するかを指定します。
-</p>
+lexerの方はTokenを定義して、文字列をどのようなトークンの列に変換するかを定義します。 <code>tokens :-</code> の下に、「どんな文字列を」「どんなトークン(Token型)」に変換するかを指定します。</p>
 <p>
-文字列の方は正規表現が使えます。トークン変換部分は文字列を受け取ってTokenを返す関数を書きます。
-</p>
+文字列の方は正規表現が使えます。トークン変換部分は文字列を受け取ってTokenを返す関数を書きます。</p>
 <p>
-上の定義だと、
-</p>
+上の定義だと、</p>
 <ul>
 <li>
-<p>
-連続する空白は無視する
-</p>
+<p>連続する空白は無視する</p>
 </li>
 <li>
+<p>#から始まる行は無視する</p>
 </li>
 <li>
-<p>
-Forallという文字列はTokenForallに変換
-</p>
+<p>Forallという文字列はTokenForallに変換</p>
 </li>
 <li>
-<p>
-Existという文字列はTokenExistに変換
-</p>
+<p>Existという文字列はTokenExistに変換</p>
 </li>
 <li>
-<p>
-<code>$alpha [$alpha $digit \_ \&#39;]*</code> の文字列はそれを引数に渡してTokenIdentを返す
-</p>
+<p><code>$alpha [$alpha $digit \_ \&#39;]*</code> の文字列はそれを引数に渡してTokenIdentを返す</p>
 </li>
 </ul>
-<p>
-みたいな感じですね。
-</p>
+<p>みたいな感じですね。</p>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-3">
 <h3 id="headline-8">
 happy
 </h3>
+<div id="outline-text-headline-8" class="outline-text-3">
 <p>
-alexによって文字列はトークンの列に変換されるので今度はそれをASTの形に変換するのがhappyです。
-</p>
+alexによって文字列はトークンの列に変換されるので今度はそれをASTの形に変換するのがhappyです。</p>
 <p>
-<a href="https://github.com/myuon/claire/blob/master/src/Claire/Parser/Parser.y">src/Claire/Parser/Parser.y</a>
-</p>
+<a href="https://github.com/myuon/claire/blob/master/src/Claire/Parser/Parser.y">src/Claire/Parser/Parser.y</a></p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="p">{</span>
   <span class="kr">module</span> <span class="nn">Claire.Parser.Parser</span> <span class="kr">where</span>
@@ -364,20 +372,20 @@ alexによって文字列はトークンの列に変換されるので今度は�
 </div>
 <p>
 <code>%%</code> より下の行がパーサーの定義です。書き方は大体BNFみたいな感じですね。
-パーサーの定義の中で使えるtokenは事前に <code>%%token</code> のところで定義しておくと便利です。
-</p>
+パーサーの定義の中で使えるtokenは事前に <code>%%token</code> のところで定義しておくと便利です。</p>
 <p>
-本当はこの辺の定義を逐一見ていくべきかもしれませんが、一度にやると大変なので後で項目ごとに説明することにします。
-</p>
+本当はこの辺の定義を逐一見ていくべきかもしれませんが、一度にやると大変なので後で項目ごとに説明することにします。</p>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-3">
 <h3 id="headline-9">
 実行
 </h3>
+<div id="outline-text-headline-9" class="outline-text-3">
 <p>
-定義ができたら、パーサーを実行することが出来ます。
-</p>
+定義ができたら、パーサーを実行することが出来ます。</p>
 <p>
-alexはalexScanTokens、happyは <code>%name</code> で指定したパーサーを関数として生成するのでそれを使って試してみます。
-</p>
+alexはalexScanTokens、happyは <code>%name</code> で指定したパーサーを関数として生成するのでそれを使って試してみます。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="o">&gt;</span> <span class="n">folparser</span> <span class="o">$</span> <span class="n">alexScanTokens</span> <span class="o">$</span> <span class="s">&#34;p ==&gt; (q /</span><span class="se">\\</span><span class="s"> q&#39; ==&gt; r)&#34;</span>
   <span class="kt">Pred</span> <span class="s">&#34;p&#34;</span> <span class="kt">[]</span> <span class="kt">:==&gt;:</span> <span class="p">((</span><span class="kt">Pred</span> <span class="s">&#34;q&#34;</span> <span class="kt">[]</span> <span class="kt">:/\:</span> <span class="kt">Pred</span> <span class="s">&#34;q&#39;&#34;</span> <span class="kt">[]</span><span class="p">)</span> <span class="kt">:==&gt;:</span> <span class="kt">Pred</span> <span class="s">&#34;r&#34;</span> <span class="kt">[]</span><span class="p">)</span>
@@ -393,27 +401,30 @@ alexはalexScanTokens、happyは <code>%name</code> で指定したパーサー�
   <span class="kt">ThmD</span> <span class="s">&#34;id&#34;</span> <span class="p">(</span><span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span> <span class="kt">:==&gt;:</span> <span class="kt">Pred</span> <span class="s">&#34;a&#34;</span> <span class="kt">[]</span><span class="p">)</span> <span class="p">(</span><span class="kt">Proof</span> <span class="p">[</span><span class="kt">Apply</span> <span class="p">[</span><span class="kt">ImpR</span><span class="p">,</span> <span class="kt">I</span><span class="p">]])</span></code></pre></div>
 </div>
 <p>
-みたいな感じになれば成功です。
-</p>
+みたいな感じになれば成功です。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-2">
 <h2 id="headline-10">
 まとめ
 </h2>
+<div id="outline-text-headline-10" class="outline-text-2">
 <p>
 今回はClaireのsyntaxとパーサーをalex/happyで書く話を簡単にしました。
-といいつつsyntaxの説明を一切していないのでこれもそのうちしないとだめですね。
-</p>
+といいつつsyntaxの説明を一切していないのでこれもそのうちしないとだめですね。</p>
 <p>
-明日はLKのcheckerを書きます。
-</p>
+明日はLKのcheckerを書きます。</p>
+</div>
+</div>
 <div class="footnotes">
 <hr class="footnotes-separatator">
 <div class="footnote-definitions">
 <div class="footnote-definition">
 <sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
 <div class="footnote-body">
-<p>
-ソースコードの方直ってないかもしれないけど気にしないでください。もともと証明記述言語の方はlaireという名前にして区別しようかと思ったけど途中でめんどくさくなってやめた跡です。
-</p>
+<p>ソースコードの方直ってないかもしれないけど気にしないでください。もともと証明記述言語の方はlaireという名前にして区別しようかと思ったけど途中でめんどくさくなってやめた跡です。</p>
 </div>
 </div>
 </div>

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>ラムダ計算 on The curse of λ</title>
@@ -6,30 +5,30 @@
     <description>Recent content in ラムダ計算 on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
-    <lastBuildDate>Sun, 04 Nov 2018 12:32:56 +0900</lastBuildDate><atom:link href="https://myuon.github.io/tags/%E3%83%A9%E3%83%A0%E3%83%80%E8%A8%88%E7%AE%97/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Elm: Concurrent FRP for Functional GUIsを読んで</title>
-      <link>https://myuon.github.io/posts/elm-functional-gui/</link>
-      <pubDate>Sun, 04 Nov 2018 12:32:56 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/elm-functional-gui/</guid>
-      <description>これ
+    <lastBuildDate>Sun, 04 Nov 2018 12:32:56 +0900</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/%E3%83%A9%E3%83%A0%E3%83%80%E8%A8%88%E7%AE%97/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>Elm: Concurrent FRP for Functional GUIsを読んで</title>
+        <link>https://myuon.github.io/posts/elm-functional-gui/</link>
+        <pubDate>Sun, 04 Nov 2018 12:32:56 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/elm-functional-gui/</guid>
+        <description>これ
 https://elm-lang.org/assets/papers/concurrent-frp.pdf
 はじめに 某所でFRPをeffect systemとみなせないか、という大変示唆的な質問をいただいて、気になったのでFRPについて調べてた流れで教えてもらったElmの作者が書いた論文。 自分はFRPについては「なんかEventとBehaviorがあってArrowになったりMonadになったりするやつ」くらいの感覚しかなかったので論文読んでみることにした。
 ところでmarkdownで数式や図を記述するのは大変つらいので記事は適当に日本語で書きます。詳しく知りたい人は論文の方を読んでください。
 あと、ElmはFRP捨てたって言ってた気がするので多分今のElmはもう論文にあるような仕組みで動いてないような気がしないでもない。
 2章 背景  FRPにはClassical, Real-time (とEvent-driven), Arrowizedの3種類ある Classical:  Behavior a = Time -&amp;gt; a: これが時間の経過とともに変わる値を表現する Event a = [(Time, a)]: これがBehaviorのスナップショットを取ったもの 基本はBehaviorをベースに計算を行うけど、実際のプログラムでは無限に細かい時間で計算はできないので30fpsとか決まったタイミングで再計算するかどうかを考えることになる。そういう離散化のためにEventがあるよみたいな感じ   Real-time:  Event a = Behavior (Maybe a) EventもBehaviorで書いちゃえばいいんちゃうん Event, Behaviorをまとめて Signal a = Time -&amp;gt; a と呼ぶことに 論文で説明されてるElm Coreもこれにinspireされてるっぽい   Arrowized:  SF a b = Signal a -&amp;gt; Signal b signal functionというものをベースにしてこれをArrowにする 論文読んだ限りだと理論が難しくなりそうなのでFRPにおける特にArrowの優位性はよくわからなかった 書きやすいってくらいなのか   Message-Passing Concurrency  Concurrent MLの説明 実装はこれで書いたり書かなかったりする(あとの章でtranslationが与えられる)   既存のFRP GUI frameworks  メモリリークする(Haskellなので)(って何度も書いてあってウケるって思った)    3章 Core Language  Dicreteなsignalを扱う 文法: e ::= () | n \in Z | \x.</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Nominal Isabelleとラムダ計算 その4</title>
-      <link>https://myuon.github.io/posts/nominal-lambda-4/</link>
-      <pubDate>Wed, 13 Dec 2017 00:04:03 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/nominal-lambda-4/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 13日目の記事です。
+      <item>
+        <title>Nominal Isabelleとラムダ計算 その4</title>
+        <link>https://myuon.github.io/posts/nominal-lambda-4/</link>
+        <pubDate>Wed, 13 Dec 2017 00:04:03 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/nominal-lambda-4/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 13日目の記事です。
   さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。 流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。
  まぁCRに比べればずっと簡単なのでいけるでしょ(適当)
  今回解説するコードは以下にあります:
@@ -37,39 +36,36 @@ https://elm-lang.org/assets/papers/concurrent-frp.pdf
 Simply-typed  nominal_datatype simply = TVar string | TArr simply simply (infixr &amp;#34;→&amp;#34; 90)   simply-typedな型はtype variableとfunction typeからなる。 typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。
 valid context   さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。
 inductive valid :: &amp;#34;(name × simply) list ⇒ bool&amp;#34; where valid_nil: &amp;#34;valid []&amp;#34; | valid_cons: &amp;#34;⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)&amp;#34; equivariance valid lemma elim_valid_cons: &amp;#34;valid ((x,T)#Γ) ⟹ valid Γ ∧ x ♯ Γ&amp;#34; by (cases rule: valid.</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Nominal Isabelleとラムダ計算 その3</title>
-      <link>https://myuon.github.io/posts/nominal-lambda-3/</link>
-      <pubDate>Tue, 12 Dec 2017 00:05:37 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/nominal-lambda-3/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 12日目の記事です。
+      <item>
+        <title>Nominal Isabelleとラムダ計算 その3</title>
+        <link>https://myuon.github.io/posts/nominal-lambda-3/</link>
+        <pubDate>Tue, 12 Dec 2017 00:05:37 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/nominal-lambda-3/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 12日目の記事です。
   前回はCRの証明の途中までやったので続きです。 内容多めですが今回で頑張って終わらせます。
 confluenceへ (cont.)  coherent lemmas   parallel betaのcoherent lemmaを示す。 証明は基本的に場合分けやるだけなので省略するとして、まぁ常識的なことが成り立つよねという補題である。(説明の放棄)
 lemma elim_pb_var: &amp;#34;Var x ⇒β N ⟹ N = Var x&amp;#34; lemma elim_pb_abs: assumes &amp;#34;lam [x]. M ⇒β N&amp;#39;&amp;#34; &amp;#34;x ♯ N&amp;#39;&amp;#34; obtains N where &amp;#34;M ⇒β N&amp;#34; &amp;#34;N&amp;#39; = lam [x]. N&amp;#34; lemma elim_pb_app: assumes &amp;#34;M1 $ M2 ⇒β N&amp;#34; obtains N1 N2 where &amp;#34;N = N1 $ N2&amp;#34; &amp;#34;M1 ⇒β N1&amp;#34; &amp;#34;M2 ⇒β N2&amp;#34; | x P P&amp;#39; L where &amp;#34;M1 = lam[x].</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Nominal Isabelleとラムダ計算 その2</title>
-      <link>https://myuon.github.io/posts/nominal-lambda-2/</link>
-      <pubDate>Mon, 11 Dec 2017 00:13:11 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/nominal-lambda-2/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 11日目の記事です。
+      <item>
+        <title>Nominal Isabelleとラムダ計算 その2</title>
+        <link>https://myuon.github.io/posts/nominal-lambda-2/</link>
+        <pubDate>Mon, 11 Dec 2017 00:13:11 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/nominal-lambda-2/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 11日目の記事です。
   前回はNominal Isabelleの説明と証明を少しだけしました。 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。
 equivarianceとnominal_inductive  補題   さて2つの補題を示しておく。
 lemma subst_eqvt[eqvt]: fixes π :: &amp;#34;var prm&amp;#34; shows &amp;#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&amp;#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &amp;#34;x ♯ t&amp;#34; shows &amp;#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&amp;#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda.</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Nominal Isabelleとラムダ計算 その1</title>
-      <link>https://myuon.github.io/posts/nominal-lambda-1/</link>
-      <pubDate>Sun, 10 Dec 2017 00:13:17 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/nominal-lambda-1/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 10日目の記事です。
+      <item>
+        <title>Nominal Isabelleとラムダ計算 その1</title>
+        <link>https://myuon.github.io/posts/nominal-lambda-1/</link>
+        <pubDate>Sun, 10 Dec 2017 00:13:17 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/nominal-lambda-1/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 10日目の記事です。
   前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。 今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。
  定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。
  今回解説するコードは以下に置いてあります。
@@ -81,7 +77,7 @@ lemma subst_eqvt[eqvt]: fixes π :: &amp;#34;var prm&amp;#34; shows &amp;#34;π�
  はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。
   Nominal Isabelle   Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。 binderは [x]. M のような形をしていて、この束縛変数 x の変数名の付け替えを区別しないような項である。
  Nominal Isabelleではこの変数の付け替え、「例えば変数 x を y に付け替える」という操作を「置換 (x,y) を作用させる」という操作とみなす、というところからスタートする。 より厳密には次のようなことである: 無限の変数からなる集合 V が与えられている時、 List (V×V) の元を置換と呼ぶ。このとき置換の作用を ∙ でかくことにし、 ((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M のようにして定める。</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

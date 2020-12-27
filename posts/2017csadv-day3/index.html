@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,12 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Isabelle/HOLの基本 その2" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 3日目の記事です。   テキスト代わりのチュートリアル: prog-prove.pdf  前回は導入と型・関数・証明について学びました。 今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。 3. Logic and Proof Beyond Equality  3.1 Formulas   HOLのformulaの定義は次: form ::= True | False | term = term | ¬ form | form ∧ form | form ∨ form | form --&gt; form | ∀x. form | ∃x. form   termはラムダ式とifとかcaseとかletとかそのへん 3.2 Sets   &#39;a のsetを &#39;a set とかく。次のようなnotationが定義されている。    {} , {e1,e2,e3}    e ∈ A , A ⊆ B    A ∪ B , A ∩ B , A − B, − A    {x | P}    HOLのsetはかなり便利なので積極的に使っていこう。 3." />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 3日目の記事です。
+  テキスト代わりのチュートリアル: prog-prove.pdf
+ 前回は導入と型・関数・証明について学びました。 今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。
+3. Logic and Proof Beyond Equality  3.1 Formulas   HOLのformulaの定義は次: form ::= True | False | term = term | ¬ form | form ∧ form | form ∨ form | form --&gt; form | ∀x. form | ∃x. form   termはラムダ式とifとかcaseとかletとかそのへん
+  3.2 Sets   &#39;a のsetを &#39;a set とかく。次のようなnotationが定義されている。
+  {} , {e1,e2,e3}" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day3/" />
 <meta property="article:published_time" content="2017-12-03T00:01:48+09:00" />
@@ -30,17 +35,28 @@
 
 
 <meta itemprop="name" content="Isabelle/HOLの基本 その2">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 3日目の記事です。   テキスト代わりのチュートリアル: prog-prove.pdf  前回は導入と型・関数・証明について学びました。 今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。 3. Logic and Proof Beyond Equality  3.1 Formulas   HOLのformulaの定義は次: form ::= True | False | term = term | ¬ form | form ∧ form | form ∨ form | form --&gt; form | ∀x. form | ∃x. form   termはラムダ式とifとかcaseとかletとかそのへん 3.2 Sets   &#39;a のsetを &#39;a set とかく。次のようなnotationが定義されている。    {} , {e1,e2,e3}    e ∈ A , A ⊆ B    A ∪ B , A ∩ B , A − B, − A    {x | P}    HOLのsetはかなり便利なので積極的に使っていこう。 3.">
-<meta itemprop="datePublished" content="2017-12-03T00:01:48&#43;09:00" />
-<meta itemprop="dateModified" content="2017-12-03T00:01:48&#43;09:00" />
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 3日目の記事です。
+  テキスト代わりのチュートリアル: prog-prove.pdf
+ 前回は導入と型・関数・証明について学びました。 今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。
+3. Logic and Proof Beyond Equality  3.1 Formulas   HOLのformulaの定義は次: form ::= True | False | term = term | ¬ form | form ∧ form | form ∨ form | form --&gt; form | ∀x. form | ∃x. form   termはラムダ式とifとかcaseとかletとかそのへん
+  3.2 Sets   &#39;a のsetを &#39;a set とかく。次のようなnotationが定義されている。
+  {} , {e1,e2,e3}">
+<meta itemprop="datePublished" content="2017-12-03T00:01:48+09:00" />
+<meta itemprop="dateModified" content="2017-12-03T00:01:48+09:00" />
 <meta itemprop="wordCount" content="430">
 
 
 
 <meta itemprop="keywords" content="AdC2017,Isabelle," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Isabelle/HOLの基本 その2"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 3日目の記事です。   テキスト代わりのチュートリアル: prog-prove.pdf  前回は導入と型・関数・証明について学びました。 今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。 3. Logic and Proof Beyond Equality  3.1 Formulas   HOLのformulaの定義は次: form ::= True | False | term = term | ¬ form | form ∧ form | form ∨ form | form --&gt; form | ∀x. form | ∃x. form   termはラムダ式とifとかcaseとかletとかそのへん 3.2 Sets   &#39;a のsetを &#39;a set とかく。次のようなnotationが定義されている。    {} , {e1,e2,e3}    e ∈ A , A ⊆ B    A ∪ B , A ∩ B , A − B, − A    {x | P}    HOLのsetはかなり便利なので積極的に使っていこう。 3."/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 3日目の記事です。
+  テキスト代わりのチュートリアル: prog-prove.pdf
+ 前回は導入と型・関数・証明について学びました。 今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。
+3. Logic and Proof Beyond Equality  3.1 Formulas   HOLのformulaの定義は次: form ::= True | False | term = term | ¬ form | form ∧ form | form ∨ form | form --&gt; form | ∀x. form | ∃x. form   termはラムダ式とifとかcaseとかletとかそのへん
+  3.2 Sets   &#39;a のsetを &#39;a set とかく。次のようなnotationが定義されている。
+  {} , {e1,e2,e3}"/>
 
 
   </head>
@@ -71,197 +87,202 @@
     </header>
     <section>
 <p>
-<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 3日目の記事です。</strong>
-</p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 3日目の記事です。</strong></p>
 <hr>
 <p>
-テキスト代わりのチュートリアル: <a href="https://isabelle.in.tum.de/dist/Isabelle2017/doc/prog-prove.pdf">prog-prove.pdf</a>
-</p>
+テキスト代わりのチュートリアル: <a href="https://isabelle.in.tum.de/dist/Isabelle2017/doc/prog-prove.pdf">prog-prove.pdf</a></p>
 <p>
 前回は導入と型・関数・証明について学びました。
-今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。
-</p>
+今回やる3章では、HOLについてと証明を書く際に知っておくと便利なあれこれについてです。</p>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 3. Logic and Proof Beyond Equality
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<div id="outline-container-headline-2" class="outline-3">
 <h3 id="headline-2">
 3.1 Formulas
 </h3>
+<div id="outline-text-headline-2" class="outline-text-3">
 <p>
-HOLのformulaの定義は次: 
-</p>
+HOLのformulaの定義は次: </p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  form
     ::= True | False | term = term
     | ¬ form | form ∧ form | form ∨ form | form --&gt; form | ∀x. form | ∃x. form</code></pre></div>
 </div>
 <p>
-termはラムダ式とifとかcaseとかletとかそのへん
-</p>
+termはラムダ式とifとかcaseとかletとかそのへん</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
 <h3 id="headline-3">
 3.2 Sets
 </h3>
+<div id="outline-text-headline-3" class="outline-text-3">
 <p>
-<code>&#39;a</code> のsetを <code>&#39;a set</code> とかく。次のようなnotationが定義されている。
-</p>
+<code>&#39;a</code> のsetを <code>&#39;a set</code> とかく。次のようなnotationが定義されている。</p>
 <ul>
 <li>
-<p>
-<code>{}</code> , <code>{e1,e2,e3}</code>
-</p>
+<p><code>{}</code> , <code>{e1,e2,e3}</code></p>
 </li>
 <li>
-<p>
-<code>e ∈ A</code> , <code>A ⊆ B</code>
-</p>
+<p><code>e ∈ A</code> , <code>A ⊆ B</code></p>
 </li>
 <li>
-<p>
-<code>A ∪ B</code> , <code>A ∩ B</code> , <code>A − B</code>, <code>− A</code>
-</p>
+<p><code>A ∪ B</code> , <code>A ∩ B</code> , <code>A − B</code>, <code>− A</code></p>
 </li>
 <li>
-<p>
-<code>{x | P}</code>
-</p>
+<p><code>{x | P}</code></p>
 </li>
 </ul>
-<p>
-HOLのsetはかなり便利なので積極的に使っていこう。
-</p>
+<p>HOLのsetはかなり便利なので積極的に使っていこう。</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-3">
 <h3 id="headline-4">
 3.3 Proof Automation
 </h3>
+<div id="outline-text-headline-4" class="outline-text-3">
 <p>
 proof assistantを用いた証明というのは程度の差はあれコンピューターの力を借りて証明を進めるのであるが、
-Isabelleはその点では大変強力な証明の自動化ツールを揃えていると言える。
-</p>
+Isabelleはその点では大変強力な証明の自動化ツールを揃えていると言える。</p>
 <p>
-すでに見たsimp, autoコマンドなどもこの意味で自動証明を行うためのコマンドといえよう。
-</p>
+すでに見たsimp, autoコマンドなどもこの意味で自動証明を行うためのコマンドといえよう。</p>
 <p>
-以下ではその他の重要な証明コマンドや、Isabelleをやるにあたって最も重要と思われるsledgehammerについても触れる。
-</p>
+以下ではその他の重要な証明コマンドや、Isabelleをやるにあたって最も重要と思われるsledgehammerについても触れる。</p>
+<div id="outline-container-headline-5" class="outline-5">
 <h5 id="headline-5">
 simpとauto
 </h5>
+<div id="outline-text-headline-5" class="outline-text-5">
 <p>
 さてsimpとautoの2つのproof methodはすでに見た。
-このセクションではより強力な自動証明や証明ツールをみていく。
-</p>
+このセクションではより強力な自動証明や証明ツールをみていく。</p>
 <p>
-この2つの特徴として
-</p>
+この2つの特徴として</p>
 <ul>
 <li>
-<p>
-上手く行かなかったら(ゴールの解消を途中で諦めた場合は)、ゴールを変形したところで止める
-</p>
+<p>上手く行かなかったら(ゴールの解消を途中で諦めた場合は)、ゴールを変形したところで止める</p>
 </li>
 <li>
-<p>
-証明可能な命題だからといって必ずこれらで証明できるわけではない。むしろ出来ないものもたくさんある。
-</p>
+<p>証明可能な命題だからといって必ずこれらで証明できるわけではない。むしろ出来ないものもたくさんある。</p>
 </li>
 </ul>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-5">
 <h5 id="headline-6">
 fastforce
 </h5>
+<div id="outline-text-headline-6" class="outline-text-5">
 <p>
-autoより強力なproof methodにfastforceがある:
-</p>
+autoより強力なproof methodにfastforceがある:</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma &#34;⟦ ∀ xs ∈ A. ∃ys. xs = ys @ ys; us ∈ A ⟧ ⟹ ∃ n. length us = n + n&#34;
   by fastforce</code></pre></div>
 </div>
 <p>
 これはquantifierが複雑なのでautoでは証明できない。
-fastforceは失敗することもあり、また最初のゴールに対してしか作用しない。fastforceは複雑なlogicに弱いがequality reasoningに強い。
-</p>
+fastforceは失敗することもあり、また最初のゴールに対してしか作用しない。fastforceは複雑なlogicに弱いがequality reasoningに強い。</p>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-5">
 <h5 id="headline-7">
 blast
 </h5>
+<div id="outline-text-headline-7" class="outline-text-5">
 <p>
-さらに複雑なゴールを示せるproof methodにblastがある。
-</p>
+さらに複雑なゴールを示せるproof methodにblastがある。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma &#34;⟦ ∀x y. T x y ∨ T y x; ∀x y. A x y ∧ A y x ⟶ x = y; ∀x y. T x y ⟶ A x y ⟧ ⟹ ∀x y. A x y ⟶ T x y&#34;
   by blast</code></pre></div>
 </div>
 <p>
-blastも失敗することもあり、logic,setに強いがequality reasoningに弱い。
-</p>
+blastも失敗することもあり、logic,setに強いがequality reasoningに弱い。</p>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-5">
 <h5 id="headline-8">
 sledgehammer
 </h5>
+<div id="outline-text-headline-8" class="outline-text-5">
 <p>
 sledgehammerはproof searchを行うコマンドである。
-これは現在証明可能な定理とblast,auto,simpなどのproof methodを組み合わせて現在のゴールを解消するような証明を自動生成するツールである。
-</p>
+これは現在証明可能な定理とblast,auto,simpなどのproof methodを組み合わせて現在のゴールを解消するような証明を自動生成するツールである。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma &#34;⟦ xs @ ys = ys @ xs; length xs = length ys ⟧ ⟹ xs = ys&#34;</code></pre></div>
 </div>
 <p>
 ここでsledgehammerと入力するか、またはjEditのsledgehammerパネルでApplyのボタンを押す。
-するといくつかの候補が表示されるので、好きな証明をクリックするとそれが実際に挿入される。
-</p>
+するといくつかの候補が表示されるので、好きな証明をクリックするとそれが実際に挿入される。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">    using append_eq_append_conv by blast</code></pre></div>
 </div>
 <p>
-ここで、使われている <code>append_eq_append_conv</code> という補題が自動的に採用されていることに注意。
-</p>
+ここで、使われている <code>append_eq_append_conv</code> という補題が自動的に採用されていることに注意。</p>
 <p>
 sledgehammerはいくつかのsolverをそれぞれ回して証明を探索するので、いくつかの証明が得られることもあれば難しい命題の場合には全て諦めてしまうこともある。
-sledgehammerが <code>metis</code> を含む証明を提案した場合、metisは与えられた補題だけからゴールを解消するためのコマンドであり、現実的な時間で応答が返らないこともあることに注意。
-</p>
+sledgehammerが <code>metis</code> を含む証明を提案した場合、metisは与えられた補題だけからゴールを解消するためのコマンドであり、現実的な時間で応答が返らないこともあることに注意。</p>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-5">
 <h5 id="headline-9">
 arithmetic
 </h5>
+<div id="outline-text-headline-9" class="outline-text-5">
 <p>
-arithmetic formula (変数、数値、 <code>+,-,=,&lt;</code>)の解消には <code>arith</code> を使う。
-</p>
+arithmetic formula (変数、数値、 <code>+,-,=,&lt;</code>)の解消には <code>arith</code> を使う。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma &#34;⟦ (a::nat) ≤ x + b; 2*x &lt; c ⟧ ⟹ 2*a + 1 ≤ 2*b + c&#34;
   by arith</code></pre></div>
 </div>
 <p>
 簡単なarithmetic formulaならautoやsimpでも解ける可能性はある。
-また、arithは整数や実数が対象でもよい。
-</p>
+また、arithは整数や実数が対象でもよい。</p>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-5">
 <h5 id="headline-10">
 try
 </h5>
+<div id="outline-text-headline-10" class="outline-text-5">
 <p>
-全てのproof methodを試すなら <code>try</code> コマンドを使う。あるいは <code>try0</code> というより簡単なものを使っても良い。
-</p>
+全てのproof methodを試すなら <code>try</code> コマンドを使う。あるいは <code>try0</code> というより簡単なものを使っても良い。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-11" class="outline-3">
 <h3 id="headline-11">
 3.4 Single Step Proofs
 </h3>
+<div id="outline-text-headline-11" class="outline-text-3">
+<div id="outline-container-headline-12" class="outline-5">
 <h5 id="headline-12">
 rule
 </h5>
+<div id="outline-text-headline-12" class="outline-text-5">
 <p>
 導入規則を適用するruleというコマンドがある。
-ruleは定理を1つ受け取ってそれをintroルールとして現在のゴールに適用する。いくつかのintro ruleはすでに知っているので省略できることもある。
-</p>
+ruleは定理を1つ受け取ってそれをintroルールとして現在のゴールに適用する。いくつかのintro ruleはすでに知っているので省略できることもある。</p>
+</div>
+</div>
+<div id="outline-container-headline-13" class="outline-5">
 <h5 id="headline-13">
 OF/of
 </h5>
+<div id="outline-text-headline-13" class="outline-text-5">
 <p>
 定理が <code>A ==&gt; B</code> の形の時(ここでのimplicationは <code>==&gt;</code> であって <code>--&gt;</code> ではないことに注意。後者は単なるHOLのlogical connectiveだが前者はIsabelleで特別な意味を持つ)、 <code>A</code> に何かを適用したいときはOFを使う:
-例えば <code>r: A ==&gt; B</code> かつ <code>s: A</code> のとき、 <code>r [OF s]</code> は <code>B</code> という定理を表す。
-</p>
+例えば <code>r: A ==&gt; B</code> かつ <code>s: A</code> のとき、 <code>r [OF s]</code> は <code>B</code> という定理を表す。</p>
 <p>
 さらに、定理が自由変数(<code>?hoge</code> のような形の変数)を含んでいる時、これをofで束縛できる:
-例えば、 <code>r: ?P ?x</code> のとき、 <code>r [of &#34;λx. x = 10&#34; 20]</code> は <code>20 = 10</code> という命題を表す。
-</p>
+例えば、 <code>r: ?P ?x</code> のとき、 <code>r [of &#34;λx. x = 10&#34; 20]</code> は <code>20 = 10</code> という命題を表す。</p>
 <p>
-OF/ofは複数適用する場合はスペース区切りで横に並べる。1つの項がスペースを含む場合は例によってダブルクオーテーションで囲むこと。
-</p>
+OF/ofは複数適用する場合はスペース区切りで横に並べる。1つの項がスペースを含む場合は例によってダブルクオーテーションで囲むこと。</p>
 <p>
-例：
-</p>
+例：</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  thm conjI
   (* conjIが ?P ==&gt; ?Q ==&gt; ?P /\ ?Q であるとき *)
@@ -272,67 +293,81 @@ OF/ofは複数適用する場合はスペース区切りで横に並べる。1�
   thm conjI[OF refl[of a] refl[of b]]
   (* は、 a=a /\ b=b という定理になる *)</code></pre></div>
 </div>
+</div>
+</div>
+<div id="outline-container-headline-14" class="outline-5">
 <h5 id="headline-14">
 intro/dest modifier
 </h5>
+<div id="outline-text-headline-14" class="outline-text-5">
 <p>
-fastforce,blast,autoに対して、modifier <code>intro, dest</code> が用意されている。
-</p>
+fastforce,blast,autoに対して、modifier <code>intro, dest</code> が用意されている。</p>
 <ul>
 <li>
-<p>
-intro: <code>blast intro: [thm]</code> などとすることで、 <code>A ==&gt; B</code> の定理を用いて結論のBをAに書き換えて証明を行う
-</p>
+<p>intro: <code>blast intro: [thm]</code> などとすることで、 <code>A ==&gt; B</code> の定理を用いて結論のBをAに書き換えて証明を行う</p>
 </li>
 <li>
-<p>
-dest: <code>blast dest: [thm]</code> などとすることで、 <code>A ==&gt; B</code> の定理を用いて仮定のA(あるいはAを含む定理)をBに書き換えて証明を行う
-</p>
+<p>dest: <code>blast dest: [thm]</code> などとすることで、 <code>A ==&gt; B</code> の定理を用いて仮定のA(あるいはAを含む定理)をBに書き換えて証明を行う</p>
 </li>
 </ul>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-15" class="outline-3">
 <h3 id="headline-15">
 3.5 Inductive Definitions
 </h3>
+<div id="outline-text-headline-15" class="outline-text-3">
+<div id="outline-container-headline-16" class="outline-5">
 <h5 id="headline-16">
 inductive predicate
 </h5>
+<div id="outline-text-headline-16" class="outline-text-5">
 <p>
-inductive predicateをinductiveキーワードを使って定義できる。
-</p>
+inductive predicateをinductiveキーワードを使って定義できる。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  inductive even :: &#34;nat =&gt; bool&#34; where
     ev0: &#34;ev 0&#34;
   | evS: &#34;ev n ==&gt; ev (n + 2)&#34;</code></pre></div>
 </div>
 <p>
-は、 <code>ev n = True</code> とnが偶数であることが同値であるような述語を表す。
-</p>
+は、 <code>ev n = True</code> とnが偶数であることが同値であるような述語を表す。</p>
+</div>
+</div>
+<div id="outline-container-headline-17" class="outline-5">
 <h5 id="headline-17">
 cases/induct
 </h5>
+<div id="outline-text-headline-17" class="outline-text-5">
 <p>
 inductiveで定義した述語に対する場合分けや構造帰納法などが自動で生成される。
-上のようにevenを定めた場合、例えばjEditのQueryパネルに <code>name:even</code> と入力することで <code>even.cases</code> や <code>even.induct</code> などの定理が自動で生成されていることがわかるだろう。
-</p>
+上のようにevenを定めた場合、例えばjEditのQueryパネルに <code>name:even</code> と入力することで <code>even.cases</code> や <code>even.induct</code> などの定理が自動で生成されていることがわかるだろう。</p>
 <p>
-この帰納法を用いて証明を行う場合、次のように書ける:
-</p>
+この帰納法を用いて証明を行う場合、次のように書ける:</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma &#34;even m ==&gt; P m&#34;
   apply (induction m rule: even.induct)</code></pre></div>
 </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-18" class="outline-2">
 <h2 id="headline-18">
 まとめ
 </h2>
+<div id="outline-text-headline-18" class="outline-text-2">
 <p>
-3章ではHOLについて、自動証明について、最後にinductive definitionについて触れた。
-</p>
+3章ではHOLについて、自動証明について、最後にinductive definitionについて触れた。</p>
 <p>
-キリがよいので本日はここまで。
-</p>
+キリがよいので本日はここまで。</p>
 <p>
-次回は4章でIsarと呼ばれる自然言語に近い証明記述を可能にする言語に触れて、一旦このチュートリアルをやるシリーズはおしまいです。
-</p>
+次回は4章でIsarと呼ばれる自然言語に近い証明記述を可能にする言語に触れて、一旦このチュートリアルをやるシリーズはおしまいです。</p>
+</div>
+</div>
 </section>
     <footer>
       <hr>

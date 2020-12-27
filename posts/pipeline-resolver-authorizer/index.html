@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -26,7 +26,7 @@
 AppSync Pipeline Resolver AppSyncにはPipeline Resolverというリゾルバーがあり、これによって複数のリゾルバーを指定できる、とある。
 CFnにはfunctionConfigurationを指定するといいよと書いてある。serverless-appsync-pluginだと次のように書ける。
 custom:appSync:mappingTemplates:- type:Queryfield:testPipelineQueryrequest:&#39;./mapping-templates/before.vtl&#39;# the pipeline&#39;s &#34;before&#34; mapping templateresponse:&#39;./mapping-templates/after.vtl&#39;# the pipeline&#39;s &#34;after&#34; mapping templatekind:PIPELINEfunctions:- authorizeFunction- fetchDataFunctionfunctionConfigurations:- dataSource:graphqlLambdaname:&#39;authorizeFunction&#39;request:&#39;./mapping-templates/authorize-request.vtl&#39;response:&#39;./mapping-templates/common-response.vtl&#39;- dataSource:dataTablename:&#39;fetchDataFunction&#39;request:&#39;./mapping-templates/fetchData.vtl&#39;response:&#39;./mapping-templates/common-response.vtl&#39;でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
- リゾルバーに対して指定できる処理の単位を&quot;function&quot;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&quot;functionからなる&rdquo; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
+ リゾルバーに対して指定できる処理の単位を&quot;function&quot;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&quot;functionからなる&quot; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
 before mapping template ↓ authorizeFunction request mapping template ↓ authorizeFunction本体 ↓ authorizeFunction response mapping template ↓ fetchDataFunction request mapping template ↓ fetchDataFunction本体 ↓ fetchDataFunction response mapping template ↓ after mapping template functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。
 Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。" />
 <meta property="og:type" content="article" />
@@ -40,23 +40,24 @@ Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorize
 AppSync Pipeline Resolver AppSyncにはPipeline Resolverというリゾルバーがあり、これによって複数のリゾルバーを指定できる、とある。
 CFnにはfunctionConfigurationを指定するといいよと書いてある。serverless-appsync-pluginだと次のように書ける。
 custom:appSync:mappingTemplates:- type:Queryfield:testPipelineQueryrequest:&#39;./mapping-templates/before.vtl&#39;# the pipeline&#39;s &#34;before&#34; mapping templateresponse:&#39;./mapping-templates/after.vtl&#39;# the pipeline&#39;s &#34;after&#34; mapping templatekind:PIPELINEfunctions:- authorizeFunction- fetchDataFunctionfunctionConfigurations:- dataSource:graphqlLambdaname:&#39;authorizeFunction&#39;request:&#39;./mapping-templates/authorize-request.vtl&#39;response:&#39;./mapping-templates/common-response.vtl&#39;- dataSource:dataTablename:&#39;fetchDataFunction&#39;request:&#39;./mapping-templates/fetchData.vtl&#39;response:&#39;./mapping-templates/common-response.vtl&#39;でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
- リゾルバーに対して指定できる処理の単位を&quot;function&quot;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&quot;functionからなる&rdquo; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
+ リゾルバーに対して指定できる処理の単位を&quot;function&quot;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&quot;functionからなる&quot; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
 before mapping template ↓ authorizeFunction request mapping template ↓ authorizeFunction本体 ↓ authorizeFunction response mapping template ↓ fetchDataFunction request mapping template ↓ fetchDataFunction本体 ↓ fetchDataFunction response mapping template ↓ after mapping template functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。
 Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。">
-<meta itemprop="datePublished" content="2019-06-16T14:26:31&#43;09:00" />
-<meta itemprop="dateModified" content="2019-06-16T14:26:31&#43;09:00" />
+<meta itemprop="datePublished" content="2019-06-16T14:26:31+09:00" />
+<meta itemprop="dateModified" content="2019-06-16T14:26:31+09:00" />
 <meta itemprop="wordCount" content="299">
 
 
 
 <meta itemprop="keywords" content="AWS," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Pipeline Resolverを使ったAppSync Authorizerパターン"/>
 <meta name="twitter:description" content="調べたけどあんまり情報がなかったので。
 AppSync Pipeline Resolver AppSyncにはPipeline Resolverというリゾルバーがあり、これによって複数のリゾルバーを指定できる、とある。
 CFnにはfunctionConfigurationを指定するといいよと書いてある。serverless-appsync-pluginだと次のように書ける。
 custom:appSync:mappingTemplates:- type:Queryfield:testPipelineQueryrequest:&#39;./mapping-templates/before.vtl&#39;# the pipeline&#39;s &#34;before&#34; mapping templateresponse:&#39;./mapping-templates/after.vtl&#39;# the pipeline&#39;s &#34;after&#34; mapping templatekind:PIPELINEfunctions:- authorizeFunction- fetchDataFunctionfunctionConfigurations:- dataSource:graphqlLambdaname:&#39;authorizeFunction&#39;request:&#39;./mapping-templates/authorize-request.vtl&#39;response:&#39;./mapping-templates/common-response.vtl&#39;- dataSource:dataTablename:&#39;fetchDataFunction&#39;request:&#39;./mapping-templates/fetchData.vtl&#39;response:&#39;./mapping-templates/common-response.vtl&#39;でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。
- リゾルバーに対して指定できる処理の単位を&quot;function&quot;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&quot;functionからなる&rdquo; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
+ リゾルバーに対して指定できる処理の単位を&quot;function&quot;とここでは呼んでいる functionを複数指定すると、それぞれが順番に実行される functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する 上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&quot;functionからなる&quot; Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある  で、上のような例だと次のように処理が進む
 before mapping template ↓ authorizeFunction request mapping template ↓ authorizeFunction本体 ↓ authorizeFunction response mapping template ↓ fetchDataFunction request mapping template ↓ fetchDataFunction本体 ↓ fetchDataFunction response mapping template ↓ after mapping template functionという概念はpipeline resolverにしか出てこないが他のリゾルバーでも内部的には使われてるとみなして良いと思う。
 Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。"/>
 
@@ -91,33 +92,33 @@ Authorizer 上の例でもあるように、DyanmoDB Resolverにcustom authorize
 <h2 id="appsync-pipeline-resolver">AppSync Pipeline Resolver</h2>
 <p>AppSyncにはPipeline Resolverというリゾルバーがあり、これによって複数のリゾルバーを指定できる、とある。</p>
 <p>CFnにはfunctionConfigurationを指定するといいよと書いてある。serverless-appsync-pluginだと次のように書ける。</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">custom</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="k">appSync</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span><span class="k">mappingTemplates</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span>- <span class="k">type</span><span class="p">:</span><span class="w"> </span>Query<span class="w">
-</span><span class="w">        </span><span class="k">field</span><span class="p">:</span><span class="w"> </span>testPipelineQuery<span class="w">
-</span><span class="w">        </span><span class="k">request</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/before.vtl&#39;</span><span class="w"> </span><span class="c"># the pipeline&#39;s &#34;before&#34; mapping template</span><span class="w">
-</span><span class="w">        </span><span class="k">response</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/after.vtl&#39;</span><span class="w"> </span><span class="c"># the pipeline&#39;s &#34;after&#34; mapping template</span><span class="w">
-</span><span class="w">        </span><span class="k">kind</span><span class="p">:</span><span class="w"> </span>PIPELINE<span class="w">
-</span><span class="w">        </span><span class="k">functions</span><span class="p">:</span><span class="w">
-</span><span class="w">          </span>- authorizeFunction<span class="w">
-</span><span class="w">          </span>- fetchDataFunction<span class="w">
-</span><span class="w">    </span><span class="k">functionConfigurations</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span>- <span class="k">dataSource</span><span class="p">:</span><span class="w"> </span>graphqlLambda<span class="w">
-</span><span class="w">        </span><span class="k">name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;authorizeFunction&#39;</span><span class="w">
-</span><span class="w">        </span><span class="k">request</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/authorize-request.vtl&#39;</span><span class="w">
-</span><span class="w">        </span><span class="k">response</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/common-response.vtl&#39;</span><span class="w">
-</span><span class="w">      </span>- <span class="k">dataSource</span><span class="p">:</span><span class="w"> </span>dataTable<span class="w">
-</span><span class="w">        </span><span class="k">name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;fetchDataFunction&#39;</span><span class="w">
-</span><span class="w">        </span><span class="k">request</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/fetchData.vtl&#39;</span><span class="w">
-</span><span class="w">        </span><span class="k">response</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/common-response.vtl&#39;</span><span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">custom</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">appSync</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">mappingTemplates</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">Query</span><span class="w">
+</span><span class="w">        </span><span class="nt">field</span><span class="p">:</span><span class="w"> </span><span class="l">testPipelineQuery</span><span class="w">
+</span><span class="w">        </span><span class="nt">request</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/before.vtl&#39;</span><span class="w"> </span><span class="c"># the pipeline&#39;s &#34;before&#34; mapping template</span><span class="w">
+</span><span class="w">        </span><span class="nt">response</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/after.vtl&#39;</span><span class="w"> </span><span class="c"># the pipeline&#39;s &#34;after&#34; mapping template</span><span class="w">
+</span><span class="w">        </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">PIPELINE</span><span class="w">
+</span><span class="w">        </span><span class="nt">functions</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span>- <span class="l">authorizeFunction</span><span class="w">
+</span><span class="w">          </span>- <span class="l">fetchDataFunction</span><span class="w">
+</span><span class="w">    </span><span class="nt">functionConfigurations</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">dataSource</span><span class="p">:</span><span class="w"> </span><span class="l">graphqlLambda</span><span class="w">
+</span><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;authorizeFunction&#39;</span><span class="w">
+</span><span class="w">        </span><span class="nt">request</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/authorize-request.vtl&#39;</span><span class="w">
+</span><span class="w">        </span><span class="nt">response</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/common-response.vtl&#39;</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">dataSource</span><span class="p">:</span><span class="w"> </span><span class="l">dataTable</span><span class="w">
+</span><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;fetchDataFunction&#39;</span><span class="w">
+</span><span class="w">        </span><span class="nt">request</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/fetchData.vtl&#39;</span><span class="w">
+</span><span class="w">        </span><span class="nt">response</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;./mapping-templates/common-response.vtl&#39;</span><span class="w">
 </span></code></pre></div><p>でこれが意外とわかりにくいのだがドキュメントをよく読むと次のような意味であることがわかる。</p>
 <ul>
 <li>リゾルバーに対して指定できる処理の単位を&quot;function&quot;とここでは呼んでいる</li>
 <li>functionを複数指定すると、それぞれが順番に実行される</li>
 <li>functionには(通常のリゾルバー同様)リクエスト・レスポンスマッピングテンプレートを指定する</li>
 <li>上記とは別に、pipelineの最初と最後にマッピングテンプレートを指定する</li>
-<li>DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&quot;functionからなる&rdquo;</li>
+<li>DynamoDBリゾルバー、Lambdaリゾルバーも内部では1つの&quot;functionからなる&quot;</li>
 <li>Pipeline ResolverでLambdaに通してからDynamoDBに送るみたいなことをしたいなら2つのfunctionをlambda dataSource, dynamodb dataSourceを指定して作成する必要がある</li>
 </ul>
 <p>で、上のような例だと次のように処理が進む</p>
@@ -140,27 +141,27 @@ after mapping template
 <h2 id="authorizer">Authorizer</h2>
 <p>上の例でもあるように、DyanmoDB Resolverにcustom authorizerを付けたいというようなユースケースではPipeline Resolverを使うのが良い。</p>
 <p>設定例を以下に示す。</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">(serverless.yml)<span class="w">
-</span><span class="w"></span><span class="k">custom</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="k">appSync</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span><span class="k">mappingTemplates</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span>- <span class="k">type</span><span class="p">:</span><span class="w"> </span>Mutation<span class="w">
-</span><span class="w">        </span><span class="k">field</span><span class="p">:</span><span class="w"> </span>addCollection<span class="w">
-</span><span class="w">        </span><span class="k">request</span><span class="p">:</span><span class="w"> </span>ContextRequest.vtl<span class="w"> </span><span class="c"># before</span><span class="w">
-</span><span class="w">        </span><span class="k">response</span><span class="p">:</span><span class="w"> </span>JsonResponse.vtl<span class="w"> </span><span class="c"># after</span><span class="w">
-</span><span class="w">        </span><span class="k">kind</span><span class="p">:</span><span class="w"> </span>PIPELINE<span class="w">
-</span><span class="w">        </span><span class="k">functions</span><span class="p">:</span><span class="w">
-</span><span class="w">          </span>- authorizer<span class="w">
-</span><span class="w">          </span>- addCollection<span class="w">
-</span><span class="w">      </span><span class="k">functionConfigurations</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span>- <span class="k">dataSource</span><span class="p">:</span><span class="w"> </span>authorizer<span class="w">
-</span><span class="w">        </span><span class="k">name</span><span class="p">:</span><span class="w"> </span>authorizer<span class="w">
-</span><span class="w">        </span><span class="k">request</span><span class="p">:</span><span class="w"> </span>AuthorizerRequest.vtl<span class="w">
-</span><span class="w">        </span><span class="k">response</span><span class="p">:</span><span class="w"> </span>AuthorizerResponse.vtl<span class="w">
-</span><span class="w">      </span>- <span class="k">dataSource</span><span class="p">:</span><span class="w"> </span>collection<span class="w">
-</span><span class="w">        </span><span class="k">name</span><span class="p">:</span><span class="w"> </span>addCollection<span class="w">
-</span><span class="w">        </span><span class="k">request</span><span class="p">:</span><span class="w"> </span>AddCollection.vtl<span class="w">
-</span><span class="w">        </span><span class="k">response</span><span class="p">:</span><span class="w"> </span>JsonResponse.vtl<span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="l">(serverless.yml)</span><span class="w">
+</span><span class="w"></span><span class="nt">custom</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">appSync</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">mappingTemplates</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">Mutation</span><span class="w">
+</span><span class="w">        </span><span class="nt">field</span><span class="p">:</span><span class="w"> </span><span class="l">addCollection</span><span class="w">
+</span><span class="w">        </span><span class="nt">request</span><span class="p">:</span><span class="w"> </span><span class="l">ContextRequest.vtl</span><span class="w"> </span><span class="c"># before</span><span class="w">
+</span><span class="w">        </span><span class="nt">response</span><span class="p">:</span><span class="w"> </span><span class="l">JsonResponse.vtl</span><span class="w"> </span><span class="c"># after</span><span class="w">
+</span><span class="w">        </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">PIPELINE</span><span class="w">
+</span><span class="w">        </span><span class="nt">functions</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span>- <span class="l">authorizer</span><span class="w">
+</span><span class="w">          </span>- <span class="l">addCollection</span><span class="w">
+</span><span class="w">      </span><span class="nt">functionConfigurations</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">dataSource</span><span class="p">:</span><span class="w"> </span><span class="l">authorizer</span><span class="w">
+</span><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">authorizer</span><span class="w">
+</span><span class="w">        </span><span class="nt">request</span><span class="p">:</span><span class="w"> </span><span class="l">AuthorizerRequest.vtl</span><span class="w">
+</span><span class="w">        </span><span class="nt">response</span><span class="p">:</span><span class="w"> </span><span class="l">AuthorizerResponse.vtl</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">dataSource</span><span class="p">:</span><span class="w"> </span><span class="l">collection</span><span class="w">
+</span><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">addCollection</span><span class="w">
+</span><span class="w">        </span><span class="nt">request</span><span class="p">:</span><span class="w"> </span><span class="l">AddCollection.vtl</span><span class="w">
+</span><span class="w">        </span><span class="nt">response</span><span class="p">:</span><span class="w"> </span><span class="l">JsonResponse.vtl</span><span class="w">
 </span></code></pre></div><pre><code>(ContextRequest.vtl; 特に何もしない)
 $util.toJson($context)
 
@@ -245,7 +246,7 @@ $util.toJson($context.result)
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">Amplify</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="nx">awsconfig</span><span class="p">);</span>
 <span class="nx">Amplify</span><span class="p">.</span><span class="nx">configure</span><span class="p">({</span>
   <span class="nx">API</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">graphql_headers</span><span class="o">:</span> <span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">graphql_headers</span><span class="o">:</span> <span class="kr">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
       <span class="k">return</span> <span class="p">{</span>
         <span class="s1">&#39;Authorization&#39;</span><span class="o">:</span> <span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span>  <span class="c1">// ここ
 </span><span class="c1"></span>      <span class="p">};</span>

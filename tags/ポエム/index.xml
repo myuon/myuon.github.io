@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>ポエム on The curse of λ</title>
@@ -6,16 +5,17 @@
     <description>Recent content in ポエム on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
-    <lastBuildDate>Sat, 02 Jun 2018 08:27:31 -0700</lastBuildDate><atom:link href="https://myuon.github.io/tags/%E3%83%9D%E3%82%A8%E3%83%A0/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>私と型システムとポエム</title>
-      <link>https://myuon.github.io/posts/type-system-poem/</link>
-      <pubDate>Sat, 02 Jun 2018 08:27:31 -0700</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/type-system-poem/</guid>
-      <description>最近巷では俄に型システムについての言及が増え、型システムポエマーが増えてる気がするので自分もその時流に乗りたい。
+    <lastBuildDate>Sat, 02 Jun 2018 08:27:31 -0700</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/%E3%83%9D%E3%82%A8%E3%83%A0/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>私と型システムとポエム</title>
+        <link>https://myuon.github.io/posts/type-system-poem/</link>
+        <pubDate>Sat, 02 Jun 2018 08:27:31 -0700</pubDate>
+        <guid>https://myuon.github.io/posts/type-system-poem/</guid>
+        <description>最近巷では俄に型システムについての言及が増え、型システムポエマーが増えてる気がするので自分もその時流に乗りたい。
  完全にポエムだけどなんかあったら随時指摘ください。直します。
 TL;DR   言いたいことはまとめると次
   型システムは程度問題なのでちょうどいいところを探すべき
@@ -33,15 +33,14 @@ TL;DR   言いたいことはまとめると次
     型システムの分類と主な特徴   当たり前だが型付き言語も一枚岩ではなく、色々違いがあるので少し分類をしておく。下に行くほど強い。
 型なし(動的型)言語    言語: untyped lambda calculusやLL系言語など
   LL系とは言ったものの例えばPythonは最近type annotationがかけるし、あるいは型のない言語でもIDEが静的解析を行い実質型システム相当のチェックを行う言語があったりするので型の恩恵を一切受けない言語はイマドキそう多くはない。 型システムの人間からは型なしは型なしとして一緒くたにせざるを得ないが、別に型なしを嫌っているわけではない。それも一つの言語の在り方である。まぁ私は死んでも書きたくないけどな。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>V.S. Hask圏</title>
-      <link>https://myuon.github.io/posts/versus-hask-category/</link>
-      <pubDate>Fri, 05 Jan 2018 22:52:56 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/versus-hask-category/</guid>
-      <description>Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
+      <item>
+        <title>V.S. Hask圏</title>
+        <link>https://myuon.github.io/posts/versus-hask-category/</link>
+        <pubDate>Fri, 05 Jan 2018 22:52:56 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/versus-hask-category/</guid>
+        <description>Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
  さて基本的な結果として次のことが知られている。
   Hask#Is Hask even a category?
   Hask is not a category
@@ -53,7 +52,7 @@ undefinedを抜く   undefinedは「評価ができない(プログラムが正�
  しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。
     ここからポエム   いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。
  個人的に、CSとは「計算機で観測可能な現象に説明をつける」学問であると思うので、実際にHaskellという言語で観測可能な現象について圏論で説明をつけようとする営み自体が否定されることはないと思う。 計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

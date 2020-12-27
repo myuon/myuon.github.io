@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,18 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="V.S. Hask圏" />
-<meta property="og:description" content="Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。  さて基本的な結果として次のことが知られている。    Hask#Is Hask even a category?    Hask is not a category    というわけでHask圏は圏にならないのでそのようなものは存在しない。 Why not?   これはundefinedというヤバイ元の存在とcall-by-needの悪魔的評価規則が合わさりこのような現象が生み出される。 主にこの2つが悪さをしているので、この辺をどうにかできればHask categoryが作れる可能性がある。 undefinedを抜く   undefinedは「評価ができない(プログラムが正しい値を返さない)」ことを表す元で、普通は(多分)domainのbottomに対応させ、無限ループするプログラムの解釈なんかに使う。 undefinedを抜くためにはプログラムが常に停止して値を返す必要があるので無限ループができないようにする必要がある。  とまぁ言うのは簡単でfixpointを抜けばいいだけなんだけどfixpointもないcalculusがプログラミング言語を名乗るのは片腹痛いのでこれはちょっとナシかなという気持ちになったりする。 call-by-needを捨てる   call-by-needを捨てて、call-by-valueとかcall-by-nameとかそういうやつに行くというのも1つだと思う。 GHCのStrict拡張を入れてライブラリもStrict付けて全てビルドしなおせばそれはもうcall-by-valueになる(よね？)はずだったり、まぁcall-by-nameもcall-by-needみたいなもんやろという乱暴な考え方によりcall-by-needを捨てるのは現実的な案だと個人的には思う。  しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。 ここからポエム   いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。  個人的に、CSとは「計算機で観測可能な現象に説明をつける」学問であると思うので、実際にHaskellという言語で観測可能な現象について圏論で説明をつけようとする営み自体が否定されることはないと思う。 計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。  実際にHaskellに限らず色々なプログラミング言語で観測可能な現象について圏論の方からそれっぽいモデルを提供するぜ的研究はあちこちで見られるので、call-by-needとかにも上手い説明を付けられる直観的で構成が大変じゃないモデルを誰か思いついてくれればよいのだけど。 data &amp; codata   HaskellのListがListかつColistであるというのは有名な話だけれど、こういうdatatypeかつcodatatypeがとれるような圏を考えるきっかけは(歴史的なことには私は詳しくないのだけれど)こういうプログラミング言語からの現象が先にあったのかな？と想像してる。 ちなみにこのようなcategoryはalgebraically boundedと呼ばれたりします。 enrichmentの隠蔽   関係ないのだけどHask categoryで圏論やろうとするとenrichmentが色々効いてきて困る、みたいな話をよく聞くし自分もそう思うのだけれど、実はenrichmentは結構避けられる(隠蔽できる)のかもと書いていてちょっと思った。  例えばFunctorのfmap methodは fmap: (Functor F) =&gt; (A -&gt; B) -&gt; FA -&gt; FB という形で書かれる。 これはHaskからHask(の適当なsubcategory)へのfunctorのfmapの型になっているが、圏論的には実際は次のような形をしているはずである: fmap: Hask(A,B) -&gt; Hask(FA,FB) ." />
+<meta property="og:description" content="Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
+ さて基本的な結果として次のことが知られている。
+  Hask#Is Hask even a category?
+  Hask is not a category
+  というわけでHask圏は圏にならないのでそのようなものは存在しない。
+  Why not?   これはundefinedというヤバイ元の存在とcall-by-needの悪魔的評価規則が合わさりこのような現象が生み出される。 主にこの2つが悪さをしているので、この辺をどうにかできればHask categoryが作れる可能性がある。
+undefinedを抜く   undefinedは「評価ができない(プログラムが正しい値を返さない)」ことを表す元で、普通は(多分)domainのbottomに対応させ、無限ループするプログラムの解釈なんかに使う。 undefinedを抜くためにはプログラムが常に停止して値を返す必要があるので無限ループができないようにする必要がある。
+ とまぁ言うのは簡単でfixpointを抜けばいいだけなんだけどfixpointもないcalculusがプログラミング言語を名乗るのは片腹痛いのでこれはちょっとナシかなという気持ちになったりする。
+  call-by-needを捨てる   call-by-needを捨てて、call-by-valueとかcall-by-nameとかそういうやつに行くというのも1つだと思う。 GHCのStrict拡張を入れてライブラリもStrict付けて全てビルドしなおせばそれはもうcall-by-valueになる(よね？)はずだったり、まぁcall-by-nameもcall-by-needみたいなもんやろという乱暴な考え方によりcall-by-needを捨てるのは現実的な案だと個人的には思う。
+ しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。
+    ここからポエム   いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。
+ 個人的に、CSとは「計算機で観測可能な現象に説明をつける」学問であると思うので、実際にHaskellという言語で観測可能な現象について圏論で説明をつけようとする営み自体が否定されることはないと思う。 計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/versus-hask-category/" />
 <meta property="article:published_time" content="2018-01-05T22:52:56+09:00" />
@@ -30,17 +41,40 @@
 
 
 <meta itemprop="name" content="V.S. Hask圏">
-<meta itemprop="description" content="Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。  さて基本的な結果として次のことが知られている。    Hask#Is Hask even a category?    Hask is not a category    というわけでHask圏は圏にならないのでそのようなものは存在しない。 Why not?   これはundefinedというヤバイ元の存在とcall-by-needの悪魔的評価規則が合わさりこのような現象が生み出される。 主にこの2つが悪さをしているので、この辺をどうにかできればHask categoryが作れる可能性がある。 undefinedを抜く   undefinedは「評価ができない(プログラムが正しい値を返さない)」ことを表す元で、普通は(多分)domainのbottomに対応させ、無限ループするプログラムの解釈なんかに使う。 undefinedを抜くためにはプログラムが常に停止して値を返す必要があるので無限ループができないようにする必要がある。  とまぁ言うのは簡単でfixpointを抜けばいいだけなんだけどfixpointもないcalculusがプログラミング言語を名乗るのは片腹痛いのでこれはちょっとナシかなという気持ちになったりする。 call-by-needを捨てる   call-by-needを捨てて、call-by-valueとかcall-by-nameとかそういうやつに行くというのも1つだと思う。 GHCのStrict拡張を入れてライブラリもStrict付けて全てビルドしなおせばそれはもうcall-by-valueになる(よね？)はずだったり、まぁcall-by-nameもcall-by-needみたいなもんやろという乱暴な考え方によりcall-by-needを捨てるのは現実的な案だと個人的には思う。  しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。 ここからポエム   いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。  個人的に、CSとは「計算機で観測可能な現象に説明をつける」学問であると思うので、実際にHaskellという言語で観測可能な現象について圏論で説明をつけようとする営み自体が否定されることはないと思う。 計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。  実際にHaskellに限らず色々なプログラミング言語で観測可能な現象について圏論の方からそれっぽいモデルを提供するぜ的研究はあちこちで見られるので、call-by-needとかにも上手い説明を付けられる直観的で構成が大変じゃないモデルを誰か思いついてくれればよいのだけど。 data &amp; codata   HaskellのListがListかつColistであるというのは有名な話だけれど、こういうdatatypeかつcodatatypeがとれるような圏を考えるきっかけは(歴史的なことには私は詳しくないのだけれど)こういうプログラミング言語からの現象が先にあったのかな？と想像してる。 ちなみにこのようなcategoryはalgebraically boundedと呼ばれたりします。 enrichmentの隠蔽   関係ないのだけどHask categoryで圏論やろうとするとenrichmentが色々効いてきて困る、みたいな話をよく聞くし自分もそう思うのだけれど、実はenrichmentは結構避けられる(隠蔽できる)のかもと書いていてちょっと思った。  例えばFunctorのfmap methodは fmap: (Functor F) =&gt; (A -&gt; B) -&gt; FA -&gt; FB という形で書かれる。 これはHaskからHask(の適当なsubcategory)へのfunctorのfmapの型になっているが、圏論的には実際は次のような形をしているはずである: fmap: Hask(A,B) -&gt; Hask(FA,FB) .">
-<meta itemprop="datePublished" content="2018-01-05T22:52:56&#43;09:00" />
-<meta itemprop="dateModified" content="2018-01-05T22:52:56&#43;09:00" />
+<meta itemprop="description" content="Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
+ さて基本的な結果として次のことが知られている。
+  Hask#Is Hask even a category?
+  Hask is not a category
+  というわけでHask圏は圏にならないのでそのようなものは存在しない。
+  Why not?   これはundefinedというヤバイ元の存在とcall-by-needの悪魔的評価規則が合わさりこのような現象が生み出される。 主にこの2つが悪さをしているので、この辺をどうにかできればHask categoryが作れる可能性がある。
+undefinedを抜く   undefinedは「評価ができない(プログラムが正しい値を返さない)」ことを表す元で、普通は(多分)domainのbottomに対応させ、無限ループするプログラムの解釈なんかに使う。 undefinedを抜くためにはプログラムが常に停止して値を返す必要があるので無限ループができないようにする必要がある。
+ とまぁ言うのは簡単でfixpointを抜けばいいだけなんだけどfixpointもないcalculusがプログラミング言語を名乗るのは片腹痛いのでこれはちょっとナシかなという気持ちになったりする。
+  call-by-needを捨てる   call-by-needを捨てて、call-by-valueとかcall-by-nameとかそういうやつに行くというのも1つだと思う。 GHCのStrict拡張を入れてライブラリもStrict付けて全てビルドしなおせばそれはもうcall-by-valueになる(よね？)はずだったり、まぁcall-by-nameもcall-by-needみたいなもんやろという乱暴な考え方によりcall-by-needを捨てるのは現実的な案だと個人的には思う。
+ しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。
+    ここからポエム   いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。
+ 個人的に、CSとは「計算機で観測可能な現象に説明をつける」学問であると思うので、実際にHaskellという言語で観測可能な現象について圏論で説明をつけようとする営み自体が否定されることはないと思う。 計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。">
+<meta itemprop="datePublished" content="2018-01-05T22:52:56+09:00" />
+<meta itemprop="dateModified" content="2018-01-05T22:52:56+09:00" />
 <meta itemprop="wordCount" content="105">
 
 
 
 <meta itemprop="keywords" content="日記,ポエム,Haskell," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="V.S. Hask圏"/>
-<meta name="twitter:description" content="Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。  さて基本的な結果として次のことが知られている。    Hask#Is Hask even a category?    Hask is not a category    というわけでHask圏は圏にならないのでそのようなものは存在しない。 Why not?   これはundefinedというヤバイ元の存在とcall-by-needの悪魔的評価規則が合わさりこのような現象が生み出される。 主にこの2つが悪さをしているので、この辺をどうにかできればHask categoryが作れる可能性がある。 undefinedを抜く   undefinedは「評価ができない(プログラムが正しい値を返さない)」ことを表す元で、普通は(多分)domainのbottomに対応させ、無限ループするプログラムの解釈なんかに使う。 undefinedを抜くためにはプログラムが常に停止して値を返す必要があるので無限ループができないようにする必要がある。  とまぁ言うのは簡単でfixpointを抜けばいいだけなんだけどfixpointもないcalculusがプログラミング言語を名乗るのは片腹痛いのでこれはちょっとナシかなという気持ちになったりする。 call-by-needを捨てる   call-by-needを捨てて、call-by-valueとかcall-by-nameとかそういうやつに行くというのも1つだと思う。 GHCのStrict拡張を入れてライブラリもStrict付けて全てビルドしなおせばそれはもうcall-by-valueになる(よね？)はずだったり、まぁcall-by-nameもcall-by-needみたいなもんやろという乱暴な考え方によりcall-by-needを捨てるのは現実的な案だと個人的には思う。  しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。 ここからポエム   いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。  個人的に、CSとは「計算機で観測可能な現象に説明をつける」学問であると思うので、実際にHaskellという言語で観測可能な現象について圏論で説明をつけようとする営み自体が否定されることはないと思う。 計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。  実際にHaskellに限らず色々なプログラミング言語で観測可能な現象について圏論の方からそれっぽいモデルを提供するぜ的研究はあちこちで見られるので、call-by-needとかにも上手い説明を付けられる直観的で構成が大変じゃないモデルを誰か思いついてくれればよいのだけど。 data &amp; codata   HaskellのListがListかつColistであるというのは有名な話だけれど、こういうdatatypeかつcodatatypeがとれるような圏を考えるきっかけは(歴史的なことには私は詳しくないのだけれど)こういうプログラミング言語からの現象が先にあったのかな？と想像してる。 ちなみにこのようなcategoryはalgebraically boundedと呼ばれたりします。 enrichmentの隠蔽   関係ないのだけどHask categoryで圏論やろうとするとenrichmentが色々効いてきて困る、みたいな話をよく聞くし自分もそう思うのだけれど、実はenrichmentは結構避けられる(隠蔽できる)のかもと書いていてちょっと思った。  例えばFunctorのfmap methodは fmap: (Functor F) =&gt; (A -&gt; B) -&gt; FA -&gt; FB という形で書かれる。 これはHaskからHask(の適当なsubcategory)へのfunctorのfmapの型になっているが、圏論的には実際は次のような形をしているはずである: fmap: Hask(A,B) -&gt; Hask(FA,FB) ."/>
+<meta name="twitter:description" content="Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
+ さて基本的な結果として次のことが知られている。
+  Hask#Is Hask even a category?
+  Hask is not a category
+  というわけでHask圏は圏にならないのでそのようなものは存在しない。
+  Why not?   これはundefinedというヤバイ元の存在とcall-by-needの悪魔的評価規則が合わさりこのような現象が生み出される。 主にこの2つが悪さをしているので、この辺をどうにかできればHask categoryが作れる可能性がある。
+undefinedを抜く   undefinedは「評価ができない(プログラムが正しい値を返さない)」ことを表す元で、普通は(多分)domainのbottomに対応させ、無限ループするプログラムの解釈なんかに使う。 undefinedを抜くためにはプログラムが常に停止して値を返す必要があるので無限ループができないようにする必要がある。
+ とまぁ言うのは簡単でfixpointを抜けばいいだけなんだけどfixpointもないcalculusがプログラミング言語を名乗るのは片腹痛いのでこれはちょっとナシかなという気持ちになったりする。
+  call-by-needを捨てる   call-by-needを捨てて、call-by-valueとかcall-by-nameとかそういうやつに行くというのも1つだと思う。 GHCのStrict拡張を入れてライブラリもStrict付けて全てビルドしなおせばそれはもうcall-by-valueになる(よね？)はずだったり、まぁcall-by-nameもcall-by-needみたいなもんやろという乱暴な考え方によりcall-by-needを捨てるのは現実的な案だと個人的には思う。
+ しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。
+    ここからポエム   いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。
+ 個人的に、CSとは「計算機で観測可能な現象に説明をつける」学問であると思うので、実際にHaskellという言語で観測可能な現象について圏論で説明をつけようとする営み自体が否定されることはないと思う。 計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。"/>
 
 
   </head>
@@ -70,107 +104,116 @@
       <h1>V.S. Hask圏</h1>
     </header>
     <section>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 Hask圏
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
 <p>
 Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。
-Haskellのtypeをobject, <code>hom(A,B)</code> をjudgement <code>x:A |- M:B</code> 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction <code>λx.M</code> を区別しない)。
-</p>
+Haskellのtypeをobject, <code>hom(A,B)</code> をjudgement <code>x:A |- M:B</code> 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction <code>λx.M</code> を区別しない)。</p>
 <p>
-さて基本的な結果として次のことが知られている。
-</p>
+さて基本的な結果として次のことが知られている。</p>
 <ul>
 <li>
-<p>
-<a href="https://wiki.haskell.org/Hask#Is_Hask_even_a_category.3F">Hask#Is Hask even a category?</a>
-</p>
+<p><a href="https://wiki.haskell.org/Hask#Is_Hask_even_a_category.3F">Hask#Is Hask even a category?</a></p>
 </li>
 <li>
-<p>
-<a href="http://math.andrej.com/2016/08/06/hask-is-not-a-category/comment-page-1/">Hask is not a category</a>
-</p>
+<p><a href="http://math.andrej.com/2016/08/06/hask-is-not-a-category/comment-page-1/">Hask is not a category</a></p>
 </li>
 </ul>
-<p>
-というわけでHask圏は圏にならないのでそのようなものは存在しない。
-</p>
+<p>というわけでHask圏は圏にならないのでそのようなものは存在しない。</p>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
 <h2 id="headline-2">
 Why not?
 </h2>
+<div id="outline-text-headline-2" class="outline-text-2">
 <p>
 これはundefinedというヤバイ元の存在とcall-by-needの悪魔的評価規則が合わさりこのような現象が生み出される。
-主にこの2つが悪さをしているので、この辺をどうにかできればHask categoryが作れる可能性がある。
-</p>
+主にこの2つが悪さをしているので、この辺をどうにかできればHask categoryが作れる可能性がある。</p>
+<div id="outline-container-headline-3" class="outline-3">
 <h3 id="headline-3">
 undefinedを抜く
 </h3>
+<div id="outline-text-headline-3" class="outline-text-3">
 <p>
 undefinedは「評価ができない(プログラムが正しい値を返さない)」ことを表す元で、普通は(多分)domainのbottomに対応させ、無限ループするプログラムの解釈なんかに使う。
-undefinedを抜くためにはプログラムが常に停止して値を返す必要があるので無限ループができないようにする必要がある。
-</p>
+undefinedを抜くためにはプログラムが常に停止して値を返す必要があるので無限ループができないようにする必要がある。</p>
 <p>
-とまぁ言うのは簡単でfixpointを抜けばいいだけなんだけどfixpointもないcalculusがプログラミング言語を名乗るのは片腹痛いのでこれはちょっとナシかなという気持ちになったりする。
-</p>
+とまぁ言うのは簡単でfixpointを抜けばいいだけなんだけどfixpointもないcalculusがプログラミング言語を名乗るのは片腹痛いのでこれはちょっとナシかなという気持ちになったりする。</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-3">
 <h3 id="headline-4">
 call-by-needを捨てる
 </h3>
+<div id="outline-text-headline-4" class="outline-text-3">
 <p>
 call-by-needを捨てて、call-by-valueとかcall-by-nameとかそういうやつに行くというのも1つだと思う。
-GHCのStrict拡張を入れてライブラリもStrict付けて全てビルドしなおせばそれはもうcall-by-valueになる(よね？)はずだったり、まぁcall-by-nameもcall-by-needみたいなもんやろという乱暴な考え方によりcall-by-needを捨てるのは現実的な案だと個人的には思う。
-</p>
+GHCのStrict拡張を入れてライブラリもStrict付けて全てビルドしなおせばそれはもうcall-by-valueになる(よね？)はずだったり、まぁcall-by-nameもcall-by-needみたいなもんやろという乱暴な考え方によりcall-by-needを捨てるのは現実的な案だと個人的には思う。</p>
 <p>
-しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。
-</p>
+しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-2">
 <h2 id="headline-5">
 ここからポエム
 </h2>
+<div id="outline-text-headline-5" class="outline-text-2">
 <p>
-いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。
-</p>
+いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。</p>
 <p>
 個人的に、CSとは「計算機で観測可能な現象に説明をつける」学問であると思うので、実際にHaskellという言語で観測可能な現象について圏論で説明をつけようとする営み自体が否定されることはないと思う。
-計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。
-</p>
+計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。</p>
 <p>
-実際にHaskellに限らず色々なプログラミング言語で観測可能な現象について圏論の方からそれっぽいモデルを提供するぜ的研究はあちこちで見られるので、call-by-needとかにも上手い説明を付けられる直観的で構成が大変じゃないモデルを誰か思いついてくれればよいのだけど。
-</p>
+実際にHaskellに限らず色々なプログラミング言語で観測可能な現象について圏論の方からそれっぽいモデルを提供するぜ的研究はあちこちで見られるので、call-by-needとかにも上手い説明を付けられる直観的で構成が大変じゃないモデルを誰か思いついてくれればよいのだけど。</p>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-2">
 <h2 id="headline-6">
 data &amp; codata
 </h2>
+<div id="outline-text-headline-6" class="outline-text-2">
 <p>
 HaskellのListがListかつColistであるというのは有名な話だけれど、こういうdatatypeかつcodatatypeがとれるような圏を考えるきっかけは(歴史的なことには私は詳しくないのだけれど)こういうプログラミング言語からの現象が先にあったのかな？と想像してる。
-ちなみにこのようなcategoryはalgebraically boundedと呼ばれたりします。
-</p>
+ちなみにこのようなcategoryはalgebraically boundedと呼ばれたりします。</p>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-2">
 <h2 id="headline-7">
 enrichmentの隠蔽
 </h2>
+<div id="outline-text-headline-7" class="outline-text-2">
 <p>
-関係ないのだけどHask categoryで圏論やろうとするとenrichmentが色々効いてきて困る、みたいな話をよく聞くし自分もそう思うのだけれど、実はenrichmentは結構避けられる(隠蔽できる)のかもと書いていてちょっと思った。
-</p>
+関係ないのだけどHask categoryで圏論やろうとするとenrichmentが色々効いてきて困る、みたいな話をよく聞くし自分もそう思うのだけれど、実はenrichmentは結構避けられる(隠蔽できる)のかもと書いていてちょっと思った。</p>
 <p>
 例えばFunctorのfmap methodは <code>fmap: (Functor F) =&gt; (A -&gt; B) -&gt; FA -&gt; FB</code> という形で書かれる。
 これはHaskからHask(の適当なsubcategory)へのfunctorのfmapの型になっているが、圏論的には実際は次のような形をしているはずである: <code>fmap: Hask(A,B) -&gt; Hask(FA,FB)</code> .
-そしてここでの <code>-&gt;</code> は単なるfunction(写像)、 <code>Hask(A,B)</code> の元に対して <code>Hask(FA,FB)</code> の元を対応させるものである。
-</p>
+そしてここでの <code>-&gt;</code> は単なるfunction(写像)、 <code>Hask(A,B)</code> の元に対して <code>Hask(FA,FB)</code> の元を対応させるものである。</p>
 <p>
 これだけ見るとHaskellの定義はfunctionがexponentialに化けているので、実はこのFunctorはHask-enriched functorで、Haskのhomがobjectだからというなんやかんやを考えないといけないのでは、と思うのだけれどそれは一応回避することができる。
 最初にも書いたとおりHask categoryはsyntactic categoryで、さらにjudgementとそれからできる関数を区別しないようにする。
-すると、 <code>fmap = λf. fmap f</code> はjudgement <code>f:Hask(A,B) |- fmap(f):Hask(FA,FB)</code> とみなせるので普通にfmapと思うことができる。
-</p>
+すると、 <code>fmap = λf. fmap f</code> はjudgement <code>f:Hask(A,B) |- fmap(f):Hask(FA,FB)</code> とみなせるので普通にfmapと思うことができる。</p>
 <p>
-いやまぁ本質的な部分は全てjudgementと関数を区別しないというところに押し付けられているので何も解決していないのだけれど、ちゃんとenriched category theoryで論をしなくても、 <code>-&gt;</code> とfunctionの読み替えの部分だけできれば多分基本的なcategory theoryはできると思うので、(ほとんどSetと同じやんけと思われる)enrichmentをフルで考えなくてもいいということはかなり負担を軽減してくれる、と思う。
-</p>
+いやまぁ本質的な部分は全てjudgementと関数を区別しないというところに押し付けられているので何も解決していないのだけれど、ちゃんとenriched category theoryで論をしなくても、 <code>-&gt;</code> とfunctionの読み替えの部分だけできれば多分基本的なcategory theoryはできると思うので、(ほとんどSetと同じやんけと思われる)enrichmentをフルで考えなくてもいいということはかなり負担を軽減してくれる、と思う。</p>
 <p>
 もしかしたらこの同一視を完全にformalizeするとenrichmentが出てくるかもしれないけれど、もしかしたらexponentialとfunctionの同一視(というかinterpretationがあってそれを適切な位置にかけていくだけでいけるみたいな)の部分だけで済むかもしれない？
-この辺ちゃんと考えてないのでよくわからない。
-</p>
+この辺ちゃんと考えてないのでよくわからない。</p>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-2">
 <h2 id="headline-8">
 おわりに
 </h2>
+<div id="outline-text-headline-8" class="outline-text-2">
 <p>
-だいぶポエミーな記事を書いてしまった。
-</p>
+だいぶポエミーな記事を書いてしまった。</p>
+</div>
+</div>
 </section>
     <footer>
       <hr>

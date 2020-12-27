@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,22 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="動画編集ソフトを作り始めた" />
-<meta property="og:description" content="Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。  最近日本語をかくのがめんどくさい以外の発言をしていない気がする。  1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK&#43;を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。 Rust   前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)    とりあえずメモリモデルとしてはスタックとヒープがあるということだけ分かっておけば大丈夫そう    structのフィールドに参照をもたせるとlifetime parameterにコードがまみれるのでやめたほうが良さそう    Rc&lt;RefCell&lt;T&gt;&gt; が便利(これは主にGTKを使う時に必要になったというのもある)    Rc&lt;RefCell&lt;T&gt;&gt; は確かに便利だけど hoge.borrow_mut().call(hoge.borrow()) みたいなことをするとBorrowMutError: already borrowedで実行時エラーになって死ぬので気をつけよう    参照が欲しいときはBorrow, BorrowMut, AsRef, AsMutトレイトの実装があるかを見よう    Derefトレイトは神    Fn, FnMut, FnOnceの意味がようやく分かってきた FnOnce系はちょっと気をつけたほうがいい(Option::unwrapがselfを消費するのとか)    trait, implは飽くまでインターフェイスの提供だけなのでデータの扱いはstructで行う    OOPっぽくコード書きたいときはtrait objectと動的ディスパッチの仕組みを上手く使う(果たしてこれが正しいアレなのかはよく分からん)    マクロは便利    別言語でtrailing commaで怒られると厳しい気持ちになる    if letが意外と便利    言語拡張が結構カジュアルに欲しくなるのでこのままだとnightlyしか使わなくなりそう    文字列リテラルが常に&amp;strなのは意外とパターンマッチの時にめんどくさい マジでViewPatterns拡張が欲しい マジで    大抵の他の言語でもそうなんだけどasって書くのめんどくさい    あと as (i32,i32) って書けないの割と不便    前は「ブロックをclosureや関数として切り出してくると怒られるの理不尽💢」みたいなことを思っていたのだけれど、closureや関数は複数回呼ばれる可能性がある上に呼ばれるタイミングが不明なので所有権をちゃんと考えないといけないということが分かりスッキリした    最近Derefは神だなと思うことがあり、今まで(なんでこれ型が合うんだろう〜)って思ってたところは大体Derefのおかげであることが分かったりした。  例えば hoge: Rc&lt;RefCell&lt;T&gt;&gt; に対して hoge." />
+<meta property="og:description" content="Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。
+ 最近日本語をかくのがめんどくさい以外の発言をしていない気がする。
+ 1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK&#43;を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。
+Rust   前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)
+  とりあえずメモリモデルとしてはスタックとヒープがあるということだけ分かっておけば大丈夫そう
+  structのフィールドに参照をもたせるとlifetime parameterにコードがまみれるのでやめたほうが良さそう
+  Rc&lt;RefCell&lt;T&gt;&gt; が便利(これは主にGTKを使う時に必要になったというのもある)
+  Rc&lt;RefCell&lt;T&gt;&gt; は確かに便利だけど hoge.borrow_mut().call(hoge.borrow()) みたいなことをするとBorrowMutError: already borrowedで実行時エラーになって死ぬので気をつけよう
+  参照が欲しいときはBorrow, BorrowMut, AsRef, AsMutトレイトの実装があるかを見よう
+  Derefトレイトは神
+  Fn, FnMut, FnOnceの意味がようやく分かってきた FnOnce系はちょっと気をつけたほうがいい(Option::unwrapがselfを消費するのとか)
+  trait, implは飽くまでインターフェイスの提供だけなのでデータの扱いはstructで行う
+  OOPっぽくコード書きたいときはtrait objectと動的ディスパッチの仕組みを上手く使う(果たしてこれが正しいアレなのかはよく分からん)
+  マクロは便利
+  別言語でtrailing commaで怒られると厳しい気持ちになる
+  if letが意外と便利" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/madder-start-to-create/" />
 <meta property="article:published_time" content="2018-03-04T19:21:20+09:00" />
@@ -30,17 +45,48 @@
 
 
 <meta itemprop="name" content="動画編集ソフトを作り始めた">
-<meta itemprop="description" content="Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。  最近日本語をかくのがめんどくさい以外の発言をしていない気がする。  1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK&#43;を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。 Rust   前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)    とりあえずメモリモデルとしてはスタックとヒープがあるということだけ分かっておけば大丈夫そう    structのフィールドに参照をもたせるとlifetime parameterにコードがまみれるのでやめたほうが良さそう    Rc&lt;RefCell&lt;T&gt;&gt; が便利(これは主にGTKを使う時に必要になったというのもある)    Rc&lt;RefCell&lt;T&gt;&gt; は確かに便利だけど hoge.borrow_mut().call(hoge.borrow()) みたいなことをするとBorrowMutError: already borrowedで実行時エラーになって死ぬので気をつけよう    参照が欲しいときはBorrow, BorrowMut, AsRef, AsMutトレイトの実装があるかを見よう    Derefトレイトは神    Fn, FnMut, FnOnceの意味がようやく分かってきた FnOnce系はちょっと気をつけたほうがいい(Option::unwrapがselfを消費するのとか)    trait, implは飽くまでインターフェイスの提供だけなのでデータの扱いはstructで行う    OOPっぽくコード書きたいときはtrait objectと動的ディスパッチの仕組みを上手く使う(果たしてこれが正しいアレなのかはよく分からん)    マクロは便利    別言語でtrailing commaで怒られると厳しい気持ちになる    if letが意外と便利    言語拡張が結構カジュアルに欲しくなるのでこのままだとnightlyしか使わなくなりそう    文字列リテラルが常に&amp;strなのは意外とパターンマッチの時にめんどくさい マジでViewPatterns拡張が欲しい マジで    大抵の他の言語でもそうなんだけどasって書くのめんどくさい    あと as (i32,i32) って書けないの割と不便    前は「ブロックをclosureや関数として切り出してくると怒られるの理不尽💢」みたいなことを思っていたのだけれど、closureや関数は複数回呼ばれる可能性がある上に呼ばれるタイミングが不明なので所有権をちゃんと考えないといけないということが分かりスッキリした    最近Derefは神だなと思うことがあり、今まで(なんでこれ型が合うんだろう〜)って思ってたところは大体Derefのおかげであることが分かったりした。  例えば hoge: Rc&lt;RefCell&lt;T&gt;&gt; に対して hoge.">
-<meta itemprop="datePublished" content="2018-03-04T19:21:20&#43;09:00" />
-<meta itemprop="dateModified" content="2018-03-04T19:21:20&#43;09:00" />
+<meta itemprop="description" content="Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。
+ 最近日本語をかくのがめんどくさい以外の発言をしていない気がする。
+ 1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK&#43;を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。
+Rust   前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)
+  とりあえずメモリモデルとしてはスタックとヒープがあるということだけ分かっておけば大丈夫そう
+  structのフィールドに参照をもたせるとlifetime parameterにコードがまみれるのでやめたほうが良さそう
+  Rc&lt;RefCell&lt;T&gt;&gt; が便利(これは主にGTKを使う時に必要になったというのもある)
+  Rc&lt;RefCell&lt;T&gt;&gt; は確かに便利だけど hoge.borrow_mut().call(hoge.borrow()) みたいなことをするとBorrowMutError: already borrowedで実行時エラーになって死ぬので気をつけよう
+  参照が欲しいときはBorrow, BorrowMut, AsRef, AsMutトレイトの実装があるかを見よう
+  Derefトレイトは神
+  Fn, FnMut, FnOnceの意味がようやく分かってきた FnOnce系はちょっと気をつけたほうがいい(Option::unwrapがselfを消費するのとか)
+  trait, implは飽くまでインターフェイスの提供だけなのでデータの扱いはstructで行う
+  OOPっぽくコード書きたいときはtrait objectと動的ディスパッチの仕組みを上手く使う(果たしてこれが正しいアレなのかはよく分からん)
+  マクロは便利
+  別言語でtrailing commaで怒られると厳しい気持ちになる
+  if letが意外と便利">
+<meta itemprop="datePublished" content="2018-03-04T19:21:20+09:00" />
+<meta itemprop="dateModified" content="2018-03-04T19:21:20+09:00" />
 <meta itemprop="wordCount" content="106">
 
 
 
 <meta itemprop="keywords" content="Rust,Gstreamer,GTK," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="動画編集ソフトを作り始めた"/>
-<meta name="twitter:description" content="Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。  最近日本語をかくのがめんどくさい以外の発言をしていない気がする。  1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK&#43;を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。 Rust   前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)    とりあえずメモリモデルとしてはスタックとヒープがあるということだけ分かっておけば大丈夫そう    structのフィールドに参照をもたせるとlifetime parameterにコードがまみれるのでやめたほうが良さそう    Rc&lt;RefCell&lt;T&gt;&gt; が便利(これは主にGTKを使う時に必要になったというのもある)    Rc&lt;RefCell&lt;T&gt;&gt; は確かに便利だけど hoge.borrow_mut().call(hoge.borrow()) みたいなことをするとBorrowMutError: already borrowedで実行時エラーになって死ぬので気をつけよう    参照が欲しいときはBorrow, BorrowMut, AsRef, AsMutトレイトの実装があるかを見よう    Derefトレイトは神    Fn, FnMut, FnOnceの意味がようやく分かってきた FnOnce系はちょっと気をつけたほうがいい(Option::unwrapがselfを消費するのとか)    trait, implは飽くまでインターフェイスの提供だけなのでデータの扱いはstructで行う    OOPっぽくコード書きたいときはtrait objectと動的ディスパッチの仕組みを上手く使う(果たしてこれが正しいアレなのかはよく分からん)    マクロは便利    別言語でtrailing commaで怒られると厳しい気持ちになる    if letが意外と便利    言語拡張が結構カジュアルに欲しくなるのでこのままだとnightlyしか使わなくなりそう    文字列リテラルが常に&amp;strなのは意外とパターンマッチの時にめんどくさい マジでViewPatterns拡張が欲しい マジで    大抵の他の言語でもそうなんだけどasって書くのめんどくさい    あと as (i32,i32) って書けないの割と不便    前は「ブロックをclosureや関数として切り出してくると怒られるの理不尽💢」みたいなことを思っていたのだけれど、closureや関数は複数回呼ばれる可能性がある上に呼ばれるタイミングが不明なので所有権をちゃんと考えないといけないということが分かりスッキリした    最近Derefは神だなと思うことがあり、今まで(なんでこれ型が合うんだろう〜)って思ってたところは大体Derefのおかげであることが分かったりした。  例えば hoge: Rc&lt;RefCell&lt;T&gt;&gt; に対して hoge."/>
+<meta name="twitter:description" content="Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。
+ 最近日本語をかくのがめんどくさい以外の発言をしていない気がする。
+ 1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK&#43;を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。
+Rust   前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)
+  とりあえずメモリモデルとしてはスタックとヒープがあるということだけ分かっておけば大丈夫そう
+  structのフィールドに参照をもたせるとlifetime parameterにコードがまみれるのでやめたほうが良さそう
+  Rc&lt;RefCell&lt;T&gt;&gt; が便利(これは主にGTKを使う時に必要になったというのもある)
+  Rc&lt;RefCell&lt;T&gt;&gt; は確かに便利だけど hoge.borrow_mut().call(hoge.borrow()) みたいなことをするとBorrowMutError: already borrowedで実行時エラーになって死ぬので気をつけよう
+  参照が欲しいときはBorrow, BorrowMut, AsRef, AsMutトレイトの実装があるかを見よう
+  Derefトレイトは神
+  Fn, FnMut, FnOnceの意味がようやく分かってきた FnOnce系はちょっと気をつけたほうがいい(Option::unwrapがselfを消費するのとか)
+  trait, implは飽くまでインターフェイスの提供だけなのでデータの扱いはstructで行う
+  OOPっぽくコード書きたいときはtrait objectと動的ディスパッチの仕組みを上手く使う(果たしてこれが正しいアレなのかはよく分からん)
+  マクロは便利
+  別言語でtrailing commaで怒られると厳しい気持ちになる
+  if letが意外と便利"/>
 
 
   </head>
@@ -71,227 +117,164 @@
     </header>
     <section>
 <p>
-Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。
-</p>
+Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。</p>
 <p>
-最近日本語をかくのがめんどくさい以外の発言をしていない気がする。
-</p>
+最近日本語をかくのがめんどくさい以外の発言をしていない気がする。</p>
 <p>
-1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK+を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。
-</p>
+1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK+を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。</p>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 Rust
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
 <p>
-前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)
-</p>
+前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)</p>
 <ul>
 <li>
-<p>
-とりあえずメモリモデルとしてはスタックとヒープがあるということだけ分かっておけば大丈夫そう
-</p>
+<p>とりあえずメモリモデルとしてはスタックとヒープがあるということだけ分かっておけば大丈夫そう</p>
 </li>
 <li>
-<p>
-structのフィールドに参照をもたせるとlifetime parameterにコードがまみれるのでやめたほうが良さそう
-</p>
+<p>structのフィールドに参照をもたせるとlifetime parameterにコードがまみれるのでやめたほうが良さそう</p>
 </li>
 <li>
-<p>
-<code class="verbatim">Rc&lt;RefCell&lt;T&gt;&gt;</code> が便利(これは主にGTKを使う時に必要になったというのもある)
-</p>
+<p><code class="verbatim">Rc&lt;RefCell&lt;T&gt;&gt;</code> が便利(これは主にGTKを使う時に必要になったというのもある)</p>
 </li>
 <li>
-<p>
-<code class="verbatim">Rc&lt;RefCell&lt;T&gt;&gt;</code> は確かに便利だけど <code class="verbatim">hoge.borrow_mut().call(hoge.borrow())</code> みたいなことをするとBorrowMutError: already borrowedで実行時エラーになって死ぬので気をつけよう
-</p>
+<p><code class="verbatim">Rc&lt;RefCell&lt;T&gt;&gt;</code> は確かに便利だけど <code class="verbatim">hoge.borrow_mut().call(hoge.borrow())</code> みたいなことをするとBorrowMutError: already borrowedで実行時エラーになって死ぬので気をつけよう</p>
 </li>
 <li>
-<p>
-参照が欲しいときはBorrow, BorrowMut, AsRef, AsMutトレイトの実装があるかを見よう
-</p>
+<p>参照が欲しいときはBorrow, BorrowMut, AsRef, AsMutトレイトの実装があるかを見よう</p>
 </li>
 <li>
-<p>
-Derefトレイトは神
-</p>
+<p>Derefトレイトは神</p>
 </li>
 <li>
-<p>
-Fn, FnMut, FnOnceの意味がようやく分かってきた FnOnce系はちょっと気をつけたほうがいい(Option::unwrapがselfを消費するのとか)
-</p>
+<p>Fn, FnMut, FnOnceの意味がようやく分かってきた FnOnce系はちょっと気をつけたほうがいい(Option::unwrapがselfを消費するのとか)</p>
 </li>
 <li>
-<p>
-trait, implは飽くまでインターフェイスの提供だけなのでデータの扱いはstructで行う
-</p>
+<p>trait, implは飽くまでインターフェイスの提供だけなのでデータの扱いはstructで行う</p>
 </li>
 <li>
-<p>
-OOPっぽくコード書きたいときはtrait objectと動的ディスパッチの仕組みを上手く使う(果たしてこれが正しいアレなのかはよく分からん)
-</p>
+<p>OOPっぽくコード書きたいときはtrait objectと動的ディスパッチの仕組みを上手く使う(果たしてこれが正しいアレなのかはよく分からん)</p>
 </li>
 <li>
-<p>
-マクロは便利
-</p>
+<p>マクロは便利</p>
 </li>
 <li>
-<p>
-別言語でtrailing commaで怒られると厳しい気持ちになる
-</p>
+<p>別言語でtrailing commaで怒られると厳しい気持ちになる</p>
 </li>
 <li>
-<p>
-if letが意外と便利
-</p>
+<p>if letが意外と便利</p>
 </li>
 <li>
-<p>
-言語拡張が結構カジュアルに欲しくなるのでこのままだとnightlyしか使わなくなりそう
-</p>
+<p>言語拡張が結構カジュアルに欲しくなるのでこのままだとnightlyしか使わなくなりそう</p>
 </li>
 <li>
-<p>
-文字列リテラルが常に&amp;strなのは意外とパターンマッチの時にめんどくさい マジでViewPatterns拡張が欲しい マジで
-</p>
+<p>文字列リテラルが常に&amp;strなのは意外とパターンマッチの時にめんどくさい マジでViewPatterns拡張が欲しい マジで</p>
 </li>
 <li>
-<p>
-大抵の他の言語でもそうなんだけどasって書くのめんどくさい
-</p>
+<p>大抵の他の言語でもそうなんだけどasって書くのめんどくさい</p>
 </li>
 <li>
-<p>
-あと <code class="verbatim">as (i32,i32)</code> って書けないの割と不便
-</p>
+<p>あと <code class="verbatim">as (i32,i32)</code> って書けないの割と不便</p>
 </li>
 <li>
-<p>
-前は「ブロックをclosureや関数として切り出してくると怒られるの理不尽💢」みたいなことを思っていたのだけれど、closureや関数は複数回呼ばれる可能性がある上に呼ばれるタイミングが不明なので所有権をちゃんと考えないといけないということが分かりスッキリした
-</p>
+<p>前は「ブロックをclosureや関数として切り出してくると怒られるの理不尽💢」みたいなことを思っていたのだけれど、closureや関数は複数回呼ばれる可能性がある上に呼ばれるタイミングが不明なので所有権をちゃんと考えないといけないということが分かりスッキリした</p>
 </li>
 </ul>
+<p>最近Derefは神だなと思うことがあり、今まで(なんでこれ型が合うんだろう〜)って思ってたところは大体Derefのおかげであることが分かったりした。</p>
 <p>
-最近Derefは神だなと思うことがあり、今まで(なんでこれ型が合うんだろう〜)って思ってたところは大体Derefのおかげであることが分かったりした。
-</p>
+例えば <code class="verbatim">hoge: Rc&lt;RefCell&lt;T&gt;&gt;</code> に対して <code class="verbatim">hoge.borrow(): &amp;T</code> で一発でTへの参照が得られるんだけど、これは <code class="verbatim">(*hoge).borrow()</code> が勝手に補われており、更にRcのDerefの実装は中身への参照を取り出すようになってるからいい感じに出来るというのがある。</p>
 <p>
-例えば <code class="verbatim">hoge: Rc&lt;RefCell&lt;T&gt;&gt;</code> に対して <code class="verbatim">hoge.borrow(): &amp;T</code> で一発でTへの参照が得られるんだけど、これは <code class="verbatim">(*hoge).borrow()</code> が勝手に補われており、更にRcのDerefの実装は中身への参照を取り出すようになってるからいい感じに出来るというのがある。
-</p>
+他にも、Rustは基本的にexplicitな言語であるけれどDerefだけは暗黙に色々やってくれるのでこいつのおかげで知らぬ間に記述が楽になってるところがあったりした。便利っぽい。</p>
 <p>
-他にも、Rustは基本的にexplicitな言語であるけれどDerefだけは暗黙に色々やってくれるのでこいつのおかげで知らぬ間に記述が楽になってるところがあったりした。便利っぽい。
-</p>
-<p>
-思ったよりいいたいことがなかった。最近Rustの勉強と言うよりGTKとかの勉強に時間もコストも取られてる感あるからかなぁ。
-</p>
+思ったよりいいたいことがなかった。最近Rustの勉強と言うよりGTKとかの勉強に時間もコストも取られてる感あるからかなぁ。</p>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
 <h2 id="headline-2">
 GTK+
 </h2>
+<div id="outline-text-headline-2" class="outline-text-2">
 <p>
-gtk-rsというプロジェクトがありGTK関係のライブラリを色々提供してくれているので使ってる。たまに対応してないAPIがあるのとドキュメントにfeatureの指定が書いてないのでたまにハマる。
-</p>
+gtk-rsというプロジェクトがありGTK関係のライブラリを色々提供してくれているので使ってる。たまに対応してないAPIがあるのとドキュメントにfeatureの指定が書いてないのでたまにハマる。</p>
 <ul>
 <li>
-<p>
-gtk: gtkのガワ widgetとかを提供する
-</p>
+<p>gtk: gtkのガワ widgetとかを提供する</p>
 </li>
 <li>
-<p>
-gdk: 中身？ 内部実装のあれこれを提供する
-</p>
+<p>gdk: 中身？ 内部実装のあれこれを提供する</p>
 </li>
 <li>
-<p>
-cairo: 2Dグラフィックスライブラリ
-</p>
+<p>cairo: 2Dグラフィックスライブラリ</p>
 </li>
 <li>
-<p>
-pango: フォントレンダリングライブラリ
-</p>
+<p>pango: フォントレンダリングライブラリ</p>
 </li>
 <li>
-<p>
-pixbuf: cairo等で扱えるpixel buffer
-</p>
+<p>pixbuf: cairo等で扱えるpixel buffer</p>
 </li>
 <li>
-<p>
-githubのイシューにもあるんだけど登録するcallbackがほぼ&#39;staticを要求するのでコード内の状態をcallback越しに持っていけない それを解決するために <code class="verbatim">Rc&lt;RefCell&lt;S&gt;&gt;</code> が必要になる
-</p>
+<p>githubのイシューにもあるんだけど登録するcallbackがほぼ&#39;staticを要求するのでコード内の状態をcallback越しに持っていけない それを解決するために <code class="verbatim">Rc&lt;RefCell&lt;S&gt;&gt;</code> が必要になる</p>
 </li>
 <li>
-<p>
-widgetが色々あるようで実はそんなにない ちょっと凝ったことするなら自作するしかない
-</p>
+<p>widgetが色々あるようで実はそんなにない ちょっと凝ったことするなら自作するしかない</p>
 </li>
 <li>
-<p>
-widgetは内部状態を持っていてそれ自体がMVCみたいな感じになっているのでデータの持ち方を中央集権的にしようとすると結構めんどくさい
-</p>
+<p>widgetは内部状態を持っていてそれ自体がMVCみたいな感じになっているのでデータの持ち方を中央集権的にしようとすると結構めんどくさい</p>
 </li>
 <li>
-<p>
-Elmの人も言っていたが何でもコンポーネントは(ライブラリは作りやすいけど)あんまりいい設計ではない気がする ViewはModelからの単なる関数にしたほうが素直
-</p>
+<p>Elmの人も言っていたが何でもコンポーネントは(ライブラリは作りやすいけど)あんまりいい設計ではない気がする ViewはModelからの単なる関数にしたほうが素直</p>
 </li>
 <li>
-<p>
-ドキュメントが豊富なので頑張って読めば意外となんとかなる(ただし本家以外は基本アテにならない)
-</p>
+<p>ドキュメントが豊富なので頑張って読めば意外となんとかなる(ただし本家以外は基本アテにならない)</p>
 </li>
 </ul>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-2">
 <h2 id="headline-3">
 Gstreamer
 </h2>
+<div id="outline-text-headline-3" class="outline-text-2">
 <p>
-gstreamer-rsというライブラリがある。これもたまに対応してないAPIが(ry
-</p>
+gstreamer-rsというライブラリがある。これもたまに対応してないAPIが(ry</p>
 <p>
-そもそもgstreamerは設計が素直だけど結構独自概念も多くて複雑なので公式のドキュメントとかを頑張って読むしかない。
-</p>
+そもそもgstreamerは設計が素直だけど結構独自概念も多くて複雑なので公式のドキュメントとかを頑張って読むしかない。</p>
 <ul>
 <li>
-<p>
-基本的には用意されているElementを組み合わせていくだけ
-</p>
+<p>基本的には用意されているElementを組み合わせていくだけ</p>
 </li>
 <li>
-<p>
-とにかく対応している動画や音声のコーデックが豊富なのが強い 本当に強い
-</p>
+<p>とにかく対応している動画や音声のコーデックが豊富なのが強い 本当に強い</p>
 </li>
 <li>
-<p>
-GdkPixbufSinkというのがありこれで動画をpixbufに吐いたり出来るのでGTKの連携は意外と簡単
-</p>
+<p>GdkPixbufSinkというのがありこれで動画をpixbufに吐いたり出来るのでGTKの連携は意外と簡単</p>
 </li>
 <li>
-<p>
-やってきたデータをプログラム側で受け取ったり逆にプログラムからデータをgstreamerへ流したりするのはAppSrc, AppSink辺りを使う
-</p>
+<p>やってきたデータをプログラム側で受け取ったり逆にプログラムからデータをgstreamerへ流したりするのはAppSrc, AppSink辺りを使う</p>
 </li>
 </ul>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
 <h2 id="headline-4">
 関係ない話
 </h2>
+<div id="outline-text-headline-4" class="outline-text-2">
 <p>
-早くリリースしたい。
-</p>
+早くリリースしたい。</p>
 <p>
-今回は流石にプロジェクトマネジメントとかも割と真面目に頑張っている(の割に納期とか設定してないけど)しあとRustやGTKやらが初めてだけど意外となんとかなっているためにアプリケーションも形になってきているのでリリースはそのうち出来るんじゃないだろうか。
-</p>
+今回は流石にプロジェクトマネジメントとかも割と真面目に頑張っている(の割に納期とか設定してないけど)しあとRustやGTKやらが初めてだけど意外となんとかなっているためにアプリケーションも形になってきているのでリリースはそのうち出来るんじゃないだろうか。</p>
 <p>
 とはいえソフトウェア作るのって大変だなという感じ。動画編集ソフトなんて実装するべき機能が無限にあるしマジかという感じ。
-某有名フリーソフトを倒せるように頑張りたい。
-</p>
+某有名フリーソフトを倒せるように頑張りたい。</p>
 <p>
-あとここまで書いた記事を読み返すといかに私が日本語を書きたくないかがよく分かると思う。
-</p>
+あとここまで書いた記事を読み返すといかに私が日本語を書きたくないかがよく分かると思う。</p>
 <p>
-言語能力退化し過ぎでは…とちょっと不安になった。
-</p>
+言語能力退化し過ぎでは…とちょっと不安になった。</p>
+</div>
+</div>
 </section>
     <footer>
       <hr>

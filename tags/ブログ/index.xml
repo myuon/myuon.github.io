@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>ブログ on The curse of λ</title>
@@ -6,16 +5,17 @@
     <description>Recent content in ブログ on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
-    <lastBuildDate>Tue, 23 Oct 2018 22:53:56 +0900</lastBuildDate><atom:link href="https://myuon.github.io/tags/%E3%83%96%E3%83%AD%E3%82%B0/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>ブログのテーマ(とGitの管理方法)を変えた</title>
-      <link>https://myuon.github.io/posts/blog-simplicity/</link>
-      <pubDate>Tue, 23 Oct 2018 22:53:56 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/blog-simplicity/</guid>
-      <description>Git管理が色々あれなことになっており記事を書くのがとても大変なことになっていたので直したかった、ついでにテーマを変えた。
+    <lastBuildDate>Tue, 23 Oct 2018 22:53:56 +0900</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/%E3%83%96%E3%83%AD%E3%82%B0/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>ブログのテーマ(とGitの管理方法)を変えた</title>
+        <link>https://myuon.github.io/posts/blog-simplicity/</link>
+        <pubDate>Tue, 23 Oct 2018 22:53:56 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/blog-simplicity/</guid>
+        <description>Git管理が色々あれなことになっており記事を書くのがとても大変なことになっていたので直したかった、ついでにテーマを変えた。
 テーマはもともと自作だったのだけれどまぁ私はデザイナーではないのであるやつに乗っかる方が色々便利だということが分かったりした(自分で書くと、状況によって変な空白が出たりとかしがち)。
 テーマを変えた Simplicity: https://github.com/eshlox/simplicity
 というテーマにしました。シンプルですっきりだけど普通に見やすいと思う(シンプルで見にくいテーマも多いのでこういうテーマは貴重)
@@ -26,7 +26,7 @@ Gitの管理方法を変えた こっちがむしろメイン。今使ってる�
 というわけで、よくわからないsubmoduleの管理などせずとも(gitのsubmoduleって結構難しい機能だと思う、いつもいまいちよくわからんって言って使ってたし結構気をつかわないといけなかったりする)、簡単にHTMLの管理ができるしpublishも1コマンドでできるしで便利～になった。
 実はこの辺の問題があって最近はブログ記事を書けていなかったのだけれど、環境をえいやと整えたのでまたなんか書いていきたいと思います。
  そういえば私は飽きっぽいので今までいろいろなプロジェクトを始めては途中で飽きてやめたりしてきたが(ここ7年くらいでGitHubリポジトリの数は58になった)、最近は昔やってたやつを引き継いでまた始めたりということもちょくちょくやるようになったりしている気がする。良い傾向だし、そういう感じで過去に挑戦したプロジェクトのサルベージやら供養やらも自然にやっていけたらいいなと思ったり思わなかったり。</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

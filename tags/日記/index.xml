@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>日記 on The curse of λ</title>
@@ -6,16 +5,17 @@
     <description>Recent content in 日記 on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
-    <lastBuildDate>Sun, 14 Jan 2018 23:14:19 +0900</lastBuildDate><atom:link href="https://myuon.github.io/tags/%E6%97%A5%E8%A8%98/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>プロジェクトマネジメントを始めたい</title>
-      <link>https://myuon.github.io/posts/want-to-start-project-management/</link>
-      <pubDate>Sun, 14 Jan 2018 23:14:19 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/want-to-start-project-management/</guid>
-      <description>資料    担当になったら知っておきたい「プロジェクトマネジメント」実践講座: 2ヶ月前くらいに買って読んだ
+    <lastBuildDate>Sun, 14 Jan 2018 23:14:19 +0900</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/%E6%97%A5%E8%A8%98/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>プロジェクトマネジメントを始めたい</title>
+        <link>https://myuon.github.io/posts/want-to-start-project-management/</link>
+        <pubDate>Sun, 14 Jan 2018 23:14:19 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/want-to-start-project-management/</guid>
+        <description>資料    担当になったら知っておきたい「プロジェクトマネジメント」実践講座: 2ヶ月前くらいに買って読んだ
   ゲーム開発 プロジェクトマネジメント講座: スクエニの資料 具体例がゲーム開発だけど内容は業種を問わないと思う
     プロジェクトマネジメント実践講座を読んだ   内容は大変丁寧な感じでモチベーションと具体的な例を上げつつPMの重要性、あと必要な各種書類や仕事の詳しい日本語による解説という感じ。 それなりにページ数あるけど圧縮したら15ページ+図表くらいで収まる気がする(チートシートほしい) モチベーションを十分理解している人は安心して読み飛ばしていいと思う。
  個人的な感想
@@ -30,15 +30,14 @@ WBS &amp;amp; ガントチャート   各node Xに対しXを作るのに必要�
  これらを作るのは自然なことなのだけど、問題は実際の作業の間には依存関係があることで、これを上手く管理するのは結構難しい。
  基本は依存関係に沿ってトポロジカルソートして作業を進めればよいがそういうことが簡単にできるツールって意外と少ないよな 本ではExcelって言ってたが果たして
   重要度-時間分割   これはスクエニの資料の方にあった話で、各作業に 重要度: 高/中/低 および かかる時間: 大/中/小 をそれぞれ割り振って3x3のボードに配置する。 手を付けるべき作業によい感じに優先順位を割り振るときに便利そう。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>V.S. Hask圏</title>
-      <link>https://myuon.github.io/posts/versus-hask-category/</link>
-      <pubDate>Fri, 05 Jan 2018 22:52:56 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/versus-hask-category/</guid>
-      <description>Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
+      <item>
+        <title>V.S. Hask圏</title>
+        <link>https://myuon.github.io/posts/versus-hask-category/</link>
+        <pubDate>Fri, 05 Jan 2018 22:52:56 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/versus-hask-category/</guid>
+        <description>Hask圏   Haskellをラムダ計算とみなした時のsyntactic categoryをHask圏というのがよく言われる定義である(と思う)。 Haskellのtypeをobject, hom(A,B) をjudgement x:A |- M:B 全体(を適当な同値関係で割ったもの)とみなして圏を作る(このときしばしばjudgementとこのjudgementから作ったfunction λx.M を区別しない)。
  さて基本的な結果として次のことが知られている。
   Hask#Is Hask even a category?
   Hask is not a category
@@ -50,15 +49,14 @@ undefinedを抜く   undefinedは「評価ができない(プログラムが正�
  しかしcall-by-needではないHaskellはそれはもうHaskellなんですか(反語)ということもあるのでアイデンティティを捨てる勇気が必要かもしれない。
     ここからポエム   いずれにせよHaskellという純粋関数型プログラミング言語でHask圏を考えるというのは無理があるということが分かるのだけれど、じゃあHask圏についてcomputer science的に意味がないかというと個人的にはそんなことはないと言いたかった。
  個人的に、CSとは「計算機で観測可能な現象に説明をつける」学問であると思うので、実際にHaskellという言語で観測可能な現象について圏論で説明をつけようとする営み自体が否定されることはないと思う。 計算機が発明されて間もないからなのか人類が遅れてるのかはわからないけれど今は計算機の説明を付けるために用意した圏論的なモデルが上手くモデルとして機能していない(モデルが現象の構造を反映する力が弱い)のかもしれないけれど、とりあえず数学的にわかりやすいモデルを取ってきていくつかの技術的な難しさ(categoryにならないとかね)を無視した上で似たような現象をシミュレーション出来ないかを調べている段階だと思えばいいんじゃないかなと。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>2017年振り返り</title>
-      <link>https://myuon.github.io/posts/end-of-2017/</link>
-      <pubDate>Sun, 31 Dec 2017 20:24:14 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/end-of-2017/</guid>
-      <description>2017年が終わりそうなので(去年の記事)。
+      <item>
+        <title>2017年振り返り</title>
+        <link>https://myuon.github.io/posts/end-of-2017/</link>
+        <pubDate>Sun, 31 Dec 2017 20:24:14 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/end-of-2017/</guid>
+        <description>2017年が終わりそうなので(去年の記事)。
 アウトプット  プログラミング&amp;amp;定理証明   github見たら意外と色々やってた。 古い順に
   DOTO: todoリストをアレするwebアプリ。これは就活用に作ったような気がする。TypescriptとReactを使ってやっぱクライアントサイドはつらいって思った記憶。今ならElmとかで作ると思う。
   CatQ: Coqによる圏論の形式化。Setoidベースでやったけど、圏論側で仮定したくなる公理の妥当性がCoqの上でも妥当なのかとかが無限に気になりやっぱ真面目にやるなら依存型使うのはダメだなと悟って放棄。
@@ -74,7 +72,7 @@ undefinedを抜く   undefinedは「評価ができない(プログラムが正�
   あと開発中のゲーム(最近開発してないけど)もあった。sdlight/widxが真面目に動くようになれば再開したいけどどうだろう。
   絵   自分の中で二次創作という行為への折り合いが付き、二次創作を行えるようになったおかげか特に10月以降はかなり積極的に絵を描くようになった。 多分今年が一番絵が上手くなった(画力向上よりも魅せ方・道具の使い方的な意味で)1年だった気がする。
  あとブログ漁ってたら今年の初めに新しいペンタブを買ったようなのでそのおかげもかなりある。 というか、今までラップトップしか持ってなかったのをデスクトップPCを買うのに合わせて21.</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

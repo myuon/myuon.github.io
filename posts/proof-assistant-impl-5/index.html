@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,14 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Proof Assistantを作る・実装編 その5" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 22日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。 Environment   proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。 説明していませんでしたが一応紹介しておきます。  Claire.Env data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&gt; Argument -&gt; [Judgement] -&gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&gt; [Decl]) }   上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。  また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。  具体的には、 theorem id: a ==&gt; a proof ." />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
+  Proof Assistant 「Claire」の実装について説明していきます。
+ リポジトリはこちら: myuon/claire
+ 機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
+Environment   proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。 説明していませんでしたが一応紹介しておきます。
+ Claire.Env
+data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&gt; Argument -&gt; [Judgement] -&gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&gt; [Decl]) }   上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。
+ また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-5/" />
 <meta property="article:published_time" content="2017-12-22T00:02:50+09:00" />
@@ -30,17 +37,32 @@
 
 
 <meta itemprop="name" content="Proof Assistantを作る・実装編 その5">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 22日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。 Environment   proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。 説明していませんでしたが一応紹介しておきます。  Claire.Env data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&gt; Argument -&gt; [Judgement] -&gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&gt; [Decl]) }   上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。  また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。  具体的には、 theorem id: a ==&gt; a proof .">
-<meta itemprop="datePublished" content="2017-12-22T00:02:50&#43;09:00" />
-<meta itemprop="dateModified" content="2017-12-22T00:02:50&#43;09:00" />
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
+  Proof Assistant 「Claire」の実装について説明していきます。
+ リポジトリはこちら: myuon/claire
+ 機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
+Environment   proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。 説明していませんでしたが一応紹介しておきます。
+ Claire.Env
+data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&gt; Argument -&gt; [Judgement] -&gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&gt; [Decl]) }   上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。
+ また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。">
+<meta itemprop="datePublished" content="2017-12-22T00:02:50+09:00" />
+<meta itemprop="dateModified" content="2017-12-22T00:02:50+09:00" />
 <meta itemprop="wordCount" content="932">
 
 
 
 <meta itemprop="keywords" content="AdC2017,定理証明,Haskell," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Proof Assistantを作る・実装編 その5"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 22日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。 Environment   proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。 説明していませんでしたが一応紹介しておきます。  Claire.Env data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&gt; Argument -&gt; [Judgement] -&gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&gt; [Decl]) }   上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。  また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。  具体的には、 theorem id: a ==&gt; a proof ."/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
+  Proof Assistant 「Claire」の実装について説明していきます。
+ リポジトリはこちら: myuon/claire
+ 機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
+Environment   proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。 説明していませんでしたが一応紹介しておきます。
+ Claire.Env
+data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&gt; Argument -&gt; [Judgement] -&gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&gt; [Decl]) }   上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。
+ また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。"/>
 
 
   </head>
@@ -71,29 +93,25 @@
     </header>
     <section>
 <p>
-<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 22日目の記事です。</strong>
-</p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 22日目の記事です。</strong></p>
 <hr>
 <p>
-Proof Assistant 「Claire」の実装について説明していきます。
-</p>
+Proof Assistant 「Claire」の実装について説明していきます。</p>
 <p>
-リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a>
-</p>
+リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a></p>
 <p>
 機能まででproofcheckerのコア機能については説明しました。
-今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
-</p>
+今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。</p>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 Environment
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
 <p>
 proofcheckerは環境とよばれる状態をもっていて、ここに証明した定理などを格納しています。
-説明していませんでしたが一応紹介しておきます。
-</p>
+説明していませんでしたが一応紹介しておきます。</p>
 <p>
-<a href="https://github.com/myuon/claire/blob/master/src/Claire/Env.hs">Claire.Env</a>
-</p>
+<a href="https://github.com/myuon/claire/blob/master/src/Claire/Env.hs">Claire.Env</a></p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">Env</span>
     <span class="ow">=</span> <span class="kt">Env</span>
@@ -105,14 +123,11 @@ proofcheckerは環境とよばれる状態をもっていて、ここに証明�
     <span class="p">}</span></code></pre></div>
 </div>
 <p>
-上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。
-</p>
+上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。</p>
 <p>
-また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。
-</p>
+また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。</p>
 <p>
-具体的には、
-</p>
+具体的には、</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">theorem</span> <span class="n">id</span><span class="kt">:</span> <span class="n">a</span> <span class="o">==&gt;</span> <span class="n">a</span>
   <span class="n">proof</span>
@@ -125,28 +140,26 @@ proofcheckerは環境とよばれる状態をもっていて、ここに証明�
 </div>
 <p>
 変数に?をつけただけじゃん、というのはまぁそうなのですが、パーサーの定義により変数名に?は使えないのでこの変数はユーザーからアクセすることは出来ません。
-これを具体化するにはuseコマンドやinstコマンドを使う必要があります。
-</p>
+これを具体化するにはuseコマンドやinstコマンドを使う必要があります。</p>
 <p>
-定理を証明して環境に追加、と一口で言ってもこのような処理が行われます。
-</p>
+定理を証明して環境に追加、と一口で言ってもこのような処理が行われます。</p>
 <p>
 このgeneralize自体は、当然ながら別に必ずしも必要ではありませんが、このようにしておくことで変数の書き換えという頻繁に発生するユーザーの操作の手間を軽減できます。
-あらゆる命題にForallを付けてくださいということにしてもまぁよいのですが、aを変数とする時に <code>P(a)</code> の証明図の存在と <code>Forall a. P(a)</code> の証明図の存在はメタロジックでは同値なのでコマンドでサポートしてあげても良いでしょうということです。
-</p>
+あらゆる命題にForallを付けてくださいということにしてもまぁよいのですが、aを変数とする時に <code>P(a)</code> の証明図の存在と <code>Forall a. P(a)</code> の証明図の存在はメタロジックでは同値なのでコマンドでサポートしてあげても良いでしょうということです。</p>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
 <h2 id="headline-2">
 Type System
 </h2>
+<div id="outline-text-headline-2" class="outline-text-2">
 <p>
-simply-typedです。以上。
-</p>
+simply-typedです。以上。</p>
 <p>
 で分かる人には分かると思うんですが別に面白いことは何もないです。
-ただしFOLはsortが2つ、FormulaとTermとあり、それぞれに型が付きます。Formulaはprop型しかないのでまぁ簡単ですが、命題変数はある型のTermを受け取ってprop型を返すような関数とみなします。
-</p>
+ただしFOLはsortが2つ、FormulaとTermとあり、それぞれに型が付きます。Formulaはprop型しかないのでまぁ簡単ですが、命題変数はある型のTermを受け取ってprop型を返すような関数とみなします。</p>
 <p>
-具体的には、
-</p>
+具体的には、</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="c1">-- Formulaの型は全部prop</span>
   <span class="p">(</span><span class="kt">:/\:</span><span class="p">)</span> <span class="ow">::</span> <span class="n">prop</span> <span class="ow">-&gt;</span> <span class="n">prop</span> <span class="ow">-&gt;</span> <span class="n">prop</span>
@@ -160,17 +173,16 @@ simply-typedです。以上。
   <span class="c1">-- みたいになる</span></code></pre></div>
 </div>
 <p>
-さらにTermについては普通にラムダ式が使えるので色んな型が来る可能性があるので、ちゃんと型チェックしないと不便そうです。
-</p>
+さらにTermについては普通にラムダ式が使えるので色んな型が来る可能性があるので、ちゃんと型チェックしないと不便そうです。</p>
+<div id="outline-container-headline-3" class="outline-3">
 <h3 id="headline-3">
 Type Definition
 </h3>
+<div id="outline-text-headline-3" class="outline-text-3">
 <p>
-simply-typedなので型はfunction type、組み込みのprop、あとはコンスタントです。
-</p>
+simply-typedなので型はfunction type、組み込みのprop、あとはコンスタントです。</p>
 <p>
-<a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/FOL.hs">Claire.Syntax.FOL</a>
-</p>
+<a href="https://github.com/myuon/claire/blob/master/src/Claire/Syntax/FOL.hs">Claire.Syntax.FOL</a></p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">TypeForm</span> <span class="n">a</span>
     <span class="ow">=</span> <span class="kt">VarT</span> <span class="n">a</span>
@@ -182,11 +194,9 @@ simply-typedなので型はfunction type、組み込みのprop、あとはコン
   <span class="kr">type</span> <span class="kt">Type</span> <span class="ow">=</span> <span class="kt">TypeForm</span> <span class="kt">Ident</span></code></pre></div>
 </div>
 <p>
-syntaxはIsabelleに合わせ、型変数は前にクォートを付けて <code>&#39;a</code> のように、関数は <code>=&gt;</code> 、propはpropそのまま、それ以外はconTとしてパースされます。
-</p>
+syntaxはIsabelleに合わせ、型変数は前にクォートを付けて <code>&#39;a</code> のように、関数は <code>=&gt;</code> 、propはpropそのまま、それ以外はconTとしてパースされます。</p>
 <p>
-termは型を付けて一々宣言することでしか定義できません。さらにdatatype宣言的なものもないので、inductionは手動で(!)公理として追加することになります。
-</p>
+termは型を付けて一々宣言することでしか定義できません。さらにdatatype宣言的なものもないので、inductionは手動で(!)公理として追加することになります。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  constant true : bool
   constant false : bool
@@ -194,11 +204,9 @@ termは型を付けて一々宣言することでしか定義できません。�
   axiom bool_induction: P(true) ==&gt; P(false) ==&gt; P(b)</code></pre></div>
 </div>
 <p>
-不便ですがまぁ理論的には何の問題もないのでいいことにします(よくない)。
-</p>
+不便ですがまぁ理論的には何の問題もないのでいいことにします(よくない)。</p>
 <p>
-typecheck自体は上のようにconstant宣言した時、axiomとtheoremで命題を宣言した時などに走ります。
-</p>
+typecheck自体は上のようにconstant宣言した時、axiomとtheoremで命題を宣言した時などに走ります。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">    <span class="kr">let</span> <span class="n">typecheck</span> <span class="n">fml</span> <span class="n">u</span> <span class="n">k</span> <span class="ow">=</span> <span class="kr">do</span> <span class="p">{</span>
       <span class="n">env</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span><span class="p">;</span>
@@ -214,21 +222,23 @@ typecheck自体は上のようにconstant宣言した時、axiomとtheoremで命
       <span class="kt">ThmD</span> <span class="n">idx</span> <span class="n">fml</span> <span class="p">(</span><span class="kt">Proof</span> <span class="n">coms</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">typecheck</span> <span class="n">fml</span> <span class="kt">Prop</span> <span class="o">$</span> <span class="o">...</span></code></pre></div>
 </div>
 <p>
-みたいにしていました。
-</p>
+みたいにしていました。</p>
 <p>
 typechecker(type inference)自体は実装が間違ってなければ普通のHM型推論のはずです。
-Formulaの中にTermが混ざってくるみたいなsyntaxのせいで普通のラムダ計算の型推論とはちょっと違いますがまぁそのくらいですね。
-</p>
+Formulaの中にTermが混ざってくるみたいなsyntaxのせいで普通のラムダ計算の型推論とはちょっと違いますがまぁそのくらいですね。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
 <h2 id="headline-4">
 Claireによる証明
 </h2>
+<div id="outline-text-headline-4" class="outline-text-2">
 <p>
-さてここまで来るとClaireで証明を書くことが可能です。
-</p>
+さてここまで来るとClaireで証明を書くことが可能です。</p>
 <p>
-<a href="https://github.com/myuon/claire/blob/master/lib/preliminaries.cl">lib/preliminaries.cl</a>
-</p>
+<a href="https://github.com/myuon/claire/blob/master/lib/preliminaries.cl">lib/preliminaries.cl</a></p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  # equality
   constant eq: &#39;a =&gt; &#39;a =&gt; prop
@@ -248,17 +258,16 @@ Claireによる証明
 </div>
 <p>
 (実はまだ説明していないマクロで定義されたコマンドを使っているので証明はまだ見せませんが)、例えば上のようにしてeqという述語を定義し、refl/substを公理として追加するとsymmetricityとtransitivityが証明できます。
-今の組み込みのコマンドだけで示すのはかなり大変ですが、もし興味があればやってみてください。
-</p>
+今の組み込みのコマンドだけで示すのはかなり大変ですが、もし興味があればやってみてください。</p>
+<div id="outline-container-headline-5" class="outline-3">
 <h3 id="headline-5">
 Proof of Curry
 </h3>
+<div id="outline-text-headline-5" class="outline-text-3">
 <p>
-何も示さないのもちょっとアレなので、1つくらい定理を示してみます。
-</p>
+何も示さないのもちょっとアレなので、1つくらい定理を示してみます。</p>
 <p>
-Claireを起動して次のCurryを入力します。
-</p>
+Claireを起動して次のCurryを入力します。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  =========================
   === Welcome to Claire ===
@@ -268,47 +277,39 @@ Claireを起動して次のCurryを入力します。
   [] |- [(Pred &#34;P&#34; [] :==&gt;: (Pred &#34;Q&#34; [] :==&gt;: Pred &#34;R&#34; [])) :==&gt;: ((Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; []) :==&gt;: Pred &#34;R&#34; [])]</code></pre></div>
 </div>
 <p>
-かつとならばを用いた <strong>メタロジックでの</strong> Curry化に関する定理です。
-</p>
+かつとならばを用いた <strong>メタロジックでの</strong> Curry化に関する定理です。</p>
 <p>
-さて、下に表示されているのがゴールです。とりあえず|-の右側(命題)が <code>_ :==&gt;: _</code> の形なので、ImpRが使えそうです。
-</p>
+さて、下に表示されているのがゴールです。とりあえず|-の右側(命題)が <code>_ :==&gt;: _</code> の形なので、ImpRが使えそうです。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  command&gt;apply ImpR
   [Pred &#34;P&#34; [] :==&gt;: (Pred &#34;Q&#34; [] :==&gt;: Pred &#34;R&#34; [])] |- [(Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; []) :==&gt;: Pred &#34;R&#34; []]</code></pre></div>
 </div>
 <p>
-ならばの先頭が左に移りました。再びImpRします。
-</p>
+ならばの先頭が左に移りました。再びImpRします。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  command&gt;apply ImpR
   [Pred &#34;P&#34; [] :==&gt;: (Pred &#34;Q&#34; [] :==&gt;: Pred &#34;R&#34; []),Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; []] |- [Pred &#34;R&#34; []]</code></pre></div>
 </div>
 <p>
 さて、今度は左辺にならばを2つも含む項があります。
-これをバラしたいのでImpLしたいところですが、ルールのapplyは仮定の一番右の項に適用されるので、左の項を仮定の先頭に持ってくる必要があります。
-</p>
+これをバラしたいのでImpLしたいところですが、ルールのapplyは仮定の一番右の項に適用されるので、左の項を仮定の先頭に持ってくる必要があります。</p>
 <p>
-というわけでここではPLを使って仮定の順番を入れ替える(指定した仮定を先頭に移動する)ことにします。
-</p>
+というわけでここではPLを使って仮定の順番を入れ替える(指定した仮定を先頭に移動する)ことにします。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  command&gt;apply PL 1
   [Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; [],Pred &#34;P&#34; [] :==&gt;: (Pred &#34;Q&#34; [] :==&gt;: Pred &#34;R&#34; [])] |- [Pred &#34;R&#34; []]</code></pre></div>
 </div>
 <p>
-そしてImpLします。
-</p>
+そしてImpLします。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  command&gt;apply ImpL
   [Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; []] |- [Pred &#34;P&#34; [],Pred &#34;R&#34; []]
   [Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; [],Pred &#34;Q&#34; [] :==&gt;: Pred &#34;R&#34; []] |- [Pred &#34;R&#34; []]</code></pre></div>
 </div>
 <p>
-ゴールが2つのsubgoalに別れました。
-</p>
+ゴールが2つのsubgoalに別れました。</p>
 <p>
-最初のやつは、仮定のかつをバラせばすぐ言えそうですね。
-</p>
+最初のやつは、仮定のかつをバラせばすぐ言えそうですね。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  command&gt;apply AndL1
   [Pred &#34;P&#34; []] |- [Pred &#34;P&#34; [],Pred &#34;R&#34; []]
@@ -331,11 +332,9 @@ Claireを起動して次のCurryを入力します。
   [Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; [],Pred &#34;Q&#34; [] :==&gt;: Pred &#34;R&#34; []] |- [Pred &#34;R&#34; []]</code></pre></div>
 </div>
 <p>
-(そしてコマンド確認用にnoapplyを使う)
-</p>
+(そしてコマンド確認用にnoapplyを使う)</p>
 <p>
-さて、ゴールが1つになったので、また似たような感じで証明を進めます。
-</p>
+さて、ゴールが1つになったので、また似たような感じで証明を進めます。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  command&gt;apply ImpL
   [Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; []] |- [Pred &#34;Q&#34; [],Pred &#34;R&#34; []]
@@ -353,8 +352,7 @@ Claireを起動して次のCurryを入力します。
   [Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; [],Pred &#34;R&#34; []] |- [Pred &#34;R&#34; []]</code></pre></div>
 </div>
 <p>
-ゴールがまた1つになったので、最後は仮定をいじって終わりです。
-</p>
+ゴールがまた1つになったので、最後は仮定をいじって終わりです。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  command&gt;noapply WL
   = NoApply WL result
@@ -370,8 +368,7 @@ Claireを起動して次のCurryを入力します。
   decl&gt;</code></pre></div>
 </div>
 <p>
-無事に証明が終わったようです。証明を出力してみましょう。
-</p>
+無事に証明が終わったようです。証明を出力してみましょう。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  decl&gt;print_proof
   = proof of the previous theorem =
@@ -396,8 +393,7 @@ Claireを起動して次のCurryを入力します。
 </div>
 <p>
 縦に長いのでダラダラしていますがまぁこんな感じですね。
-証明のまとまりごとに(ゴールが減るのはIなのでIの部分で)見やすく分けるとよいかもしれません。
-</p>
+証明のまとまりごとに(ゴールが減るのはIなのでIの部分で)見やすく分けるとよいかもしれません。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  proof
     apply (ImpR, ImpR, PL 1, ImpL)
@@ -408,36 +404,41 @@ Claireを起動して次のCurryを入力します。
   qed</code></pre></div>
 </div>
 <p>
-いやぁ素晴らしい！ちゃんとProof Assistantとして動いてくれましたね！！
-</p>
+いやぁ素晴らしい！ちゃんとProof Assistantとして動いてくれましたね！！</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-2">
 <h2 id="headline-6">
 マクロへ
 </h2>
+<div id="outline-text-headline-6" class="outline-text-2">
 <p>
-さて、Claireをちょっと触ると分かりますが(いや触らなくても分かると思いますが)コマンドが貧弱すぎて証明を書くのが非常に大変です。
-</p>
+さて、Claireをちょっと触ると分かりますが(いや触らなくても分かると思いますが)コマンドが貧弱すぎて証明を書くのが非常に大変です。</p>
 <p>
-例を一つ上げておくと、
-</p>
+例を一つ上げておくと、</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">    [Pred &#34;P&#34; [] :/\: Pred &#34;Q&#34; [],Pred &#34;R&#34; []] |- [Pred &#34;R&#34; []]</code></pre></div>
 </div>
 <p>
-なんかは、「いや仮定に命題と同じものがあるんだから明らかでしょ」という気持ちにまぁなりますよね。
-</p>
+なんかは、「いや仮定に命題と同じものがあるんだから明らかでしょ」という気持ちにまぁなりますよね。</p>
 <p>
 というわけで、例えばこういう状況でPLやWLを適当にやってくれるコマンドなどがあると便利なので、そういうものをマクロで定義できるようにしましょう。
-というのが次の話になります。
-</p>
+というのが次の話になります。</p>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-2">
 <h2 id="headline-7">
 まとめ
 </h2>
+<div id="outline-text-headline-7" class="outline-text-2">
 <p>
-というわけで環境、型システム、それにClaireによる定理証明を行いました。
-</p>
+というわけで環境、型システム、それにClaireによる定理証明を行いました。</p>
 <p>
-お疲れ様でした。
-</p>
+お疲れ様でした。</p>
+</div>
+</div>
 </section>
     <footer>
       <hr>

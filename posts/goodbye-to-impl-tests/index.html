@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -57,13 +57,14 @@ E2Eテスト: エンドユーザーが行う操作と同じ操作を行い期待
  ライブラリとして切り出す場合: ライブラリはそこでexportされる関数がsemanticsになるので今度そのテストはむしろ書いてくださいとなる。同じプログラムでも使われ方によって意味が変わってくるのでしょうがない。 スタブとかの都合: サービステストは通常複数のモジュールをまたがるのでローカルサーバーとかでテストできるのが一番良いのだけど使ってるSDKの都合とかでそういうテストが書きにくいのでこの画面のテストだけは実装詳細でやりますみたいなのはアリだと思う(というかしょうがない) 実装が非自明な場合: 何かの方程式を超多ステップで解くとか複雑なアルゴリズムを手書きするとか まぁ実装が非自明な場合はやった方がいいですね 当たり前や  ｳｪｯﾌﾞｻｰﾋﾞｽの構成 今こういう感じでやっておる
  サーバーサイド  SDK: サーバーサイドが提供するAPIをたたくだけのSDKを用意する; クライアントサイドで読み込んで使う サーバーサイドのコード サービステスト: SDKに対するテストをがりがり書く (必要があればモジュールごとに)実装詳細テスト   クライアントサイド  (必要があればコンポーネント/画面ごとに)Viewの詳細テスト    ひとまず困ってない。あとテストはやっぱり書きたくない。
 semantics、意識していこうな">
-<meta itemprop="datePublished" content="2018-12-24T14:25:05&#43;09:00" />
-<meta itemprop="dateModified" content="2018-12-24T14:25:05&#43;09:00" />
+<meta itemprop="datePublished" content="2018-12-24T14:25:05+09:00" />
+<meta itemprop="dateModified" content="2018-12-24T14:25:05+09:00" />
 <meta itemprop="wordCount" content="39">
 
 
 
 <meta itemprop="keywords" content="" />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="実装詳細テスト要るのか問題(反語)"/>
 <meta name="twitter:description" content="備忘録です。

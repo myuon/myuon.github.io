@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Webサイト on The curse of λ</title>
@@ -6,16 +5,17 @@
     <description>Recent content in Webサイト on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
-    <lastBuildDate>Fri, 10 Nov 2017 02:37:31 +0900</lastBuildDate><atom:link href="https://myuon.github.io/tags/web%E3%82%B5%E3%82%A4%E3%83%88/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>HakyllからHugoに移行した</title>
-      <link>https://myuon.github.io/posts/migrate-to-hugo/</link>
-      <pubDate>Fri, 10 Nov 2017 02:37:31 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/migrate-to-hugo/</guid>
-      <description>移行理由   前はHakyll+pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。
+    <lastBuildDate>Fri, 10 Nov 2017 02:37:31 +0900</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/web%E3%82%B5%E3%82%A4%E3%83%88/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>HakyllからHugoに移行した</title>
+        <link>https://myuon.github.io/posts/migrate-to-hugo/</link>
+        <pubDate>Fri, 10 Nov 2017 02:37:31 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/migrate-to-hugo/</guid>
+        <description>移行理由   前はHakyll+pandocでorg-modeで書く→htmlに変換してgithub pagesで公開という手順を踏んでいたのだけれど、pandocのorg-mode対応が中途半端すぎて、対応していない記法があったりcode block(こういうの)の中で特殊な記号を使うと上手くパース出来なかったりして色々厳しくなってきていたというのが理由。 困ってたところにhugoというのを教えてもらったのでそれに移行することにした。
   手順諸々  導入   hugoをsnapdから入れて使う。テストサイトを作って挙動を確認してから必要なものをsourceブランチに持ってきて導入はおしまい。 各記事はfront matterを少し書きなおすだけ。ありがたいことにorg-modeでかく場合は大体似たような文法なのでちょこっと書き換えるだけで動く。
  hugo serve --watch --buildDrafts でドラフトも見れるようにできるので、ドラフト確認してOKならhugoからpublishするというのが正しいフローっぽい。
   テーマ   Hakyllの時からテーマは自作していたのでテンプレートのカスタマイズとcssを持ってくるみたいな作業が必要になったのでやった。 hugo new theme [テーマ名] で必要なファイル群が themes にできるのであとは Templates にテンプレートの公式ドキュメントがあるのでそれとかhugoの実際のテンプレートを見てカスタマイズをした。
@@ -24,15 +24,14 @@
 pygmentscodefences = true pygmentsstyle = &amp;#34;manni&amp;#34;   と書いた。 pygmentscodefencesはmarkdownで ```lang みたいに書けるようにするやつだけど、org-modeのcode blockもありがたいことに対応してくれてたのでそのまま色がついた。
  カラースキームはPygmentsの公式サイトから色々試してしっくり来るやつを探すと良さそう。
 syntax highlight関係のデザイン   pandocではsyntax highlight用にcssを用意して色を指定していたんだけどそれが不要になった。 それと、pygmentsstyleで色をつけるとpreの背景の色を強制的に指定されてしまうので今までは色をつけてたんだけどそれを外した(文章中のcodeはそのままにしてる)。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>HakyllでBlogを作る</title>
-      <link>https://myuon.github.io/posts/hakyll-blog/</link>
-      <pubDate>Wed, 16 Aug 2017 22:39:48 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/hakyll-blog/</guid>
-      <description>Hakyllでこのブログを作ったのでそのあれこれを
+      <item>
+        <title>HakyllでBlogを作る</title>
+        <link>https://myuon.github.io/posts/hakyll-blog/</link>
+        <pubDate>Wed, 16 Aug 2017 22:39:48 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/hakyll-blog/</guid>
+        <description>Hakyllでこのブログを作ったのでそのあれこれを
 概要   やりたいことは以下
   orgで文章をかく(大事)
   orgから良い感じのHTMLを生成し
@@ -45,7 +44,7 @@ syntax highlight関係のデザイン   pandocではsyntax highlight用にcssを
   stack でパッケージを入れて、 hakyll-init → stack build → stack exec site watch で動かすところまでは簡単にいけた 2番目のリンクにあるように、 _site をsubmoduleに登録しておいて、これをmasterブランチにpushして公開するようにしておく
   文書の変換・Hakyllの設定   プロジェクトの構造は次のようになっている
 - root - _site できたHTMLファイルが置かれる - _cache - css できたCSSファイルが置かれる(圧縮済) - images 画像ファイルが(ry - posts ここにorg or markdownで書いた記事を入れる - site.</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

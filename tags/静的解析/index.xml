@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>静的解析 on The curse of λ</title>
@@ -6,16 +5,17 @@
     <description>Recent content in 静的解析 on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
-    <lastBuildDate>Wed, 11 Jul 2018 05:49:39 -0700</lastBuildDate><atom:link href="https://myuon.github.io/tags/%E9%9D%99%E7%9A%84%E8%A7%A3%E6%9E%90/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>静的解析の限界、現実世界との境界</title>
-      <link>https://myuon.github.io/posts/how-far-can-static-analysis-go/</link>
-      <pubDate>Wed, 11 Jul 2018 05:49:39 -0700</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/how-far-can-static-analysis-go/</guid>
-      <description>はじめに   2018年に静的解析をとにかく強力につけまくるのは多分あんまりコストに見合わないのでよくない
+    <lastBuildDate>Wed, 11 Jul 2018 05:49:39 -0700</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/%E9%9D%99%E7%9A%84%E8%A7%A3%E6%9E%90/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>静的解析の限界、現実世界との境界</title>
+        <link>https://myuon.github.io/posts/how-far-can-static-analysis-go/</link>
+        <pubDate>Wed, 11 Jul 2018 05:49:39 -0700</pubDate>
+        <guid>https://myuon.github.io/posts/how-far-can-static-analysis-go/</guid>
+        <description>はじめに   2018年に静的解析をとにかく強力につけまくるのは多分あんまりコストに見合わないのでよくない
  じゃあ静的解析を窓から投げ捨ててよいかというとそれはただの愚行
  (以下、静的解析を普通に使えてる人には自明なことしか言いません)
 依存型のつらみ   私が最初に静的解析の限界を感じたのは多分依存型で遊んでいたとき
@@ -27,7 +27,7 @@
   問題を解決するつもりでキッチリ型を付けた先にある高い壁 - ぼくのぬまち 出張版
   実世界を扱う依存型プログラミングのたぶん基本～外界から安全な世界までの道 - ぼくのぬまち 出張版
     Welcome to 現実   上の記事にも書いてあるんだけど、実は依存型のつらみはこれだけではない(そして今回の記事はむしろこっちの話を書きたい)</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,11 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="IMPのoperational semantics その2" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 6日目の記事です。   前回はaexp/bexpとそのevaluationを定めた。 3. Commands   さて次にcommandを定義する。  これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。 section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&#34;SKIP&#34;) and CAssign (&#34;_ ::= _&#34; [50,50] 90) and CSeq (infixr &#34;;;&#34; 30) and CIf (&#34;IF _ THEN _ ELSE _&#34; 80) and CWhile (&#34;WHILE _ DO _&#34; 90)   comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。 WHILE BLeq (AId &#39;&#39;X&#39;&#39;) (ANum 0) DO IF BTrue THEN &#39;&#39;X&#39;&#39; ::= ANum 1 ;; &#39;&#39;Y&#39;&#39; ::= ANum 10 ELSE SKIP  4." />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 6日目の記事です。
+  前回はaexp/bexpとそのevaluationを定めた。
+3. Commands   さて次にcommandを定義する。
+ これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
+section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&#34;SKIP&#34;) and CAssign (&#34;_ ::= _&#34; [50,50] 90) and CSeq (infixr &#34;;;&#34; 30) and CIf (&#34;IF _ THEN _ ELSE _&#34; 80) and CWhile (&#34;WHILE _ DO _&#34; 90)   comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/2017csadv-day6/" />
 <meta property="article:published_time" content="2017-12-06T00:07:53+09:00" />
@@ -30,17 +34,26 @@
 
 
 <meta itemprop="name" content="IMPのoperational semantics その2">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 6日目の記事です。   前回はaexp/bexpとそのevaluationを定めた。 3. Commands   さて次にcommandを定義する。  これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。 section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&#34;SKIP&#34;) and CAssign (&#34;_ ::= _&#34; [50,50] 90) and CSeq (infixr &#34;;;&#34; 30) and CIf (&#34;IF _ THEN _ ELSE _&#34; 80) and CWhile (&#34;WHILE _ DO _&#34; 90)   comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。 WHILE BLeq (AId &#39;&#39;X&#39;&#39;) (ANum 0) DO IF BTrue THEN &#39;&#39;X&#39;&#39; ::= ANum 1 ;; &#39;&#39;Y&#39;&#39; ::= ANum 10 ELSE SKIP  4.">
-<meta itemprop="datePublished" content="2017-12-06T00:07:53&#43;09:00" />
-<meta itemprop="dateModified" content="2017-12-06T00:07:53&#43;09:00" />
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 6日目の記事です。
+  前回はaexp/bexpとそのevaluationを定めた。
+3. Commands   さて次にcommandを定義する。
+ これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
+section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&#34;SKIP&#34;) and CAssign (&#34;_ ::= _&#34; [50,50] 90) and CSeq (infixr &#34;;;&#34; 30) and CIf (&#34;IF _ THEN _ ELSE _&#34; 80) and CWhile (&#34;WHILE _ DO _&#34; 90)   comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。">
+<meta itemprop="datePublished" content="2017-12-06T00:07:53+09:00" />
+<meta itemprop="dateModified" content="2017-12-06T00:07:53+09:00" />
 <meta itemprop="wordCount" content="505">
 
 
 
 <meta itemprop="keywords" content="AdC2017,Isabelle,計算機科学," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="IMPのoperational semantics その2"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 6日目の記事です。   前回はaexp/bexpとそのevaluationを定めた。 3. Commands   さて次にcommandを定義する。  これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。 section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&#34;SKIP&#34;) and CAssign (&#34;_ ::= _&#34; [50,50] 90) and CSeq (infixr &#34;;;&#34; 30) and CIf (&#34;IF _ THEN _ ELSE _&#34; 80) and CWhile (&#34;WHILE _ DO _&#34; 90)   comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。 WHILE BLeq (AId &#39;&#39;X&#39;&#39;) (ANum 0) DO IF BTrue THEN &#39;&#39;X&#39;&#39; ::= ANum 1 ;; &#39;&#39;Y&#39;&#39; ::= ANum 10 ELSE SKIP  4."/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 6日目の記事です。
+  前回はaexp/bexpとそのevaluationを定めた。
+3. Commands   さて次にcommandを定義する。
+ これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
+section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&#34;SKIP&#34;) and CAssign (&#34;_ ::= _&#34; [50,50] 90) and CSeq (infixr &#34;;;&#34; 30) and CIf (&#34;IF _ THEN _ ELSE _&#34; 80) and CWhile (&#34;WHILE _ DO _&#34; 90)   comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。"/>
 
 
   </head>
@@ -71,21 +84,19 @@
     </header>
     <section>
 <p>
-<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 6日目の記事です。</strong>
-</p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 6日目の記事です。</strong></p>
 <hr>
 <p>
-前回はaexp/bexpとそのevaluationを定めた。
-</p>
+前回はaexp/bexpとそのevaluationを定めた。</p>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 3. Commands
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
 <p>
-さて次にcommandを定義する。
-</p>
+さて次にcommandを定義する。</p>
 <p>
-これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
-</p>
+これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  section {* Commands *}
 
@@ -102,8 +113,7 @@
 </div>
 <p>
 comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。
-このように定義しておくと、例えば以下のような記述ができるようになる。
-</p>
+このように定義しておくと、例えば以下のような記述ができるようになる。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  WHILE BLeq (AId &#39;&#39;X&#39;&#39;) (ANum 0) DO
     IF BTrue THEN
@@ -112,47 +122,48 @@ comを定義した後、notationによって各コンストラクタをよりそ
     ELSE
       SKIP</code></pre></div>
 </div>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
 <h2 id="headline-2">
 4. Operational semantics
 </h2>
+<div id="outline-text-headline-2" class="outline-text-2">
 <p>
-さていよいよcommandの評価を行えるようにする。
-</p>
+さていよいよcommandの評価を行えるようにする。</p>
 <p>
 commandにはWHILEが含まれていることからも分かる通り無限ループが書けるので、一般に評価は停止しない。
-このため、「commandを実行したら(有限ステップで停止し)rという結果になった」ということを表現するための関係を定義する。
-</p>
+このため、「commandを実行したら(有限ステップで停止し)rという結果になった」ということを表現するための関係を定義する。</p>
 <p>
-あるいは、これはevalという部分関数のグラフだと思っても良いが、domain上でのwell-definednessは後にeval_deterministicという形で示すまでは単なる関係である。
-</p>
+あるいは、これはevalという部分関数のグラフだと思っても良いが、domain上でのwell-definednessは後にeval_deterministicという形で示すまでは単なる関係である。</p>
+<div id="outline-container-headline-3" class="outline-3">
 <h3 id="headline-3">
 small-step vs big-step
 </h3>
+<div id="outline-text-headline-3" class="outline-text-3">
 <p>
-これは直接IMPとは関係のない話だけれどして念の為ここで説明しておく。
-</p>
+これは直接IMPとは関係のない話だけれどして念の為ここで説明しておく。</p>
 <p>
 operational semanticsとは「評価」や「簡約」と言った操作を定めるが、この定め方としてsmall-stepまたはbig-stepという手法が使われる。
 small-stepとは、与えられたtermの次のステップを具体的に与えるようなもので、big-stepとは与えられたtermのsubtermを評価した結果を用いて次のステップを与えるようなもの。
-(これもだいぶ怪しい説明な気がするがなんて言ったらいいのかヨクワカラナイ)
-</p>
+(これもだいぶ怪しい説明な気がするがなんて言ったらいいのかヨクワカラナイ)</p>
 <p>
 small-stepは1ステップ分を定義してそれを順次繋いでいくという比較的直観に沿った与え方である。
-例えば <code>M</code> という項を評価すると <code>r</code> という結果になるような場合、 <code>M -&gt; M1 -&gt; M2 -&gt; ... -&gt; r</code> のようなステップを1つ1つ進んでいくような仕方で簡約が進むやり方(ここでの矢印1つ1つ)がsmall-stepである。
-</p>
+例えば <code>M</code> という項を評価すると <code>r</code> という結果になるような場合、 <code>M -&gt; M1 -&gt; M2 -&gt; ... -&gt; r</code> のようなステップを1つ1つ進んでいくような仕方で簡約が進むやり方(ここでの矢印1つ1つ)がsmall-stepである。</p>
 <p>
-対してbig-stepはrecursive functionの定義のように、 <code>eval(M)</code> の定義の中で <code>eval(M&#39;)</code> (M&#39;はMのsubterm)なる結果を用いることができる。
-</p>
+対してbig-stepはrecursive functionの定義のように、 <code>eval(M)</code> の定義の中で <code>eval(M&#39;)</code> (M&#39;はMのsubterm)なる結果を用いることができる。</p>
 <p>
 small-stepとbig-stepのどちらがよいというようなものではなく、大抵の場合は片方を定めたらもう一方も簡単に導出でき、しかも同値である(small-stepを繰り返したものとbig-stepは関係として一致する)ことが示せることが多い。
-(極稀に一方では定めにくい言語があるがそうそう遭遇するものではないと思う)
-</p>
+(極稀に一方では定めにくい言語があるがそうそう遭遇するものではないと思う)</p>
 <p>
-というわけで今回も、IMPのoperational semanticsをsmall-stepとbig-stepの両方で定め、それが同値になることを後々に示すことになる。
-</p>
+というわけで今回も、IMPのoperational semanticsをsmall-stepとbig-stepの両方で定め、それが同値になることを後々に示すことになる。</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-3">
 <h3 id="headline-4">
 コード
 </h3>
+<div id="outline-text-headline-4" class="outline-text-3">
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  section {* Small-step operational semantics *}
 
@@ -183,35 +194,41 @@ small-stepとbig-stepのどちらがよいというようなものではなく�
 </div>
 <p>
 定め方自体はごく標準的な仕方で取った。
-面倒なので逐一説明はしないけど(よく知らないって人には申し訳ないです)それぞれWHILEの評価をどうやっているかに注目しておくといいんじゃなかろうかと思う。
-</p>
+面倒なので逐一説明はしないけど(よく知らないって人には申し訳ないです)それぞれWHILEの評価をどうやっているかに注目しておくといいんじゃなかろうかと思う。</p>
 <p>
 small-stepの方では <code>WHILE b DO c -&gt; IF b THEN (c ;; WHILE b DO c ELSE SKIP)</code> とやっているのに対して、
-big-stepの方では <code>WHILE b DO c</code> の <code>b</code> をまず評価し、それがfalseなら何もしない、trueなら <code>c</code> の実行と <code>WHILE b DO c</code> の実行を順次帰納的に行うことにしている。
-</p>
+big-stepの方では <code>WHILE b DO c</code> の <code>b</code> をまず評価し、それがfalseなら何もしない、trueなら <code>c</code> の実行と <code>WHILE b DO c</code> の実行を順次帰納的に行うことにしている。</p>
 <p>
-big-stepな方では、 <code>&lt;c,st1&gt; ⇓ st2</code> と 「cをst1の下で評価したら停止してst2になる」ことが同値になる(関係の中に停止性が含まれている)のでこのような定義になっていることに注意しよう。
-</p>
+big-stepな方では、 <code>&lt;c,st1&gt; ⇓ st2</code> と 「cをst1の下で評価したら停止してst2になる」ことが同値になる(関係の中に停止性が含まれている)のでこのような定義になっていることに注意しよう。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-2">
 <h2 id="headline-5">
 5. Deterministic
 </h2>
+<div id="outline-text-headline-5" class="outline-text-2">
 <p>
-さて実際の証明とは前後するが、ここで示したい定理のうちの1つを述べる。
-</p>
+さて実際の証明とは前後するが、ここで示したい定理のうちの1つを述べる。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma cbig_deterministic: &#34;⟦ &lt;c,st&gt; ⇓ st&#39;; &lt;c,st&gt; ⇓ st&#39;&#39; ⟧ ⟹ st&#39; = st&#39;&#39;&#34;</code></pre></div>
 </div>
 <p>
 これは関係cbigが部分関数であること(値を返す入力に対してはwell-definedであること)を言っている。
-これを示すためにはいくつか補題が必要になるので以下ではそれを先に示していく。
-</p>
+これを示すためにはいくつか補題が必要になるので以下ではそれを先に示していく。</p>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-2">
 <h2 id="headline-6">
 まとめ
 </h2>
+<div id="outline-text-headline-6" class="outline-text-2">
 <p>
 というところで今回は終わりです。
-次回は今回の記事の最後に述べた定理を示します。
-</p>
+次回は今回の記事の最後に述べた定理を示します。</p>
+</div>
+</div>
 </section>
     <footer>
       <hr>

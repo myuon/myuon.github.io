@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,19 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Fluxを再発明する" />
-<meta property="og:description" content="Haskellの2D graphics libraryを作った   作った: refluxive  与太話に興味がない人は解説まで飛んでください なにこれ   大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。 なぜ   大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。  —  なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。 画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。  グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。 Flux   JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。 といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。 Haskellとは   HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。 Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。 テクいところ   最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。 refluxive   ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。  あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。 構成要素     Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない    Model: Componentの内部状態    Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる    ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる    Graphical: Viewの表現    UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる   例:ボタン   とりあえず例をやろうということでボタン。  https://github." />
+<meta property="og:description" content="Haskellの2D graphics libraryを作った   作った: refluxive
+ 与太話に興味がない人は解説まで飛んでください
+なにこれ   大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。
+  なぜ   大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。
+ —
+ なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。 画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。
+ グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。
+  Flux   JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。 といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。
+  Haskellとは   HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。 Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。
+  テクいところ   最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。
+    refluxive   ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。
+ あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。
+構成要素    Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/refluxible-library/" />
 <meta property="article:published_time" content="2018-06-16T08:00:49-07:00" />
@@ -30,7 +42,19 @@
 
 
 <meta itemprop="name" content="Fluxを再発明する">
-<meta itemprop="description" content="Haskellの2D graphics libraryを作った   作った: refluxive  与太話に興味がない人は解説まで飛んでください なにこれ   大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。 なぜ   大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。  —  なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。 画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。  グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。 Flux   JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。 といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。 Haskellとは   HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。 Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。 テクいところ   最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。 refluxive   ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。  あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。 構成要素     Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない    Model: Componentの内部状態    Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる    ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる    Graphical: Viewの表現    UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる   例:ボタン   とりあえず例をやろうということでボタン。  https://github.">
+<meta itemprop="description" content="Haskellの2D graphics libraryを作った   作った: refluxive
+ 与太話に興味がない人は解説まで飛んでください
+なにこれ   大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。
+  なぜ   大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。
+ —
+ なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。 画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。
+ グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。
+  Flux   JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。 といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。
+  Haskellとは   HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。 Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。
+  テクいところ   最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。
+    refluxive   ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。
+ あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。
+構成要素    Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない">
 <meta itemprop="datePublished" content="2018-06-16T08:00:49-07:00" />
 <meta itemprop="dateModified" content="2018-06-16T08:00:49-07:00" />
 <meta itemprop="wordCount" content="343">
@@ -38,9 +62,22 @@
 
 
 <meta itemprop="keywords" content="Haskell," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Fluxを再発明する"/>
-<meta name="twitter:description" content="Haskellの2D graphics libraryを作った   作った: refluxive  与太話に興味がない人は解説まで飛んでください なにこれ   大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。 なぜ   大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。  —  なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。 画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。  グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。 Flux   JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。 といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。 Haskellとは   HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。 Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。 テクいところ   最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。 refluxive   ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。  あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。 構成要素     Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない    Model: Componentの内部状態    Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる    ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる    Graphical: Viewの表現    UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる   例:ボタン   とりあえず例をやろうということでボタン。  https://github."/>
+<meta name="twitter:description" content="Haskellの2D graphics libraryを作った   作った: refluxive
+ 与太話に興味がない人は解説まで飛んでください
+なにこれ   大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。
+  なぜ   大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。 一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。
+ —
+ なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。 画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。
+ グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。
+  Flux   JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。 といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。
+  Haskellとは   HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。 Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。
+  テクいところ   最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。 performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。
+    refluxive   ライブラリの中身を超簡単に解説します。 「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。
+ あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。
+構成要素    Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない"/>
 
 
   </head>
@@ -70,130 +107,134 @@
       <h1>Fluxを再発明する</h1>
     </header>
     <section>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 Haskellの2D graphics libraryを作った
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
 <p>
-作った: <a href="https://github.com/myuon/refluxive">refluxive</a>
-</p>
+作った: <a href="https://github.com/myuon/refluxive">refluxive</a></p>
 <p>
-与太話に興味がない人は<a href="#refluxible">解説</a>まで飛んでください
-</p>
+与太話に興味がない人は<a href="#refluxible">解説</a>まで飛んでください</p>
+<div id="outline-container-headline-2" class="outline-3">
 <h3 id="headline-2">
 なにこれ
 </h3>
+<div id="outline-text-headline-2" class="outline-text-3">
 <p>
-大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。
-</p>
+大体Haskell製Fluxベースの2Dグラフィックスライブラリ on SDLという感じの代物です。</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
 <h3 id="headline-3">
 なぜ
 </h3>
+<div id="outline-text-headline-3" class="outline-text-3">
 <p>
 大変悲しいことにHaskellではゲーム用に気軽に使えるグラフィックスフレームワークがないことがよく知られているわけです。
 候補としては一部のFRP系のやつ、あとDSL系のやつも少々(これは用途がかなり限定されていることが多いけど)、それと今ならElm(!)が下手すると最有力かもしれない。
-一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。
-</p>
+一応本当に簡単な用途ではglossがそれ系を標榜しているがフレームワークではないし、真面目に使うには多々至らぬ点も多く…という感じなので困った困ったになるわけですね。</p>
 <p>
-—
-</p>
+—</p>
 <p>
 なぜフレームワークがほしいかというとUIを一から作りたくないというのがある。私はあと何回「ボタン」をrectangleとfillRectangleとtextを組み合わせて一から作らないといけないんだ。
-画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。
-</p>
+画像を読み込んできて3x3マスに分割して「レイヤー」として表示できるようにするみたいなのも何回も書かされたのでもう散々という気持ちがあった。</p>
 <p>
-グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。
-</p>
+グラフィックスライブラリは別にOpenGLでもSDLでもGLFWでもなんでもいいんだけど一からUI部品を作っていると日が暮れてしまうのでそういうUI部品をライブラリとして提供したくて、じゃあUI部品を共通して作って提供できる仕組みをどうにか考えないとなぁという感じになってた。</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-3">
 <h3 id="headline-4">
 Flux
 </h3>
+<div id="outline-text-headline-4" class="outline-text-3">
 <p>
 JavaScript(クライアントサイド)業界ではこの辺をみんな真面目に考えて色々やっていってるわけですがまぁ最近はFluxの影響を受けたやつが人気なので私もそういうのにのっかる感じにしました。
-といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。
-</p>
+といっても完全なFluxでもないと思う。ViewがModelの射影になっていること、Viewへの変更がSignalとして送出されてModelの方に伝わるみたいな感じになっているのは大体Fluxだけど、dispatcherではなくSignalの送出はベースのUIモナドが一括で請け負ってるとことかはちょっと違うような気もする(詳しくないからよくわからんけど)。</p>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-3">
 <h3 id="headline-5">
 Haskellとは
 </h3>
+<div id="outline-text-headline-5" class="outline-text-3">
 <p>
 HaskellでFluxぽい仕組みがちゃんと乗っかるかは若干不安だったけど特に問題はなかった。そもそもこっちはDOMを操作する必要がない、何もない代わりに何にも縛られないのでまぁ自由は効くよねという感じ。
-Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。
-</p>
+Haskellらしいコードになったかという意味では、default-extensionsを見てもらえばまぁ察しはつくと思う。今回はExistentialQuantificationとTypeFamiliesとDataFamiliesを使いまくったのでHaskell(GHC)でこそという感じはしてるような気もする。</p>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-3">
 <h3 id="headline-6">
 テクいところ
 </h3>
+<div id="outline-text-headline-6" class="outline-text-3">
 <p>
 最近Rustに浮気しっぱなしだったからHaskell真面目に書くの実はそれなりに久々だったけど、ちゃんとRustや他で勉強したりしてたことが活かせたりはしたと思う。
-performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。
-</p>
+performGCとかunsafeCoerceとか今までどう使っていいかよくわからなくてやってなかったけどちょっと分かってきた感じもありよかった。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-2">
 <h2 id="headline-7">
 refluxive
 </h2>
+<div id="outline-text-headline-7" class="outline-text-2">
 <p>
 ライブラリの中身を超簡単に解説します。
-「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。
-</p>
+「ほーんHaskellではそうやってやってるんだー」くらいで見てもらえればいいと思います。</p>
 <p>
-あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。
-</p>
+あと当たり前だけどまだプロトタイプができたてのライブラリなのでAPIは将来変更されるおそれが大いにあります。</p>
+<div id="outline-container-headline-8" class="outline-3">
 <h3 id="headline-8">
 構成要素
 </h3>
+<div id="outline-text-headline-8" class="outline-text-3">
 <ul>
 <li>
-<p>
-Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない
-</p>
+<p>Component: 1つの部品を表す単位; 中にModelとかそういうのが定義されているが外からは見えない</p>
 </li>
 <li>
-<p>
-Model: Componentの内部状態
-</p>
+<p>Model: Componentの内部状態</p>
 </li>
 <li>
-<p>
-Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる
-</p>
+<p>Signal: Componentから送出されうるメッセージ 他のComponentはSignalを監視して非同期にcallbackを実行したりできる</p>
 </li>
 <li>
-<p>
-ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる
-</p>
+<p>ComponentView: Componentをインスタンス化したやつ、モデルのデータそのものとかuniqueな名前とかが入ってる</p>
 </li>
 <li>
-<p>
-Graphical: Viewの表現
-</p>
+<p>Graphical: Viewの表現</p>
 </li>
 <li>
-<p>
-UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる
-</p>
+<p>UIモナド: Componentの操作とかを実現するためのモナドで、Componentの管理、送出されたSignalの配信などをやってくれる</p>
 </li>
 </ul>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-3">
 <h3 id="headline-9">
 例:ボタン
 </h3>
+<div id="outline-text-headline-9" class="outline-text-3">
 <p>
-とりあえず例をやろうということでボタン。
-</p>
+とりあえず例をやろうということでボタン。</p>
 <p>
-<a href="https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs"><a href="https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs">https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs</a></a>
-</p>
+<a href="https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs"><a href="https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs">https://github.com/myuon/refluxive/blob/73c498186d9d5ab911f97332e261b87ca86e8cd4/example/Button.hs</a></a></p>
 <p>
-動作例は次のようになります
-</p>
+動作例は次のようになります</p>
 <p>
 &lt;blockquote class=&#34;twitter-tweet&#34; data-lang=&#34;en&#34;&gt;&lt;p lang=&#34;ja&#34; dir=&#34;ltr&#34;&gt;ボタンのめんどくささよ &lt;a href=&#34;<a href="https://t.co/ImMyAwXJ7G">https://t.co/ImMyAwXJ7G</a>&#34;&gt;pic.twitter.com/ImMyAwXJ7G&lt;/a&gt;&lt;/p&gt;&amp;mdash; みょん (@myuon_myon) &lt;a href=&#34;<a href="https://twitter.com/myuon_myon/status/1007983200868552704?ref_src=twsrc">https://twitter.com/myuon_myon/status/1007983200868552704?ref_src=twsrc</a>%5Etfw&#34;&gt;June 16, 2018&lt;/a&gt;&lt;/blockquote&gt;
-&lt;script async src=&#34;<a href="https://platform.twitter.com/widgets.js">https://platform.twitter.com/widgets.js</a>&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
-</p>
+&lt;script async src=&#34;<a href="https://platform.twitter.com/widgets.js">https://platform.twitter.com/widgets.js</a>&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;</p>
+<div id="outline-container-headline-10" class="outline-4">
 <h4 id="headline-10">
 Component
 </h4>
+<div id="outline-text-headline-10" class="outline-text-4">
 <p>
-Componentはbuttonとappの2つ
-</p>
+Componentはbuttonとappの2つ</p>
 <p>
-まずbuttonから。
-</p>
+まずbuttonから。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">data</span> <span class="kt">ButtonState</span> <span class="ow">=</span> <span class="kt">None</span> <span class="o">|</span> <span class="kt">Hover</span> <span class="o">|</span> <span class="kt">Clicking</span>
     <span class="kr">deriving</span> <span class="kt">Eq</span>
@@ -217,11 +258,9 @@ Componentはbuttonとappの2つ
 </div>
 <p>
 ModelParamがコンストラクタの引数で、Modelが実際の内部状態の定義。Signalは今回はクリックだけ拾えればいいのでClickだけ。
-他にメソッドとしてモデルの初期化をするnewModel, インスタンス化した直後にイベントハンドラーとかを定義するためのinitComponent, viewを作るgetGraphicalとかがある。
-</p>
+他にメソッドとしてモデルの初期化をするnewModel, インスタンス化した直後にイベントハンドラーとかを定義するためのinitComponent, viewを作るgetGraphicalとかがある。</p>
 <p>
-例えばイベントハンドラーの登録は次のようになっている。
-</p>
+例えばイベントハンドラーの登録は次のようになっている。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="o">...</span>
       <span class="n">addWatchSignal</span> <span class="n">self</span> <span class="o">$</span> <span class="n">watch</span> <span class="n">b</span> <span class="o">$</span> <span class="nf">\</span><span class="n">rs</span> <span class="ow">-&gt;</span> <span class="nf">\</span><span class="kr">case</span>
@@ -234,11 +273,9 @@ ModelParamがコンストラクタの引数で、Modelが実際の内部状態�
 </div>
 <p>
 MouseButtonのイベントが来て、カーソルがエリア内部だったら内部状態をClickingにして、Clickイベントを送出するという感じ。
-ちなみにこのコールバックの中ではそれが呼ばれた瞬間の内部状態と、その時のオブジェクトの画面上の位置などに依存できるようになっている。
-</p>
+ちなみにこのコールバックの中ではそれが呼ばれた瞬間の内部状態と、その時のオブジェクトの画面上の位置などに依存できるようになっている。</p>
 <p>
-一応appの方も
-</p>
+一応appの方も</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kr">instance</span> <span class="kt">Component</span> <span class="kt">UI</span> <span class="s">&#34;app&#34;</span> <span class="kr">where</span>
     <span class="kr">type</span> <span class="kt">ModelParam</span> <span class="s">&#34;app&#34;</span> <span class="ow">=</span> <span class="nb">()</span>
@@ -266,14 +303,16 @@ MouseButtonのイベントが来て、カーソルがエリア内部だったら
       <span class="n">return</span> <span class="o">$</span> <span class="n">translate</span> <span class="p">(</span><span class="kt">V2</span> <span class="mi">50</span> <span class="mi">50</span><span class="p">)</span> <span class="o">$</span> <span class="n">buttonView</span></code></pre></div>
 </div>
 <p>
-appはアプリケーション本体の方で、中にはbutton componentを1つ抱えているがまぁ難しいことは特にしてない。
-</p>
+appはアプリケーション本体の方で、中にはbutton componentを1つ抱えているがまぁ難しいことは特にしてない。</p>
+</div>
+</div>
+<div id="outline-container-headline-11" class="outline-4">
 <h4 id="headline-11">
 main
 </h4>
+<div id="outline-text-headline-11" class="outline-text-4">
 <p>
-あとはmain関数。
-</p>
+あとはmain関数。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">main</span> <span class="ow">=</span> <span class="n">runUI</span> <span class="o">$</span> <span class="kr">do</span>
     <span class="n">setClearColor</span> <span class="p">(</span><span class="kt">V4</span> <span class="mi">255</span> <span class="mi">255</span> <span class="mi">255</span> <span class="mi">255</span><span class="p">)</span>
@@ -284,44 +323,48 @@ main
     <span class="n">mainloop</span> <span class="p">[</span><span class="n">asRoot</span> <span class="n">app</span><span class="p">]</span></code></pre></div>
 </div>
 <p>
-なんと分かりやすい。
-</p>
+なんと分かりやすい。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-12" class="outline-3">
 <h3 id="headline-12">
 ライブラリについて
 </h3>
+<div id="outline-text-headline-12" class="outline-text-3">
 <p>
 100行程度書けば上のボタンが動くようになるならまぁいいんじゃないですかねという感じの評価です。
-イベントハンドラーがかったるいけどまぁそれ以外は割といい感じのプログラムになってると思います。ちょっと記述が冗長なところもあるがそのへんはTHでどうとでもなるのでさほど問題ではない(ほんまか？)。
-</p>
+イベントハンドラーがかったるいけどまぁそれ以外は割といい感じのプログラムになってると思います。ちょっと記述が冗長なところもあるがそのへんはTHでどうとでもなるのでさほど問題ではない(ほんまか？)。</p>
 <p>
-あとは今はComponentの継承というかプラグイン化というか、機能を付け足していくみたいなことができないと多分不便なのでそういうのもできるようにしていきたい。
-</p>
+あとは今はComponentの継承というかプラグイン化というか、機能を付け足していくみたいなことができないと多分不便なのでそういうのもできるようにしていきたい。</p>
 <p>
-裏側ではそれなりに色々やってるけどユーザーには見せないようにちゃんと隠蔽しているのでフレームワークに乗っかるのは難しくないと信じている。どうせ中身もペラペラなので中読むのも簡単だけど。
-</p>
+裏側ではそれなりに色々やってるけどユーザーには見せないようにちゃんと隠蔽しているのでフレームワークに乗っかるのは難しくないと信じている。どうせ中身もペラペラなので中読むのも簡単だけど。</p>
 <p>
-とりあえずUI部品を充実させること、ドキュメントの整備(これは本当に必要だと思う)、あと前に作ろうとしてたゲームをこれで書き直そうかなーというあれ。
-</p>
+とりあえずUI部品を充実させること、ドキュメントの整備(これは本当に必要だと思う)、あと前に作ろうとしてたゲームをこれで書き直そうかなーというあれ。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-13" class="outline-2">
 <h2 id="headline-13">
 終わりに(はじめに)
 </h2>
+<div id="outline-text-headline-13" class="outline-text-2">
 <p>
 これは明らかにはじめにに書くべきことだったが今思い出したのでここに書く。
-前にHaskellでゲーム作ろうとして、こういうUIフレームワークが必要になってどうにか色々考えたりして自分で作ったりしたけど、純粋/非純粋の分割に潔癖になりすぎたり型の操作が重すぎてコード書きにくかったり色々問題が多かったので、今回再挑戦してみた。
-</p>
+前にHaskellでゲーム作ろうとして、こういうUIフレームワークが必要になってどうにか色々考えたりして自分で作ったりしたけど、純粋/非純粋の分割に潔癖になりすぎたり型の操作が重すぎてコード書きにくかったり色々問題が多かったので、今回再挑戦してみた。</p>
 <p>
-最近はIOに関してもそこまで恐れるものではないなという感じに考えが変わってきたりした。特にunsafePerformIOとかも使いどころを見つけてもっと気軽につかっていくべきだし、そうでなくともIOがかかってくること自体はHaskellでは普通なのでそこまで非純粋を敬遠する必要はないなと思ったりもしている。
-</p>
+最近はIOに関してもそこまで恐れるものではないなという感じに考えが変わってきたりした。特にunsafePerformIOとかも使いどころを見つけてもっと気軽につかっていくべきだし、そうでなくともIOがかかってくること自体はHaskellでは普通なのでそこまで非純粋を敬遠する必要はないなと思ったりもしている。</p>
 <p>
 とりあえずゆっくり開発しつつしばらくは様子を見ます。
-誰か使ってissueとか投げてくれるとすごく嬉しいけどどうだろう、そもそもHaskellでグラフィカルなもの作る人がほとんどいないって問題が大きいんだよなー。
-</p>
+誰か使ってissueとか投げてくれるとすごく嬉しいけどどうだろう、そもそもHaskellでグラフィカルなもの作る人がほとんどいないって問題が大きいんだよなー。</p>
 <p>
-あと、本当はもっとFluxの設計についてのあれこれとHaskellでの実装とを比較してあれこれみたいなことを書きたかったが色々書いてるうちに何を書こうとしていたのかを忘れてしまったのでまた次の機会に。
-</p>
+あと、本当はもっとFluxの設計についてのあれこれとHaskellでの実装とを比較してあれこれみたいなことを書きたかったが色々書いてるうちに何を書こうとしていたのかを忘れてしまったのでまた次の機会に。</p>
 <p>
-以上
-</p>
+以上</p>
+</div>
+</div>
 </section>
     <footer>
       <hr>

@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -49,13 +49,14 @@ https://github.com/myuon/minilight/blob/master/examples/button-counter.hs
  以下がButton型の定義と生成関数。まあこれはいいでしょう。ちなみにminilightではライブラリ名に従ってMiniLightモナドが基本のモナドです。
 data Button = Button { font :: SDL.Font.Font, counter :: Int } new :: MiniLight Button new = do font &lt;- loadFont (FontDescriptor &#34;IPAGothic&#34; (FontStyle False False)) 22 return $ Button {font = font, counter = 0} 以下がボタンコンポーネントの定義。ComponentUnitのインスタンスを作れば良い。viewはfiguresで、イベントハンドラーはonSignalで、モデルの更新はupdateで、キャッシュの設定はuseCacheでそれぞれ行う。
 instance ComponentUnit Button where update = return figures comp = do textTexture &lt;- liftMiniLight $ text (font comp) (Vect.V4 255 255 255 255) $ if counter comp == 0 then &#34;Click me!">
-<meta itemprop="datePublished" content="2019-04-11T20:30:21&#43;09:00" />
-<meta itemprop="dateModified" content="2019-04-11T20:30:21&#43;09:00" />
+<meta itemprop="datePublished" content="2019-04-11T20:30:21+09:00" />
+<meta itemprop="dateModified" content="2019-04-11T20:30:21+09:00" />
 <meta itemprop="wordCount" content="284">
 
 
 
 <meta itemprop="keywords" content="Haskell," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="newtype decoratorパターンとグラフィックスライブラリ"/>
 <meta name="twitter:description" content="minilightというSDL2の上で動くグラフィックスライブラリを作っている。

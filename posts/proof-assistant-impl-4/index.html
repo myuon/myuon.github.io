@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,12 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Proof Assistantを作る・実装編 その4" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 21日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  昨日に引き続いてClaireの宣言(Decl)について説明していきます。 Declarations   まずはtoplevelMの定義から。 toplevelM :: (Monad m, MonadIO m) =&gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &lt;- lift get; utyp &lt;- liftIO $ try $ infer env fml; case utyp of Left err -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&gt; k Right typ -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &lt;- suspend (DeclAwait return) env &lt;- lift get case decl of ここに実装を書く   Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。 ThmD thmindex formula proof   定理と証明を宣言します。 ThmD idx fml (Proof coms) -&gt; typecheck fml Prop $ do lift $ modify $ \env -&gt; env { proof = [] } runThmD idx fml coms where runThmD :: (Monad m, MonadIO m) =&gt; ThmIndex -&gt; Formula -&gt; [Command] -&gt; Coroutine DeclSuspender (StateT Env m) () runThmD idx fml coms = do env &lt;- lift get go (commandM env) (newGoal fml) coms lift $ modify $ insertThm idx fml where go :: (Monad m) =&gt; Coroutine ComSuspender (StateT [Judgement] m) () -&gt; [Judgement] -&gt; [Command] -&gt; Coroutine DeclSuspender (StateT Env m) () go machine js coms = do env &lt;- lift get (result,js&#39;) &lt;- lift $ lift $ runStateT (resume machine) js case result of Right () -&gt; return () Left (ComAwait cont) -&gt; do case coms of [] -&gt; do com&#39; &lt;- suspend $ ProofNotFinished js&#39; return go (suspend $ ComAwait cont) js&#39; [com&#39;] (c:cs) -&gt; do go (cont c) js&#39; cs Left (z@(CommandError idt err cont)) -&gt; do suspend $ RunCommandError idt err (return ()) go cont js coms   ThmDは中でcommandMを走らせ、その結果によって挙動を決めます。  commandMが問題なく終了した時(=与えられたProofが与えられた命題の証明を完成させた時)、示した論理式を環境に追加して終了します。 commandMがコマンドを要求するComAwaitで終了したとき、toplevelM全体をProofNotFinishedという証明が完了していないことを表すsuspenderでsuspendします。 commandMがエラーになった時toplevelM全体をRunCommandErrorで返します。  syntaxは次のような感じです。 theorem hoge: a ==&gt; a proof apply ImpR apply I qed  AxiomD thmindex formula   公理として指定された論理式を追加します。 AxiomD idx fml -&gt; typecheck fml Prop $ do lift $ modify $ insertThm idx fml   環境に定理として追加するだけ。 ImportD path   他の証明ファイルをインポートします。 ImportD path -&gt; do env &lt;- lift get env&#39; &lt;- liftIO $ claire env ." />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
+  Proof Assistant 「Claire」の実装について説明していきます。
+ リポジトリはこちら: myuon/claire
+ 昨日に引き続いてClaireの宣言(Decl)について説明していきます。
+Declarations   まずはtoplevelMの定義から。
+toplevelM :: (Monad m, MonadIO m) =&gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &lt;- lift get; utyp &lt;- liftIO $ try $ infer env fml; case utyp of Left err -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&gt; k Right typ -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &lt;- suspend (DeclAwait return) env &lt;- lift get case decl of ここに実装を書く   Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-4/" />
 <meta property="article:published_time" content="2017-12-21T00:20:35+09:00" />
@@ -30,17 +35,28 @@
 
 
 <meta itemprop="name" content="Proof Assistantを作る・実装編 その4">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 21日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  昨日に引き続いてClaireの宣言(Decl)について説明していきます。 Declarations   まずはtoplevelMの定義から。 toplevelM :: (Monad m, MonadIO m) =&gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &lt;- lift get; utyp &lt;- liftIO $ try $ infer env fml; case utyp of Left err -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&gt; k Right typ -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &lt;- suspend (DeclAwait return) env &lt;- lift get case decl of ここに実装を書く   Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。 ThmD thmindex formula proof   定理と証明を宣言します。 ThmD idx fml (Proof coms) -&gt; typecheck fml Prop $ do lift $ modify $ \env -&gt; env { proof = [] } runThmD idx fml coms where runThmD :: (Monad m, MonadIO m) =&gt; ThmIndex -&gt; Formula -&gt; [Command] -&gt; Coroutine DeclSuspender (StateT Env m) () runThmD idx fml coms = do env &lt;- lift get go (commandM env) (newGoal fml) coms lift $ modify $ insertThm idx fml where go :: (Monad m) =&gt; Coroutine ComSuspender (StateT [Judgement] m) () -&gt; [Judgement] -&gt; [Command] -&gt; Coroutine DeclSuspender (StateT Env m) () go machine js coms = do env &lt;- lift get (result,js&#39;) &lt;- lift $ lift $ runStateT (resume machine) js case result of Right () -&gt; return () Left (ComAwait cont) -&gt; do case coms of [] -&gt; do com&#39; &lt;- suspend $ ProofNotFinished js&#39; return go (suspend $ ComAwait cont) js&#39; [com&#39;] (c:cs) -&gt; do go (cont c) js&#39; cs Left (z@(CommandError idt err cont)) -&gt; do suspend $ RunCommandError idt err (return ()) go cont js coms   ThmDは中でcommandMを走らせ、その結果によって挙動を決めます。  commandMが問題なく終了した時(=与えられたProofが与えられた命題の証明を完成させた時)、示した論理式を環境に追加して終了します。 commandMがコマンドを要求するComAwaitで終了したとき、toplevelM全体をProofNotFinishedという証明が完了していないことを表すsuspenderでsuspendします。 commandMがエラーになった時toplevelM全体をRunCommandErrorで返します。  syntaxは次のような感じです。 theorem hoge: a ==&gt; a proof apply ImpR apply I qed  AxiomD thmindex formula   公理として指定された論理式を追加します。 AxiomD idx fml -&gt; typecheck fml Prop $ do lift $ modify $ insertThm idx fml   環境に定理として追加するだけ。 ImportD path   他の証明ファイルをインポートします。 ImportD path -&gt; do env &lt;- lift get env&#39; &lt;- liftIO $ claire env .">
-<meta itemprop="datePublished" content="2017-12-21T00:20:35&#43;09:00" />
-<meta itemprop="dateModified" content="2017-12-21T00:20:35&#43;09:00" />
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
+  Proof Assistant 「Claire」の実装について説明していきます。
+ リポジトリはこちら: myuon/claire
+ 昨日に引き続いてClaireの宣言(Decl)について説明していきます。
+Declarations   まずはtoplevelMの定義から。
+toplevelM :: (Monad m, MonadIO m) =&gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &lt;- lift get; utyp &lt;- liftIO $ try $ infer env fml; case utyp of Left err -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&gt; k Right typ -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &lt;- suspend (DeclAwait return) env &lt;- lift get case decl of ここに実装を書く   Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。">
+<meta itemprop="datePublished" content="2017-12-21T00:20:35+09:00" />
+<meta itemprop="dateModified" content="2017-12-21T00:20:35+09:00" />
 <meta itemprop="wordCount" content="831">
 
 
 
 <meta itemprop="keywords" content="AdC2017,定理証明,Haskell," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Proof Assistantを作る・実装編 その4"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 21日目の記事です。   Proof Assistant 「Claire」の実装について説明していきます。  リポジトリはこちら: myuon/claire  昨日に引き続いてClaireの宣言(Decl)について説明していきます。 Declarations   まずはtoplevelMの定義から。 toplevelM :: (Monad m, MonadIO m) =&gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &lt;- lift get; utyp &lt;- liftIO $ try $ infer env fml; case utyp of Left err -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&gt; k Right typ -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &lt;- suspend (DeclAwait return) env &lt;- lift get case decl of ここに実装を書く   Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。 ThmD thmindex formula proof   定理と証明を宣言します。 ThmD idx fml (Proof coms) -&gt; typecheck fml Prop $ do lift $ modify $ \env -&gt; env { proof = [] } runThmD idx fml coms where runThmD :: (Monad m, MonadIO m) =&gt; ThmIndex -&gt; Formula -&gt; [Command] -&gt; Coroutine DeclSuspender (StateT Env m) () runThmD idx fml coms = do env &lt;- lift get go (commandM env) (newGoal fml) coms lift $ modify $ insertThm idx fml where go :: (Monad m) =&gt; Coroutine ComSuspender (StateT [Judgement] m) () -&gt; [Judgement] -&gt; [Command] -&gt; Coroutine DeclSuspender (StateT Env m) () go machine js coms = do env &lt;- lift get (result,js&#39;) &lt;- lift $ lift $ runStateT (resume machine) js case result of Right () -&gt; return () Left (ComAwait cont) -&gt; do case coms of [] -&gt; do com&#39; &lt;- suspend $ ProofNotFinished js&#39; return go (suspend $ ComAwait cont) js&#39; [com&#39;] (c:cs) -&gt; do go (cont c) js&#39; cs Left (z@(CommandError idt err cont)) -&gt; do suspend $ RunCommandError idt err (return ()) go cont js coms   ThmDは中でcommandMを走らせ、その結果によって挙動を決めます。  commandMが問題なく終了した時(=与えられたProofが与えられた命題の証明を完成させた時)、示した論理式を環境に追加して終了します。 commandMがコマンドを要求するComAwaitで終了したとき、toplevelM全体をProofNotFinishedという証明が完了していないことを表すsuspenderでsuspendします。 commandMがエラーになった時toplevelM全体をRunCommandErrorで返します。  syntaxは次のような感じです。 theorem hoge: a ==&gt; a proof apply ImpR apply I qed  AxiomD thmindex formula   公理として指定された論理式を追加します。 AxiomD idx fml -&gt; typecheck fml Prop $ do lift $ modify $ insertThm idx fml   環境に定理として追加するだけ。 ImportD path   他の証明ファイルをインポートします。 ImportD path -&gt; do env &lt;- lift get env&#39; &lt;- liftIO $ claire env ."/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
+  Proof Assistant 「Claire」の実装について説明していきます。
+ リポジトリはこちら: myuon/claire
+ 昨日に引き続いてClaireの宣言(Decl)について説明していきます。
+Declarations   まずはtoplevelMの定義から。
+toplevelM :: (Monad m, MonadIO m) =&gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &lt;- lift get; utyp &lt;- liftIO $ try $ infer env fml; case utyp of Left err -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&gt; k Right typ -&gt; suspend $ DeclError &#34;typecheck&#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &lt;- suspend (DeclAwait return) env &lt;- lift get case decl of ここに実装を書く   Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。"/>
 
 
   </head>
@@ -71,24 +87,21 @@
     </header>
     <section>
 <p>
-<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 21日目の記事です。</strong>
-</p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 21日目の記事です。</strong></p>
 <hr>
 <p>
-Proof Assistant 「Claire」の実装について説明していきます。
-</p>
+Proof Assistant 「Claire」の実装について説明していきます。</p>
 <p>
-リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a>
-</p>
+リポジトリはこちら: <a href="https://github.com/myuon/claire">myuon/claire</a></p>
 <p>
-昨日に引き続いてClaireの宣言(Decl)について説明していきます。
-</p>
+昨日に引き続いてClaireの宣言(Decl)について説明していきます。</p>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 Declarations
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
 <p>
-まずはtoplevelMの定義から。
-</p>
+まずはtoplevelMの定義から。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">toplevelM</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Monad</span> <span class="n">m</span><span class="p">,</span> <span class="kt">MonadIO</span> <span class="n">m</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">Coroutine</span> <span class="kt">DeclSuspender</span> <span class="p">(</span><span class="kt">StateT</span> <span class="kt">Env</span> <span class="n">m</span><span class="p">)</span> <span class="nb">()</span>
   <span class="n">toplevelM</span> <span class="ow">=</span> <span class="n">forever</span> <span class="o">$</span> <span class="kr">do</span>
@@ -108,14 +121,14 @@ Declarations
 </div>
 <p>
 Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。
-とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。
-</p>
+とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。</p>
+<div id="outline-container-headline-2" class="outline-3">
 <h3 id="headline-2">
 ThmD thmindex formula proof
 </h3>
+<div id="outline-text-headline-2" class="outline-text-3">
 <p>
-定理と証明を宣言します。
-</p>
+定理と証明を宣言します。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="kt">ThmD</span> <span class="n">idx</span> <span class="n">fml</span> <span class="p">(</span><span class="kt">Proof</span> <span class="n">coms</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">typecheck</span> <span class="n">fml</span> <span class="kt">Prop</span> <span class="o">$</span> <span class="kr">do</span>
     <span class="n">lift</span> <span class="o">$</span> <span class="n">modify</span> <span class="o">$</span> <span class="nf">\</span><span class="n">env</span> <span class="ow">-&gt;</span> <span class="n">env</span> <span class="p">{</span> <span class="n">proof</span> <span class="ow">=</span> <span class="kt">[]</span> <span class="p">}</span>
@@ -148,16 +161,13 @@ ThmD thmindex formula proof
                 <span class="n">go</span> <span class="n">cont</span> <span class="n">js</span> <span class="n">coms</span></code></pre></div>
 </div>
 <p>
-ThmDは中でcommandMを走らせ、その結果によって挙動を決めます。
-</p>
+ThmDは中でcommandMを走らせ、その結果によって挙動を決めます。</p>
 <p>
 commandMが問題なく終了した時(=与えられたProofが与えられた命題の証明を完成させた時)、示した論理式を環境に追加して終了します。
 commandMがコマンドを要求するComAwaitで終了したとき、toplevelM全体をProofNotFinishedという証明が完了していないことを表すsuspenderでsuspendします。
-commandMがエラーになった時toplevelM全体をRunCommandErrorで返します。
-</p>
+commandMがエラーになった時toplevelM全体をRunCommandErrorで返します。</p>
 <p>
-syntaxは次のような感じです。
-</p>
+syntaxは次のような感じです。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  theorem hoge: a ==&gt; a
   proof
@@ -165,25 +175,30 @@ syntaxは次のような感じです。
     apply I
   qed</code></pre></div>
 </div>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
 <h3 id="headline-3">
 AxiomD thmindex formula
 </h3>
+<div id="outline-text-headline-3" class="outline-text-3">
 <p>
-公理として指定された論理式を追加します。
-</p>
+公理として指定された論理式を追加します。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">AxiomD</span> <span class="n">idx</span> <span class="n">fml</span> <span class="ow">-&gt;</span> <span class="n">typecheck</span> <span class="n">fml</span> <span class="kt">Prop</span> <span class="o">$</span> <span class="kr">do</span>
         <span class="n">lift</span> <span class="o">$</span> <span class="n">modify</span> <span class="o">$</span> <span class="n">insertThm</span> <span class="n">idx</span> <span class="n">fml</span></code></pre></div>
 </div>
 <p>
-環境に定理として追加するだけ。
-</p>
+環境に定理として追加するだけ。</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-3">
 <h3 id="headline-4">
 ImportD path
 </h3>
+<div id="outline-text-headline-4" class="outline-text-3">
 <p>
-他の証明ファイルをインポートします。
-</p>
+他の証明ファイルをインポートします。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">ImportD</span> <span class="n">path</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
         <span class="n">env</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
@@ -192,47 +207,60 @@ ImportD path
 </div>
 <p>
 あとで定義しますがclaireというClaireの証明ファイル(というかClaire型の値)そのものを解釈して動くproofchecker machineをあとで定義するのでそれを使います。
-そしてそれを実行後に環境を現在の環境に上書きします。
-</p>
+そしてそれを実行後に環境を現在の環境に上書きします。</p>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-3">
 <h3 id="headline-5">
 ConstD identifier type
 </h3>
+<div id="outline-text-headline-5" class="outline-text-3">
 <p>
 ある型のtermを追加します。
-これは型チェッカーの話をする時についでに説明しますが、ADTみたいなsyntaxが今のところないのでconstructorはこのdeclarationによって追加します。
-</p>
+これは型チェッカーの話をする時についでに説明しますが、ADTみたいなsyntaxが今のところないのでconstructorはこのdeclarationによって追加します。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">ConstD</span> <span class="n">p</span> <span class="n">typ</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
         <span class="n">lift</span> <span class="o">$</span> <span class="n">modify</span> <span class="o">$</span> <span class="nf">\</span><span class="n">env</span> <span class="ow">-&gt;</span> <span class="n">env</span> <span class="p">{</span> <span class="n">types</span> <span class="ow">=</span> <span class="kt">M</span><span class="o">.</span><span class="n">insert</span> <span class="n">p</span> <span class="n">typ</span> <span class="p">(</span><span class="n">types</span> <span class="n">env</span><span class="p">)</span> <span class="p">}</span></code></pre></div>
 </div>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-3">
 <h3 id="headline-6">
 Print_Proof
 </h3>
+<div id="outline-text-headline-6" class="outline-text-3">
 <p>
 直前の証明をprintします。
-これは証明を入力するたびにそれを証明に追加していくという方法で実装しています。詳細はまた後ほど。
-</p>
+これは証明を入力するたびにそれを証明に追加していくという方法で実装しています。詳細はまた後ほど。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">PrintProof</span> <span class="ow">-&gt;</span> <span class="kr">do</span>
         <span class="n">env</span> <span class="ow">&lt;-</span> <span class="n">lift</span> <span class="n">get</span>
         <span class="n">liftIO</span> <span class="o">$</span> <span class="n">putStrLn</span> <span class="o">$</span> <span class="n">print_proof</span> <span class="n">env</span></code></pre></div>
 </div>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-3">
 <h3 id="headline-7">
 HsFile, NewDecl
 </h3>
+<div id="outline-text-headline-7" class="outline-text-3">
 <p>
-この辺はマクロ関係の機能なので今は保留。
-</p>
+この辺はマクロ関係の機能なので今は保留。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">      <span class="kt">HsFile</span> <span class="n">file</span> <span class="ow">-&gt;</span> <span class="o">...</span>
       <span class="kt">NewDecl</span> <span class="n">dec</span> <span class="n">args</span> <span class="ow">-&gt;</span> <span class="o">...</span></code></pre></div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-2">
 <h2 id="headline-8">
 Claire Proofchecker
 </h2>
+<div id="outline-text-headline-8" class="outline-text-2">
 <p>
-色々説明していないこともありますがまぁそれはそれとして、Claireのproofcheckerを定義します。
-</p>
+色々説明していないこともありますがまぁそれはそれとして、Claireのproofcheckerを定義します。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">claire</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Decl</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="kt">Env</span>
   <span class="n">claire</span> <span class="ow">=</span> <span class="n">go</span> <span class="n">toplevelM</span> <span class="kr">where</span>
@@ -249,20 +277,20 @@ Claire Proofchecker
 </div>
 <p>
 これは基本的には、受け取ったDeclのリストをtoplevelMに食わしながらループをぐるぐる回すだけですね。
-toplevelMは(foreverで定義されているのでresumeすると常にDeclAwaitが出現し続けるという)無限の深さの構造をもつので、戻り値は必ずLeftﾅﾝﾄｶの形になります。
-</p>
+toplevelMは(foreverで定義されているのでresumeすると常にDeclAwaitが出現し続けるという)無限の深さの構造をもつので、戻り値は必ずLeftﾅﾝﾄｶの形になります。</p>
 <p>
-DeclAwaitになったらそのまま実行を続け、そうでなければエラーなので画面に出力してそこでproofcheckerを止めます。
-</p>
+DeclAwaitになったらそのまま実行を続け、そうでなければエラーなので画面に出力してそこでproofcheckerを止めます。</p>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-2">
 <h2 id="headline-9">
 Main.hs
 </h2>
+<div id="outline-text-headline-9" class="outline-text-2">
 <p>
-さて、今までの機能を使ってとにかく動くところまでやりたいので、Main.hsの実装を説明します。
-</p>
+さて、今までの機能を使ってとにかく動くところまでやりたいので、Main.hsの実装を説明します。</p>
 <p>
-<a href="https://github.com/myuon/claire/blob/master/app/Main.hs">app/Main.hs</a>
-</p>
+<a href="https://github.com/myuon/claire/blob/master/app/Main.hs">app/Main.hs</a></p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">main</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="nb">()</span>
   <span class="n">main</span> <span class="ow">=</span> <span class="kr">do</span>
@@ -285,11 +313,9 @@ Main.hs
 </div>
 <p>
 main関数は、ファイルを受け取ってproofcheckerを走らせるか、インタラクティブシェルを起動するかのいずれかです。
-proofcheckerは先程説明したclaireを実行するだけですね。
-</p>
+proofcheckerは先程説明したclaireを実行するだけですね。</p>
 <p>
-インタラクティブシェルは次のような実装になっています。
-</p>
+インタラクティブシェルは次のような実装になっています。</p>
 <div class="src src-haskell">
 <div class="highlight"><pre class="chroma"><code class="language-haskell" data-lang="haskell">  <span class="n">clairepl</span> <span class="ow">::</span> <span class="kt">Env</span> <span class="ow">-&gt;</span> <span class="kt">IO</span> <span class="nb">()</span>
   <span class="n">clairepl</span> <span class="n">env</span> <span class="ow">=</span> <span class="n">go</span> <span class="n">env</span> <span class="n">toplevelM</span> <span class="kr">where</span>
@@ -320,32 +346,29 @@ proofcheckerは先程説明したclaireを実行するだけですね。
     <span class="n">safep</span> <span class="n">ma</span> <span class="n">p</span> <span class="ow">=</span> <span class="n">ma</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">p</span> <span class="o">&lt;$!&gt;</span> <span class="n">getLine</span><span class="p">)</span> <span class="p">`</span><span class="n">catch</span><span class="p">`</span> <span class="p">(</span><span class="nf">\</span><span class="n">err</span> <span class="ow">-&gt;</span> <span class="n">print</span> <span class="p">(</span><span class="n">err</span> <span class="ow">::</span> <span class="kt">ErrorCall</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">safep</span> <span class="n">ma</span> <span class="n">p</span><span class="p">)</span></code></pre></div>
 </div>
 <p>
-これはtoplevelMを使って実際にどのように実行するかを記述するものです。
-</p>
+これはtoplevelMを使って実際にどのように実行するかを記述するものです。</p>
 <p>
 toplevelMを実行すると、DeclAwait, ProofNotFinished, RunCommandError, DeclErrorなどの様々な状態が返ってきます。
 DeclAwaitが返ってきたらDeclをユーザーに入力させ、ProofNotFinishedが返ってきたらCommandをユーザーに入力させる、みたいなことをしているのが上のコードです。
-コマンドの入力は証明の入力なので、上でも触れましたがPrint_Proofができるようにするために入力した証明を環境に追加しておきます。
-</p>
+コマンドの入力は証明の入力なので、上でも触れましたがPrint_Proofができるようにするために入力した証明を環境に追加しておきます。</p>
 <p>
-ところで、ユーザーの入力が例えばパース不可能な文字列である場合があるので、そのような場合にはエラーを出力しもう一度入力をさせるための関数がsafepです。
-</p>
+ところで、ユーザーの入力が例えばパース不可能な文字列である場合があるので、そのような場合にはエラーを出力しもう一度入力をさせるための関数がsafepです。</p>
 <p>
-toplevelMの結果エラーが返ってきたらエラー内容を画面に出力して、もう一度入力をさせます。
-</p>
+toplevelMの結果エラーが返ってきたらエラー内容を画面に出力して、もう一度入力をさせます。</p>
 <p>
 注目してほしいこととして、証明チェックに関する実装は全てtoplevelMが請け負っていて、claireplもclaireも共通したコードで実装ができているということですね。
-Coroutineモナドを使ったことにより、証明の実装自体は共通化させ、実際にマシーンが停止状態に入った時にエラーを画面に表示するか、それともユーザーからの入力を受け付けるのか、というUI部分は後から実装を与えて挙動を変えているというのが大事なところです。
-</p>
+Coroutineモナドを使ったことにより、証明の実装自体は共通化させ、実際にマシーンが停止状態に入った時にエラーを画面に表示するか、それともユーザーからの入力を受け付けるのか、というUI部分は後から実装を与えて挙動を変えているというのが大事なところです。</p>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-2">
 <h2 id="headline-10">
 実行
 </h2>
+<div id="outline-text-headline-10" class="outline-text-2">
 <p>
-以上のような仕組みで、Claireのproofcheckerとインタラクティブシェルが動きます。
-</p>
+以上のような仕組みで、Claireのproofcheckerとインタラクティブシェルが動きます。</p>
 <p>
-例えば実行してみると、次のような操作で証明を記述することが出来ます。
-</p>
+例えば実行してみると、次のような操作で証明を記述することが出来ます。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  =========================
   === Welcome to Claire ===
@@ -370,21 +393,23 @@ Coroutineモナドを使ったことにより、証明の実装自体は共通�
   qed</code></pre></div>
 </div>
 <p>
-decl&gt;, command&gt; の部分がユーザーの入力です。
-</p>
+decl&gt;, command&gt; の部分がユーザーの入力です。</p>
+</div>
+</div>
+<div id="outline-container-headline-11" class="outline-2">
 <h2 id="headline-11">
 まとめ
 </h2>
+<div id="outline-text-headline-11" class="outline-text-2">
 <p>
 はてさて、だいぶ形になってきたように思います。
-一応今回でClaireの証明チェックに関するコアの部分の説明は終わりです。
-</p>
+一応今回でClaireの証明チェックに関するコアの部分の説明は終わりです。</p>
 <p>
-あと、型システムの説明と(と言っても特別なことはないので説明することもないですが)、マクロ機能の説明をしたらClaireの解説はおしまいになります。
-</p>
+あと、型システムの説明と(と言っても特別なことはないので説明することもないですが)、マクロ機能の説明をしたらClaireの解説はおしまいになります。</p>
 <p>
-というわけでお疲れ様でした。
-</p>
+というわけでお疲れ様でした。</p>
+</div>
+</div>
 </section>
     <footer>
       <hr>

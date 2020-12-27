@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>CG on The curse of λ</title>
@@ -6,16 +5,17 @@
     <description>Recent content in CG on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
-    <lastBuildDate>Sun, 03 Mar 2019 19:33:25 +0900</lastBuildDate><atom:link href="https://myuon.github.io/tags/cg/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>パストレーシングについて調べてる</title>
-      <link>https://myuon.github.io/posts/survey-ray-tracing/</link>
-      <pubDate>Sun, 03 Mar 2019 19:33:25 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/survey-ray-tracing/</guid>
-      <description>前に入門記事を書いてそこから色々調べたりしてたのでその備忘録として
+    <lastBuildDate>Sun, 03 Mar 2019 19:33:25 +0900</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/cg/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>パストレーシングについて調べてる</title>
+        <link>https://myuon.github.io/posts/survey-ray-tracing/</link>
+        <pubDate>Sun, 03 Mar 2019 19:33:25 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/survey-ray-tracing/</guid>
+        <description>前に入門記事を書いてそこから色々調べたりしてたのでその備忘録として
 アルゴリズムについて カメラから出たレイをたどりながら光線のシミュレーションを行う単純なアルゴリズムをレイトレーシングと言って、それを確率的な計算によってオブジェクトの数に依らない計算量で計算できるように改良したものをパストレーシングと呼ぶらしい(正確な定義はよくわからなかったがアルゴリズムの差から名前が違うみたい)。
 アルゴリズムの詳細については次とかを見るとよさそう。
  memoRANDOM 物理ベースレンダラ edupt解説  パストレーシングアルゴリズムの初出は&amp;quot;The rendering equation (J. Kajiya, 1986)&amp;ldquo;か？
@@ -30,7 +30,7 @@ Stratified Sampling 層化サンプリングによってサンプルの座標が
  GPU Ray Tracing in Unity – Part 1  例えば次のような画像が割と簡単に出せる。
 なるほど pic.twitter.com/vgvv8ohDdk
 &amp;mdash; みょん (@myuon_myon) 2019年3月3日  WebGL 人間に見せるUIとしてWebGLにして吐くのは結構ありかもしれないと思っていた。WebGLはRustを使っても吐けるみたいだった(けど中身は普通にshader言語書いてたのでRustで書けるとは言わない気もする)。</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

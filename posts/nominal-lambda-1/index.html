@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,18 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Nominal Isabelleとラムダ計算 その1" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 10日目の記事です。   前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。 今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。  定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。  今回解説するコードは以下に置いてあります。  myuon/CR.thy 前置き  ラムダ計算   この記事をわざわざ読む人はラムダ計算についてはある程度知っている人が多いと思うのですが、簡単に説明をしておきます。  ラムダ計算は計算のモデルとなるべく作られた言語で、「関数を作る・作った関数を呼び出す(関数を適用すること)」の2つの操作を基本とします。 ここでの「計算」とは数を与えたら数を返す、のような、電卓で行われるような最も我々がイメージしやすい計算のことです。ラムダ計算ではこの「計算」を、項を別の項に変換するような操作によって実現します。 これは単に 1&#43;2 という項があったらそれを 3 へと変換する、あるいは f(x)=x&#43;2 という項があるときに、 f(10) を 12 へと変換する、そういう操作を計算と呼びますというだけなので難しいことはありません。  さてラムダ計算の項(何がラムダ計算の項かはまだちゃんと説明していないけど)は通常変数の付け替えを同一視します。具体的には f(x)=x と f(y)=y を区別しないのですが、この同値をα同値と呼びます。  ラムダ計算の定理証明で最も厄介なのはこのα同値性の扱いで、というか定理証明による形式化ではそもそも「同一視」とか「同値関係で割る」みたいな操作を扱うのがめちゃくちゃ苦手です。 これは主に、一般に同一視されているかが計算によって判定可能でないこと1と、同一視された項同士の計算はしばしば(人間は気にしないけど)それらの項の変形の構成に依存するからだと個人的には思っています。  はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。 Nominal Isabelle   Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。 binderは [x]. M のような形をしていて、この束縛変数 x の変数名の付け替えを区別しないような項である。  Nominal Isabelleではこの変数の付け替え、「例えば変数 x を y に付け替える」という操作を「置換 (x,y) を作用させる」という操作とみなす、というところからスタートする。 より厳密には次のようなことである: 無限の変数からなる集合 V が与えられている時、 List (V×V) の元を置換と呼ぶ。このとき置換の作用を ∙ でかくことにし、 ((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M のようにして定める。  上の変数の書き換えの部分は当然項 M が属するデータ型がどのように定義されているかに依存するが、この辺のあれこれをいい感じにやってくれるのがNominal Isabelleであり、Nominal Isabelleが提供するコマンドだったりするわけである。  また、以下でも登場するが、ある変数 x が項 M (複数ある場合はタプルとかにする)に(自由)出現しない、ということを x♯M で表す。  (余談だが、こういうbinderの変数のつらみというのはほか言語でも当然あるので、例えば(こちらはde Bruijn indexを使った代入規則の自動化に限定されてはいるが)Coqのautosubstというライブラリもあって、同じくラムダ計算の定理証明などに威力を発揮するようだ。) nominal_datatype  はじめに   Nominal IsabelleはHOLのライブラリ群の中に含まれているはずで、 imports &#34;~~/src/HOL/Nominal/Nominal&#34; とかでインポートできる。(~~ でIsabelleがインストールされているパスを表す) ライブラリのコードはNominal theoryそのものがここ、例がここにあるので見ると良いかもしれない。 (例に今回の目標と同じCRを示しているのがあるけれど、(大まかな流れは同じだけど)これは特に見てないので私の証明とは色々違うと思います)  また、チュートリアルというかマニュアルが以下にあるので必要に応じて参照して欲しい。  nominal_datatype_manual." />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 10日目の記事です。
+  前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。 今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。
+ 定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。
+ 今回解説するコードは以下に置いてあります。
+ myuon/CR.thy
+前置き  ラムダ計算   この記事をわざわざ読む人はラムダ計算についてはある程度知っている人が多いと思うのですが、簡単に説明をしておきます。
+ ラムダ計算は計算のモデルとなるべく作られた言語で、「関数を作る・作った関数を呼び出す(関数を適用すること)」の2つの操作を基本とします。 ここでの「計算」とは数を与えたら数を返す、のような、電卓で行われるような最も我々がイメージしやすい計算のことです。ラムダ計算ではこの「計算」を、項を別の項に変換するような操作によって実現します。 これは単に 1&#43;2 という項があったらそれを 3 へと変換する、あるいは f(x)=x&#43;2 という項があるときに、 f(10) を 12 へと変換する、そういう操作を計算と呼びますというだけなので難しいことはありません。
+ さてラムダ計算の項(何がラムダ計算の項かはまだちゃんと説明していないけど)は通常変数の付け替えを同一視します。具体的には f(x)=x と f(y)=y を区別しないのですが、この同値をα同値と呼びます。
+ ラムダ計算の定理証明で最も厄介なのはこのα同値性の扱いで、というか定理証明による形式化ではそもそも「同一視」とか「同値関係で割る」みたいな操作を扱うのがめちゃくちゃ苦手です。 これは主に、一般に同一視されているかが計算によって判定可能でないこと1と、同一視された項同士の計算はしばしば(人間は気にしないけど)それらの項の変形の構成に依存するからだと個人的には思っています。
+ はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。
+  Nominal Isabelle   Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。 binderは [x]. M のような形をしていて、この束縛変数 x の変数名の付け替えを区別しないような項である。
+ Nominal Isabelleではこの変数の付け替え、「例えば変数 x を y に付け替える」という操作を「置換 (x,y) を作用させる」という操作とみなす、というところからスタートする。 より厳密には次のようなことである: 無限の変数からなる集合 V が与えられている時、 List (V×V) の元を置換と呼ぶ。このとき置換の作用を ∙ でかくことにし、 ((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M のようにして定める。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/nominal-lambda-1/" />
 <meta property="article:published_time" content="2017-12-10T00:13:17+09:00" />
@@ -30,17 +41,40 @@
 
 
 <meta itemprop="name" content="Nominal Isabelleとラムダ計算 その1">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 10日目の記事です。   前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。 今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。  定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。  今回解説するコードは以下に置いてあります。  myuon/CR.thy 前置き  ラムダ計算   この記事をわざわざ読む人はラムダ計算についてはある程度知っている人が多いと思うのですが、簡単に説明をしておきます。  ラムダ計算は計算のモデルとなるべく作られた言語で、「関数を作る・作った関数を呼び出す(関数を適用すること)」の2つの操作を基本とします。 ここでの「計算」とは数を与えたら数を返す、のような、電卓で行われるような最も我々がイメージしやすい計算のことです。ラムダ計算ではこの「計算」を、項を別の項に変換するような操作によって実現します。 これは単に 1&#43;2 という項があったらそれを 3 へと変換する、あるいは f(x)=x&#43;2 という項があるときに、 f(10) を 12 へと変換する、そういう操作を計算と呼びますというだけなので難しいことはありません。  さてラムダ計算の項(何がラムダ計算の項かはまだちゃんと説明していないけど)は通常変数の付け替えを同一視します。具体的には f(x)=x と f(y)=y を区別しないのですが、この同値をα同値と呼びます。  ラムダ計算の定理証明で最も厄介なのはこのα同値性の扱いで、というか定理証明による形式化ではそもそも「同一視」とか「同値関係で割る」みたいな操作を扱うのがめちゃくちゃ苦手です。 これは主に、一般に同一視されているかが計算によって判定可能でないこと1と、同一視された項同士の計算はしばしば(人間は気にしないけど)それらの項の変形の構成に依存するからだと個人的には思っています。  はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。 Nominal Isabelle   Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。 binderは [x]. M のような形をしていて、この束縛変数 x の変数名の付け替えを区別しないような項である。  Nominal Isabelleではこの変数の付け替え、「例えば変数 x を y に付け替える」という操作を「置換 (x,y) を作用させる」という操作とみなす、というところからスタートする。 より厳密には次のようなことである: 無限の変数からなる集合 V が与えられている時、 List (V×V) の元を置換と呼ぶ。このとき置換の作用を ∙ でかくことにし、 ((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M のようにして定める。  上の変数の書き換えの部分は当然項 M が属するデータ型がどのように定義されているかに依存するが、この辺のあれこれをいい感じにやってくれるのがNominal Isabelleであり、Nominal Isabelleが提供するコマンドだったりするわけである。  また、以下でも登場するが、ある変数 x が項 M (複数ある場合はタプルとかにする)に(自由)出現しない、ということを x♯M で表す。  (余談だが、こういうbinderの変数のつらみというのはほか言語でも当然あるので、例えば(こちらはde Bruijn indexを使った代入規則の自動化に限定されてはいるが)Coqのautosubstというライブラリもあって、同じくラムダ計算の定理証明などに威力を発揮するようだ。) nominal_datatype  はじめに   Nominal IsabelleはHOLのライブラリ群の中に含まれているはずで、 imports &#34;~~/src/HOL/Nominal/Nominal&#34; とかでインポートできる。(~~ でIsabelleがインストールされているパスを表す) ライブラリのコードはNominal theoryそのものがここ、例がここにあるので見ると良いかもしれない。 (例に今回の目標と同じCRを示しているのがあるけれど、(大まかな流れは同じだけど)これは特に見てないので私の証明とは色々違うと思います)  また、チュートリアルというかマニュアルが以下にあるので必要に応じて参照して欲しい。  nominal_datatype_manual.">
-<meta itemprop="datePublished" content="2017-12-10T00:13:17&#43;09:00" />
-<meta itemprop="dateModified" content="2017-12-10T00:13:17&#43;09:00" />
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 10日目の記事です。
+  前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。 今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。
+ 定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。
+ 今回解説するコードは以下に置いてあります。
+ myuon/CR.thy
+前置き  ラムダ計算   この記事をわざわざ読む人はラムダ計算についてはある程度知っている人が多いと思うのですが、簡単に説明をしておきます。
+ ラムダ計算は計算のモデルとなるべく作られた言語で、「関数を作る・作った関数を呼び出す(関数を適用すること)」の2つの操作を基本とします。 ここでの「計算」とは数を与えたら数を返す、のような、電卓で行われるような最も我々がイメージしやすい計算のことです。ラムダ計算ではこの「計算」を、項を別の項に変換するような操作によって実現します。 これは単に 1&#43;2 という項があったらそれを 3 へと変換する、あるいは f(x)=x&#43;2 という項があるときに、 f(10) を 12 へと変換する、そういう操作を計算と呼びますというだけなので難しいことはありません。
+ さてラムダ計算の項(何がラムダ計算の項かはまだちゃんと説明していないけど)は通常変数の付け替えを同一視します。具体的には f(x)=x と f(y)=y を区別しないのですが、この同値をα同値と呼びます。
+ ラムダ計算の定理証明で最も厄介なのはこのα同値性の扱いで、というか定理証明による形式化ではそもそも「同一視」とか「同値関係で割る」みたいな操作を扱うのがめちゃくちゃ苦手です。 これは主に、一般に同一視されているかが計算によって判定可能でないこと1と、同一視された項同士の計算はしばしば(人間は気にしないけど)それらの項の変形の構成に依存するからだと個人的には思っています。
+ はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。
+  Nominal Isabelle   Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。 binderは [x]. M のような形をしていて、この束縛変数 x の変数名の付け替えを区別しないような項である。
+ Nominal Isabelleではこの変数の付け替え、「例えば変数 x を y に付け替える」という操作を「置換 (x,y) を作用させる」という操作とみなす、というところからスタートする。 より厳密には次のようなことである: 無限の変数からなる集合 V が与えられている時、 List (V×V) の元を置換と呼ぶ。このとき置換の作用を ∙ でかくことにし、 ((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M のようにして定める。">
+<meta itemprop="datePublished" content="2017-12-10T00:13:17+09:00" />
+<meta itemprop="dateModified" content="2017-12-10T00:13:17+09:00" />
 <meta itemprop="wordCount" content="562">
 
 
 
 <meta itemprop="keywords" content="AdC2017,Isabelle,計算機科学,ラムダ計算," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Nominal Isabelleとラムダ計算 その1"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 10日目の記事です。   前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。 今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。  定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。  今回解説するコードは以下に置いてあります。  myuon/CR.thy 前置き  ラムダ計算   この記事をわざわざ読む人はラムダ計算についてはある程度知っている人が多いと思うのですが、簡単に説明をしておきます。  ラムダ計算は計算のモデルとなるべく作られた言語で、「関数を作る・作った関数を呼び出す(関数を適用すること)」の2つの操作を基本とします。 ここでの「計算」とは数を与えたら数を返す、のような、電卓で行われるような最も我々がイメージしやすい計算のことです。ラムダ計算ではこの「計算」を、項を別の項に変換するような操作によって実現します。 これは単に 1&#43;2 という項があったらそれを 3 へと変換する、あるいは f(x)=x&#43;2 という項があるときに、 f(10) を 12 へと変換する、そういう操作を計算と呼びますというだけなので難しいことはありません。  さてラムダ計算の項(何がラムダ計算の項かはまだちゃんと説明していないけど)は通常変数の付け替えを同一視します。具体的には f(x)=x と f(y)=y を区別しないのですが、この同値をα同値と呼びます。  ラムダ計算の定理証明で最も厄介なのはこのα同値性の扱いで、というか定理証明による形式化ではそもそも「同一視」とか「同値関係で割る」みたいな操作を扱うのがめちゃくちゃ苦手です。 これは主に、一般に同一視されているかが計算によって判定可能でないこと1と、同一視された項同士の計算はしばしば(人間は気にしないけど)それらの項の変形の構成に依存するからだと個人的には思っています。  はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。 Nominal Isabelle   Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。 binderは [x]. M のような形をしていて、この束縛変数 x の変数名の付け替えを区別しないような項である。  Nominal Isabelleではこの変数の付け替え、「例えば変数 x を y に付け替える」という操作を「置換 (x,y) を作用させる」という操作とみなす、というところからスタートする。 より厳密には次のようなことである: 無限の変数からなる集合 V が与えられている時、 List (V×V) の元を置換と呼ぶ。このとき置換の作用を ∙ でかくことにし、 ((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M のようにして定める。  上の変数の書き換えの部分は当然項 M が属するデータ型がどのように定義されているかに依存するが、この辺のあれこれをいい感じにやってくれるのがNominal Isabelleであり、Nominal Isabelleが提供するコマンドだったりするわけである。  また、以下でも登場するが、ある変数 x が項 M (複数ある場合はタプルとかにする)に(自由)出現しない、ということを x♯M で表す。  (余談だが、こういうbinderの変数のつらみというのはほか言語でも当然あるので、例えば(こちらはde Bruijn indexを使った代入規則の自動化に限定されてはいるが)Coqのautosubstというライブラリもあって、同じくラムダ計算の定理証明などに威力を発揮するようだ。) nominal_datatype  はじめに   Nominal IsabelleはHOLのライブラリ群の中に含まれているはずで、 imports &#34;~~/src/HOL/Nominal/Nominal&#34; とかでインポートできる。(~~ でIsabelleがインストールされているパスを表す) ライブラリのコードはNominal theoryそのものがここ、例がここにあるので見ると良いかもしれない。 (例に今回の目標と同じCRを示しているのがあるけれど、(大まかな流れは同じだけど)これは特に見てないので私の証明とは色々違うと思います)  また、チュートリアルというかマニュアルが以下にあるので必要に応じて参照して欲しい。  nominal_datatype_manual."/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 10日目の記事です。
+  前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。 今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。
+ 定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。
+ 今回解説するコードは以下に置いてあります。
+ myuon/CR.thy
+前置き  ラムダ計算   この記事をわざわざ読む人はラムダ計算についてはある程度知っている人が多いと思うのですが、簡単に説明をしておきます。
+ ラムダ計算は計算のモデルとなるべく作られた言語で、「関数を作る・作った関数を呼び出す(関数を適用すること)」の2つの操作を基本とします。 ここでの「計算」とは数を与えたら数を返す、のような、電卓で行われるような最も我々がイメージしやすい計算のことです。ラムダ計算ではこの「計算」を、項を別の項に変換するような操作によって実現します。 これは単に 1&#43;2 という項があったらそれを 3 へと変換する、あるいは f(x)=x&#43;2 という項があるときに、 f(10) を 12 へと変換する、そういう操作を計算と呼びますというだけなので難しいことはありません。
+ さてラムダ計算の項(何がラムダ計算の項かはまだちゃんと説明していないけど)は通常変数の付け替えを同一視します。具体的には f(x)=x と f(y)=y を区別しないのですが、この同値をα同値と呼びます。
+ ラムダ計算の定理証明で最も厄介なのはこのα同値性の扱いで、というか定理証明による形式化ではそもそも「同一視」とか「同値関係で割る」みたいな操作を扱うのがめちゃくちゃ苦手です。 これは主に、一般に同一視されているかが計算によって判定可能でないこと1と、同一視された項同士の計算はしばしば(人間は気にしないけど)それらの項の変形の構成に依存するからだと個人的には思っています。
+ はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。
+  Nominal Isabelle   Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。 binderは [x]. M のような形をしていて、この束縛変数 x の変数名の付け替えを区別しないような項である。
+ Nominal Isabelleではこの変数の付け替え、「例えば変数 x を y に付け替える」という操作を「置換 (x,y) を作用させる」という操作とみなす、というところからスタートする。 より厳密には次のようなことである: 無限の変数からなる集合 V が与えられている時、 List (V×V) の元を置換と呼ぶ。このとき置換の作用を ∙ でかくことにし、 ((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M のようにして定める。"/>
 
 
   </head>
@@ -71,89 +105,90 @@
     </header>
     <section>
 <p>
-<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 10日目の記事です。</strong>
-</p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 10日目の記事です。</strong></p>
 <hr>
 <p>
 前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。
-今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。
-</p>
+今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。</p>
 <p>
-定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。
-</p>
+定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。</p>
 <p>
-今回解説するコードは以下に置いてあります。
-</p>
+今回解説するコードは以下に置いてあります。</p>
 <p>
-<a href="https://gist.github.com/myuon/6ac863426d27f5d4df3a4dea4112eb7d">myuon/CR.thy</a>
-</p>
+<a href="https://gist.github.com/myuon/6ac863426d27f5d4df3a4dea4112eb7d">myuon/CR.thy</a></p>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 前置き
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<div id="outline-container-headline-2" class="outline-3">
 <h3 id="headline-2">
 ラムダ計算
 </h3>
+<div id="outline-text-headline-2" class="outline-text-3">
 <p>
-この記事をわざわざ読む人はラムダ計算についてはある程度知っている人が多いと思うのですが、簡単に説明をしておきます。
-</p>
+この記事をわざわざ読む人はラムダ計算についてはある程度知っている人が多いと思うのですが、簡単に説明をしておきます。</p>
 <p>
 ラムダ計算は計算のモデルとなるべく作られた言語で、「関数を作る・作った関数を呼び出す(関数を適用すること)」の2つの操作を基本とします。
 ここでの「計算」とは数を与えたら数を返す、のような、電卓で行われるような最も我々がイメージしやすい計算のことです。ラムダ計算ではこの「計算」を、項を別の項に変換するような操作によって実現します。
-これは単に <code>1+2</code> という項があったらそれを <code>3</code> へと変換する、あるいは <code>f(x)=x+2</code> という項があるときに、 <code>f(10)</code> を <code>12</code> へと変換する、そういう操作を計算と呼びますというだけなので難しいことはありません。
-</p>
+これは単に <code>1+2</code> という項があったらそれを <code>3</code> へと変換する、あるいは <code>f(x)=x+2</code> という項があるときに、 <code>f(10)</code> を <code>12</code> へと変換する、そういう操作を計算と呼びますというだけなので難しいことはありません。</p>
 <p>
-さてラムダ計算の項(何がラムダ計算の項かはまだちゃんと説明していないけど)は通常変数の付け替えを同一視します。具体的には <code>f(x)=x</code> と <code>f(y)=y</code> を区別しないのですが、この同値をα同値と呼びます。
-</p>
+さてラムダ計算の項(何がラムダ計算の項かはまだちゃんと説明していないけど)は通常変数の付け替えを同一視します。具体的には <code>f(x)=x</code> と <code>f(y)=y</code> を区別しないのですが、この同値をα同値と呼びます。</p>
 <p>
 ラムダ計算の定理証明で最も厄介なのはこのα同値性の扱いで、というか定理証明による形式化ではそもそも「同一視」とか「同値関係で割る」みたいな操作を扱うのがめちゃくちゃ苦手です。
-これは主に、一般に同一視されているかが計算によって判定可能でないこと<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>と、同一視された項同士の計算はしばしば(人間は気にしないけど)それらの項の変形の構成に依存するからだと個人的には思っています。
-</p>
+これは主に、一般に同一視されているかが計算によって判定可能でないこと<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>と、同一視された項同士の計算はしばしば(人間は気にしないけど)それらの項の変形の構成に依存するからだと個人的には思っています。</p>
 <p>
-はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。
-</p>
+はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
 <h3 id="headline-3">
 Nominal Isabelle
 </h3>
+<div id="outline-text-headline-3" class="outline-text-3">
 <p>
 Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。
-binderは <code>[x]. M</code> のような形をしていて、この束縛変数 <code>x</code> の変数名の付け替えを区別しないような項である。
-</p>
+binderは <code>[x]. M</code> のような形をしていて、この束縛変数 <code>x</code> の変数名の付け替えを区別しないような項である。</p>
 <p>
 Nominal Isabelleではこの変数の付け替え、「例えば変数 <code>x</code> を <code>y</code> に付け替える」という操作を「置換 <code>(x,y)</code> を作用させる」という操作とみなす、というところからスタートする。
-より厳密には次のようなことである: 無限の変数からなる集合 <code>V</code> が与えられている時、 <code>List (V×V)</code> の元を置換と呼ぶ。このとき置換の作用を <code>∙</code> でかくことにし、 <code>((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M</code> のようにして定める。
-</p>
+より厳密には次のようなことである: 無限の変数からなる集合 <code>V</code> が与えられている時、 <code>List (V×V)</code> の元を置換と呼ぶ。このとき置換の作用を <code>∙</code> でかくことにし、 <code>((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M</code> のようにして定める。</p>
 <p>
-上の変数の書き換えの部分は当然項 <code>M</code> が属するデータ型がどのように定義されているかに依存するが、この辺のあれこれをいい感じにやってくれるのがNominal Isabelleであり、Nominal Isabelleが提供するコマンドだったりするわけである。
-</p>
+上の変数の書き換えの部分は当然項 <code>M</code> が属するデータ型がどのように定義されているかに依存するが、この辺のあれこれをいい感じにやってくれるのがNominal Isabelleであり、Nominal Isabelleが提供するコマンドだったりするわけである。</p>
 <p>
-また、以下でも登場するが、ある変数 <code>x</code> が項 <code>M</code> (複数ある場合はタプルとかにする)に(自由)出現しない、ということを <code>x♯M</code> で表す。
-</p>
+また、以下でも登場するが、ある変数 <code>x</code> が項 <code>M</code> (複数ある場合はタプルとかにする)に(自由)出現しない、ということを <code>x♯M</code> で表す。</p>
 <p>
-(余談だが、こういうbinderの変数のつらみというのはほか言語でも当然あるので、例えば(こちらはde Bruijn indexを使った代入規則の自動化に限定されてはいるが)<a href="https://www.ps.uni-saarland.de/autosubst/">Coqのautosubst</a>というライブラリもあって、同じくラムダ計算の定理証明などに威力を発揮するようだ。)
-</p>
+(余談だが、こういうbinderの変数のつらみというのはほか言語でも当然あるので、例えば(こちらはde Bruijn indexを使った代入規則の自動化に限定されてはいるが)<a href="https://www.ps.uni-saarland.de/autosubst/">Coqのautosubst</a>というライブラリもあって、同じくラムダ計算の定理証明などに威力を発揮するようだ。)</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
 <h2 id="headline-4">
 nominal_datatype
 </h2>
+<div id="outline-text-headline-4" class="outline-text-2">
+<div id="outline-container-headline-5" class="outline-3">
 <h3 id="headline-5">
 はじめに
 </h3>
+<div id="outline-text-headline-5" class="outline-text-3">
 <p>
 Nominal IsabelleはHOLのライブラリ群の中に含まれているはずで、 <code class="verbatim">imports &#34;~~/src/HOL/Nominal/Nominal&#34;</code> とかでインポートできる。(<code class="verbatim">~~</code> でIsabelleがインストールされているパスを表す)
 ライブラリのコードはNominal theoryそのものが<a href="https://isabelle.in.tum.de/dist/library/HOL/HOL-Nominal/index.html">ここ</a>、例が<a href="https://isabelle.in.tum.de/dist/library/HOL/HOL-Nominal-Examples/index.html">ここ</a>にあるので見ると良いかもしれない。
-(例に今回の目標と同じCRを示しているのがあるけれど、(大まかな流れは同じだけど)これは特に見てないので私の証明とは色々違うと思います)
-</p>
+(例に今回の目標と同じCRを示しているのがあるけれど、(大まかな流れは同じだけど)これは特に見てないので私の証明とは色々違うと思います)</p>
 <p>
-また、チュートリアルというかマニュアルが以下にあるので必要に応じて参照して欲しい。
-</p>
+また、チュートリアルというかマニュアルが以下にあるので必要に応じて参照して欲しい。</p>
 <p>
-<a href="https://nms.kcl.ac.uk/christian.urban/Nominal/manual/nominal_datatype_manual.pdf">nominal_datatype_manual.pdf</a>
-</p>
+<a href="https://nms.kcl.ac.uk/christian.urban/Nominal/manual/nominal_datatype_manual.pdf">nominal_datatype_manual.pdf</a></p>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-3">
 <h3 id="headline-6">
 nominal_datatype
 </h3>
+<div id="outline-text-headline-6" class="outline-text-3">
 <p>
-さて御託を並べるのはこのくらいにして、実際の証明の解説に入る。
-</p>
+さて御託を並べるのはこのくらいにして、実際の証明の解説に入る。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  atom_decl var
 
@@ -163,22 +198,22 @@ nominal_datatype
   | Abs &#34;«var»lambda&#34; (&#34;lam [_]._&#34; [100,100] 100)</code></pre></div>
 </div>
 <p>
-<code>atom_decl</code> はatomicな型を宣言するためのもの(Nominal Isabelleとは関係ない)。
-</p>
+<code>atom_decl</code> はatomicな型を宣言するためのもの(Nominal Isabelleとは関係ない)。</p>
 <p>
 <code>nominal_datatype</code> はdatatypeのようなものであるが、binderを指定すると上にも述べたような置換の作用と関連する大量の補題が全て自動で定義される。
-binderの指定は <code>«var»</code> のように行う。
-</p>
+binderの指定は <code>«var»</code> のように行う。</p>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-3">
 <h3 id="headline-7">
 strong_induction
 </h3>
+<div id="outline-text-headline-7" class="outline-text-3">
 <p>
 nominal_datatypeで定義された項は内部的には通常のdatatypeをα同値で割った型として定義されるので、通常のdatatypeとは少し挙動が違ったりする。
-代わりにnominal_datatype(と他のいくつかのコマンド)は通常のinductionの他にstrong_inductという帰納法を生成する。
-</p>
+代わりにnominal_datatype(と他のいくつかのコマンド)は通常のinductionの他にstrong_inductという帰納法を生成する。</p>
 <p>
-<code>lambda.induct</code> と <code>lambda.strong_induct</code> を比べてみよう。
-</p>
+<code>lambda.induct</code> と <code>lambda.strong_induct</code> を比べてみよう。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  thm lambda.induct
 
@@ -196,17 +231,20 @@ nominal_datatypeで定義された項は内部的には通常のdatatypeをα同
 </div>
 <p>
 strong_inductの方には余分な引数 <code>z</code> が追加されており、ラムダ抽象の部分では新たに <code>var ♯ z</code> が帰納法の仮定に追加されている。
-この部分がまさにstrong_inductであり、「帰納法を回す際に、binderの変数として与えられた項とはかぶらないものが取れる」ということを言っている。
-</p>
+この部分がまさにstrong_inductであり、「帰納法を回す際に、binderの変数として与えられた項とはかぶらないものが取れる」ということを言っている。</p>
 <p>
-より正確には、α同値により、「もし仮に <code>lam[x].M</code> のxがzに出現した場合、freshな変数x&#39;をとり、α同値性により <code>lam[x].M = lam[x&#39;]. [(x,x&#39;)]∙M</code> なので、命題中の <code>M</code> を <code>[(x,x&#39;)]∙M</code> に、 <code>x</code> を <code>x&#39;</code> に取り替えることで最初から <code>x</code> はzの中でfreshなものとしてとってきてもよい」ということを含んでいるのがこのstrong_inductである。
-</p>
+より正確には、α同値により、「もし仮に <code>lam[x].M</code> のxがzに出現した場合、freshな変数x&#39;をとり、α同値性により <code>lam[x].M = lam[x&#39;]. [(x,x&#39;)]∙M</code> なので、命題中の <code>M</code> を <code>[(x,x&#39;)]∙M</code> に、 <code>x</code> を <code>x&#39;</code> に取り替えることで最初から <code>x</code> はzの中でfreshなものとしてとってきてもよい」ということを含んでいるのがこのstrong_inductである。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-2">
 <h2 id="headline-8">
 substitution
 </h2>
+<div id="outline-text-headline-8" class="outline-text-2">
 <p>
-項の代入を行うsubstitutionを定義しよう。
-</p>
+項の代入を行うsubstitutionを定義しよう。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  nominal_primrec subst (&#34;_[_::=_]&#34; [100,100,100] 120) where
     &#34;(Var x)[y ::= s] = (if x = y then s else Var x)&#34;
@@ -219,17 +257,18 @@ substitution
 </div>
 <p>
 nominal_datatypeについてのprimitive recursive functionは <code>nominal_primrec</code> で定義する。
-primrecとほぼ同じだが、nominal_primrecは定義に出現している項がいくつかの性質を満たしていることを示す必要がある。 <code>finite_guess</code> と <code>fresh_guess</code> を上手く使うとなんとかなることが多い。
-</p>
+primrecとほぼ同じだが、nominal_primrecは定義に出現している項がいくつかの性質を満たしていることを示す必要がある。 <code>finite_guess</code> と <code>fresh_guess</code> を上手く使うとなんとかなることが多い。</p>
 <p>
-また、ラムダ抽象の項に対する代入は当然ながら束縛変数と代入する変数が被らないようにしないと色々まずいのでここでは仮定として追加している。
-</p>
+また、ラムダ抽象の項に対する代入は当然ながら束縛変数と代入する変数が被らないようにしないと色々まずいのでここでは仮定として追加している。</p>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-2">
 <h2 id="headline-9">
 lemmas for substitution
 </h2>
+<div id="outline-text-headline-9" class="outline-text-2">
 <p>
-代入関連の補題を先に示しておく。
-</p>
+代入関連の補題を先に示しておく。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma subst_gfresh&#39;:
     assumes &#34;x ♯ t&#34; &#34;x ♯ s&#34; &#34;x ≠ y&#34;
@@ -243,19 +282,15 @@ lemmas for substitution
 </div>
 <p>
 まずは、 <code>x</code> が <code>t</code> と <code>s</code> に出現せず <code>y</code> と異なる時、 <code>x</code> は <code>t[y::=s]</code> に自由出現であるという補題である。
-さてこれを示すためには <code>t</code> についての帰納法をすればよさそうだが、今 <code>t</code> はnominal_datatypeなのでそのままの帰納法は使えない。nominal_datatypeに対する帰納法を行うコマンドに、 <strong>nominal_induct</strong> がある。
-</p>
+さてこれを示すためには <code>t</code> についての帰納法をすればよさそうだが、今 <code>t</code> はnominal_datatypeなのでそのままの帰納法は使えない。nominal_datatypeに対する帰納法を行うコマンドに、 <strong>nominal_induct</strong> がある。</p>
 <p>
 nominal_inductは <code>rule</code> によってどの帰納法を使うか(<code>lambda.strong_induct</code> はnominal_datatypeが自動で導出した帰納法である)を指定する必要がある。
-また、strong_inductを用いる場合には <code>avoiding</code> というattributeにより与えれた項にfreshな変数を使って帰納法が回るようになる。
-</p>
+また、strong_inductを用いる場合には <code>avoiding</code> というattributeにより与えれた項にfreshな変数を使って帰納法が回るようになる。</p>
 <p>
 上のstrong_inductのところでみた <code>var ♯ z</code> のzとしてこの <code>avoiding</code> で与えた項をとって帰納法を回すことになる。
-言い換えれば、 <code>avoiding:z</code> とかくと <code>t = lam[x].t&#39;</code> の形の時にxがzにfreshであるという仮定を追加することができるようになる。
-</p>
+言い換えれば、 <code>avoiding:z</code> とかくと <code>t = lam[x].t&#39;</code> の形の時にxがzにfreshであるという仮定を追加することができるようになる。</p>
 <p>
-Nominal Isabelleで最も大切なのがこのstrong_inductを用いたnominal_inductで、このようにbinderに出現する変数を特定の項に被らないようにして帰納法が回せるというのがポイントである。
-</p>
+Nominal Isabelleで最も大切なのがこのstrong_inductを用いたnominal_inductで、このようにbinderに出現する変数を特定の項に被らないようにして帰納法が回せるというのがポイントである。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma subst_fresh: &#34;x ♯ s ⟹ x ♯ t[x ::= s]&#34;
   apply (nominal_induct t avoiding: x s rule: lambda.strong_induct)
@@ -289,28 +324,29 @@ Nominal Isabelleで最も大切なのがこのstrong_inductを用いたnominal_i
   done</code></pre></div>
 </div>
 <p>
-あとの補題はさらっと見るだけにしよう。
-</p>
+あとの補題はさらっと見るだけにしよう。</p>
 <p>
 どれも基本的な補題であるが、最後のsubstitution lemmaは割とよく使われる重要な性質である。
-ステートメント自体は有名だが仮定にxとyが異なること、そしてxがLにfreshなことが必要であることに注意しよう。
-</p>
+ステートメント自体は有名だが仮定にxとyが異なること、そしてxがLにfreshなことが必要であることに注意しよう。</p>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-2">
 <h2 id="headline-10">
 まとめ
 </h2>
+<div id="outline-text-headline-10" class="outline-text-2">
 <p>
 Nominal Isabelleの説明をして補題を示したら長くなってしまったので一旦ここで分割する。
-次回はbeta reductionとかの諸々の証明をします。
-</p>
+次回はbeta reductionとかの諸々の証明をします。</p>
+</div>
+</div>
 <div class="footnotes">
 <hr class="footnotes-separatator">
 <div class="footnote-definitions">
 <div class="footnote-definition">
 <sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
 <div class="footnote-body">
-<p>
-逆に、計算によって判定可能な関係を含む項書換えについては計算機で扱いやすい形でよく使われていると思う
-</p>
+<p>逆に、計算によって判定可能な関係を含む項書換えについては計算機で扱いやすい形でよく使われていると思う</p>
 </div>
 </div>
 </div>

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Gstreamer on The curse of λ</title>
@@ -6,16 +5,17 @@
     <description>Recent content in Gstreamer on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
-    <lastBuildDate>Sun, 04 Mar 2018 19:21:20 +0900</lastBuildDate><atom:link href="https://myuon.github.io/tags/gstreamer/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>動画編集ソフトを作り始めた</title>
-      <link>https://myuon.github.io/posts/madder-start-to-create/</link>
-      <pubDate>Sun, 04 Mar 2018 19:21:20 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/madder-start-to-create/</guid>
-      <description>Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。
+    <lastBuildDate>Sun, 04 Mar 2018 19:21:20 +0900</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/gstreamer/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>動画編集ソフトを作り始めた</title>
+        <link>https://myuon.github.io/posts/madder-start-to-create/</link>
+        <pubDate>Sun, 04 Mar 2018 19:21:20 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/madder-start-to-create/</guid>
+        <description>Rustを使い始めて1ヶ月だぜ体験記みたいなのを書こうとしたけどせっかくなので今やってることも全部まとめて1本の記事にすることにした。
  最近日本語をかくのがめんどくさい以外の発言をしていない気がする。
  1ヶ月ほど前に動画編集ソフトを作りたくなって、言語はRust メディアフレームワークにGstreamer GUIにGTK+を使うのだけどこの3つをどれも触ったことがない状態で作り始めるという完全に勢いだけのアレというのが前置き。
 Rust   前回の記事でも色々言ってたけどその後分かったことなんかを記しておく(本当はWHAT I WISH I KNEW WHEN LEARNING RUSTみたいにしてまとめると良いのだろうなぁ)
@@ -31,7 +31,7 @@ Rust   前回の記事でも色々言ってたけどその後分かったこと�
   マクロは便利
   別言語でtrailing commaで怒られると厳しい気持ちになる
   if letが意外と便利</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

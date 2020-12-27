@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,10 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Nominal Isabelleとラムダ計算 その2" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 11日目の記事です。   前回はNominal Isabelleの説明と証明を少しだけしました。 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。 equivarianceとnominal_inductive  補題   さて2つの補題を示しておく。 lemma subst_eqvt[eqvt]: fixes π :: &#34;var prm&#34; shows &#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &#34;x ♯ t&#34; shows &#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda." />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 11日目の記事です。
+  前回はNominal Isabelleの説明と証明を少しだけしました。 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。
+equivarianceとnominal_inductive  補題   さて2つの補題を示しておく。
+lemma subst_eqvt[eqvt]: fixes π :: &#34;var prm&#34; shows &#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &#34;x ♯ t&#34; shows &#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/nominal-lambda-2/" />
 <meta property="article:published_time" content="2017-12-11T00:13:11+09:00" />
@@ -30,17 +33,24 @@
 
 
 <meta itemprop="name" content="Nominal Isabelleとラムダ計算 その2">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 11日目の記事です。   前回はNominal Isabelleの説明と証明を少しだけしました。 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。 equivarianceとnominal_inductive  補題   さて2つの補題を示しておく。 lemma subst_eqvt[eqvt]: fixes π :: &#34;var prm&#34; shows &#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &#34;x ♯ t&#34; shows &#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda.">
-<meta itemprop="datePublished" content="2017-12-11T00:13:11&#43;09:00" />
-<meta itemprop="dateModified" content="2017-12-11T00:13:11&#43;09:00" />
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 11日目の記事です。
+  前回はNominal Isabelleの説明と証明を少しだけしました。 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。
+equivarianceとnominal_inductive  補題   さて2つの補題を示しておく。
+lemma subst_eqvt[eqvt]: fixes π :: &#34;var prm&#34; shows &#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &#34;x ♯ t&#34; shows &#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda.">
+<meta itemprop="datePublished" content="2017-12-11T00:13:11+09:00" />
+<meta itemprop="dateModified" content="2017-12-11T00:13:11+09:00" />
 <meta itemprop="wordCount" content="965">
 
 
 
 <meta itemprop="keywords" content="AdC2017,Isabelle,計算機科学,ラムダ計算," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Nominal Isabelleとラムダ計算 その2"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 11日目の記事です。   前回はNominal Isabelleの説明と証明を少しだけしました。 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。 equivarianceとnominal_inductive  補題   さて2つの補題を示しておく。 lemma subst_eqvt[eqvt]: fixes π :: &#34;var prm&#34; shows &#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &#34;x ♯ t&#34; shows &#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda."/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 11日目の記事です。
+  前回はNominal Isabelleの説明と証明を少しだけしました。 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。
+equivarianceとnominal_inductive  補題   さて2つの補題を示しておく。
+lemma subst_eqvt[eqvt]: fixes π :: &#34;var prm&#34; shows &#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &#34;x ♯ t&#34; shows &#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda."/>
 
 
   </head>
@@ -71,22 +81,23 @@
     </header>
     <section>
 <p>
-<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 11日目の記事です。</strong>
-</p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 11日目の記事です。</strong></p>
 <hr>
 <p>
 前回はNominal Isabelleの説明と証明を少しだけしました。
-今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。
-</p>
+今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。</p>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 equivarianceとnominal_inductive
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<div id="outline-container-headline-2" class="outline-3">
 <h3 id="headline-2">
 補題
 </h3>
+<div id="outline-text-headline-2" class="outline-text-3">
 <p>
-さて2つの補題を示しておく。
-</p>
+さて2つの補題を示しておく。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma subst_eqvt[eqvt]:
     fixes π :: &#34;var prm&#34;
@@ -107,17 +118,18 @@ equivarianceとnominal_inductive
 </div>
 <p>
 subst_eqvtに <code>[eqvt]</code> というattributeがついていることに注目して欲しい。
-これはprm(変数の置換)の作用に関する等式につけるattributeで、実際にsubst_eqvtは <code>π∙M = ..</code> みたいな形をしているのが分かると思う。
-</p>
+これはprm(変数の置換)の作用に関する等式につけるattributeで、実際にsubst_eqvtは <code>π∙M = ..</code> みたいな形をしているのが分かると思う。</p>
 <p>
-これが以下の話に関わってくる。
-</p>
+これが以下の話に関わってくる。</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
 <h3 id="headline-3">
 β変換
 </h3>
+<div id="outline-text-headline-3" class="outline-text-3">
 <p>
-さてβ簡約を定義しよう。1ステップのβ簡約は普通にinductive relationとして定められる。
-</p>
+さてβ簡約を定義しよう。1ステップのβ簡約は普通にinductive relationとして定められる。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  inductive beta (infixl &#34;→β&#34; 50) where
     b_app1: &#34;t1 →β t2 ⟹ t1 $ s →β t2 $ s&#34;
@@ -132,18 +144,19 @@ subst_eqvtに <code>[eqvt]</code> というattributeがついていることに�
 </div>
 <p>
 β変換を行うb_beta&#39;では、freshnessの条件がついていることに注意。
-そしてその下では、equivarianceとnominal_inductiveというのがあるが、これの説明をしよう。
-</p>
+そしてその下では、equivarianceとnominal_inductiveというのがあるが、これの説明をしよう。</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-3">
 <h3 id="headline-4">
 nominal_inductive
 </h3>
+<div id="outline-text-headline-4" class="outline-text-3">
 <p>
 nominal_inductiveはnominal_datatypeの時のようなstrong_inductを生成するためのコマンドである。つまり、上のbetaでいうならば <code>M →β M&#39;</code> についての帰納法で、b_abs規則の <code>lam[x].t →β lam[x].s</code> 部分でxが特定の項にfreshになるようにとれるようなものである。
-このようなstrong_inductを生成するのがnominal_inductiveである。
-</p>
+このようなstrong_inductを生成するのがnominal_inductiveである。</p>
 <p>
-実際に導出されるstrong_inductを見てみよう。
-</p>
+実際に導出されるstrong_inductを見てみよう。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  thm beta.strong_induct
 
@@ -155,35 +168,36 @@ nominal_inductiveはnominal_datatypeの時のようなstrong_inductを生成す�
       (⋀x s t y. x ♯ y ⟹ x ♯ s ⟹ ?P y ((lam [x].t) $ s) (t[x::=s])) ⟹ ?P ?z ?x1.0 ?x2.0</code></pre></div>
 </div>
 <p>
-b_absとb_beta&#39;のところで、新たに <code>x ♯ y</code> が追加され、xが与えられた項を回避できるようになっていることがわかる。
-</p>
+b_absとb_beta&#39;のところで、新たに <code>x ♯ y</code> が追加され、xが与えられた項を回避できるようになっていることがわかる。</p>
 <p>
 さて、このstrong_inductは <code>lam[x].t1 →β lam[x].t2</code> の項があるならばこれを適当にアルファ変換して <code>x ♯ y</code> となるようにxを取りなおす、ということをしているので、
-当然ながらこのようなアルファ変換が出来る必要があり、具体的に言えば <code>π∙(lam[x].t1 →β lam[x].t2) = (π∙(lam[x].t1) →β π∙(lam[x].t2))</code> が言えなければならない。
-</p>
+当然ながらこのようなアルファ変換が出来る必要があり、具体的に言えば <code>π∙(lam[x].t1 →β lam[x].t2) = (π∙(lam[x].t1) →β π∙(lam[x].t2))</code> が言えなければならない。</p>
 <p>
-このような置換の作用に関する等式をいい感じに導出してくれるのがequivarianceでああり、そこからstrong_inductを導出するのがnominal_inductiveである。
-</p>
+このような置換の作用に関する等式をいい感じに導出してくれるのがequivarianceでああり、そこからstrong_inductを導出するのがnominal_inductiveである。</p>
 <p>
 まとめると、inductive relationに対するstrong_inductを使うためにはequivariance→nominal_inductの流れだけを抑えておけばよい。
-しかし、例えば上のbetaの定義にはsubstが出現するが、それについての置換の作用は自動では導出できないので、その場合は上でsubst_eqvtを示したように、置換の作用でどうなるかを <code>[eqvt]</code> attributeを付けて示す必要がある場合がある。
-</p>
+しかし、例えば上のbetaの定義にはsubstが出現するが、それについての置換の作用は自動では導出できないので、その場合は上でsubst_eqvtを示したように、置換の作用でどうなるかを <code>[eqvt]</code> attributeを付けて示す必要がある場合がある。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-2">
 <h2 id="headline-5">
 confluenceへ
 </h2>
+<div id="outline-text-headline-5" class="outline-text-2">
 <p>
 さて今回はNominal Isabelleの解説が目的ではなく(いやそれもあるけど)ラムダ計算の定理証明が目的だったのでそのへんの話をしよう。
-以下ではChurch-Rosserを示していくが、ここではparallel beta変換を用いる手法を用いることにする。
-</p>
+以下ではChurch-Rosserを示していくが、ここではparallel beta変換を用いる手法を用いることにする。</p>
 <p>
-(parallel beta変換て何という人もきっと証明を追いかけていれば分かると思うので(ほんまか)安心して欲しい)
-</p>
+(parallel beta変換て何という人もきっと証明を追いかけていれば分かると思うので(ほんまか)安心して欲しい)</p>
+<div id="outline-container-headline-6" class="outline-3">
 <h3 id="headline-6">
 parallel beta
 </h3>
+<div id="outline-text-headline-6" class="outline-text-3">
 <p>
-初めにparallel beta変換を定義する。上でもやったようにparallel betaのstrong_inductも導出しておく。
-</p>
+初めにparallel beta変換を定義する。上でもやったようにparallel betaのstrong_inductも導出しておく。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  inductive par_beta (infixl &#34;⇒β&#34; 50) where
     pb_var: &#34;Var x ⇒β Var x&#34;
@@ -198,44 +212,40 @@ parallel beta
 </div>
 <p>
 parallel betaは普通のbeta簡約より少し強力で、1度(1ステップで)に複数のβ基を同時に簡約することを許している。
-例えば、 <code>(lam [x]. (lam [y]. M) N) L</code> の両方のβ基を簡約するのがparallel betaだと1ステップでできる。
-</p>
+例えば、 <code>(lam [x]. (lam [y]. M) N) L</code> の両方のβ基を簡約するのがparallel betaだと1ステップでできる。</p>
 <p>
 ただしparallel betaは「すでに見えているβ基を同時に複数簡約出来るだけで」あって、「β変換を行うことによって初めて得られるβ基の簡約はできない」ことに注意。
-例えば、 <code>(lam [x]. (lam [y]. M)) N L</code> を <code>(lam [y]. M[x::=N]) L</code> にはできるが、このyとLの簡約は最初の項から直接は行えない。このような違いがCRの証明に関わってくるので注意しよう。
-</p>
+例えば、 <code>(lam [x]. (lam [y]. M)) N L</code> を <code>(lam [y]. M[x::=N]) L</code> にはできるが、このyとLの簡約は最初の項から直接は行えない。このような違いがCRの証明に関わってくるので注意しよう。</p>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-3">
 <h3 id="headline-7">
 CR property
 </h3>
+<div id="outline-text-headline-7" class="outline-text-3">
 <p>
-CRを言うためにparallel betaを導入したが、実際に必要になるのは以下の3性質である:
-</p>
+CRを言うためにparallel betaを導入したが、実際に必要になるのは以下の3性質である:</p>
 <ol>
 <li>
-<p>
-one_to_par: <code>M →β N ⟹ M ⇒β N</code>
-</p>
+<p>one_to_par: <code>M →β N ⟹ M ⇒β N</code></p>
 </li>
 <li>
-<p>
-par_to_longbeta: <code>M ⇒β N ⟹ M ⟶β N</code>
-</p>
+<p>par_to_longbeta: <code>M ⇒β N ⟹ M ⟶β N</code></p>
 </li>
 <li>
-<p>
-par_to_star: <code>⟦ t ⟶* t1; t ⇒β t2 ⟧ ⟹ t2 ⇒β t1</code>
-</p>
+<p>par_to_star: <code>⟦ t ⟶* t1; t ⇒β t2 ⟧ ⟹ t2 ⇒β t1</code></p>
 </li>
 </ol>
-<p>
-<code>⟶*</code> は、あとで定義するがβ基を全て簡約する変換である。
-</p>
+<p><code>⟶*</code> は、あとで定義するがβ基を全て簡約する変換である。</p>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-3">
 <h3 id="headline-8">
 parallel betaの補題
 </h3>
+<div id="outline-text-headline-8" class="outline-text-3">
 <p>
-いくつか補題を示す。
-</p>
+いくつか補題を示す。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma pb_refl: &#34;t ⇒β t&#34;
   apply (induction t rule: lambda.induct)
@@ -251,32 +261,30 @@ parallel betaの補題
   done</code></pre></div>
 </div>
 <p>
-pb_reflはよいだろう。
-</p>
+pb_reflはよいだろう。</p>
 <p>
-one_to_parは先にも言った重要な性質で、parallel betaは通常のbetaを含んでいることを表している。
-</p>
+one_to_parは先にも言った重要な性質で、parallel betaは通常のbetaを含んでいることを表している。</p>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-3">
 <h3 id="headline-9">
 long beta
 </h3>
+<div id="outline-text-headline-9" class="outline-text-3">
 <p>
-次にlong beta簡約を定義する。といっても普通のbetaのreflexive transitive closureを取るだけで、さらにrefl-trans closureはIsabelleに組み込みのものがあるのでそれを使うことにする。
-</p>
+次にlong beta簡約を定義する。といっても普通のbetaのreflexive transitive closureを取るだけで、さらにrefl-trans closureはIsabelleに組み込みのものがあるのでそれを使うことにする。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">    abbreviation long_beta (infixl &#34;⟶β&#34; 50) where
       &#34;long_beta == beta⇧*⇧*&#34;</code></pre></div>
 </div>
 <p>
 ところで関係はないが、このように定義したlong_betaをrelationとするreasoningをしようとすると、Isarのhave…also have…などの途中でcalculationの計算が停止しなくなることがあるようだ。
-おそらくこれはrefl-trans closureのtransitive ruleの定め方が特殊なせいだと思うのだが、実際にこういう不便な側面もあるので普通にinductiveで定義するほうがいいのかもしれない。
-</p>
+おそらくこれはrefl-trans closureのtransitive ruleの定め方が特殊なせいだと思うのだが、実際にこういう不便な側面もあるので普通にinductiveで定義するほうがいいのかもしれない。</p>
 <p>
-以下では、 <code>r_into_rtranclp: beta M N ==&gt; long_beta M N</code> と <code>rtranclp_trans</code> (単なるtransitivity)をよく使う。
-</p>
+以下では、 <code>r_into_rtranclp: beta M N ==&gt; long_beta M N</code> と <code>rtranclp_trans</code> (単なるtransitivity)をよく使う。</p>
 <p>
 あとで使う補題を示しておく。
-証明は簡単なのでステートメントだけ列挙しておく。
-</p>
+証明は簡単なのでステートメントだけ列挙しておく。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma lb_app1: &#34;t1 ⟶β t2 ⟹ t1 $ s ⟶β t2 $ s&#34;
   lemma lb_app2: &#34;s1 ⟶β s2 ⟹ t $ s1 ⟶β t $ s2&#34;
@@ -300,15 +308,17 @@ long beta
   done</code></pre></div>
 </div>
 <p>
-正直補題自体は特別言うこともないが、最後のpar_to_longbetaは先も出てきたやつの2つ目で、parallel betaはlong_betaに変換できることを言っている。
-</p>
+正直補題自体は特別言うこともないが、最後のpar_to_longbetaは先も出てきたやつの2つ目で、parallel betaはlong_betaに変換できることを言っている。</p>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-3">
 <h3 id="headline-10">
 star変換
 </h3>
+<div id="outline-text-headline-10" class="outline-text-3">
 <p>
 さてβ基を一度に全て簡約するstar変換を定義する。
-このstar変換は常に行うことができるが(どんなラムダ項も1-step star変換が可能だが)、それを直接nominal_primrecとして定義してさらに停止性まで言うのは難しいので一旦relationとして定める。
-</p>
+このstar変換は常に行うことができるが(どんなラムダ項も1-step star変換が可能だが)、それを直接nominal_primrecとして定義してさらに停止性まで言うのは難しいので一旦relationとして定める。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  nominal_primrec nonabs :: &#34;lambda ⇒ bool&#34; where
     &#34;nonabs (lam [_]._) = False&#34;
@@ -333,15 +343,12 @@ star変換
   by (simp_all add: abs_fresh subst_fresh)</code></pre></div>
 </div>
 <p>
-みて分かる通り、ラムダ項がapplicationの場合は1項目がabstractionかどうかで場合分けが必要だが、そのために <code>nonabs</code> という関数を用意し、そのeqvt lemmaも示しておいた。
-</p>
+みて分かる通り、ラムダ項がapplicationの場合は1項目がabstractionかどうかで場合分けが必要だが、そのために <code>nonabs</code> という関数を用意し、そのeqvt lemmaも示しておいた。</p>
 <p>
 さて、bstarの定義ではbeta変換の部分でfreshnessを仮定に追加したが、これはequivarianceなどのために(Isabelleが自動導出できなくなるので)つけていたもので、
-この仮定は適当なアルファ変換を行うことではずすことができる。
-</p>
+この仮定は適当なアルファ変換を行うことではずすことができる。</p>
 <p>
-実は通常のbetaでも同じことができるが必要にならなかったので示さなかった。
-</p>
+実は通常のbetaでも同じことができるが必要にならなかったので示さなかった。</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  lemma bs_beta:
     assumes &#34;M1 ⟶* M2&#34; &#34;N1 ⟶* N2&#34;
@@ -365,43 +372,38 @@ star変換
   qed</code></pre></div>
 </div>
 <p>
-証明の概要は、次のとおりである。
-</p>
+証明の概要は、次のとおりである。</p>
 <ol>
 <li>
-<p>
-freshなyをとる
-</p>
+<p>freshなyをとる</p>
 </li>
 <li>
-<p>
-<code>(lam [x]. M1) $ N1 = (lam [y]. ([(y,x)]∙M1)) $ N1</code> なるアルファ変換を行う。
-</p>
+<p><code>(lam [x]. M1) $ N1 = (lam [y]. ([(y,x)]∙M1)) $ N1</code> なるアルファ変換を行う。</p>
 </li>
 <li>
-<p>
-yのfreshnessによりベータ簡約ができて、 <code>… ⟶* ([(y,x)]∙M2)[y ::= N2]</code> とできる。
-</p>
+<p>yのfreshnessによりベータ簡約ができて、 <code>… ⟶* ([(y,x)]∙M2)[y ::= N2]</code> とできる。</p>
 </li>
 <li>
-<p>
-再びアルファ変換により <code>… = M2[x ::= N2]</code>
-</p>
+<p>再びアルファ変換により <code>… = M2[x ::= N2]</code></p>
 </li>
 </ol>
-<p>
-yのfreshnessが効いてきてこういうことが言えるのだけど詳細は証明読んでって感じ。
-</p>
+<p>yのfreshnessが効いてきてこういうことが言えるのだけど詳細は証明読んでって感じ。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-11" class="outline-2">
 <h2 id="headline-11">
 まとめ
 </h2>
+<div id="outline-text-headline-11" class="outline-text-2">
 <p>
-意外と説明することが多くて(そもそもラムダ計算の内容自体それなりにあるのでしょうがないけど)記事が長くなりすぎて驚愕してる。
-</p>
+意外と説明することが多くて(そもそもラムダ計算の内容自体それなりにあるのでしょうがないけど)記事が長くなりすぎて驚愕してる。</p>
 <p>
 CR編は次回で終わりだけど次回も結構分量があります。
-死なない程度についてきてくれると嬉しいですね。
-</p>
+死なない程度についてきてくれると嬉しいですね。</p>
+</div>
+</div>
 </section>
     <footer>
       <hr>

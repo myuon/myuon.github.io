@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -41,13 +41,14 @@ serverless-reason serverless frameworkというサーバーレスアプリをや
   以下このプロジェクトの中身の解説をする。
 echo.re Lambda Functionとしてechoというものがsrc/functions/echo.reに定義されている。
 /* Sorry I&#39;m a lazy person! */ type event = { . &#34;pathParameters&#34;: Js.Dict.t(string), }; type context = unit; type callback = (. Js.null(string), Js.Json.t) =&gt; Js.Promise.t(unit); type response = { . &#34;statusCode&#34;: int, &#34;body&#34;: string, }; let handler : (event, context, callback) =&gt; Js.Promise.t(response) = (event, _, _) =&gt; { Js.">
-<meta itemprop="datePublished" content="2018-11-23T21:00:48&#43;09:00" />
-<meta itemprop="dateModified" content="2018-11-23T21:00:48&#43;09:00" />
+<meta itemprop="datePublished" content="2018-11-23T21:00:48+09:00" />
+<meta itemprop="dateModified" content="2018-11-23T21:00:48+09:00" />
 <meta itemprop="wordCount" content="117">
 
 
 
 <meta itemprop="keywords" content="AWS,Reason," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Lambda FunctionをReasonで書く"/>
 <meta name="twitter:description" content="Reason ML、やっていこうな 世はまさに大サーバーレス時代なのでLambda Functionやっていきというお気持ち。

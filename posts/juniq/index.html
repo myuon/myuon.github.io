@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -79,13 +79,14 @@ Live2D SDKリリースライセンス: https://www.live2d.com/ja/products/releas
 映像取得部分 映像と音声を取得する。getUserMediaとかを使うとできる。映像は30fpsくらいに落としてwebsocketサーバーにjpeg画像として投げつける。音声はリップシンクのために使う。
 リップシンク作るところだけ載せます。
 // https://github.com/myuon/juniQ/blob/master/viewer/src/index.ts#L42 class AudioVolume { processor: ScriptProcessorNode; volume: number; clipLevel: number; averaging: number; clipping: boolean; lastClip: number; clipLag: number; constructor(audioContext: AudioContext, clipLevel = 0.">
-<meta itemprop="datePublished" content="2018-12-25T20:25:54&#43;09:00" />
-<meta itemprop="dateModified" content="2018-12-25T20:25:54&#43;09:00" />
+<meta itemprop="datePublished" content="2018-12-25T20:25:54+09:00" />
+<meta itemprop="dateModified" content="2018-12-25T20:25:54+09:00" />
 <meta itemprop="wordCount" content="1150">
 
 
 
 <meta itemprop="keywords" content="" />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="バーチャル美少女定理証明士を支える技術"/>
 <meta name="twitter:description" content="この記事とは特に関係ないのですがVTuber Techアドベントカレンダー(その1 その2)があるらしいので興味がある人は覗いてみるといいんじゃないでしょうか。
@@ -612,7 +613,7 @@ Live2D SDKリリースライセンス: https://www.live2d.com/ja/products/releas
 </span><span class="c1"></span>        <span class="c1">// ここは完全に謎だけどこれをしないと目の表示とか上手くいかなかった
 </span><span class="c1"></span>        <span class="c1">// 謎が深い
 </span><span class="c1"></span>        <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">removeChildren</span><span class="p">();</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="p">[</span><span class="nx">mesh_name</span><span class="p">,</span> <span class="nx">_</span><span class="p">]</span> <span class="nx">of</span> <span class="nx">orders</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="p">[</span><span class="nx">mesh_name</span><span class="p">,</span> <span class="nx">_</span><span class="p">]</span> <span class="k">of</span> <span class="nx">orders</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">let</span> <span class="nx">mesh</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">getModelMeshById</span><span class="p">(</span><span class="nx">mesh_name</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">mesh</span><span class="p">);</span>
         <span class="p">}</span>

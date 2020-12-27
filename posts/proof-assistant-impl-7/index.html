@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,17 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="Proof Assistantを作る・発展編 その7" />
-<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 24日目の記事です。   Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。 実装すべき機能など  prover   さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。  Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。 unifier   一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。  各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。  あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&gt; P(a) かつ thm: ?X /\ ?Y ==&gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。 HOLの実装   大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。  ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。  それに関連するrefl, substなどのコマンドを定義しておくと便利です。 マクロ記述言語   前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。 Isabelleとの関連   ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。 prop?" />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
+  Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
+実装すべき機能など  prover   さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
+ Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
+  unifier   一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。
+ 各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。
+ あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&gt; P(a) かつ thm: ?X /\ ?Y ==&gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。
+  HOLの実装   大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。
+ ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
+ それに関連するrefl, substなどのコマンドを定義しておくと便利です。
+  マクロ記述言語   前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/proof-assistant-impl-7/" />
 <meta property="article:published_time" content="2017-12-24T00:04:51+09:00" />
@@ -30,17 +40,38 @@
 
 
 <meta itemprop="name" content="Proof Assistantを作る・発展編 その7">
-<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 24日目の記事です。   Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。 実装すべき機能など  prover   さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。  Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。 unifier   一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。  各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。  あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&gt; P(a) かつ thm: ?X /\ ?Y ==&gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。 HOLの実装   大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。  ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。  それに関連するrefl, substなどのコマンドを定義しておくと便利です。 マクロ記述言語   前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。 Isabelleとの関連   ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。 prop?">
-<meta itemprop="datePublished" content="2017-12-24T00:04:51&#43;09:00" />
-<meta itemprop="dateModified" content="2017-12-24T00:04:51&#43;09:00" />
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
+  Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
+実装すべき機能など  prover   さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
+ Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
+  unifier   一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。
+ 各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。
+ あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&gt; P(a) かつ thm: ?X /\ ?Y ==&gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。
+  HOLの実装   大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。
+ ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
+ それに関連するrefl, substなどのコマンドを定義しておくと便利です。
+  マクロ記述言語   前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。">
+<meta itemprop="datePublished" content="2017-12-24T00:04:51+09:00" />
+<meta itemprop="dateModified" content="2017-12-24T00:04:51+09:00" />
 <meta itemprop="wordCount" content="116">
 
 
 
 <meta itemprop="keywords" content="AdC2017,定理証明,Haskell," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Proof Assistantを作る・発展編 その7"/>
-<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 24日目の記事です。   Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。 実装すべき機能など  prover   さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。  Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。 unifier   一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。  各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。  あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&gt; P(a) かつ thm: ?X /\ ?Y ==&gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。 HOLの実装   大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。  ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。  それに関連するrefl, substなどのコマンドを定義しておくと便利です。 マクロ記述言語   前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。 Isabelleとの関連   ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。 prop?"/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
+  Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
+実装すべき機能など  prover   さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
+ Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
+  unifier   一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。 この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。
+ 各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。
+ あくまで一例ですが、 goal: |- P(a) /\ P(b) ==&gt; P(a) かつ thm: ?X /\ ?Y ==&gt; ?Z のとき、 このゴールを解消する exact thm を use thm; unify; assumption みたいに定義できるとよさそうです。
+  HOLの実装   大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。
+ ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
+ それに関連するrefl, substなどのコマンドを定義しておくと便利です。
+  マクロ記述言語   前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。"/>
 
 
   </head>
@@ -71,130 +102,142 @@
     </header>
     <section>
 <p>
-<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 24日目の記事です。</strong>
-</p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 24日目の記事です。</strong></p>
 <hr>
 <p>
-Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
-</p>
+Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。</p>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 実装すべき機能など
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<div id="outline-container-headline-2" class="outline-3">
 <h3 id="headline-2">
 prover
 </h3>
+<div id="outline-text-headline-2" class="outline-text-3">
 <p>
-さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
-</p>
+さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。</p>
 <p>
-Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
-</p>
+Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
 <h3 id="headline-3">
 unifier
 </h3>
+<div id="outline-text-headline-3" class="outline-text-3">
 <p>
 一旦示した定理は、自由変数を全部メタ変数に変えてから環境に追加されます。
-この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。
-</p>
+この定理を後から使う場合はこのメタ変数に何か適当なものを代入する必要があり、今回のClaireの実装ではこれは全てユーザーが決定する必要がありました。</p>
 <p>
-各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。
-</p>
+各変数ごとに代入を行うのではなく適当な論理式を与えるとそれとunifyしたものを返すような感じにしてくれるコマンドを例えば追加すると多分便利です。</p>
 <p>
 あくまで一例ですが、 <code>goal: |- P(a) /\ P(b) ==&gt; P(a)</code> かつ <code>thm: ?X /\ ?Y ==&gt; ?Z</code> のとき、
-このゴールを解消する <code>exact thm</code> を <code>use thm; unify; assumption</code> みたいに定義できるとよさそうです。
-</p>
+このゴールを解消する <code>exact thm</code> を <code>use thm; unify; assumption</code> みたいに定義できるとよさそうです。</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-3">
 <h3 id="headline-4">
 HOLの実装
 </h3>
+<div id="outline-text-headline-4" class="outline-text-3">
 <p>
-大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。
-</p>
+大変なだけです。技術的な難しさは特に無いです(IsabelleのHOLとか参考にするといいかも)。</p>
 <p>
-ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
-</p>
+ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。</p>
 <p>
-それに関連するrefl, substなどのコマンドを定義しておくと便利です。
-</p>
+それに関連するrefl, substなどのコマンドを定義しておくと便利です。</p>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-3">
 <h3 id="headline-5">
 マクロ記述言語
 </h3>
+<div id="outline-text-headline-5" class="outline-text-3">
 <p>
-前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。
-</p>
+前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-2">
 <h2 id="headline-6">
 Isabelleとの関連
 </h2>
+<div id="outline-text-headline-6" class="outline-text-2">
 <p>
-ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。
-</p>
+ここは実装に関わる話ではないのですが、IsabelleとClaireを比較していくつか気がついたことがあるので紹介しておきます。</p>
+<div id="outline-container-headline-7" class="outline-3">
 <h3 id="headline-7">
 prop? bool?
 </h3>
+<div id="outline-text-headline-7" class="outline-text-3">
 <p>
-Isabelleではprop型というのはあまり見ない(存在しますが、チュートリアルを少しやったくらいでは見ないかもしれません)と思います。
-</p>
+Isabelleではprop型というのはあまり見ない(存在しますが、チュートリアルを少しやったくらいでは見ないかもしれません)と思います。</p>
 <p>
 IsabelleのpropはClaireのprop型と同じく、メタロジックの基本型です。
-しかし一方でHOLにはbool型というのが組み込みの型であり、これが要は「項の型」になります。
-</p>
+しかし一方でHOLにはbool型というのが組み込みの型であり、これが要は「項の型」になります。</p>
 <p>
 前回も説明したと思いますが、型はFormulaとTermと2つにつき、Formulaにはprop型、Termには他の適当な型がつくことになっています。
-bool型というのはTermの方につく型なのですね。
-</p>
+bool型というのはTermの方につく型なのですね。</p>
 <p>
 さらにHOLではboolをpropに持ち上げるcoercionが定義されていてこれが効いているので、 <code>lemma: True</code> とか書けますが、これは本来は <code>T :: bool =&gt; prop</code> みたいなのがあって <code>T(True)</code> と解釈されています。
-ので、Isabelleを書いていると基本の型はboolでしょ、みたいな気持ちになると思いますがメタロジックの論理式の型はpropで、boolはあくまで項につく型だったのです。
-</p>
+ので、Isabelleを書いていると基本の型はboolでしょ、みたいな気持ちになると思いますがメタロジックの論理式の型はpropで、boolはあくまで項につく型だったのです。</p>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-3">
 <h3 id="headline-8">
 メタロジックの結合子
 </h3>
+<div id="outline-text-headline-8" class="outline-text-3">
 <p>
-IsabelleのメタロジックはPure logicと呼ばれるものです。
-</p>
+IsabelleのメタロジックはPure logicと呼ばれるものです。</p>
 <p>
 Claireではメタロジックの結合子としてForall, Exist, ==&gt;などが提供されています。
-Pure logicでは結合子として⋀(forall), ==&gt;などが提供されています。
-</p>
+Pure logicでは結合子として⋀(forall), ==&gt;などが提供されています。</p>
 <p>
 それに対して、Isabelle/HOLでは∀,∃,–&gt;などが提供されています。
 これらは定義されているのがPure logicか、それともHOLかという違いがあり、定義も微妙に違います。
-さらにコマンドやproverはPure logicをベースにして作られていることが多いので、sledgehammerを使いたい場合はPure logicに合わせるほうがいいです。
-</p>
+さらにコマンドやproverはPure logicをベースにして作られていることが多いので、sledgehammerを使いたい場合はPure logicに合わせるほうがいいです。</p>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-3">
 <h3 id="headline-9">
 NewDecl
 </h3>
+<div id="outline-text-headline-9" class="outline-text-3">
 <p>
 Isabelleにはdefintion, fun, inductiveなどの色々な宣言をよく使います。
-が、これらのほとんどは組み込みではなく後から定義された宣言です。
-</p>
+が、これらのほとんどは組み込みではなく後から定義された宣言です。</p>
 <p>
-Claireでもこれに倣ってNewDeclという仕組みで(マクロで)あとから宣言を追加できるようにしました。
-</p>
+Claireでもこれに倣ってNewDeclという仕組みで(マクロで)あとから宣言を追加できるようにしました。</p>
 <p>
-例えば <code>definition name where &#34;name == body&#34;</code> は、 <code>name</code> の存在を宣言した後、 <code>name_def: name = body</code> をaxiomとして追加します。
-</p>
+例えば <code>definition name where &#34;name == body&#34;</code> は、 <code>name</code> の存在を宣言した後、 <code>name_def: name = body</code> をaxiomとして追加します。</p>
 <p>
 ほかのものもそうですが、実際に宣言を行う場合はIsabelleのconstやconstdef、Claireのconstantなど「存在の宣言(主に型チェックなどに使う)」と「公理の追加」の2つで大体事足ります。
-マクロで定義されるdeclは大体「適切な公理を追加する」のを自動化するために使います。
-</p>
+マクロで定義されるdeclは大体「適切な公理を追加する」のを自動化するために使います。</p>
 <p>
-これは、勝手な公理を追加することを許すと危険なのでaxiomはあまりユーザーに見せないほうがよいということもあります。
-</p>
+これは、勝手な公理を追加することを許すと危険なのでaxiomはあまりユーザーに見せないほうがよいということもあります。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-2">
 <h2 id="headline-10">
 まとめ
 </h2>
+<div id="outline-text-headline-10" class="outline-text-2">
 <p>
-Claireのお話は以上です。
-</p>
+Claireのお話は以上です。</p>
 <p>
-Isabelleを見ながらClaireを実装してたらIsabelleのことに詳しくなれました。
-</p>
+Isabelleを見ながらClaireを実装してたらIsabelleのことに詳しくなれました。</p>
 <p>
-というわけでまぁこのシリーズ7(+2)回もあって長いんですがよかったらみなさんも自分なりにProof Assistantを作ってみてください。
-</p>
+というわけでまぁこのシリーズ7(+2)回もあって長いんですがよかったらみなさんも自分なりにProof Assistantを作ってみてください。</p>
 <p>
-というわけでここまでお疲れ様でした。
-</p>
+というわけでここまでお疲れ様でした。</p>
+</div>
+</div>
 </section>
     <footer>
       <hr>

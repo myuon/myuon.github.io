@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>計算機科学 on The curse of λ</title>
@@ -6,16 +5,17 @@
     <description>Recent content in 計算機科学 on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
-    <lastBuildDate>Wed, 13 Dec 2017 00:04:03 +0900</lastBuildDate><atom:link href="https://myuon.github.io/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%A6/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Nominal Isabelleとラムダ計算 その4</title>
-      <link>https://myuon.github.io/posts/nominal-lambda-4/</link>
-      <pubDate>Wed, 13 Dec 2017 00:04:03 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/nominal-lambda-4/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 13日目の記事です。
+    <lastBuildDate>Wed, 13 Dec 2017 00:04:03 +0900</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/%E8%A8%88%E7%AE%97%E6%A9%9F%E7%A7%91%E5%AD%A6/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>Nominal Isabelleとラムダ計算 その4</title>
+        <link>https://myuon.github.io/posts/nominal-lambda-4/</link>
+        <pubDate>Wed, 13 Dec 2017 00:04:03 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/nominal-lambda-4/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 13日目の記事です。
   さて、前回はChurch-Rosserを示しました。今回は型付きラムダ計算もやっとかないとだめかなと思ったのでsimply-typedのtype soundnessです。 流石にラムダ計算の話題ばっかりで疲れてきたと思いますが今回は1日ですべて終わらせます。
  まぁCRに比べればずっと簡単なのでいけるでしょ(適当)
  今回解説するコードは以下にあります:
@@ -23,39 +23,36 @@
 Simply-typed  nominal_datatype simply = TVar string | TArr simply simply (infixr &amp;#34;→&amp;#34; 90)   simply-typedな型はtype variableとfunction typeからなる。 typeの定義自体は特にbinderを含まないが、後に型を含むnominal_inductiveの宣言をしたりする都合上nominal_datatypeにしてある。
 valid context   さて型付けに必要になるcontext(変数とその型を組にしたもの)は同じ変数を複数含んではいけないという制約があるので、それを表すvalidという述語を定義する。
 inductive valid :: &amp;#34;(name × simply) list ⇒ bool&amp;#34; where valid_nil: &amp;#34;valid []&amp;#34; | valid_cons: &amp;#34;⟦ valid Γ; x ♯ Γ ⟧ ⟹ valid ((x,T)#Γ)&amp;#34; equivariance valid lemma elim_valid_cons: &amp;#34;valid ((x,T)#Γ) ⟹ valid Γ ∧ x ♯ Γ&amp;#34; by (cases rule: valid.</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Nominal Isabelleとラムダ計算 その3</title>
-      <link>https://myuon.github.io/posts/nominal-lambda-3/</link>
-      <pubDate>Tue, 12 Dec 2017 00:05:37 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/nominal-lambda-3/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 12日目の記事です。
+      <item>
+        <title>Nominal Isabelleとラムダ計算 その3</title>
+        <link>https://myuon.github.io/posts/nominal-lambda-3/</link>
+        <pubDate>Tue, 12 Dec 2017 00:05:37 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/nominal-lambda-3/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 12日目の記事です。
   前回はCRの証明の途中までやったので続きです。 内容多めですが今回で頑張って終わらせます。
 confluenceへ (cont.)  coherent lemmas   parallel betaのcoherent lemmaを示す。 証明は基本的に場合分けやるだけなので省略するとして、まぁ常識的なことが成り立つよねという補題である。(説明の放棄)
 lemma elim_pb_var: &amp;#34;Var x ⇒β N ⟹ N = Var x&amp;#34; lemma elim_pb_abs: assumes &amp;#34;lam [x]. M ⇒β N&amp;#39;&amp;#34; &amp;#34;x ♯ N&amp;#39;&amp;#34; obtains N where &amp;#34;M ⇒β N&amp;#34; &amp;#34;N&amp;#39; = lam [x]. N&amp;#34; lemma elim_pb_app: assumes &amp;#34;M1 $ M2 ⇒β N&amp;#34; obtains N1 N2 where &amp;#34;N = N1 $ N2&amp;#34; &amp;#34;M1 ⇒β N1&amp;#34; &amp;#34;M2 ⇒β N2&amp;#34; | x P P&amp;#39; L where &amp;#34;M1 = lam[x].</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Nominal Isabelleとラムダ計算 その2</title>
-      <link>https://myuon.github.io/posts/nominal-lambda-2/</link>
-      <pubDate>Mon, 11 Dec 2017 00:13:11 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/nominal-lambda-2/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 11日目の記事です。
+      <item>
+        <title>Nominal Isabelleとラムダ計算 その2</title>
+        <link>https://myuon.github.io/posts/nominal-lambda-2/</link>
+        <pubDate>Mon, 11 Dec 2017 00:13:11 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/nominal-lambda-2/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 11日目の記事です。
   前回はNominal Isabelleの説明と証明を少しだけしました。 今回から徐々に証明したいことの内容(ラムダ計算そのもの)の話もしていきます。
 equivarianceとnominal_inductive  補題   さて2つの補題を示しておく。
 lemma subst_eqvt[eqvt]: fixes π :: &amp;#34;var prm&amp;#34; shows &amp;#34;π∙(t[x ::= s]) = (π∙t)[(π∙x) ::= (π∙s)]&amp;#34; apply (nominal_induct t avoiding: x s rule: strong_induct) apply (simp add: perm_bij) apply (simp) apply (simp add: fresh_bij) done lemma subst_rename: assumes &amp;#34;x ♯ t&amp;#34; shows &amp;#34;([(x,y)]∙t) [x ::= s] = t [y ::= s]&amp;#34; using assms apply (nominal_induct t avoiding: x y s rule: lambda.</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Nominal Isabelleとラムダ計算 その1</title>
-      <link>https://myuon.github.io/posts/nominal-lambda-1/</link>
-      <pubDate>Sun, 10 Dec 2017 00:13:17 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/nominal-lambda-1/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 10日目の記事です。
+      <item>
+        <title>Nominal Isabelleとラムダ計算 その1</title>
+        <link>https://myuon.github.io/posts/nominal-lambda-1/</link>
+        <pubDate>Sun, 10 Dec 2017 00:13:17 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/nominal-lambda-1/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 10日目の記事です。
   前回、4日分に分けてIMPのoperational semanticsの証明の解説をしてみました。 今回はより発展的な話題として、Nominal Isabelleを用いてChurch-Rosser性やSimply-typedのsoundnessなどを示してみようと思います。
  定理証明に詳しい人ならもうこれだけでつらさが伝わるかと思うのですが、実際証明はかなり大変なので今回は発展編(応用編)としてこの話題を選んでみました。
  今回解説するコードは以下に置いてあります。
@@ -67,58 +64,54 @@ lemma subst_eqvt[eqvt]: fixes π :: &amp;#34;var prm&amp;#34; shows &amp;#34;π�
  はてさて真面目にラムダ計算の形式化をやると地獄をみますが、そんな時にNominal Isabelleが便利なんですよ〜！っていうのがこの導入です。
   Nominal Isabelle   Nominal Isabelleは(ラムダ項だけではなく; ラムダ計算みたい題材が最も威力を発揮することは間違いないが)binderを含むデータ型を扱う際に利用すると便利なライブラリである。 binderは [x]. M のような形をしていて、この束縛変数 x の変数名の付け替えを区別しないような項である。
  Nominal Isabelleではこの変数の付け替え、「例えば変数 x を y に付け替える」という操作を「置換 (x,y) を作用させる」という操作とみなす、というところからスタートする。 より厳密には次のようなことである: 無限の変数からなる集合 V が与えられている時、 List (V×V) の元を置換と呼ぶ。このとき置換の作用を ∙ でかくことにし、 ((x,y)::xs)∙M := xs∙(Mに出現する自由変数xをyに、yをxに書き換えた項); []∙M := M のようにして定める。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>IMPのoperational semantics その4</title>
-      <link>https://myuon.github.io/posts/2017csadv-day8/</link>
-      <pubDate>Fri, 08 Dec 2017 00:01:48 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/2017csadv-day8/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 8日目の記事です。
+      <item>
+        <title>IMPのoperational semantics その4</title>
+        <link>https://myuon.github.io/posts/2017csadv-day8/</link>
+        <pubDate>Fri, 08 Dec 2017 00:01:48 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day8/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 8日目の記事です。
   前回は、big-stepがdeterministicであることを示した。
 9. Small-step long reduction   csmallを複数回適用した、ということを表す関係を &amp;lt;_,_&amp;gt; ⟶* &amp;lt;_,_&amp;gt; でかいて、次のように定める。
 subsubsection {* small-step long reduction *} inductive csmall_long (&amp;#34;&amp;lt;_,_&amp;gt; ⟶* &amp;lt;_,_&amp;gt;&amp;#34;) where SL_refl: &amp;#34;&amp;lt;c,st&amp;gt; ⟶* &amp;lt;c,st&amp;gt;&amp;#34; | SL_trans1: &amp;#34;⟦ &amp;lt;c,st&amp;gt; ⟶ &amp;lt;c&amp;#39;,st&amp;#39;&amp;gt;; &amp;lt;c&amp;#39;,st&amp;#39;&amp;gt; ⟶* &amp;lt;c&amp;#39;&amp;#39;,st&amp;#39;&amp;#39;&amp;gt; ⟧ ⟹ &amp;lt;c,st&amp;gt; ⟶* &amp;lt;c&amp;#39;&amp;#39;,st&amp;#39;&amp;#39;&amp;gt;&amp;#34; lemma SL_trans: &amp;#34;⟦ &amp;lt;c,st&amp;gt; ⟶* &amp;lt;c&amp;#39;,st&amp;#39;&amp;gt;; &amp;lt;c&amp;#39;,st&amp;#39;&amp;gt; ⟶* &amp;lt;c&amp;#39;&amp;#39;,st&amp;#39;&amp;#39;&amp;gt; ⟧ ⟹ &amp;lt;c,st&amp;gt; ⟶* &amp;lt;c&amp;#39;&amp;#39;,st&amp;#39;&amp;#39;&amp;gt;&amp;#34; apply (induction arbitrary: c&amp;#39;&amp;#39; st&amp;#39;&amp;#39; rule: csmall_long.induct) apply simp apply (blast intro: SL_trans1) done lemma SL_SeqStep: &amp;#34;&amp;lt;c1,st&amp;gt; ⟶* &amp;lt;c1&amp;#39;,st&amp;#39;&amp;gt; ⟹ &amp;lt;c1;;c2,st&amp;gt; ⟶* &amp;lt;c1&amp;#39;;;c2,st&amp;#39;&amp;gt;&amp;#34; apply (induction arbitrary: c2 rule: csmall_long.</description>
-    </item>
+      </item>
     
-    <item>
-      <title>IMPのoperational semantics その3</title>
-      <link>https://myuon.github.io/posts/2017csadv-day7/</link>
-      <pubDate>Thu, 07 Dec 2017 00:18:10 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/2017csadv-day7/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 7日目の記事です。
+      <item>
+        <title>IMPのoperational semantics その3</title>
+        <link>https://myuon.github.io/posts/2017csadv-day7/</link>
+        <pubDate>Thu, 07 Dec 2017 00:18:10 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day7/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 7日目の記事です。
   前回はcommandとcommandの評価を定義した。
 6. Coherent lemmas  SKIP  subsection {* Coherent lemmas *} lemma coh_B_Skip: assumes &amp;#34;&amp;lt;SKIP,st&amp;gt; ⇓ st&amp;#39;&amp;#34; shows &amp;#34;st = st&amp;#39;&amp;#34; using cbig.cases [OF assms] by auto   始めの補題はSKIPについてで、 &amp;lt;SKIP,st&amp;gt; ⇓ st&amp;#39; ならば st = st&amp;#39; というものである。 直観的には明らかであろうし、証明も場合分けをするだけで済む。
   Ass  lemma coh_B_Ass: assumes &amp;#34;&amp;lt;x ::= a , st&amp;gt; ⇓ st&amp;#39;&amp;#34; shows &amp;#34;st&amp;#39; = st [x ↦ aeval st a]&amp;#34; using cbig.</description>
-    </item>
+      </item>
     
-    <item>
-      <title>IMPのoperational semantics その2</title>
-      <link>https://myuon.github.io/posts/2017csadv-day6/</link>
-      <pubDate>Wed, 06 Dec 2017 00:07:53 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/2017csadv-day6/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 6日目の記事です。
+      <item>
+        <title>IMPのoperational semantics その2</title>
+        <link>https://myuon.github.io/posts/2017csadv-day6/</link>
+        <pubDate>Wed, 06 Dec 2017 00:07:53 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day6/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 6日目の記事です。
   前回はaexp/bexpとそのevaluationを定めた。
 3. Commands   さて次にcommandを定義する。
  これはIMPの「命令」や「文」にあたるもので、変数の代入、If文、While文などが用意されている。
 section {* Commands *} subsection {* Syntax *} datatype com = CSkip | CAssign id aexp | CSeq com com | CIf bexp com com | CWhile bexp com notation CSkip (&amp;#34;SKIP&amp;#34;) and CAssign (&amp;#34;_ ::= _&amp;#34; [50,50] 90) and CSeq (infixr &amp;#34;;;&amp;#34; 30) and CIf (&amp;#34;IF _ THEN _ ELSE _&amp;#34; 80) and CWhile (&amp;#34;WHILE _ DO _&amp;#34; 90)   comを定義した後、notationによって各コンストラクタをよりそれらしいnotationで記述できるようにしている。 このように定義しておくと、例えば以下のような記述ができるようになる。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>IMPのoperational semantics その1</title>
-      <link>https://myuon.github.io/posts/2017csadv-day5/</link>
-      <pubDate>Tue, 05 Dec 2017 00:02:29 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/2017csadv-day5/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 5日目の記事です。
+      <item>
+        <title>IMPのoperational semantics その1</title>
+        <link>https://myuon.github.io/posts/2017csadv-day5/</link>
+        <pubDate>Tue, 05 Dec 2017 00:02:29 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/2017csadv-day5/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 5日目の記事です。
   今回から実際に実践的な証明をしながらIsabelleの解説をしていこうと思います。 そしてこの記事は一人computer scienceアドベントカレンダーなのでCSらしい話題を、ということで、 IMPのoperational semanticsの話でもしようと思います。
 IMPについて   IMPとはimperative languageの頭文字を取ったもので、natとboolを基本型にもつ簡単な手続き型言語です。 CSの教科書とかでよく見かけるやつです。 IMPの定義をし、そのevaluationを定めます。
  ただし、IMPはチューリング完全なので評価は一般には停止しません。つまりプログラムを「評価」して結果を返すような関数は全域関数にはなりません。 このような評価を表す部分関数(関係)を定め、実際にこれがいい感じの性質をもつことを示していきます。
   0. States   IMPの定義を行う前の準備。IMPは変数を扱うことができるので変数名を処理するための型が必要になるのと、プログラムの実行には実際に各変数の値を記録したもの(環境の一種)が必要になるのでそれらを定義する。
 section {* States *} type_synonym id = string type_synonym state = &amp;#34;id ⇒ nat&amp;#34; definition empty :: &amp;#34;state&amp;#34; where &amp;#34;empty _ = 0&amp;#34; no_syntax &amp;#34;_maplet&amp;#34; :: &amp;#34;[&amp;#39;a, &amp;#39;a] ⇒ maplet&amp;#34; (&amp;#34;_ /↦/ _&amp;#34;) fun update :: &amp;#34;state ⇒ id ⇒ nat ⇒ state&amp;#34; (&amp;#34;_[_ ↦ _]&amp;#34; [80,80,80] 80) where &amp;#34;update st x n y = (if x = y then n else st y)&amp;#34;   sectionコマンドは証明には影響を与えないが、Sidekickにsectionとして表示されたりLaTeXに出力すると実際に節として扱われたりするもの。chapter, subsectio, subsubsectionなどもある。</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

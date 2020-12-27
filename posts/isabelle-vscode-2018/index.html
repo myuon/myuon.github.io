@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,20 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="VSCodeでIsabelle2018環境構築" />
-<meta property="og:description" content="こうなるよ   スクショ   環境構築   ほぼこれにある通りでOK  https://marketplace.visualstudio.com/items?itemName=makarius.isabelle Isabelleのインストール   http://isabelle.in.tum.de/devel/release_snapshot  から対応するプラットフォームのファイルをダウンロードして展開しとく VSCode pluginのインストール     Isabelle    Prettify Symbols Mode    bibtexLanguage (optional)    を入れる VSCode config   user configを開いて次を追加 &#34;isabelle.home&#34;: [Isabelle2018のルートへのパス],   VSCodeをリロードすると、初回であればビルドが走って、それが終われば&#34;Welcome to Isabelle …&#34;って出る  これで環境構築はOK 対応状況   VSCodeサポートは残念ながら完璧とはいえない    state: VSCodeで Isabelle: Show State しましょう, output panelが出る(白背景に勝手になるんだけどこれは設定できないのだろうか, ダークテーマだとつらい)    syntax highlight: これは問題なし    unicode symbolの入力: \&lt;forall&gt; とかで入力できるが結構カーソル移動の制御とかがキモイ, あと !" />
+<meta property="og:description" content="こうなるよ   スクショ
+    環境構築   ほぼこれにある通りでOK
+ https://marketplace.visualstudio.com/items?itemName=makarius.isabelle
+Isabelleのインストール   http://isabelle.in.tum.de/devel/release_snapshot
+ から対応するプラットフォームのファイルをダウンロードして展開しとく
+  VSCode pluginのインストール    Isabelle
+  Prettify Symbols Mode
+  bibtexLanguage (optional)
+  を入れる
+  VSCode config   user configを開いて次を追加
+&#34;isabelle.home&#34;: [Isabelle2018のルートへのパス],   VSCodeをリロードすると、初回であればビルドが走って、それが終われば&#34;Welcome to Isabelle …&#34;って出る
+ これで環境構築はOK
+  対応状況   VSCodeサポートは残念ながら完璧とはいえない
+  state: VSCodeで Isabelle: Show State しましょう, output panelが出る(白背景に勝手になるんだけどこれは設定できないのだろうか, ダークテーマだとつらい)" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/isabelle-vscode-2018/" />
 <meta property="article:published_time" content="2018-07-28T11:46:33+09:00" />
@@ -30,17 +43,44 @@
 
 
 <meta itemprop="name" content="VSCodeでIsabelle2018環境構築">
-<meta itemprop="description" content="こうなるよ   スクショ   環境構築   ほぼこれにある通りでOK  https://marketplace.visualstudio.com/items?itemName=makarius.isabelle Isabelleのインストール   http://isabelle.in.tum.de/devel/release_snapshot  から対応するプラットフォームのファイルをダウンロードして展開しとく VSCode pluginのインストール     Isabelle    Prettify Symbols Mode    bibtexLanguage (optional)    を入れる VSCode config   user configを開いて次を追加 &#34;isabelle.home&#34;: [Isabelle2018のルートへのパス],   VSCodeをリロードすると、初回であればビルドが走って、それが終われば&#34;Welcome to Isabelle …&#34;って出る  これで環境構築はOK 対応状況   VSCodeサポートは残念ながら完璧とはいえない    state: VSCodeで Isabelle: Show State しましょう, output panelが出る(白背景に勝手になるんだけどこれは設定できないのだろうか, ダークテーマだとつらい)    syntax highlight: これは問題なし    unicode symbolの入力: \&lt;forall&gt; とかで入力できるが結構カーソル移動の制御とかがキモイ, あと !">
-<meta itemprop="datePublished" content="2018-07-28T11:46:33&#43;09:00" />
-<meta itemprop="dateModified" content="2018-07-28T11:46:33&#43;09:00" />
+<meta itemprop="description" content="こうなるよ   スクショ
+    環境構築   ほぼこれにある通りでOK
+ https://marketplace.visualstudio.com/items?itemName=makarius.isabelle
+Isabelleのインストール   http://isabelle.in.tum.de/devel/release_snapshot
+ から対応するプラットフォームのファイルをダウンロードして展開しとく
+  VSCode pluginのインストール    Isabelle
+  Prettify Symbols Mode
+  bibtexLanguage (optional)
+  を入れる
+  VSCode config   user configを開いて次を追加
+&#34;isabelle.home&#34;: [Isabelle2018のルートへのパス],   VSCodeをリロードすると、初回であればビルドが走って、それが終われば&#34;Welcome to Isabelle …&#34;って出る
+ これで環境構築はOK
+  対応状況   VSCodeサポートは残念ながら完璧とはいえない
+  state: VSCodeで Isabelle: Show State しましょう, output panelが出る(白背景に勝手になるんだけどこれは設定できないのだろうか, ダークテーマだとつらい)">
+<meta itemprop="datePublished" content="2018-07-28T11:46:33+09:00" />
+<meta itemprop="dateModified" content="2018-07-28T11:46:33+09:00" />
 <meta itemprop="wordCount" content="65">
 
 
 
 <meta itemprop="keywords" content="" />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="VSCodeでIsabelle2018環境構築"/>
-<meta name="twitter:description" content="こうなるよ   スクショ   環境構築   ほぼこれにある通りでOK  https://marketplace.visualstudio.com/items?itemName=makarius.isabelle Isabelleのインストール   http://isabelle.in.tum.de/devel/release_snapshot  から対応するプラットフォームのファイルをダウンロードして展開しとく VSCode pluginのインストール     Isabelle    Prettify Symbols Mode    bibtexLanguage (optional)    を入れる VSCode config   user configを開いて次を追加 &#34;isabelle.home&#34;: [Isabelle2018のルートへのパス],   VSCodeをリロードすると、初回であればビルドが走って、それが終われば&#34;Welcome to Isabelle …&#34;って出る  これで環境構築はOK 対応状況   VSCodeサポートは残念ながら完璧とはいえない    state: VSCodeで Isabelle: Show State しましょう, output panelが出る(白背景に勝手になるんだけどこれは設定できないのだろうか, ダークテーマだとつらい)    syntax highlight: これは問題なし    unicode symbolの入力: \&lt;forall&gt; とかで入力できるが結構カーソル移動の制御とかがキモイ, あと !"/>
+<meta name="twitter:description" content="こうなるよ   スクショ
+    環境構築   ほぼこれにある通りでOK
+ https://marketplace.visualstudio.com/items?itemName=makarius.isabelle
+Isabelleのインストール   http://isabelle.in.tum.de/devel/release_snapshot
+ から対応するプラットフォームのファイルをダウンロードして展開しとく
+  VSCode pluginのインストール    Isabelle
+  Prettify Symbols Mode
+  bibtexLanguage (optional)
+  を入れる
+  VSCode config   user configを開いて次を追加
+&#34;isabelle.home&#34;: [Isabelle2018のルートへのパス],   VSCodeをリロードすると、初回であればビルドが走って、それが終われば&#34;Welcome to Isabelle …&#34;って出る
+ これで環境構築はOK
+  対応状況   VSCodeサポートは残念ながら完璧とはいえない
+  state: VSCodeで Isabelle: Show State しましょう, output panelが出る(白背景に勝手になるんだけどこれは設定できないのだろうか, ダークテーマだとつらい)"/>
 
 
   </head>
@@ -70,118 +110,109 @@
       <h1>VSCodeでIsabelle2018環境構築</h1>
     </header>
     <section>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 こうなるよ
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
 <p>
-スクショ
-</p>
+スクショ</p>
 <p>
 <figure class="center">
     <img src="/images/20180728.png" width="640"/> 
 </figure>
-
 </p>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
 <h2 id="headline-2">
 環境構築
 </h2>
+<div id="outline-text-headline-2" class="outline-text-2">
 <p>
-ほぼこれにある通りでOK
-</p>
+ほぼこれにある通りでOK</p>
 <p>
-<a href="https://marketplace.visualstudio.com/items?itemName=makarius.isabelle"><a href="https://marketplace.visualstudio.com/items?itemName=makarius.isabelle">https://marketplace.visualstudio.com/items?itemName=makarius.isabelle</a></a>
-</p>
+<a href="https://marketplace.visualstudio.com/items?itemName=makarius.isabelle"><a href="https://marketplace.visualstudio.com/items?itemName=makarius.isabelle">https://marketplace.visualstudio.com/items?itemName=makarius.isabelle</a></a></p>
+<div id="outline-container-headline-3" class="outline-4">
 <h4 id="headline-3">
 Isabelleのインストール
 </h4>
+<div id="outline-text-headline-3" class="outline-text-4">
 <p>
-<a href="http://isabelle.in.tum.de/devel/release_snapshot"><a href="http://isabelle.in.tum.de/devel/release_snapshot">http://isabelle.in.tum.de/devel/release_snapshot</a></a>
-</p>
+<a href="http://isabelle.in.tum.de/devel/release_snapshot"><a href="http://isabelle.in.tum.de/devel/release_snapshot">http://isabelle.in.tum.de/devel/release_snapshot</a></a></p>
 <p>
-から対応するプラットフォームのファイルをダウンロードして展開しとく
-</p>
+から対応するプラットフォームのファイルをダウンロードして展開しとく</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-4">
 <h4 id="headline-4">
 VSCode pluginのインストール
 </h4>
+<div id="outline-text-headline-4" class="outline-text-4">
 <ul>
 <li>
-<p>
-Isabelle
-</p>
+<p>Isabelle</p>
 </li>
 <li>
-<p>
-Prettify Symbols Mode
-</p>
+<p>Prettify Symbols Mode</p>
 </li>
 <li>
-<p>
-bibtexLanguage (optional)
-</p>
+<p>bibtexLanguage (optional)</p>
 </li>
 </ul>
-<p>
-を入れる
-</p>
+<p>を入れる</p>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-4">
 <h4 id="headline-5">
 VSCode config
 </h4>
+<div id="outline-text-headline-5" class="outline-text-4">
 <p>
-user configを開いて次を追加
-</p>
+user configを開いて次を追加</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  &#34;isabelle.home&#34;: [Isabelle2018のルートへのパス],</code></pre></div>
 </div>
 <p>
-VSCodeをリロードすると、初回であればビルドが走って、それが終われば&#34;Welcome to Isabelle …&#34;って出る
-</p>
+VSCodeをリロードすると、初回であればビルドが走って、それが終われば&#34;Welcome to Isabelle …&#34;って出る</p>
 <p>
-これで環境構築はOK
-</p>
+これで環境構築はOK</p>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-3">
 <h3 id="headline-6">
 対応状況
 </h3>
+<div id="outline-text-headline-6" class="outline-text-3">
 <p>
-VSCodeサポートは残念ながら完璧とはいえない
-</p>
+VSCodeサポートは残念ながら完璧とはいえない</p>
 <ul>
 <li>
-<p>
-state: VSCodeで <code>Isabelle: Show State</code> しましょう, output panelが出る(白背景に勝手になるんだけどこれは設定できないのだろうか, ダークテーマだとつらい)
-</p>
+<p>state: VSCodeで <code>Isabelle: Show State</code> しましょう, output panelが出る(白背景に勝手になるんだけどこれは設定できないのだろうか, ダークテーマだとつらい)</p>
 </li>
 <li>
-<p>
-syntax highlight: これは問題なし
-</p>
+<p>syntax highlight: これは問題なし</p>
 </li>
 <li>
-<p>
-unicode symbolの入力: <code>\&lt;forall&gt;</code> とかで入力できるが結構カーソル移動の制御とかがキモイ, あと <code>!!</code> とかの入力方法が分からない(記号のままだと正しく変換されない)
-</p>
+<p>unicode symbolの入力: <code>\&lt;forall&gt;</code> とかで入力できるが結構カーソル移動の制御とかがキモイ, あと <code>!!</code> とかの入力方法が分からない(記号のままだと正しく変換されない)</p>
 </li>
 <li>
-<p>
-sledgehammer: vampireがnot activatedなのでvampire_noncommercialをyesにしろってメッセージが出てvampireが使えない. 設定方法は不明だが他のproverは使えるのでまぁセーフか？
-</p>
+<p>sledgehammer: vampireがnot activatedなのでvampire_noncommercialをyesにしろってメッセージが出てvampireが使えない. 設定方法は不明だが他のproverは使えるのでまぁセーフか？</p>
 </li>
 <li>
-<p>
-他panel: Query, Sledgehammerパネルはまだない模様
-</p>
+<p>他panel: Query, Sledgehammerパネルはまだない模様</p>
 </li>
 <li>
-<p>
-一部state画面に出ないものがある: solve_directのメッセージとかが出てくれない. 対応する箇所にエディタ側で下線が引かれてマウスカーソルをあてるとメッセージが出たりする(けどちゃんと対応してほしい)
-</p>
+<p>一部state画面に出ないものがある: solve_directのメッセージとかが出てくれない. 対応する箇所にエディタ側で下線が引かれてマウスカーソルをあてるとメッセージが出たりする(けどちゃんと対応してほしい)</p>
 </li>
 </ul>
+<p>一方でVSCodeがベースなのでauto-completionのUIが使いやすい(というかjEditが本当にひどかった)とか, VSCodeのemacs keybind pluginは出来がいいので快適にemacs keybindで証明が書けるなどのよさがあります.</p>
 <p>
-一方でVSCodeがベースなのでauto-completionのUIが使いやすい(というかjEditが本当にひどかった)とか, VSCodeのemacs keybind pluginは出来がいいので快適にemacs keybindで証明が書けるなどのよさがあります.
-</p>
-<p>
-使っていきたい
-</p>
+使っていきたい</p>
+</div>
+</div>
+</div>
+</div>
 </section>
     <footer>
       <hr>

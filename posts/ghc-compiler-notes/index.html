@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -37,7 +37,7 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
 ビルドコマンド キャッシュは、今のところは cabal new-update してからindex.cacheのchecksumをみて ~/.cabal を丸ごとキャッシュしている。よくわかってないんだけどこれで大丈夫なの？
 あと、以後のjobでも使うので dist-newstyle もworkspaceに放り込んでる。
 何かの参考になれば。
-build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:- checkout- run:cabalnew-update- restore_cache:keys:- cabal-index-{{checksum&#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34;}}-v1- run:makebuild- run:maketest- save_cache:key:cabal-index-{{checksum&#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34;}}-v1paths:- ~/.cabal- persist_to_workspace:root:.paths:- dist-newstyle" />
+build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:- checkout- run:cabal new-update- restore_cache:keys:- cabal-index-{{ checksum &#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34; }}-v1- run:make build- run:make test- save_cache:key:cabal-index-{{ checksum &#34;~/." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/ghc-compiler-notes/" />
 <meta property="article:published_time" content="2019-04-04T22:30:29+09:00" />
@@ -60,14 +60,15 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
 ビルドコマンド キャッシュは、今のところは cabal new-update してからindex.cacheのchecksumをみて ~/.cabal を丸ごとキャッシュしている。よくわかってないんだけどこれで大丈夫なの？
 あと、以後のjobでも使うので dist-newstyle もworkspaceに放り込んでる。
 何かの参考になれば。
-build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:- checkout- run:cabalnew-update- restore_cache:keys:- cabal-index-{{checksum&#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34;}}-v1- run:makebuild- run:maketest- save_cache:key:cabal-index-{{checksum&#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34;}}-v1paths:- ~/.cabal- persist_to_workspace:root:.paths:- dist-newstyle">
-<meta itemprop="datePublished" content="2019-04-04T22:30:29&#43;09:00" />
-<meta itemprop="dateModified" content="2019-04-04T22:30:29&#43;09:00" />
-<meta itemprop="wordCount" content="64">
+build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:- checkout- run:cabal new-update- restore_cache:keys:- cabal-index-{{ checksum &#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34; }}-v1- run:make build- run:make test- save_cache:key:cabal-index-{{ checksum &#34;~/.">
+<meta itemprop="datePublished" content="2019-04-04T22:30:29+09:00" />
+<meta itemprop="dateModified" content="2019-04-04T22:30:29+09:00" />
+<meta itemprop="wordCount" content="73">
 
 
 
 <meta itemprop="keywords" content="Haskell," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="GHCのソースコードのノートを読むやつを作った"/>
 <meta name="twitter:description" content="タイトルがふわっとしてるけど見れば多分わかる。
@@ -85,7 +86,7 @@ CIはCircleCIを使っている。プロジェクト自体のビルドはcabal�
 ビルドコマンド キャッシュは、今のところは cabal new-update してからindex.cacheのchecksumをみて ~/.cabal を丸ごとキャッシュしている。よくわかってないんだけどこれで大丈夫なの？
 あと、以後のjobでも使うので dist-newstyle もworkspaceに放り込んでる。
 何かの参考になれば。
-build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:- checkout- run:cabalnew-update- restore_cache:keys:- cabal-index-{{checksum&#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34;}}-v1- run:makebuild- run:maketest- save_cache:key:cabal-index-{{checksum&#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34;}}-v1paths:- ~/.cabal- persist_to_workspace:root:.paths:- dist-newstyle"/>
+build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:- checkout- run:cabal new-update- restore_cache:keys:- cabal-index-{{ checksum &#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34; }}-v1- run:make build- run:make test- save_cache:key:cabal-index-{{ checksum &#34;~/."/>
 
 
   </head>
@@ -151,26 +152,26 @@ build-test-8_6_3:working_directory:~/workspacedocker:- image:haskell:8.6.3steps:
 <p>キャッシュは、今のところは <code>cabal new-update</code> してからindex.cacheのchecksumをみて <code>~/.cabal</code> を丸ごとキャッシュしている。よくわかってないんだけどこれで大丈夫なの？</p>
 <p>あと、以後のjobでも使うので <code>dist-newstyle</code> もworkspaceに放り込んでる。</p>
 <p>何かの参考になれば。</p>
-<div class="highlight"><pre class="chroma"><code class="language-yml" data-lang="yml"><span class="w">  </span><span class="k">build-test-8_6_3</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span><span class="k">working_directory</span><span class="p">:</span><span class="w"> </span>~/workspace<span class="w">
-</span><span class="w">    </span><span class="k">docker</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span>- <span class="k">image</span><span class="p">:</span><span class="w"> </span>haskell<span class="p">:</span><span class="m">8.6.3</span><span class="w">
-</span><span class="w">    </span><span class="k">steps</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span>- checkout<span class="w">
-</span><span class="w">      </span>- <span class="k">run</span><span class="p">:</span><span class="w"> </span>cabal<span class="w"> </span>new-update<span class="w">
-</span><span class="w">      </span>- <span class="k">restore_cache</span><span class="p">:</span><span class="w">
-</span><span class="w">          </span><span class="k">keys</span><span class="p">:</span><span class="w">
-</span><span class="w">            </span>- cabal-index-{{<span class="w"> </span>checksum<span class="w"> </span><span class="s2">&#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34;</span><span class="w"> </span>}}-v1<span class="w">
-</span><span class="w">      </span>- <span class="k">run</span><span class="p">:</span><span class="w"> </span>make<span class="w"> </span>build<span class="w">
-</span><span class="w">      </span>- <span class="k">run</span><span class="p">:</span><span class="w"> </span>make<span class="w"> </span>test<span class="w">
-</span><span class="w">      </span>- <span class="k">save_cache</span><span class="p">:</span><span class="w">
-</span><span class="w">          </span><span class="k">key</span><span class="p">:</span><span class="w"> </span>cabal-index-{{<span class="w"> </span>checksum<span class="w"> </span><span class="s2">&#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34;</span><span class="w"> </span>}}-v1<span class="w">
-</span><span class="w">          </span><span class="k">paths</span><span class="p">:</span><span class="w">
-</span><span class="w">            </span>- ~/.cabal<span class="w">
-</span><span class="w">      </span>- <span class="k">persist_to_workspace</span><span class="p">:</span><span class="w">
-</span><span class="w">          </span><span class="k">root</span><span class="p">:</span><span class="w"> </span>.<span class="w">
-</span><span class="w">          </span><span class="k">paths</span><span class="p">:</span><span class="w">
-</span><span class="w">            </span>- dist-newstyle<span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-yml" data-lang="yml"><span class="w">  </span><span class="nt">build-test-8_6_3</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">working_directory</span><span class="p">:</span><span class="w"> </span><span class="l">~/workspace</span><span class="w">
+</span><span class="w">    </span><span class="nt">docker</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">haskell:8.6.3</span><span class="w">
+</span><span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="l">checkout</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l">cabal new-update</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">restore_cache</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">keys</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span>- <span class="l">cabal-index-{{ checksum &#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34; }}-v1</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l">make build</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l">make test</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">save_cache</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">cabal-index-{{ checksum &#34;~/.cabal/packages/hackage.haskell.org/01-index.cache&#34; }}-v1</span><span class="w">
+</span><span class="w">          </span><span class="nt">paths</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span>- <span class="l">~/.cabal</span><span class="w">
+</span><span class="w">      </span>- <span class="nt">persist_to_workspace</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span><span class="nt">root</span><span class="p">:</span><span class="w"> </span><span class="l">.</span><span class="w">
+</span><span class="w">          </span><span class="nt">paths</span><span class="p">:</span><span class="w">
+</span><span class="w">            </span>- <span class="l">dist-newstyle</span><span class="w">
 </span></code></pre></div></section>
     <footer>
       <hr>

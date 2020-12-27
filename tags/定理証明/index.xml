@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>定理証明 on The curse of λ</title>
@@ -6,16 +5,17 @@
     <description>Recent content in 定理証明 on The curse of λ</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <managingEditor>ioi.joi.koi.loi@gmail.com (myuon)</managingEditor>
-    <webMaster>ioi.joi.koi.loi@gmail.com (myuon)</webMaster>
-    <lastBuildDate>Sun, 27 Oct 2019 15:33:19 +0900</lastBuildDate><atom:link href="https://myuon.github.io/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>IsabelleによるCBC CasperのSafetyの証明をしました</title>
-      <link>https://myuon.github.io/posts/isabelle-cbc-casper-safety-proof/</link>
-      <pubDate>Sun, 27 Oct 2019 15:33:19 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/isabelle-cbc-casper-safety-proof/</guid>
-      <description>日記です。
+    <lastBuildDate>Sun, 27 Oct 2019 15:33:19 +0900</lastBuildDate>
+    
+      <atom:link href="https://myuon.github.io/tags/%E5%AE%9A%E7%90%86%E8%A8%BC%E6%98%8E/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      <item>
+        <title>IsabelleによるCBC CasperのSafetyの証明をしました</title>
+        <link>https://myuon.github.io/posts/isabelle-cbc-casper-safety-proof/</link>
+        <pubDate>Sun, 27 Oct 2019 15:33:19 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/isabelle-cbc-casper-safety-proof/</guid>
+        <description>日記です。
 リポジトリ: LayerXcom/cbc-casper-proof
 概要 (私は LayerX の人ではないですが)LayerX 社の人と色々あって CBC Casper というブロックチェーンのプロトコルの検証作業を行いました。(主に定理証明士としてのお手伝い)
 半年くらいかかったけどやりたかった証明についにたどり着いたよという話。
@@ -30,15 +30,14 @@ Isabelle で検証って何するの ブロックチェーンはコンセンサ�
 完走した感想 ドメイン知識がないこともあってめっちゃ大変だったというのが正直なところ。アタリマエであるが、論文に書いてない行間を埋める作業や誤植・足りない仮定を追加するなどの作業はちゃんと理論側の理解がないとやはりつらい。
 一方で、今回は「理論側は別の人・定理証明は私」という分担を行ったが、そういう感じでもこういう証明の仕事を行うことは不可能ではないなという手応えを感じることが出来たのも良かった気がする。
 証明がめっちゃ汚いのとまだ一般化する余地がそれなりに残っているので(あと Liveness の証明という大仕事も手付かずだし…)、気が向いたらまた続きをやりたいと思います。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・発展編 その7</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-7/</link>
-      <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-7/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・発展編 その7</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-7/</link>
+        <pubDate>Sun, 24 Dec 2017 00:04:51 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-7/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 24日目の記事です。
   Proof Assistant 「Claire」の実装の説明は前回までで終わったので、よりProof Assistantとして発展させていくには、という話をします。
 実装すべき機能など  prover   さていきなりめちゃくちゃ重い話ですが、今回はproverを実装しませんでしたがこれは是非とも欲しい機能ではあります。
  Isabelleでは色々なproverが提供されていますが、First-order logicのproverの実装は色々なやり方が知られているようなので(※やったことないのでよく知らない)実装できるとよさそうです。
@@ -49,15 +48,14 @@ Isabelle で検証って何するの ブロックチェーンはコンセンサ�
  ところで、Claireには組み込みのequalityがないので、equalityはそれ用のpredicateを後から定義して、公理(reflexivitiyとsubst rule)を追加して使うことになります。
  それに関連するrefl, substなどのコマンドを定義しておくと便利です。
   マクロ記述言語   前回も説明しましたがhintでGHCをインタープリターとして使うのは起動に時間がかかりすぎるので、まともな言語を定義したほうが便利でしょう。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・マクロ編 その6</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-6/</link>
-      <pubDate>Sat, 23 Dec 2017 00:04:55 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-6/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・マクロ編 その6</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-6/</link>
+        <pubDate>Sat, 23 Dec 2017 00:04:55 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-6/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 23日目の記事です。
   Proof Assistant 「Claire」の実装について説明していきます。
  リポジトリはこちら: myuon/claire
  今回はClaireのマクロ機能について説明します。
@@ -68,15 +66,14 @@ Isabelle で検証って何するの ブロックチェーンはコンセンサ�
   マクロの実装   マクロ自体は、適当な引数を受け取ってCommand, Declの列を返すような関数です。これはClaire言語やその証明の構文木を返しているわけです。
 マクロ定義モジュール   定義は適当なHaskellのモジュールとして記述します。 export_command, export_declに定義したマクロを列挙します。
 module Commands where import Claire macro :: Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command] macro = ... export_command :: [(String, Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command])] export_command = [ (&amp;#34;name&amp;#34;, macro) ] declmacro :: [Argument] -&amp;gt; [Decl] declmacro = .</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・実装編 その5</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-5/</link>
-      <pubDate>Fri, 22 Dec 2017 00:02:50 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-5/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・実装編 その5</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-5/</link>
+        <pubDate>Fri, 22 Dec 2017 00:02:50 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-5/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 22日目の記事です。
   Proof Assistant 「Claire」の実装について説明していきます。
  リポジトリはこちら: myuon/claire
  機能まででproofcheckerのコア機能については説明しました。 今日は雑にtype systemの話をして、Claireを実際に動かして証明を書いてみます。
@@ -84,29 +81,27 @@ Environment   proofcheckerは環境とよばれる状態をもっていて、こ
  Claire.Env
 data Env = Env { thms :: M.Map ThmIndex Formula , types :: M.Map Ident Type , proof :: [(Command, String)] , newcommands :: M.Map Ident (Env -&amp;gt; Argument -&amp;gt; [Judgement] -&amp;gt; [Command]) , newdecls :: M.Map Ident ([Argument] -&amp;gt; [Decl]) }   上から順に、「すでに示した定理」「宣言された型つきの項」「直前の定理の証明」「マクロで定義されたコマンド」「マクロで定義された宣言」です。
  また、実は定理を示した時に(ThmD節による命題の宣言と証明がcheckされ、環境に定理を追加する時に)定理の自由変数をメタ変数としてgeneralizeする機構が挟んであります(Isabelleでもやっています)。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・実装編 その4</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-4/</link>
-      <pubDate>Thu, 21 Dec 2017 00:20:35 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-4/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・実装編 その4</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-4/</link>
+        <pubDate>Thu, 21 Dec 2017 00:20:35 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-4/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 21日目の記事です。
   Proof Assistant 「Claire」の実装について説明していきます。
  リポジトリはこちら: myuon/claire
  昨日に引き続いてClaireの宣言(Decl)について説明していきます。
 Declarations   まずはtoplevelMの定義から。
 toplevelM :: (Monad m, MonadIO m) =&amp;gt; Coroutine DeclSuspender (StateT Env m) () toplevelM = forever $ do let typecheck fml u k = do { env &amp;lt;- lift get; utyp &amp;lt;- liftIO $ try $ infer env fml; case utyp of Left err -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml err) (return ()) Right typ | u == typ -&amp;gt; k Right typ -&amp;gt; suspend $ DeclError &amp;#34;typecheck&amp;#34; (toException $ TypeError fml (toException $ UnificationFailed u typ)) (return ()) } decl &amp;lt;- suspend (DeclAwait return) env &amp;lt;- lift get case decl of ここに実装を書く   Claireは実は(貧弱ながら)型システムを備えていて、型チェックを一応行います。 とりあえずそれは今はおいておいて、toplevelMはDeclを受け取って実行するのを繰り返すだけの単純なステートマシンです。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・実装編 その3</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-3/</link>
-      <pubDate>Wed, 20 Dec 2017 00:12:26 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-3/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・実装編 その3</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-3/</link>
+        <pubDate>Wed, 20 Dec 2017 00:12:26 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-3/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 20日目の記事です。
   Proof Assistant 「Claire」の実装について説明していきます。
  リポジトリはこちら: myuon/claire
 Proofchecker state machine   さてClaireのproofcheckerを作っていきます。
@@ -119,15 +114,14 @@ proof state   初めに仕様を固めます。
  Claire.Checker
 Command Machine Suspender   簡単な方から行きます。
 data ComSuspender y = ComAwait (Command -&amp;gt; y) | CommandError Ident SomeException y deriving (Functor) commandM :: (Monad m, MonadIO m) =&amp;gt; Env -&amp;gt; Coroutine ComSuspender (StateT [Judgement] m) () commandM = .</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・実装編 その2</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-2/</link>
-      <pubDate>Tue, 19 Dec 2017 00:00:24 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-2/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・実装編 その2</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-2/</link>
+        <pubDate>Tue, 19 Dec 2017 00:00:24 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-2/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 19日目の記事です。
   Proof Assistant 「Claire」の実装について説明していきます。
  リポジトリはこちら: myuon/claire
 LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これは、LKのルールの列を受け取って、それを現在のJudgementに適用した結果を返すような関数です。
@@ -136,29 +130,27 @@ LK proofchecker  ルールの適用   LKのproofcheckerを作ります。これ�
  LKのルールはほとんどintro ruleなのでルールの名前を指定するだけでいいのですが、例えば次のルールCutは新たな(ゴールには出現しない)論理式Aを導入するので、これもルールに合わせて指定する必要があります。
 Γ |- Δ,A A,Γ |- Δ -------------------- (Cut) Γ |- Δ   このようなことを鑑みて、前回も説明したとおりLKのRule型は次のような定義にしていました。
 data Rule = I | Cut Formula -- CutはFormulaを引数に取る ...    チェッカー   Claire.</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・実装編 その1</title>
-      <link>https://myuon.github.io/posts/proof-assistant-impl-1/</link>
-      <pubDate>Mon, 18 Dec 2017 00:01:47 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-impl-1/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・実装編 その1</title>
+        <link>https://myuon.github.io/posts/proof-assistant-impl-1/</link>
+        <pubDate>Mon, 18 Dec 2017 00:01:47 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-impl-1/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 18日目の記事です。
   Proof Assistant 「Claire」の実装について説明していきます。
  リポジトリはこちら: myuon/claire
 Syntax: FOL, LK, Claire   初めにSyntaxの定義をしてからパーサーを用意します。 これがないと何も出来ないので。
 FOL   Claire.Syntax.FOL
 data Term = Var Ident | Abs [Ident] Term | App Term [Term] deriving (Eq, Show) data Formula = Pred Ident [Term] | Top | Bottom | Formula :/\: Formula | Formula :\/: Formula | Formula :==&amp;gt;: Formula | Forall Ident Formula | Exist Ident Formula deriving (Eq, Show)   それぞれfirst-order logicの項と論理式の定義です。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・理論編 その2</title>
-      <link>https://myuon.github.io/posts/proof-assistant-theory-2/</link>
-      <pubDate>Sun, 17 Dec 2017 00:17:12 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-theory-2/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 17日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・理論編 その2</title>
+        <link>https://myuon.github.io/posts/proof-assistant-theory-2/</link>
+        <pubDate>Sun, 17 Dec 2017 00:17:12 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-theory-2/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 17日目の記事です。
   昨日に引き続き、Proof Assistantを作る話をしていきます。
  今日は実際にこの後作っていくProof Assistant固有の話をしていきます。
 Claire言語とその設計   唐突ですがこれから作るProof Assistantを「Claire1」と呼ぶことにします。
@@ -172,15 +164,14 @@ Claire言語とその設計   唐突ですがこれから作るProof Assistant�
   LKについて   Proof Systemとして、Sequent Calculus LKを採用します。定義はwikipediaのページでも見るといいんじゃないでしょうか。
  The system LK - Wikipedia
  今回LKを採用した理由として、natural deductionに比べると推論規則を適用した時のゴールの変形の選択肢が少ない(規則を適用する時に必要な情報が少ない)ことがあります。 というか、natural deductionは命題変数の数を減らすelimination ruleを多く含みますがelimination ruleはゴールに対して適用する、つまり下から上に読むと新たな変数を導入することになるので曖昧さが出やすいです。</description>
-    </item>
+      </item>
     
-    <item>
-      <title>Proof Assistantを作る・理論編 その1</title>
-      <link>https://myuon.github.io/posts/proof-assistant-theory-1/</link>
-      <pubDate>Sat, 16 Dec 2017 00:04:42 +0900</pubDate>
-      <author>ioi.joi.koi.loi@gmail.com (myuon)</author>
-      <guid>https://myuon.github.io/posts/proof-assistant-theory-1/</guid>
-      <description>これは一人Computer Scienceアドベントカレンダー 16日目の記事です。
+      <item>
+        <title>Proof Assistantを作る・理論編 その1</title>
+        <link>https://myuon.github.io/posts/proof-assistant-theory-1/</link>
+        <pubDate>Sat, 16 Dec 2017 00:04:42 +0900</pubDate>
+        <guid>https://myuon.github.io/posts/proof-assistant-theory-1/</guid>
+        <description>これは一人Computer Scienceアドベントカレンダー 16日目の記事です。
   さてCSアドベントカレンダーも後半戦ということで、Proof Assistantを作ります。
  Proof Assistantを作ったことがある人は少ないと思うのでまずどういう風に言語を設計していくかという話をしてから、今回実際に作る言語の説明に入ります。
 Proof Assistantとは   Proof Assistantは大体次のいずれかの方式をとるものが多いです。
@@ -196,7 +187,7 @@ Proof Assistantとは   Proof Assistantは大体次のいずれかの方式を�
   Proof Assistantを起動する
   証明したい命題を入力 (例: a -&amp;gt; a)
   現在のゴールが a -&amp;gt; a になる</description>
-    </item>
+      </item>
     
   </channel>
 </rss>

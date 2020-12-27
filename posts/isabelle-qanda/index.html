@@ -7,7 +7,7 @@
 <meta name="author" content="myuon">
 <meta name="description" content="λに捧げよ">
 
-<meta name="generator" content="Hugo 0.69.2" />
+<meta name="generator" content="Hugo 0.79.1" />
 
 
 <link href="//fonts.googleapis.com/css?family=Roboto:400" rel="stylesheet">
@@ -22,7 +22,17 @@
 <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="The curse of λ" />
 
 <meta property="og:title" content="IsabelleについてのQ&amp;A" />
-<meta property="og:description" content="  これは一人Computer Scienceアドベントカレンダー 9日目の記事です。   さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。  というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。 Syntax関係  矢印がいっぱいあるんだけど何     =&gt; : HOLのfunction type constructor    ==&gt; : Pure logicのimplication    --&gt; : HOLのimplication   Pure logicってなんですか   (この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。 そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。  なのでHOLの証明は内部的には全てPure logicの証明図に置き換えてcheckされます。 AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。 依存型とかないんですか   ないよ(無慈悲) 知らないキーワード・コマンド・attributeが出てきた/便利なコマンドについて知りたい     isar-ref.pdfのAppendixにquick referenceあるので眺めるとよいかも？   証明関係  Sledgehammerと仲良くなれない   これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。  まずsledgehammerは優秀とはいえそれでも人間の「自明」とはかなり感覚が違います。 そもそも人間が自明だと思っていてもformalizeにはたくさん補題が必要だったりするので、出来る限りsledgehammerに与える命題は分かりやすく、すぐ示せそうなものだけにしたほうがいいです。  あと、余分な仮定が多いと探索が失敗しやすいです。goalが複雑なときは示したい命題を補題として切り出したりしたほうがいいこともあります。  それと、どうしても上手くいかないときは命題を見直しましょう。「簡単なはずなのにsledgehammerが答えを返さないぞ？」ってときはそもそも間違っている(goalが成り立たない)ことがあります。  次に、探索に成功し証明が複数出た場合、可能ならば簡単で応答の早い証明を選んだほうがいいです。 気をつけるべきはmetisで、これは現実的な時間では終わらない場合があるので避けられるならmetisを含まないものにするか、またはmetisに与えられた補題で先に使えるものは使ってしまいましょう。  例えば、 by (metis lemmaA lemmaB lemmaC)   の時に、lemmaAが先に適用されてそれ以後使わないことがはっきりしているなら apply (rule lemmaA) by (metis lemmaB lemmC)   としたほうが応答が早くなります。あるいはapplyの後にもう一度sledehammerをかけてもいいでしょう。 自動証明コマンドって使い分けるもの？   ある程度はね。    simp: 式変形のみ    auto: 便利コマンドに見えるけれどこいつは(今注目していないものも含めて)全てのgoalに対して変形を行うので注意が必要, 代わりに失敗しても(完全にゴールが解消できなくても)ある程度変形した形を保ってくれるのでsimp_allの代わりに使える場合もある    fastforce: autoみたいに使えて現在のgoalに対する変形しかしないので便利 代わりに証明完了or失敗(何もしない)で挙動が極端    blast: 体感では汎用的な証明力が強い。代わりにauto/fastforceと違ってsimp add:できないので打つのがめんどくさい    その他: 自動証明コマンドはいろいろあるけど、これ以外はsledgehammerが返した時に大人しく従うくらいで自分から使う必要は多分ない   一々仮定に名前付けるのめんどい   lemmaやtheoremのassumesに現れる仮定や、Isarで名前を付けられる命題は項をスペースで区切って列挙が出来ます。 具体的に、 &#34;A&#34; &#34;B&#34; みたいに横に並べることが出来て、これには一度に名前を付けられるので、 x: &#34;A&#34; &#34;B&#34; とするとx(1)でAを、x(2)でBを参照できます。 定理の検索がしたい   jEditならQueryパネルにダブルクォートで囲って項を渡すとその項を含む定理を検索できます。ここにはパターンを渡すのでワイルドカードとしてアンダーバーも使えます。 name: hoge とかやると定理の名前にhogeを含むものという意味にもなります。 jEditのマーカーつくやつ何？     紫: コマンド評価中。これが数秒同じ所で止まっているならその証明は重いのでやめたほうがいいかもしれない。    赤下線: エラー    青下線: info的な情報を出してくれます。前の定理から即座に示せる場合はsolve_direct、反例が見つかる場合はquickcheckなどがたまに教えてくれます。    オレンジ下線: 警告。パース関係の警告(この項は〜とも〜ともパースできるよみたいなやつ)は無視しないほうがいいです。   その他  (jEditなどがないと)ソースコードが読めない   Isabelleはユニコード文字をタグみたいにして埋め込むのでソースコード自体は直接読むに耐えないのですが、 例えばgithubとかに公開するとかブラウザが使えるならドキュメントを用意しておくのがおすすめです。  詳しくはドキュメントを見てもらうといいんですが、プロジェクトのルートにROOTというファイルを置いて内容書いてコマンド走らせると公式のソースコード表示しているやつみたいな感じでHTMLが生成されます。 ちなみにpdfにも吐けます。 まとめ   こういうのっていざ書こうとしたら意外と思いつかないものですね。 なんか思いついたら追加したりしようかなと思います。 " />
+<meta property="og:description" content="これは一人Computer Scienceアドベントカレンダー 9日目の記事です。
+  さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。
+ というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。
+Syntax関係  矢印がいっぱいあるんだけど何    =&gt; : HOLのfunction type constructor
+  ==&gt; : Pure logicのimplication
+  --&gt; : HOLのimplication
+    Pure logicってなんですか   (この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。 そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。
+ なのでHOLの証明は内部的には全てPure logicの証明図に置き換えてcheckされます。 AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。
+  依存型とかないんですか   ないよ(無慈悲)
+  知らないキーワード・コマンド・attributeが出てきた/便利なコマンドについて知りたい    isar-ref.pdfのAppendixにquick referenceあるので眺めるとよいかも？
+      証明関係  Sledgehammerと仲良くなれない   これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://myuon.github.io/posts/isabelle-qanda/" />
 <meta property="article:published_time" content="2017-12-09T00:03:23+09:00" />
@@ -30,17 +40,38 @@
 
 
 <meta itemprop="name" content="IsabelleについてのQ&amp;A">
-<meta itemprop="description" content="  これは一人Computer Scienceアドベントカレンダー 9日目の記事です。   さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。  というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。 Syntax関係  矢印がいっぱいあるんだけど何     =&gt; : HOLのfunction type constructor    ==&gt; : Pure logicのimplication    --&gt; : HOLのimplication   Pure logicってなんですか   (この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。 そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。  なのでHOLの証明は内部的には全てPure logicの証明図に置き換えてcheckされます。 AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。 依存型とかないんですか   ないよ(無慈悲) 知らないキーワード・コマンド・attributeが出てきた/便利なコマンドについて知りたい     isar-ref.pdfのAppendixにquick referenceあるので眺めるとよいかも？   証明関係  Sledgehammerと仲良くなれない   これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。  まずsledgehammerは優秀とはいえそれでも人間の「自明」とはかなり感覚が違います。 そもそも人間が自明だと思っていてもformalizeにはたくさん補題が必要だったりするので、出来る限りsledgehammerに与える命題は分かりやすく、すぐ示せそうなものだけにしたほうがいいです。  あと、余分な仮定が多いと探索が失敗しやすいです。goalが複雑なときは示したい命題を補題として切り出したりしたほうがいいこともあります。  それと、どうしても上手くいかないときは命題を見直しましょう。「簡単なはずなのにsledgehammerが答えを返さないぞ？」ってときはそもそも間違っている(goalが成り立たない)ことがあります。  次に、探索に成功し証明が複数出た場合、可能ならば簡単で応答の早い証明を選んだほうがいいです。 気をつけるべきはmetisで、これは現実的な時間では終わらない場合があるので避けられるならmetisを含まないものにするか、またはmetisに与えられた補題で先に使えるものは使ってしまいましょう。  例えば、 by (metis lemmaA lemmaB lemmaC)   の時に、lemmaAが先に適用されてそれ以後使わないことがはっきりしているなら apply (rule lemmaA) by (metis lemmaB lemmC)   としたほうが応答が早くなります。あるいはapplyの後にもう一度sledehammerをかけてもいいでしょう。 自動証明コマンドって使い分けるもの？   ある程度はね。    simp: 式変形のみ    auto: 便利コマンドに見えるけれどこいつは(今注目していないものも含めて)全てのgoalに対して変形を行うので注意が必要, 代わりに失敗しても(完全にゴールが解消できなくても)ある程度変形した形を保ってくれるのでsimp_allの代わりに使える場合もある    fastforce: autoみたいに使えて現在のgoalに対する変形しかしないので便利 代わりに証明完了or失敗(何もしない)で挙動が極端    blast: 体感では汎用的な証明力が強い。代わりにauto/fastforceと違ってsimp add:できないので打つのがめんどくさい    その他: 自動証明コマンドはいろいろあるけど、これ以外はsledgehammerが返した時に大人しく従うくらいで自分から使う必要は多分ない   一々仮定に名前付けるのめんどい   lemmaやtheoremのassumesに現れる仮定や、Isarで名前を付けられる命題は項をスペースで区切って列挙が出来ます。 具体的に、 &#34;A&#34; &#34;B&#34; みたいに横に並べることが出来て、これには一度に名前を付けられるので、 x: &#34;A&#34; &#34;B&#34; とするとx(1)でAを、x(2)でBを参照できます。 定理の検索がしたい   jEditならQueryパネルにダブルクォートで囲って項を渡すとその項を含む定理を検索できます。ここにはパターンを渡すのでワイルドカードとしてアンダーバーも使えます。 name: hoge とかやると定理の名前にhogeを含むものという意味にもなります。 jEditのマーカーつくやつ何？     紫: コマンド評価中。これが数秒同じ所で止まっているならその証明は重いのでやめたほうがいいかもしれない。    赤下線: エラー    青下線: info的な情報を出してくれます。前の定理から即座に示せる場合はsolve_direct、反例が見つかる場合はquickcheckなどがたまに教えてくれます。    オレンジ下線: 警告。パース関係の警告(この項は〜とも〜ともパースできるよみたいなやつ)は無視しないほうがいいです。   その他  (jEditなどがないと)ソースコードが読めない   Isabelleはユニコード文字をタグみたいにして埋め込むのでソースコード自体は直接読むに耐えないのですが、 例えばgithubとかに公開するとかブラウザが使えるならドキュメントを用意しておくのがおすすめです。  詳しくはドキュメントを見てもらうといいんですが、プロジェクトのルートにROOTというファイルを置いて内容書いてコマンド走らせると公式のソースコード表示しているやつみたいな感じでHTMLが生成されます。 ちなみにpdfにも吐けます。 まとめ   こういうのっていざ書こうとしたら意外と思いつかないものですね。 なんか思いついたら追加したりしようかなと思います。 ">
-<meta itemprop="datePublished" content="2017-12-09T00:03:23&#43;09:00" />
-<meta itemprop="dateModified" content="2017-12-09T00:03:23&#43;09:00" />
+<meta itemprop="description" content="これは一人Computer Scienceアドベントカレンダー 9日目の記事です。
+  さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。
+ というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。
+Syntax関係  矢印がいっぱいあるんだけど何    =&gt; : HOLのfunction type constructor
+  ==&gt; : Pure logicのimplication
+  --&gt; : HOLのimplication
+    Pure logicってなんですか   (この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。 そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。
+ なのでHOLの証明は内部的には全てPure logicの証明図に置き換えてcheckされます。 AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。
+  依存型とかないんですか   ないよ(無慈悲)
+  知らないキーワード・コマンド・attributeが出てきた/便利なコマンドについて知りたい    isar-ref.pdfのAppendixにquick referenceあるので眺めるとよいかも？
+      証明関係  Sledgehammerと仲良くなれない   これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。">
+<meta itemprop="datePublished" content="2017-12-09T00:03:23+09:00" />
+<meta itemprop="dateModified" content="2017-12-09T00:03:23+09:00" />
 <meta itemprop="wordCount" content="112">
 
 
 
 <meta itemprop="keywords" content="AdC2017,Isabelle," />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="IsabelleについてのQ&amp;A"/>
-<meta name="twitter:description" content="  これは一人Computer Scienceアドベントカレンダー 9日目の記事です。   さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。  というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。 Syntax関係  矢印がいっぱいあるんだけど何     =&gt; : HOLのfunction type constructor    ==&gt; : Pure logicのimplication    --&gt; : HOLのimplication   Pure logicってなんですか   (この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。 そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。  なのでHOLの証明は内部的には全てPure logicの証明図に置き換えてcheckされます。 AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。 依存型とかないんですか   ないよ(無慈悲) 知らないキーワード・コマンド・attributeが出てきた/便利なコマンドについて知りたい     isar-ref.pdfのAppendixにquick referenceあるので眺めるとよいかも？   証明関係  Sledgehammerと仲良くなれない   これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。  まずsledgehammerは優秀とはいえそれでも人間の「自明」とはかなり感覚が違います。 そもそも人間が自明だと思っていてもformalizeにはたくさん補題が必要だったりするので、出来る限りsledgehammerに与える命題は分かりやすく、すぐ示せそうなものだけにしたほうがいいです。  あと、余分な仮定が多いと探索が失敗しやすいです。goalが複雑なときは示したい命題を補題として切り出したりしたほうがいいこともあります。  それと、どうしても上手くいかないときは命題を見直しましょう。「簡単なはずなのにsledgehammerが答えを返さないぞ？」ってときはそもそも間違っている(goalが成り立たない)ことがあります。  次に、探索に成功し証明が複数出た場合、可能ならば簡単で応答の早い証明を選んだほうがいいです。 気をつけるべきはmetisで、これは現実的な時間では終わらない場合があるので避けられるならmetisを含まないものにするか、またはmetisに与えられた補題で先に使えるものは使ってしまいましょう。  例えば、 by (metis lemmaA lemmaB lemmaC)   の時に、lemmaAが先に適用されてそれ以後使わないことがはっきりしているなら apply (rule lemmaA) by (metis lemmaB lemmC)   としたほうが応答が早くなります。あるいはapplyの後にもう一度sledehammerをかけてもいいでしょう。 自動証明コマンドって使い分けるもの？   ある程度はね。    simp: 式変形のみ    auto: 便利コマンドに見えるけれどこいつは(今注目していないものも含めて)全てのgoalに対して変形を行うので注意が必要, 代わりに失敗しても(完全にゴールが解消できなくても)ある程度変形した形を保ってくれるのでsimp_allの代わりに使える場合もある    fastforce: autoみたいに使えて現在のgoalに対する変形しかしないので便利 代わりに証明完了or失敗(何もしない)で挙動が極端    blast: 体感では汎用的な証明力が強い。代わりにauto/fastforceと違ってsimp add:できないので打つのがめんどくさい    その他: 自動証明コマンドはいろいろあるけど、これ以外はsledgehammerが返した時に大人しく従うくらいで自分から使う必要は多分ない   一々仮定に名前付けるのめんどい   lemmaやtheoremのassumesに現れる仮定や、Isarで名前を付けられる命題は項をスペースで区切って列挙が出来ます。 具体的に、 &#34;A&#34; &#34;B&#34; みたいに横に並べることが出来て、これには一度に名前を付けられるので、 x: &#34;A&#34; &#34;B&#34; とするとx(1)でAを、x(2)でBを参照できます。 定理の検索がしたい   jEditならQueryパネルにダブルクォートで囲って項を渡すとその項を含む定理を検索できます。ここにはパターンを渡すのでワイルドカードとしてアンダーバーも使えます。 name: hoge とかやると定理の名前にhogeを含むものという意味にもなります。 jEditのマーカーつくやつ何？     紫: コマンド評価中。これが数秒同じ所で止まっているならその証明は重いのでやめたほうがいいかもしれない。    赤下線: エラー    青下線: info的な情報を出してくれます。前の定理から即座に示せる場合はsolve_direct、反例が見つかる場合はquickcheckなどがたまに教えてくれます。    オレンジ下線: 警告。パース関係の警告(この項は〜とも〜ともパースできるよみたいなやつ)は無視しないほうがいいです。   その他  (jEditなどがないと)ソースコードが読めない   Isabelleはユニコード文字をタグみたいにして埋め込むのでソースコード自体は直接読むに耐えないのですが、 例えばgithubとかに公開するとかブラウザが使えるならドキュメントを用意しておくのがおすすめです。  詳しくはドキュメントを見てもらうといいんですが、プロジェクトのルートにROOTというファイルを置いて内容書いてコマンド走らせると公式のソースコード表示しているやつみたいな感じでHTMLが生成されます。 ちなみにpdfにも吐けます。 まとめ   こういうのっていざ書こうとしたら意外と思いつかないものですね。 なんか思いついたら追加したりしようかなと思います。 "/>
+<meta name="twitter:description" content="これは一人Computer Scienceアドベントカレンダー 9日目の記事です。
+  さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。
+ というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。
+Syntax関係  矢印がいっぱいあるんだけど何    =&gt; : HOLのfunction type constructor
+  ==&gt; : Pure logicのimplication
+  --&gt; : HOLのimplication
+    Pure logicってなんですか   (この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。 そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。
+ なのでHOLの証明は内部的には全てPure logicの証明図に置き換えてcheckされます。 AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。
+  依存型とかないんですか   ないよ(無慈悲)
+  知らないキーワード・コマンド・attributeが出てきた/便利なコマンドについて知りたい    isar-ref.pdfのAppendixにquick referenceあるので眺めるとよいかも？
+      証明関係  Sledgehammerと仲良くなれない   これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。"/>
 
 
   </head>
@@ -71,197 +102,207 @@
     </header>
     <section>
 <p>
-<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 9日目の記事です。</strong>
-</p>
+<strong>これは<a href="https://qiita.com/advent-calendar/2017/myuon_myon_cs">一人Computer Scienceアドベントカレンダー</a> 9日目の記事です。</strong></p>
 <hr>
 <p>
-さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。
-</p>
+さて、Isabelleの入門編・基礎編が終わったところで、お口直しに(？？)Isabelleで証明していると遭遇するかもしれない疑問に答えたりする記事を用意してみました。</p>
 <p>
-というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。
-</p>
+というか、私がIsabelleを学ぶ過程で公式のリファレンス以外に困った時に頼れるものがなかったりして大変苦労したのでせめて後の人のために身についたノウハウは記事に還元していきたいという気持ちからこういうコーナーを挟んでみました。</p>
+<div id="outline-container-headline-1" class="outline-2">
 <h2 id="headline-1">
 Syntax関係
 </h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<div id="outline-container-headline-2" class="outline-3">
 <h3 id="headline-2">
 矢印がいっぱいあるんだけど何
 </h3>
+<div id="outline-text-headline-2" class="outline-text-3">
 <ul>
 <li>
-<p>
-<code>=&gt;</code> : HOLのfunction type constructor
-</p>
+<p><code>=&gt;</code> : HOLのfunction type constructor</p>
 </li>
 <li>
-<p>
-<code>==&gt;</code> : Pure logicのimplication
-</p>
+<p><code>==&gt;</code> : Pure logicのimplication</p>
 </li>
 <li>
-<p>
-<code>--&gt;</code> : HOLのimplication
-</p>
+<p><code>--&gt;</code> : HOLのimplication</p>
 </li>
 </ul>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
 <h3 id="headline-3">
 Pure logicってなんですか
 </h3>
+<div id="outline-text-headline-3" class="outline-text-3">
 <p>
 (この辺の話は後半のところでもやる予定なんですが)Isabelleはライブラリのとは別に組み込みのロジックあって、これがPure logicと呼ばれています。
-そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。
-</p>
+そもそもIsabelleは本来Pure logic上で証明を行うproof assistantなんですが、このPure logicの上に別のlogicを構成することが出来て、それがHOLやZFCです。</p>
 <p>
 なのでHOLの証明は内部的には全てPure logicの証明図に置き換えてcheckされます。
-AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。
-</p>
+AgdaやCoqなどの言語ではこういうことはしない(組み込みのものをそのまま使う)ので慣れないと不思議に感じるかもしれません。</p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-3">
 <h3 id="headline-4">
 依存型とかないんですか
 </h3>
+<div id="outline-text-headline-4" class="outline-text-3">
 <p>
-ないよ(無慈悲)
-</p>
+ないよ(無慈悲)</p>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-3">
 <h3 id="headline-5">
 知らないキーワード・コマンド・attributeが出てきた/便利なコマンドについて知りたい
 </h3>
+<div id="outline-text-headline-5" class="outline-text-3">
 <ul>
 <li>
-<p>
-<a href="http://isabelle.in.tum.de/doc/isar-ref.pdf">isar-ref.pdf</a>のAppendixにquick referenceあるので眺めるとよいかも？
-</p>
+<p><a href="http://isabelle.in.tum.de/doc/isar-ref.pdf">isar-ref.pdf</a>のAppendixにquick referenceあるので眺めるとよいかも？</p>
 </li>
 </ul>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-2">
 <h2 id="headline-6">
 証明関係
 </h2>
+<div id="outline-text-headline-6" class="outline-text-2">
+<div id="outline-container-headline-7" class="outline-3">
 <h3 id="headline-7">
 Sledgehammerと仲良くなれない
 </h3>
+<div id="outline-text-headline-7" class="outline-text-3">
 <p>
-これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。
-</p>
+これは慣れもありますが、 (1) goalを優しくする (2) 証明の選び方 の2点がポイントです。</p>
 <p>
 まずsledgehammerは優秀とはいえそれでも人間の「自明」とはかなり感覚が違います。
-そもそも人間が自明だと思っていてもformalizeにはたくさん補題が必要だったりするので、出来る限りsledgehammerに与える命題は分かりやすく、すぐ示せそうなものだけにしたほうがいいです。
-</p>
+そもそも人間が自明だと思っていてもformalizeにはたくさん補題が必要だったりするので、出来る限りsledgehammerに与える命題は分かりやすく、すぐ示せそうなものだけにしたほうがいいです。</p>
 <p>
-あと、余分な仮定が多いと探索が失敗しやすいです。goalが複雑なときは示したい命題を補題として切り出したりしたほうがいいこともあります。
-</p>
+あと、余分な仮定が多いと探索が失敗しやすいです。goalが複雑なときは示したい命題を補題として切り出したりしたほうがいいこともあります。</p>
 <p>
-それと、どうしても上手くいかないときは命題を見直しましょう。「簡単なはずなのにsledgehammerが答えを返さないぞ？」ってときはそもそも間違っている(goalが成り立たない)ことがあります。
-</p>
+それと、どうしても上手くいかないときは命題を見直しましょう。「簡単なはずなのにsledgehammerが答えを返さないぞ？」ってときはそもそも間違っている(goalが成り立たない)ことがあります。</p>
 <p>
 次に、探索に成功し証明が複数出た場合、可能ならば簡単で応答の早い証明を選んだほうがいいです。
-気をつけるべきはmetisで、これは現実的な時間では終わらない場合があるので避けられるならmetisを含まないものにするか、またはmetisに与えられた補題で先に使えるものは使ってしまいましょう。
-</p>
+気をつけるべきはmetisで、これは現実的な時間では終わらない場合があるので避けられるならmetisを含まないものにするか、またはmetisに与えられた補題で先に使えるものは使ってしまいましょう。</p>
 <p>
-例えば、
-</p>
+例えば、</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  by (metis lemmaA lemmaB lemmaC)</code></pre></div>
 </div>
 <p>
-の時に、lemmaAが先に適用されてそれ以後使わないことがはっきりしているなら
-</p>
+の時に、lemmaAが先に適用されてそれ以後使わないことがはっきりしているなら</p>
 <div class="src src-text">
 <div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">  apply (rule lemmaA)
   by (metis lemmaB lemmC)</code></pre></div>
 </div>
 <p>
-としたほうが応答が早くなります。あるいはapplyの後にもう一度sledehammerをかけてもいいでしょう。
-</p>
+としたほうが応答が早くなります。あるいはapplyの後にもう一度sledehammerをかけてもいいでしょう。</p>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-3">
 <h3 id="headline-8">
 自動証明コマンドって使い分けるもの？
 </h3>
+<div id="outline-text-headline-8" class="outline-text-3">
 <p>
-ある程度はね。
-</p>
+ある程度はね。</p>
 <ul>
 <li>
-<p>
-simp: 式変形のみ
-</p>
+<p>simp: 式変形のみ</p>
 </li>
 <li>
-<p>
-auto: 便利コマンドに見えるけれどこいつは(今注目していないものも含めて)全てのgoalに対して変形を行うので注意が必要, 代わりに失敗しても(完全にゴールが解消できなくても)ある程度変形した形を保ってくれるのでsimp_allの代わりに使える場合もある
-</p>
+<p>auto: 便利コマンドに見えるけれどこいつは(今注目していないものも含めて)全てのgoalに対して変形を行うので注意が必要, 代わりに失敗しても(完全にゴールが解消できなくても)ある程度変形した形を保ってくれるのでsimp_allの代わりに使える場合もある</p>
 </li>
 <li>
-<p>
-fastforce: autoみたいに使えて現在のgoalに対する変形しかしないので便利 代わりに証明完了or失敗(何もしない)で挙動が極端
-</p>
+<p>fastforce: autoみたいに使えて現在のgoalに対する変形しかしないので便利 代わりに証明完了or失敗(何もしない)で挙動が極端</p>
 </li>
 <li>
-<p>
-blast: 体感では汎用的な証明力が強い。代わりにauto/fastforceと違ってsimp add:できないので打つのがめんどくさい
-</p>
+<p>blast: 体感では汎用的な証明力が強い。代わりにauto/fastforceと違ってsimp add:できないので打つのがめんどくさい</p>
 </li>
 <li>
-<p>
-その他: 自動証明コマンドはいろいろあるけど、これ以外はsledgehammerが返した時に大人しく従うくらいで自分から使う必要は多分ない
-</p>
+<p>その他: 自動証明コマンドはいろいろあるけど、これ以外はsledgehammerが返した時に大人しく従うくらいで自分から使う必要は多分ない</p>
 </li>
 </ul>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-3">
 <h3 id="headline-9">
 一々仮定に名前付けるのめんどい
 </h3>
+<div id="outline-text-headline-9" class="outline-text-3">
 <p>
 lemmaやtheoremのassumesに現れる仮定や、Isarで名前を付けられる命題は項をスペースで区切って列挙が出来ます。
-具体的に、 <code>&#34;A&#34; &#34;B&#34;</code> みたいに横に並べることが出来て、これには一度に名前を付けられるので、 <code>x: &#34;A&#34; &#34;B&#34;</code> とするとx(1)でAを、x(2)でBを参照できます。
-</p>
+具体的に、 <code>&#34;A&#34; &#34;B&#34;</code> みたいに横に並べることが出来て、これには一度に名前を付けられるので、 <code>x: &#34;A&#34; &#34;B&#34;</code> とするとx(1)でAを、x(2)でBを参照できます。</p>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-3">
 <h3 id="headline-10">
 定理の検索がしたい
 </h3>
+<div id="outline-text-headline-10" class="outline-text-3">
 <p>
 jEditならQueryパネルにダブルクォートで囲って項を渡すとその項を含む定理を検索できます。ここにはパターンを渡すのでワイルドカードとしてアンダーバーも使えます。
- <code>name: hoge</code> とかやると定理の名前にhogeを含むものという意味にもなります。
-</p>
+ <code>name: hoge</code> とかやると定理の名前にhogeを含むものという意味にもなります。</p>
+</div>
+</div>
+<div id="outline-container-headline-11" class="outline-3">
 <h3 id="headline-11">
 jEditのマーカーつくやつ何？
 </h3>
+<div id="outline-text-headline-11" class="outline-text-3">
 <ul>
 <li>
-<p>
-紫: コマンド評価中。これが数秒同じ所で止まっているならその証明は重いのでやめたほうがいいかもしれない。
-</p>
+<p>紫: コマンド評価中。これが数秒同じ所で止まっているならその証明は重いのでやめたほうがいいかもしれない。</p>
 </li>
 <li>
-<p>
-赤下線: エラー
-</p>
+<p>赤下線: エラー</p>
 </li>
 <li>
-<p>
-青下線: info的な情報を出してくれます。前の定理から即座に示せる場合はsolve_direct、反例が見つかる場合はquickcheckなどがたまに教えてくれます。
-</p>
+<p>青下線: info的な情報を出してくれます。前の定理から即座に示せる場合はsolve_direct、反例が見つかる場合はquickcheckなどがたまに教えてくれます。</p>
 </li>
 <li>
-<p>
-オレンジ下線: 警告。パース関係の警告(この項は〜とも〜ともパースできるよみたいなやつ)は無視しないほうがいいです。
-</p>
+<p>オレンジ下線: 警告。パース関係の警告(この項は〜とも〜ともパースできるよみたいなやつ)は無視しないほうがいいです。</p>
 </li>
 </ul>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-12" class="outline-2">
 <h2 id="headline-12">
 その他
 </h2>
+<div id="outline-text-headline-12" class="outline-text-2">
+<div id="outline-container-headline-13" class="outline-3">
 <h3 id="headline-13">
 (jEditなどがないと)ソースコードが読めない
 </h3>
+<div id="outline-text-headline-13" class="outline-text-3">
 <p>
 Isabelleはユニコード文字をタグみたいにして埋め込むのでソースコード自体は直接読むに耐えないのですが、
-例えばgithubとかに公開するとかブラウザが使えるならドキュメントを用意しておくのがおすすめです。
-</p>
+例えばgithubとかに公開するとかブラウザが使えるならドキュメントを用意しておくのがおすすめです。</p>
 <p>
 詳しくはドキュメントを見てもらうといいんですが、プロジェクトのルートにROOTというファイルを置いて内容書いてコマンド走らせると公式のソースコード表示しているやつみたいな感じでHTMLが生成されます。
-ちなみにpdfにも吐けます。
-</p>
+ちなみにpdfにも吐けます。</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-14" class="outline-2">
 <h2 id="headline-14">
 まとめ
 </h2>
+<div id="outline-text-headline-14" class="outline-text-2">
 <p>
 こういうのっていざ書こうとしたら意外と思いつかないものですね。
-なんか思いついたら追加したりしようかなと思います。
-</p>
+なんか思いついたら追加したりしようかなと思います。</p>
+</div>
+</div>
 </section>
     <footer>
       <hr>
